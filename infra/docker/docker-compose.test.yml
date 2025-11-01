@@ -1,0 +1,155 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 测试数据库
+  postgres-test:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: reopeninnolab_test
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user -d reopeninnolab_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Redis 测试缓存
+  redis-test:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_test_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Kafka 测试消息队列
+  zookeeper-test:
+    image: confluentinc/cp-zookeeper:7.4.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2182:2181"
+
+  kafka-test:
+    image: confluentinc/cp-kafka:7.4.0
+    depends_on:
+      - zookeeper-test
+    ports:
+      - "9093:9093"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-test:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:9093", "--list"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  # MinIO 测试文件存储
+  minio-test:
+    image: minio/minio:latest
+    ports:
+      - "9001:9000"
+      - "9002:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_test_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # Neo4j 测试知识图谱
+  neo4j-test:
+    image: neo4j:5.12-community
+    ports:
+      - "7688:7687"
+      - "7475:7474"
+    environment:
+      NEO4J_AUTH: neo4j/test_password
+      NEO4J_PLUGINS: '["apoc", "graph-data-science"]'
+      NEO4J_dbms_security_procedures_unrestricted: "apoc.*,gds.*"
+    volumes:
+      - neo4j_test_data:/data
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "test_password", "RETURN 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  # ClickHouse 测试分析数据库
+  clickhouse-test:
+    image: clickhouse/clickhouse-server:23.11-alpine
+    ports:
+      - "8124:8123"
+      - "9001:9000"
+    environment:
+      CLICKHOUSE_DB: test_db
+      CLICKHOUSE_USER: test_user
+      CLICKHOUSE_PASSWORD: test_password
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    volumes:
+      - clickhouse_test_data:/var/lib/clickhouse
+      - ./clickhouse/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Jaeger 测试链路追踪
+  jaeger-test:
+    image: jaegertracing/all-in-one:1.50
+    ports:
+      - "16687:16686"
+      - "14269:14268"
+      - "14250:14250"
+      - "6832:6831/udp"
+      - "6833:6832/udp"
+    environment:
+      COLLECTOR_OTLP_ENABLED: true
+
+  # Prometheus 测试监控
+  prometheus-test:
+    image: prom/prometheus:v2.47.2
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./prometheus/prometheus-test.yml:/etc/prometheus/prometheus.yml
+      - prometheus_test_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+
+volumes:
+  postgres_test_data:
+  redis_test_data:
+  minio_test_data:
+  neo4j_test_data:
+  clickhouse_test_data:
+  prometheus_test_data:
+
+networks:
+  default:
+    name: reopeninnolab-test
+    driver: bridge

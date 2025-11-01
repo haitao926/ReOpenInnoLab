@@ -1,0 +1,97 @@
+{
+  "name": "reopeninnolab",
+  "version": "1.0.0",
+  "description": "下一代智能教育基础设施",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "test:unit": "turbo run test:unit",
+    "test:integration": "turbo run test:integration",
+    "test:e2e": "turbo run test:e2e",
+    "test:coverage": "turbo run test:coverage",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "lint:all": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "lint:style": "stylelint \"**/*.{css,scss,vue}\" --fix",
+    "lint:md": "markdownlint \"**/*.md\" --fix",
+    "quality:check": "pnpm type-check && pnpm lint:all && pnpm format:check",
+    "docker:build": "turbo run docker:build",
+    "docker:push": "turbo run docker:push",
+    "k8s:deploy": "kubectl apply -f infra/k8s/",
+    "k8s:delete": "kubectl delete -f infra/k8s/",
+    "infra:plan": "cd infra/terraform && terraform plan",
+    "infra:apply": "cd infra/terraform && terraform apply",
+    "infra:destroy": "cd infra/terraform && terraform destroy",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "db:migrate": "turbo run db:migrate",
+    "db:seed": "turbo run db:seed",
+    "ai:test": "turbo run ai:test --filter=ai-service",
+    "perf:test": "k6 run tests/load/smoke-test.js",
+    "security:audit": "pnpm audit --audit-level moderate",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-vue": "^9.18.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.1.0",
+    "prettier": "^3.1.0",
+    "turbo": "^1.11.0",
+    "typescript": "^5.3.0",
+    "vitepress": "^1.0.0-rc.31"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.12.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/reopeninnolab.git"
+  },
+  "keywords": [
+    "education",
+    "ai",
+    "learning",
+    "teaching",
+    "vue",
+    "nestjs",
+    "microservices",
+    "edtech"
+  ],
+  "author": "ReOpenInnoLab Team",
+  "license": "MIT",
+  "lint-staged": {
+    "*.{js,ts,tsx,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ],
+    "*.{css,scss,vue}": [
+      "prettier --write",
+      "stylelint --fix"
+    ],
+    "*.{vue}": [
+      "eslint --fix"
+    ]
+  }
+}

@@ -1,0 +1,1049 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reopeninnolab.com/schemas/acl/v1.0.0",
+  "title": "AiCourseLayout Schema",
+  "description": "智能教育课程布局文件格式定义",
+  "type": "object",
+  "required": ["meta", "courseInfo", "structure"],
+  "properties": {
+    "meta": {
+      "$ref": "#/definitions/CourseMeta",
+      "description": "课程元数据信息"
+    },
+    "courseInfo": {
+      "$ref": "#/definitions/CourseInfo",
+      "description": "课程基本信息"
+    },
+    "structure": {
+      "$ref": "#/definitions/CourseStructure",
+      "description": "课程结构定义"
+    },
+    "resourceRefs": {
+      "$ref": "#/definitions/ResourceReference",
+      "description": "资源引用列表"
+    },
+    "analyticsProfile": {
+      "$ref": "#/definitions/AnalyticsProfile",
+      "description": "分析配置文件"
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "CourseMeta": {
+      "type": "object",
+      "description": "课程元数据",
+      "required": ["id", "version", "tags", "contributors", "lastModified"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9-_.]+$",
+          "description": "课程唯一标识符"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "语义化版本号 (如 1.0.0)"
+        },
+        "tenant": {
+          "type": "string",
+          "description": "租户ID (多租户场景)"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "课程标签"
+        },
+        "contributors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "贡献者列表"
+        },
+        "license": {
+          "type": "string",
+          "enum": ["educational-use", "cc-by", "cc-by-sa", "cc-by-nc", "proprietary"],
+          "default": "educational-use",
+          "description": "使用许可"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "创建时间"
+        },
+        "lastModified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "最后修改时间"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CourseInfo": {
+      "type": "object",
+      "description": "课程基本信息",
+      "required": ["title", "subject", "grade", "learningObjectives", "targetAudience", "estimatedDuration", "aiPrompts"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "课程标题"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "课程描述"
+        },
+        "subject": {
+          "type": "string",
+          "enum": ["math", "physics", "chemistry", "biology", "language", "history", "geography", "english", "art", "music", "pe", "it"],
+          "description": "学科类型"
+        },
+        "grade": {
+          "type": "string",
+          "pattern": "^[一二三四五六七八九]年级$|^高中[一二三]$|^初中[一二三]$",
+          "description": "适用年级"
+        },
+        "learningObjectives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LearningObjective"
+          },
+          "minItems": 1,
+          "description": "学习目标列表"
+        },
+        "targetAudience": {
+          "$ref": "#/definitions/TargetAudience",
+          "description": "目标受众"
+        },
+        "estimatedDuration": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 300,
+          "description": "预计课程时长(分钟)"
+        },
+        "prerequisites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "前置知识要求"
+        },
+        "aiPrompts": {
+          "$ref": "#/definitions/AIPrompts",
+          "description": "AI提示词配置"
+        }
+      },
+      "additionalProperties": false
+    },
+    "LearningObjective": {
+      "type": "object",
+      "required": ["id", "description", "cognitiveLevel", "assessmentCriteria"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^lo-[a-zA-Z0-9-_.]+$",
+          "description": "学习目标ID"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 500,
+          "description": "学习目标描述"
+        },
+        "cognitiveLevel": {
+          "$ref": "#/definitions/CognitiveLevel",
+          "description": "认知层次"
+        },
+        "assessmentCriteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "评估标准"
+        },
+        "prerequisites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "前置学习目标"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CognitiveLevel": {
+      "type": "string",
+      "enum": ["remember", "understand", "apply", "analyze", "evaluate", "create"],
+      "description": "布鲁姆认知层次"
+    },
+    "TargetAudience": {
+      "type": "object",
+      "required": ["grade", "learningStyles"],
+      "properties": {
+        "grade": {
+          "type": "string",
+          "description": "适用年级"
+        },
+        "classSize": {
+          "type": "string",
+          "enum": ["small", "medium", "large"],
+          "description": "班级规模"
+        },
+        "priorKnowledge": {
+          "type": "string",
+          "description": "前置知识"
+        },
+        "learningStyles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LearningStyle"
+          },
+          "minItems": 1,
+          "description": "学习风格"
+        },
+        "specialNeeds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "特殊需求"
+        }
+      },
+      "additionalProperties": false
+    },
+    "LearningStyle": {
+      "type": "string",
+      "enum": ["visual", "auditory", "kinesthetic", "reading"],
+      "description": "学习风格类型"
+    },
+    "AIPrompts": {
+      "type": "object",
+      "required": ["generation", "assessment"],
+      "properties": {
+        "generation": {
+          "type": "string",
+          "minLength": 50,
+          "maxLength": 2000,
+          "description": "内容生成提示词"
+        },
+        "assessment": {
+          "type": "string",
+          "minLength": 50,
+          "maxLength": 2000,
+          "description": "评估提示词"
+        },
+        "intervention": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "干预提示词"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CourseStructure": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/CourseNode"
+      },
+      "minItems": 1,
+      "description": "课程节点列表"
+    },
+    "CourseNode": {
+      "type": "object",
+      "required": ["id", "title", "type", "duration", "learningGoals", "resourceRefs"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9-_.]+$",
+          "description": "节点ID"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "节点标题"
+        },
+        "type": {
+          "$ref": "#/definitions/NodeType",
+          "description": "节点类型"
+        },
+        "duration": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120,
+          "description": "持续时间(分钟)"
+        },
+        "learningGoals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "学习目标"
+        },
+        "aiStrategy": {
+          "$ref": "#/definitions/AIStrategy",
+          "description": "AI策略"
+        },
+        "assessment": {
+          "$ref": "#/definitions/Assessment",
+          "description": "评估配置"
+        },
+        "resourceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "资源引用ID列表"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "元数据"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CourseNode"
+          },
+          "description": "子节点(仅当type为chapter时)"
+        },
+        "content": {
+          "oneOf": [
+            {"$ref": "#/definitions/IntroductionContent"},
+            {"$ref": "#/definitions/KnowledgeContent"},
+            {"$ref": "#/definitions/ActivityContent"},
+            {"$ref": "#/definitions/ExperimentContent"},
+            {"$ref": "#/definitions/InteractionContent"},
+            {"$ref": "#/definitions/AssignmentContent"},
+            {"$ref": "#/definitions/AssessmentContent"}
+          ],
+          "description": "节点内容"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "chapter"
+              }
+            }
+          },
+          "then": {
+            "required": ["children"],
+            "properties": {
+              "children": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/CourseNode"
+                },
+                "minItems": 1
+              }
+            }
+          },
+          "else": {
+            "required": ["content"]
+          }
+        }
+      ]
+    },
+    "NodeType": {
+      "type": "string",
+      "enum": ["introduction", "chapter", "knowledge", "activity", "experiment", "interaction", "assignment", "assessment"],
+      "description": "课程节点类型"
+    },
+    "AIStrategy": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "AI策略类型"
+        },
+        "dataSources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "数据源"
+        },
+        "fallbackContent": {
+          "type": "string",
+          "description": "备用内容"
+        },
+        "adaptationRules": {
+          "type": "object",
+          "description": "适应规则"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Assessment": {
+      "type": "object",
+      "required": ["type", "indicators"],
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/AssessmentType",
+          "description": "评估类型"
+        },
+        "indicators": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "评估指标"
+        },
+        "aiAnalysis": {
+          "type": "string",
+          "description": "AI分析配置"
+        },
+        "interventionThreshold": {
+          "type": "object",
+          "description": "干预阈值"
+        }
+      },
+      "additionalProperties": false
+    },
+    "AssessmentType": {
+      "type": "string",
+      "enum": ["formative", "summative", "diagnostic"],
+      "description": "评估类型"
+    },
+    "IntroductionContent": {
+      "type": "object",
+      "required": ["hookType", "hookContent", "objectives"],
+      "properties": {
+        "hookType": {
+          "type": "string",
+          "enum": ["question", "story", "video", "image"],
+          "description": "导入类型"
+        },
+        "hookContent": {
+          "type": "string",
+          "minLength": 10,
+          "description": "导入内容"
+        },
+        "objectives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "学习目标"
+        },
+        "prerequisites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "前置知识"
+        }
+      },
+      "additionalProperties": false
+    },
+    "KnowledgeContent": {
+      "type": "object",
+      "required": ["format", "content"],
+      "properties": {
+        "format": {
+          "type": "string",
+          "enum": ["text", "video", "audio", "interactive"],
+          "description": "内容格式"
+        },
+        "content": {
+          "oneOf": [
+            {"type": "string"},
+            {"$ref": "#/definitions/MediaContent"}
+          ],
+          "description": "内容"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Example"
+          },
+          "description": "示例"
+        },
+        "checkpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Checkpoint"
+          },
+          "description": "检查点"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ActivityContent": {
+      "type": "object",
+      "required": ["activityType", "instructions", "duration"],
+      "properties": {
+        "activityType": {
+          "type": "string",
+          "enum": ["individual", "group", "class"],
+          "description": "活动类型"
+        },
+        "instructions": {
+          "type": "string",
+          "minLength": 20,
+          "description": "活动说明"
+        },
+        "materials": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "所需材料"
+        },
+        "duration": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60,
+          "description": "活动时长(分钟)"
+        },
+        "collaborationLevel": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "协作程度"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ExperimentContent": {
+      "type": "object",
+      "required": ["experimentType", "safetyLevel"],
+      "properties": {
+        "experimentType": {
+          "type": "string",
+          "enum": ["jupyter", "virtual", "physical", "simulation"],
+          "description": "实验类型"
+        },
+        "notebook": {
+          "type": "string",
+          "description": "Jupyter Notebook路径"
+        },
+        "environment": {
+          "$ref": "#/definitions/ExperimentEnvironment",
+          "description": "实验环境"
+        },
+        "aiAssistant": {
+          "$ref": "#/definitions/AIExperimentAssistant",
+          "description": "AI实验助手"
+        },
+        "safetyLevel": {
+          "type": "string",
+          "enum": ["safe", "moderate", "high"],
+          "description": "安全等级"
+        }
+      },
+      "additionalProperties": false
+    },
+    "InteractionContent": {
+      "type": "object",
+      "required": ["interactionType", "content"],
+      "properties": {
+        "interactionType": {
+          "type": "string",
+          "enum": ["html", "simulation", "game", "vr"],
+          "description": "交互类型"
+        },
+        "content": {
+          "type": "string",
+          "description": "交互内容"
+        },
+        "previewConfig": {
+          "$ref": "#/definitions/PreviewConfig",
+          "description": "预览配置"
+        },
+        "tracking": {
+          "$ref": "#/definitions/TrackingConfig",
+          "description": "追踪配置"
+        }
+      },
+      "additionalProperties": false
+    },
+    "AssignmentContent": {
+      "type": "object",
+      "required": ["assignmentType", "submissionFormat"],
+      "properties": {
+        "assignmentType": {
+          "type": "string",
+          "enum": ["quiz", "essay", "project", "presentation"],
+          "description": "作业类型"
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Question"
+          },
+          "description": "问题列表"
+        },
+        "rubric": {
+          "$ref": "#/definitions/Rubric",
+          "description": "评分标准"
+        },
+        "submissionFormat": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "提交格式"
+        }
+      },
+      "additionalProperties": false
+    },
+    "AssessmentContent": {
+      "type": "object",
+      "required": ["assessmentType", "questions"],
+      "properties": {
+        "assessmentType": {
+          "type": "string",
+          "enum": ["quiz", "test", "portfolio", "performance"],
+          "description": "评估类型"
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Question"
+          },
+          "minItems": 1,
+          "description": "问题列表"
+        },
+        "timeLimit": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "时间限制(分钟)"
+        },
+        "passingScore": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "及格分数"
+        }
+      },
+      "additionalProperties": false
+    },
+    "MediaContent": {
+      "type": "object",
+      "required": ["type", "url", "format"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["video", "audio", "image", "document"],
+          "description": "媒体类型"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "资源URL"
+        },
+        "duration": {
+          "type": "integer",
+          "description": "时长(秒)"
+        },
+        "size": {
+          "type": "integer",
+          "description": "文件大小(字节)"
+        },
+        "format": {
+          "type": "string",
+          "description": "文件格式"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Example": {
+      "type": "object",
+      "required": ["id", "title", "content", "difficulty"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "示例ID"
+        },
+        "title": {
+          "type": "string",
+          "description": "示例标题"
+        },
+        "content": {
+          "type": "string",
+          "description": "示例内容"
+        },
+        "explanation": {
+          "type": "string",
+          "description": "解释说明"
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["easy", "medium", "hard"],
+          "description": "难度等级"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Checkpoint": {
+      "type": "object",
+      "required": ["id", "question", "type", "correctAnswer"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "检查点ID"
+        },
+        "question": {
+          "type": "string",
+          "description": "问题"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["multiple-choice", "true-false", "short-answer"],
+          "description": "问题类型"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "选项"
+        },
+        "correctAnswer": {
+          "type": ["string", "number", "boolean"],
+          "description": "正确答案"
+        },
+        "explanation": {
+          "type": "string",
+          "description": "解释"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ExperimentEnvironment": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["jupyter", "docker", "web"],
+          "description": "环境类型"
+        },
+        "image": {
+          "type": "string",
+          "description": "Docker镜像"
+        },
+        "resources": {
+          "$ref": "#/definitions/ResourceAllocation",
+          "description": "资源配置"
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "依赖"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ResourceAllocation": {
+      "type": "object",
+      "properties": {
+        "cpu": {
+          "type": "string",
+          "description": "CPU配置"
+        },
+        "memory": {
+          "type": "string",
+          "description": "内存配置"
+        },
+        "storage": {
+          "type": "string",
+          "description": "存储配置"
+        },
+        "gpu": {
+          "type": "boolean",
+          "description": "是否需要GPU"
+        }
+      },
+      "additionalProperties": false
+    },
+    "AIExperimentAssistant": {
+      "type": "object",
+      "required": ["capabilities", "interactionStyle"],
+      "properties": {
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "能力列表"
+        },
+        "interactionStyle": {
+          "type": "string",
+          "enum": ["socratic", "direct", "guided"],
+          "description": "交互风格"
+        },
+        "adaptationLevel": {
+          "type": "string",
+          "description": "适应等级"
+        },
+        "personality": {
+          "type": "string",
+          "description": "性格特征"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PreviewConfig": {
+      "type": "object",
+      "properties": {
+        "device": {
+          "type": "string",
+          "enum": ["desktop", "tablet", "mobile"],
+          "description": "设备类型"
+        },
+        "orientation": {
+          "type": "string",
+          "enum": ["portrait", "landscape"],
+          "description": "屏幕方向"
+        },
+        "interactive": {
+          "type": "boolean",
+          "description": "是否可交互"
+        }
+      },
+      "additionalProperties": false
+    },
+    "TrackingConfig": {
+      "type": "object",
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "追踪事件"
+        },
+        "analytics": {
+          "type": "boolean",
+          "description": "是否启用分析"
+        },
+        "privacy": {
+          "type": "string",
+          "enum": ["strict", "standard", "minimal"],
+          "description": "隐私级别"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Question": {
+      "type": "object",
+      "required": ["id", "type", "question", "correctAnswer", "points"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "问题ID"
+        },
+        "type": {
+          "$ref": "#/definitions/QuestionType",
+          "description": "问题类型"
+        },
+        "question": {
+          "type": "string",
+          "description": "问题内容"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "选项"
+        },
+        "correctAnswer": {
+          "type": ["string", "number", "boolean"],
+          "description": "正确答案"
+        },
+        "points": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "分值"
+        },
+        "explanation": {
+          "type": "string",
+          "description": "解释"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "元数据"
+        }
+      },
+      "additionalProperties": false
+    },
+    "QuestionType": {
+      "type": "string",
+      "enum": ["multiple-choice", "true-false", "short-answer", "essay", "fill-blank", "matching", "ordering"],
+      "description": "问题类型"
+    },
+    "Rubric": {
+      "type": "object",
+      "required": ["criteria", "maxScore", "levels"],
+      "properties": {
+        "criteria": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RubricCriteria"
+          },
+          "minItems": 1,
+          "description": "评分标准"
+        },
+        "maxScore": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "最高分"
+        },
+        "levels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RubricLevel"
+          },
+          "minItems": 2,
+          "description": "评分等级"
+        }
+      },
+      "additionalProperties": false
+    },
+    "RubricCriteria": {
+      "type": "object",
+      "required": ["id", "description", "weight", "levels"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "标准ID"
+        },
+        "description": {
+          "type": "string",
+          "description": "描述"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "权重"
+        },
+        "levels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RubricLevel"
+          },
+          "description": "等级"
+        }
+      },
+      "additionalProperties": false
+    },
+    "RubricLevel": {
+      "type": "object",
+      "required": ["name", "description", "points"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "等级名称"
+        },
+        "description": {
+          "type": "string",
+          "description": "等级描述"
+        },
+        "points": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "分数"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ResourceReference": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ResourceItem"
+      },
+      "description": "资源引用列表"
+    },
+    "ResourceItem": {
+      "type": "object",
+      "required": ["id", "type", "title", "url"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "资源ID"
+        },
+        "type": {
+          "$ref": "#/definitions/ResourceType",
+          "description": "资源类型"
+        },
+        "title": {
+          "type": "string",
+          "description": "资源标题"
+        },
+        "description": {
+          "type": "string",
+          "description": "资源描述"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "资源URL"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "元数据"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ResourceType": {
+      "type": "string",
+      "enum": ["video", "image", "document", "audio", "simulation", "notebook", "tool", "external"],
+      "description": "资源类型"
+    },
+    "AnalyticsProfile": {
+      "type": "object",
+      "properties": {
+        "learningMetrics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "学习指标"
+        },
+        "aiInsights": {
+          "$ref": "#/definitions/AIInsights",
+          "description": "AI洞察"
+        }
+      },
+      "additionalProperties": false
+    },
+    "AIInsights": {
+      "type": "object",
+      "properties": {
+        "learningPathOptimization": {
+          "type": "boolean",
+          "description": "学习路径优化"
+        },
+        "difficultyAdjustment": {
+          "type": "boolean",
+          "description": "难度调整"
+        },
+        "recommendationEngine": {
+          "type": "boolean",
+          "description": "推荐引擎"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

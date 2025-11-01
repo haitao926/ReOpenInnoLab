@@ -1,0 +1,101 @@
+{
+  "name": "@reopeninnolab/ui-kit",
+  "version": "1.0.0",
+  "description": "教育主题UI组件库 - 基于Element Plus深度定制",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build && npm run build:themes",
+    "build:themes": "node scripts/build-themes.js",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "type-check": "vue-tsc --noEmit",
+    "clean": "rm -rf dist storybook-static"
+  },
+  "dependencies": {
+    "vue": "^3.3.8",
+    "element-plus": "^2.4.4",
+    "@element-plus/icons-vue": "^2.1.0",
+    "@vueuse/core": "^10.6.1",
+    "framer-motion": "^10.16.16",
+    "lodash-es": "^4.17.21",
+    "dayjs": "^1.11.10"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.0",
+    "@vue/tsconfig": "^0.4.0",
+    "typescript": "^5.3.0",
+    "vue-tsc": "^1.8.22",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.6.3",
+    "vitest": "^0.34.6",
+    "@vitest/ui": "^0.34.6",
+    "jsdom": "^23.0.1",
+    "@vue/test-utils": "^2.4.2",
+    "sass": "^1.69.5",
+    "postcss": "^8.4.32",
+    "autoprefixer": "^10.4.16",
+    "tailwindcss": "^3.3.6",
+    "@storybook/addon-essentials": "^7.5.3",
+    "@storybook/addon-interactions": "^7.5.3",
+    "@storybook/addon-links": "^7.5.3",
+    "@storybook/blocks": "^7.5.3",
+    "@storybook/testing-library": "^0.2.2",
+    "@storybook/vue3": "^7.5.3",
+    "@storybook/vue3-vite": "^7.5.3",
+    "storybook": "^7.5.3",
+    "@types/lodash-es": "^4.17.12"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./theme": {
+      "import": "./dist/theme/index.mjs",
+      "require": "./dist/theme/index.js",
+      "types": "./dist/theme/index.d.ts"
+    },
+    "./components": {
+      "import": "./dist/components/index.mjs",
+      "require": "./dist/components/index.js",
+      "types": "./dist/components/index.d.ts"
+    },
+    "./composables": {
+      "import": "./dist/composables/index.mjs",
+      "require": "./dist/composables/index.js",
+      "types": "./dist/composables/index.d.ts"
+    },
+    "./styles": "./src/index.scss"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "element-plus",
+    "ui",
+    "components",
+    "education",
+    "theme"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/reopeninnolab.git",
+    "directory": "packages/ui-kit"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    // 前端应用
+    { "path": "./apps/web-teacher" },
+    { "path": "./apps/web-student" },
+    { "path": "./apps/admin-console" },
+
+    // 后端服务
+    { "path": "./services/gateway" },
+    { "path": "./services/identity-service" },
+    { "path": "./services/course-service" },
+    { "path": "./services/classroom-service" },
+    { "path": "./services/lab-service" },
+    { "path": "./services/experience-service" },
+    { "path": "./services/assignment-service" },
+    { "path": "./services/insight-service" },
+    { "path": "./services/ai-service" },
+
+    // 共享包
+    { "path": "./packages/acl-sdk" },
+    { "path": "./packages/ui-kit" },
+    { "path": "./packages/shared-utils" },
+    { "path": "./packages/eslint-config" }
+  ]
+}

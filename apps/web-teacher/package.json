@@ -1,0 +1,53 @@
+{
+  "name": "@reopeninnolab/web-teacher",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "type-check": "vue-tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "vue": "^3.3.8",
+    "vue-router": "^4.2.5",
+    "pinia": "^2.1.7",
+    "element-plus": "^2.4.4",
+    "@element-plus/icons-vue": "^2.1.0",
+    "axios": "^1.6.2",
+    "dayjs": "^1.11.10",
+    "lodash-es": "^4.17.21",
+    "monaco-editor": "^0.44.0",
+    "echarts": "^5.4.3",
+    "vue-echarts": "^6.6.1",
+    "@vueuse/core": "^10.6.1",
+    "framer-motion": "^10.16.16"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.0",
+    "@vue/tsconfig": "^0.4.0",
+    "typescript": "^5.3.0",
+    "vue-tsc": "^1.8.22",
+    "vite": "^5.0.0",
+    "vitest": "^0.34.6",
+    "@vitest/ui": "^0.34.6",
+    "jsdom": "^23.0.1",
+    "@vue/test-utils": "^2.4.2",
+    "c8": "^8.0.1",
+    "unplugin-auto-import": "^0.17.2",
+    "unplugin-vue-components": "^0.25.2",
+    "sass": "^1.69.5",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6",
+    "@types/lodash-es": "^4.17.12"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

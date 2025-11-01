@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 运行 lint-staged
+npx lint-staged
+
+# 运行类型检查
+npx turbo run type-check --filter="!docs"

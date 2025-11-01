@@ -1,0 +1,12 @@
+packages:
+  # 前端应用
+  - 'apps/*'
+
+  # 后端服务
+  - 'services/*'
+
+  # 共享包
+  - 'packages/*'
+
+  # 文档 (不构建但参与工作区)
+  - 'docs'

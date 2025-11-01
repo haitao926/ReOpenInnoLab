@@ -1,0 +1,362 @@
+// 开源浦育 ReOpenInnoLab - UI Kit
+// 统一的主题和样式系统
+
+// 导入变量和混入
+@import './styles/variables.scss';
+@import './styles/mixins.scss';
+
+// 导出所有样式
+// 其他项目可以通过 @import '@ui-kit/index.scss' 引入
+
+// ========================================
+// 基础重置样式
+// ========================================
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  line-height: var(--line-height-normal);
+  -webkit-text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  font-family: var(--font-sans);
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-gray-900);
+  background-color: var(--color-white);
+}
+
+[data-theme="dark"] body {
+  color: var(--color-gray-100);
+  background-color: var(--color-gray-900);
+}
+
+// ========================================
+// 通用工具类
+// ========================================
+
+// 布局
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-center { @include flex-center; }
+.flex-between { @include flex-between; }
+.hidden { display: none; }
+.block { display: block; }
+.inline-block { display: inline-block; }
+
+// 文本
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+.text-2xl { font-size: var(--font-size-2xl); }
+
+.font-normal { font-weight: var(--font-weight-normal); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+.text-ellipsis { @include text-ellipsis(1); }
+.text-ellipsis-2 { @include text-ellipsis(2); }
+.text-ellipsis-3 { @include text-ellipsis(3); }
+
+// 颜色
+.text-primary { color: var(--color-primary-500); }
+.text-secondary { color: var(--color-secondary-500); }
+.text-success { color: var(--color-success-default); }
+.text-warning { color: var(--color-warning-default); }
+.text-error { color: var(--color-error-default); }
+.text-info { color: var(--color-info-default); }
+
+.text-gray-500 { color: var(--color-gray-500); }
+.text-gray-600 { color: var(--color-gray-600); }
+.text-gray-700 { color: var(--color-gray-700); }
+.text-gray-800 { color: var(--color-gray-800); }
+.text-gray-900 { color: var(--color-gray-900); }
+
+.bg-primary { background-color: var(--color-primary-500); }
+.bg-secondary { background-color: var(--color-secondary-500); }
+.bg-success { background-color: var(--color-success-default); }
+.bg-warning { background-color: var(--color-warning-default); }
+.bg-error { background-color: var(--color-error-default); }
+.bg-info { background-color: var(--color-info-default); }
+
+.bg-white { background-color: var(--color-white); }
+.bg-gray-50 { background-color: var(--color-gray-50); }
+.bg-gray-100 { background-color: var(--color-gray-100); }
+
+// 间距
+@each $size, $value in (0: 0, 1: 4px, 2: 8px, 3: 12px, 4: 16px, 5: 20px, 6: 24px, 8: 32px, 10: 40px, 12: 48px) {
+  .m-#{$size} { margin: #{$value}; }
+  .mt-#{$size} { margin-top: #{$value}; }
+  .mr-#{$size} { margin-right: #{$value}; }
+  .mb-#{$size} { margin-bottom: #{$value}; }
+  .ml-#{$size} { margin-left: #{$value}; }
+  .mx-#{$size} { margin-left: #{$value}; margin-right: #{$value}; }
+  .my-#{$size} { margin-top: #{$value}; margin-bottom: #{$value}; }
+
+  .p-#{$size} { padding: #{$value}; }
+  .pt-#{$size} { padding-top: #{$value}; }
+  .pr-#{$size} { padding-right: #{$value}; }
+  .pb-#{$size} { padding-bottom: #{$value}; }
+  .pl-#{$size} { padding-left: #{$value}; }
+  .px-#{$size} { padding-left: #{$value}; padding-right: #{$value}; }
+  .py-#{$size} { padding-top: #{$value}; padding-bottom: #{$value}; }
+}
+
+// 圆角
+.rounded-none { border-radius: var(--border-radius-none); }
+.rounded-sm { border-radius: var(--border-radius-sm); }
+.rounded { border-radius: var(--border-radius-base); }
+.rounded-md { border-radius: var(--border-radius-md); }
+.rounded-lg { border-radius: var(--border-radius-lg); }
+.rounded-xl { border-radius: var(--border-radius-xl); }
+.rounded-2xl { border-radius: var(--border-radius-2xl); }
+.rounded-3xl { border-radius: var(--border-radius-3xl); }
+.rounded-full { border-radius: var(--border-radius-full); }
+
+// 阴影
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow { box-shadow: var(--shadow-base); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+.shadow-2xl { box-shadow: var(--shadow-2xl); }
+.shadow-education { box-shadow: var(--shadow-education); }
+
+// 过渡效果
+.transition { @include transition(); }
+.transition-colors { @include transition-colors(); }
+.transition-transform { @include transition-transform(); }
+.transition-opacity { @include transition-opacity(); }
+
+// 响应式工具类
+@each $breakpoint in (sm, md, lg, xl, 2xl) {
+  @include respond-to($breakpoint) {
+    .\32xl\:flex-col { flex-direction: column; }
+    .\32xl\:text-center { text-align: center; }
+
+    @if $breakpoint == sm {
+      .sm\:flex-col { flex-direction: column; }
+      .sm\:text-center { text-align: center; }
+      .sm\:hidden { display: none; }
+    } @else if $breakpoint == md {
+      .md\:flex-col { flex-direction: column; }
+      .md\:text-center { text-align: center; }
+      .md\:hidden { display: none; }
+    } @else if $breakpoint == lg {
+      .lg\:flex-col { flex-direction: column; }
+      .lg\:text-center { text-align: center; }
+      .lg\:hidden { display: none; }
+    } @else if $breakpoint == xl {
+      .xl\:flex-col { flex-direction: column; }
+      .xl\:text-center { text-align: center; }
+      .xl\:hidden { display: none; }
+    }
+  }
+}
+
+// ========================================
+// 通用组件样式
+// ========================================
+
+// 按钮样式
+.btn {
+  @include button-base();
+
+  &--sm { @include button-base(sm); }
+  &--md { @include button-base(md); }
+  &--lg { @include button-base(lg); }
+
+  &--primary { @include button-variant('primary-500'); }
+  &--secondary { @include button-variant('secondary-500'); }
+  &--success { @include button-variant('success-default'); }
+  &--warning { @include button-variant('warning-default'); }
+  &--error { @include button-variant('error-default'); }
+  &--info { @include button-variant('info-default'); }
+
+  &--outline-primary { @include button-outline('primary-500'); }
+  &--outline-secondary { @include button-outline('secondary-500'); }
+
+  &--ghost {
+    background: transparent;
+    color: var(--color-gray-700);
+
+    &:hover:not(:disabled) {
+      background: var(--color-gray-100);
+    }
+  }
+
+  &--link {
+    background: transparent;
+    border: none;
+    color: var(--color-primary-500);
+    text-decoration: underline;
+
+    &:hover:not(:disabled) {
+      color: var(--color-primary-600);
+    }
+  }
+}
+
+// 卡片样式
+.card {
+  @include card();
+
+  &--sm { @include card(sm); }
+  &--md { @include card(md); }
+  &--lg { @include card(lg); }
+
+  &--hover { @include card-hover(); }
+
+  &--glass { @include glass(); }
+}
+
+// 输入框样式
+.input {
+  @include input-base();
+
+  &--error {
+    border-color: var(--color-error-default);
+
+    &:focus {
+      border-color: var(--color-error-default);
+      box-shadow: 0 0 0 2px rgba(245, 34, 45, 0.2);
+    }
+  }
+
+  &--success {
+    border-color: var(--color-success-default);
+
+    &:focus {
+      border-color: var(--color-success-default);
+      box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.2);
+    }
+  }
+}
+
+// ========================================
+// 学科颜色类
+// ========================================
+
+@each $subject, $colors in (
+  math: (color: #FF6B6B, light: #FF8787, dark: #E55555),
+  physics: (color: #4ECDC4, light: #6DD8D0, dark: #3DBCB3),
+  chemistry: (color: #45B7D1, light: #6BC5DA, dark: #35A5C7),
+  biology: (color: #96CEB4, light: #AAD8C2, dark: #7ABE9F),
+  language: (color: #DDA0DD, light: #E8B8E8, dark: #D288D2),
+  history: (color: #FFB347, light: #FFC262, dark: #FFA32C),
+  geography: (color: #87CEEB, light: #A3D9F0, dark: #6BC3DB),
+  english: (color: #98D8C8, light: #B5E5D8, dark: #7BC8B8),
+  art: (color: #FF69B4, light: #FF85C4, dark: #FF4DA4),
+  music: (color: #DDA0DD, light: #E8B8E8, dark: #D288D2),
+  pe: (color: #FFA07A, light: #FFB59C, dark: #FF8B58),
+  it: (color: #708090, light: #8A9AAA, dark: #566676)
+) {
+  .subject-#{$subject} {
+    color: map-get($colors, color);
+  }
+  .bg-subject-#{$subject} {
+    background-color: map-get($colors, color);
+  }
+  .subject-#{$subject}-light {
+    color: map-get($colors, light);
+  }
+  .bg-subject-#{$subject}-light {
+    background-color: map-get($colors, light);
+  }
+  .subject-#{$subject}-dark {
+    color: map-get($colors, dark);
+  }
+  .bg-subject-#{$subject}-dark {
+    background-color: map-get($colors, dark);
+  }
+}
+
+// ========================================
+// 动画类
+// ========================================
+
+.animate-fade-in {
+  animation: fadeIn var(--duration-normal) var(--easing-out);
+}
+
+.animate-fade-out {
+  animation: fadeOut var(--duration-normal) var(--easing-out);
+}
+
+.animate-slide-in-up {
+  animation: slideInUp var(--duration-normal) var(--easing-out);
+}
+
+.animate-slide-in-down {
+  animation: slideInDown var(--duration-normal) var(--easing-out);
+}
+
+.animate-bounce {
+  animation: bounce var(--duration-slow) var(--easing-bounce);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -30px, 0);
+  }
+  70% {
+    transform: translate3d(0, -15px, 0);
+  }
+  90% {
+    transform: translate3d(0, -4px, 0);
+  }
+}

@@ -1,0 +1,473 @@
+/**
+ * 智能教育平台主题样式
+ * 基于Element Plus的深度定制，体现"温暖科技"的设计理念
+ */
+
+// 色彩系统
+:root {
+  // 主色调 - 温暖科技蓝
+  --edu-primary: #5B8FF9;
+  --edu-primary-light: #85BEFF;
+  --edu-primary-lighter: #B3D4FF;
+  --edu-primary-dark: #3971D7;
+  --edu-primary-darker: #2851B8;
+
+  // 辅助色彩
+  --edu-secondary: #52C41A;
+  --edu-secondary-light: #7ED321;
+  --edu-secondary-dark: #389E0D;
+
+  // 功能色彩
+  --edu-success: #52C41A;
+  --edu-warning: #FAAD14;
+  --edu-error: #F5222D;
+  --edu-info: #1890FF;
+
+  // 学科色彩系统
+  --edu-subject-math: #FF6B6B;      // 数学 - 活力红
+  --edu-subject-physics: #4ECDC4;    // 物理 - 智慧青
+  --edu-subject-chemistry: #45B7D1;  // 化学 - 实验蓝
+  --edu-subject-biology: #96CEB4;    // 生物 - 生命绿
+  --edu-subject-language: #DDA0DD;   // 语文 - 文艺紫
+  --edu-subject-history: #FFB347;    // 历史 - 厚史橙
+  --edu-subject-geography: #87CEEB;  // 地理 - 天空蓝
+  --edu-subject-english: #98D8C8;    // 英语 - 薄荷绿
+  --edu-subject-art: #FF69B4;        // 美术 - 艺术粉
+  --edu-subject-music: #DDA0DD;      // 音乐 - 优雅紫
+  --edu-subject-pe: #FFA07A;         // 体育 - 健康橘
+  --edu-subject-it: #708090;         // 信息技术 - 科技灰
+
+  // 中性色彩
+  --edu-text-primary: #262626;
+  --edu-text-regular: #595959;
+  --edu-text-secondary: #8C8C8C;
+  --edu-text-placeholder: #BFBFBF;
+
+  // 背景色
+  --edu-bg-primary: #FFFFFF;
+  --edu-bg-secondary: #FAFAFA;
+  --edu-bg-tertiary: #F5F5F5;
+  --edu-bg-quaternary: #F0F2F5;
+
+  // 边框色
+  --edu-border-light: #F0F0F0;
+  --edu-border-base: #D9D9D9;
+  --edu-border-dark: #BFBFBF;
+
+  // 玻璃质感效果
+  --edu-glass-bg: rgba(255, 255, 255, 0.85);
+  --edu-glass-bg-dark: rgba(0, 0, 0, 0.75);
+  --edu-glass-border: 1px solid rgba(255, 255, 255, 0.18);
+  --edu-glass-border-dark: 1px solid rgba(255, 255, 255, 0.1);
+  --edu-glass-blur: blur(12px);
+  --edu-glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+
+  // 阴影
+  --edu-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --edu-shadow-base: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  --edu-shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  --edu-shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+
+  // 圆角
+  --edu-radius-sm: 4px;
+  --edu-radius-base: 8px;
+  --edu-radius-lg: 12px;
+  --edu-radius-xl: 16px;
+  --edu-radius-2xl: 24px;
+  --edu-radius-full: 9999px;
+
+  // 动效曲线
+  --edu-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --edu-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --edu-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --edu-ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --edu-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --edu-ease-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  // 间距系统
+  --edu-spacing-xs: 4px;
+  --edu-spacing-sm: 8px;
+  --edu-spacing-base: 16px;
+  --edu-spacing-lg: 24px;
+  --edu-spacing-xl: 32px;
+  --edu-spacing-2xl: 48px;
+  --edu-spacing-3xl: 64px;
+
+  // 字体大小
+  --edu-text-xs: 12px;
+  --edu-text-sm: 14px;
+  --edu-text-base: 16px;
+  --edu-text-lg: 18px;
+  --edu-text-xl: 20px;
+  --edu-text-2xl: 24px;
+  --edu-text-3xl: 30px;
+  --edu-text-4xl: 36px;
+  --edu-text-5xl: 48px;
+
+  // 行高
+  --edu-leading-tight: 1.25;
+  --edu-leading-normal: 1.5;
+  --edu-leading-relaxed: 1.75;
+
+  // 层级
+  --edu-z-dropdown: 1000;
+  --edu-z-sticky: 1020;
+  --edu-z-fixed: 1030;
+  --edu-z-modal-backdrop: 1040;
+  --edu-z-modal: 1050;
+  --edu-z-popover: 1060;
+  --edu-z-tooltip: 1070;
+  --edu-z-toast: 1080;
+}
+
+// Element Plus 主题定制
+:root {
+  // 主色定制
+  --el-color-primary: var(--edu-primary);
+  --el-color-primary-light-3: var(--edu-primary-light);
+  --el-color-primary-light-5: var(--edu-primary-lighter);
+  --el-color-primary-light-7: #E6F4FF;
+  --el-color-primary-light-8: #F2F8FF;
+  --el-color-primary-light-9: #F7FAFF;
+  --el-color-primary-dark-2: var(--edu-primary-dark);
+
+  // 功能色定制
+  --el-color-success: var(--edu-success);
+  --el-color-warning: var(--edu-warning);
+  --el-color-danger: var(--edu-error);
+  --el-color-info: var(--edu-info);
+
+  // 文字颜色
+  --el-text-color-primary: var(--edu-text-primary);
+  --el-text-color-regular: var(--edu-text-regular);
+  --el-text-color-secondary: var(--edu-text-secondary);
+  --el-text-color-placeholder: var(--edu-text-placeholder);
+
+  // 边框颜色
+  --el-border-color-light: var(--edu-border-light);
+  --el-border-color: var(--edu-border-base);
+  --el-border-color-dark: var(--edu-border-dark);
+
+  // 填充色
+  --el-fill-color-blank: var(--edu-bg-primary);
+  --el-fill-color: var(--edu-bg-secondary);
+  --el-fill-color-light: var(--edu-bg-tertiary);
+  --el-fill-color-lighter: var(--edu-bg-quaternary);
+
+  // 背景色
+  --el-bg-color: var(--edu-bg-primary);
+  --el-bg-color-page: var(--edu-bg-secondary);
+
+  // 组件尺寸
+  --el-component-size-large: 40px;
+  --el-component-size: 32px;
+  --el-component-size-small: 24px;
+
+  // 圆角
+  --el-border-radius-base: var(--edu-radius-base);
+  --el-border-radius-small: var(--edu-radius-sm);
+  --el-border-radius-round: var(--edu-radius-full);
+
+  // 阴影
+  --el-box-shadow: var(--edu-shadow-base);
+  --el-box-shadow-light: var(--edu-shadow-sm);
+  --el-box-shadow-dark: var(--edu-shadow-lg);
+
+  // 字体
+  --el-font-size-base: var(--edu-text-base);
+  --el-font-size-small: var(--edu-text-sm);
+  --el-font-size-large: var(--edu-text-lg);
+  --el-font-size-extra-large: var(--edu-text-xl);
+
+  // 动画
+  --el-transition-duration: 0.3s;
+  --el-transition-duration-fast: 0.2s;
+  --el-transition-function: var(--edu-ease-smooth);
+}
+
+// 全局样式重置
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  line-height: var(--edu-leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  color: var(--edu-text-primary);
+  background-color: var(--edu-bg-secondary);
+  margin: 0;
+  padding: 0;
+}
+
+// 玻璃质感组件
+.edu-glass {
+  background: var(--edu-glass-bg);
+  backdrop-filter: var(--edu-glass-blur);
+  border: var(--edu-glass-border);
+  border-radius: var(--edu-radius-lg);
+  box-shadow: var(--edu-glass-shadow);
+}
+
+.edu-glass-dark {
+  background: var(--edu-glass-bg-dark);
+  backdrop-filter: var(--edu-glass-blur);
+  border: var(--edu-glass-border-dark);
+  border-radius: var(--edu-radius-lg);
+  box-shadow: var(--edu-glass-shadow);
+}
+
+// 渐变背景
+.edu-gradient-primary {
+  background: linear-gradient(135deg, var(--edu-primary) 0%, var(--edu-primary-light) 100%);
+}
+
+.edu-gradient-secondary {
+  background: linear-gradient(135deg, var(--edu-secondary) 0%, var(--edu-secondary-light) 100%);
+}
+
+.edu-gradient-warm {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+}
+
+.edu-gradient-cool {
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A3AA 100%);
+}
+
+// 学科标签样式
+.edu-subject-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--edu-spacing-xs) var(--edu-spacing-sm);
+  border-radius: var(--edu-radius-full);
+  font-size: var(--edu-text-xs);
+  font-weight: 500;
+  color: white;
+
+  &.math { background-color: var(--edu-subject-math); }
+  &.physics { background-color: var(--edu-subject-physics); }
+  &.chemistry { background-color: var(--edu-subject-chemistry); }
+  &.biology { background-color: var(--edu-subject-biology); }
+  &.language { background-color: var(--edu-subject-language); }
+  &.history { background-color: var(--edu-subject-history); }
+  &.geography { background-color: var(--edu-subject-geography); }
+  &.english { background-color: var(--edu-subject-english); }
+  &.art { background-color: var(--edu-subject-art); }
+  &.music { background-color: var(--edu-subject-music); }
+  &.pe { background-color: var(--edu-subject-pe); }
+  &.it { background-color: var(--edu-subject-it); }
+}
+
+// 教育卡片样式
+.edu-card {
+  background: var(--edu-bg-primary);
+  border-radius: var(--edu-radius-lg);
+  box-shadow: var(--edu-shadow-sm);
+  border: 1px solid var(--edu-border-light);
+  padding: var(--edu-spacing-lg);
+  transition: all 0.3s var(--edu-ease-smooth);
+
+  &:hover {
+    box-shadow: var(--edu-shadow-lg);
+    transform: translateY(-2px);
+  }
+}
+
+.edu-card-glass {
+  @extend .edu-glass;
+  padding: var(--edu-spacing-lg);
+}
+
+// AI助手样式
+.edu-ai-assistant {
+  position: fixed;
+  bottom: var(--edu-spacing-xl);
+  right: var(--edu-spacing-xl);
+  z-index: var(--edu-z-toast);
+}
+
+.edu-ai-bubble {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--edu-gradient-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--edu-shadow-lg);
+  transition: all 0.3s var(--edu-ease-bounce);
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: var(--edu-shadow-xl);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// 进度条样式
+.edu-progress {
+  .el-progress-bar__outer {
+    background-color: var(--edu-bg-tertiary);
+    border-radius: var(--edu-radius-full);
+  }
+
+  .el-progress-bar__inner {
+    background: var(--edu-gradient-primary);
+    border-radius: var(--edu-radius-full);
+    transition: width 0.6s var(--edu-ease-smooth);
+  }
+}
+
+// 动画效果
+.edu-fade-enter-active,
+.edu-fade-leave-active {
+  transition: opacity 0.3s var(--edu-ease-smooth);
+}
+
+.edu-fade-enter-from,
+.edu-fade-leave-to {
+  opacity: 0;
+}
+
+.edu-slide-enter-active,
+.edu-slide-leave-active {
+  transition: transform 0.3s var(--edu-ease-smooth);
+}
+
+.edu-slide-enter-from {
+  transform: translateX(100%);
+}
+
+.edu-slide-leave-to {
+  transform: translateX(-100%);
+}
+
+.edu-bounce-enter-active {
+  animation: bounce-in 0.6s var(--edu-ease-bounce);
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  :root {
+    --edu-spacing-base: 12px;
+    --edu-spacing-lg: 16px;
+    --edu-spacing-xl: 24px;
+    --edu-text-base: 14px;
+    --edu-text-lg: 16px;
+    --edu-text-xl: 18px;
+  }
+
+  .edu-card {
+    padding: var(--edu-spacing-base);
+  }
+}
+
+// 深色模式
+@media (prefers-color-scheme: dark) {
+  :root {
+    --edu-text-primary: #FFFFFF;
+    --edu-text-regular: #E6E6E6;
+    --edu-text-secondary: #B3B3B3;
+    --edu-text-placeholder: #666666;
+
+    --edu-bg-primary: #1F1F1F;
+    --edu-bg-secondary: #141414;
+    --edu-bg-tertiary: #0A0A0A;
+    --edu-bg-quaternary: #000000;
+
+    --edu-border-light: #404040;
+    --edu-border-base: #333333;
+    --edu-border-dark: #262626;
+
+    --edu-glass-bg: rgba(31, 31, 31, 0.85);
+    --edu-glass-border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+// 高对比度模式
+@media (prefers-contrast: high) {
+  :root {
+    --edu-border-light: #000000;
+    --edu-border-base: #000000;
+    --edu-border-dark: #000000;
+
+    --edu-shadow-sm: none;
+    --edu-shadow-base: none;
+    --edu-shadow-lg: none;
+    --edu-glass-shadow: none;
+  }
+
+  .edu-card {
+    border: 2px solid var(--edu-border-base);
+  }
+}
+
+// 减少动画模式
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// 打印样式
+@media print {
+  .edu-ai-assistant,
+  .no-print {
+    display: none !important;
+  }
+
+  .edu-card {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}
+
+// 无障碍访问
+@media (prefers-reduced-motion: no-preference) {
+  .edu-focus-visible {
+    outline: 2px solid var(--edu-primary);
+    outline-offset: 2px;
+  }
+}
+
+// 焦点管理
+.edu-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -1,0 +1,373 @@
+// 开源浦育 ReOpenInnoLab - UI Kit Variables
+// 基于 Design Tokens 的样式变量
+
+// ========================================
+// 颜色系统
+// ========================================
+
+// 主色调 - 温暖科技蓝
+:root {
+  // Primary Colors
+  --color-primary-50: #E6F4FF;
+  --color-primary-100: #BAE0FF;
+  --color-primary-200: #91CAFF;
+  --color-primary-300: #69B1FF;
+  --color-primary-400: #4096FF;
+  --color-primary-500: #5B8FF9;
+  --color-primary-600: #597EF7;
+  --color-primary-700: #597EF7;
+  --color-primary-800: #2F54EB;
+  --color-primary-900: #1D39C4;
+  --color-primary-950: #101D4C;
+
+  // Secondary Colors
+  --color-secondary-50: #F6FFED;
+  --color-secondary-100: #D9F7BE;
+  --color-secondary-200: #BAF0B4;
+  --color-secondary-300: #95DE64;
+  --color-secondary-400: #73D13D;
+  --color-secondary-500: #52C41A;
+  --color-secondary-600: #389E0D;
+  --color-secondary-700: #237804;
+  --color-secondary-800: #135200;
+  --color-secondary-900: #092B00;
+
+  // 中性色
+  --color-white: #FFFFFF;
+  --color-gray-50: #FAFAFA;
+  --color-gray-100: #F5F5F5;
+  --color-gray-200: #F0F0F0;
+  --color-gray-300: #D9D9D9;
+  --color-gray-400: #BFBFBF;
+  --color-gray-500: #8C8C8C;
+  --color-gray-600: #595959;
+  --color-gray-700: #434343;
+  --color-gray-800: #262626;
+  --color-gray-900: #1F1F1F;
+  --color-black: #000000;
+
+  // 语义化颜色
+  --color-success-light: #B7EB8F;
+  --color-success-default: #52C41A;
+  --color-success-dark: #389E0D;
+
+  --color-warning-light: #FFE58F;
+  --color-warning-default: #FAAD14;
+  --color-warning-dark: #D48806;
+
+  --color-error-light: #FF7875;
+  --color-error-default: #F5222D;
+  --color-error-dark: #CF1322;
+
+  --color-info-light: #91D5FF;
+  --color-info-default: #1890FF;
+  --color-info-dark: #0958D9;
+
+  // 学科色彩
+  --color-math: #FF6B6B;
+  --color-math-light: #FF8787;
+  --color-math-dark: #E55555;
+
+  --color-physics: #4ECDC4;
+  --color-physics-light: #6DD8D0;
+  --color-physics-dark: #3DBCB3;
+
+  --color-chemistry: #45B7D1;
+  --color-chemistry-light: #6BC5DA;
+  --color-chemistry-dark: #35A5C7;
+
+  --color-biology: #96CEB4;
+  --color-biology-light: #AAD8C2;
+  --color-biology-dark: #7ABE9F;
+
+  --color-language: #DDA0DD;
+  --color-language-light: #E8B8E8;
+  --color-language-dark: #D288D2;
+
+  --color-history: #FFB347;
+  --color-history-light: #FFC262;
+  --color-history-dark: #FFA32C;
+
+  --color-geography: #87CEEB;
+  --color-geography-light: #A3D9F0;
+  --color-geography-dark: #6BC3DB;
+
+  --color-english: #98D8C8;
+  --color-english-light: #B5E5D8;
+  --color-english-dark: #7BC8B8;
+
+  --color-art: #FF69B4;
+  --color-art-light: #FF85C4;
+  --color-art-dark: #FF4DA4;
+
+  --color-music: #DDA0DD;
+  --color-music-light: #E8B8E8;
+  --color-music-dark: #D288D2;
+
+  --color-pe: #FFA07A;
+  --color-pe-light: #FFB59C;
+  --color-pe-dark: #FF8B58;
+
+  --color-it: #708090;
+  --color-it-light: #8A9AAA;
+  --color-it-dark: #566676;
+}
+
+// ========================================
+// 字体系统
+// ========================================
+
+:root {
+  // 字体族
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', sans-serif;
+  --font-serif: 'Georgia', 'Cambria', 'Times New Roman', 'Times', serif;
+  --font-mono: 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', 'Courier', monospace;
+
+  // 字体大小
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  --font-size-4xl: 36px;
+  --font-size-5xl: 48px;
+  --font-size-6xl: 60px;
+  --font-size-7xl: 72px;
+
+  // 字体粗细
+  --font-weight-thin: 100;
+  --font-weight-extralight: 200;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+
+  // 行高
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+
+  // 字间距
+  --letter-spacing-tighter: -0.05em;
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0em;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+  --letter-spacing-widest: 0.1em;
+}
+
+// ========================================
+// 间距系统
+// ========================================
+
+:root {
+  --spacing-0: 0px;
+  --spacing-px: 1px;
+  --spacing-0-5: 2px;
+  --spacing-1: 4px;
+  --spacing-1-5: 6px;
+  --spacing-2: 8px;
+  --spacing-2-5: 10px;
+  --spacing-3: 12px;
+  --spacing-3-5: 14px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-7: 28px;
+  --spacing-8: 32px;
+  --spacing-9: 36px;
+  --spacing-10: 40px;
+  --spacing-11: 44px;
+  --spacing-12: 48px;
+  --spacing-14: 56px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-28: 112px;
+  --spacing-32: 128px;
+  --spacing-36: 144px;
+  --spacing-40: 160px;
+  --spacing-44: 176px;
+  --spacing-48: 192px;
+  --spacing-52: 208px;
+  --spacing-56: 224px;
+  --spacing-60: 240px;
+  --spacing-64: 256px;
+  --spacing-72: 288px;
+  --spacing-80: 320px;
+  --spacing-96: 384px;
+}
+
+// ========================================
+// 圆角系统
+// ========================================
+
+:root {
+  --border-radius-none: 0px;
+  --border-radius-sm: 2px;
+  --border-radius-base: 4px;
+  --border-radius-md: 6px;
+  --border-radius-lg: 8px;
+  --border-radius-xl: 12px;
+  --border-radius-2xl: 16px;
+  --border-radius-3xl: 24px;
+  --border-radius-full: 9999px;
+}
+
+// ========================================
+// 阴影系统
+// ========================================
+
+:root {
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  --shadow-glass: 0 8px 32px rgba(31, 38, 135, 0.15);
+  --shadow-education: 0 4px 20px rgba(91, 143, 249, 0.15);
+}
+
+// ========================================
+// 层级系统
+// ========================================
+
+:root {
+  --z-index-hide: -1;
+  --z-index-auto: auto;
+  --z-index-base: 0;
+  --z-index-docked: 10;
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1100;
+  --z-index-banner: 1200;
+  --z-index-overlay: 1300;
+  --z-index-modal: 1400;
+  --z-index-popover: 1500;
+  --z-index-skip-link: 1600;
+  --z-index-toast: 1700;
+  --z-index-tooltip: 1800;
+}
+
+// ========================================
+// 动效系统
+// ========================================
+
+:root {
+  // 缓动函数
+  --easing-linear: linear;
+  --easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --easing-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  // 持续时间
+  --duration-fast: 0.15s;
+  --duration-normal: 0.3s;
+  --duration-slow: 0.5s;
+
+  // 延迟时间
+  --delay-short: 0.1s;
+  --delay-normal: 0.2s;
+  --delay-long: 0.3s;
+}
+
+// ========================================
+// 渐变色系统
+// ========================================
+
+:root {
+  --gradient-primary: linear-gradient(135deg, #5B8FF9 0%, #85BEFF 100%);
+  --gradient-secondary: linear-gradient(135deg, #52C41A 0%, #7ED321 100%);
+  --gradient-warm: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+  --gradient-cool: linear-gradient(135deg, #4ECDC4 0%, #44A3AA 100%);
+  --gradient-education: linear-gradient(135deg, #5B8FF9 0%, #4ECDC4 100%);
+  --gradient-success: linear-gradient(135deg, #52C41A 0%, #95DE64 100%);
+  --gradient-warning: linear-gradient(135deg, #FAAD14 0%, #FFD666 100%);
+  --gradient-error: linear-gradient(135deg, #F5222D 0%, #FF7875 100%);
+}
+
+// ========================================
+// 响应式断点
+// ========================================
+
+:root {
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 768px;
+  --breakpoint-md: 1024px;
+  --breakpoint-lg: 1280px;
+  --breakpoint-xl: 1536px;
+  --breakpoint-2xl: 1920px;
+}
+
+// ========================================
+// 组件特定变量
+// ========================================
+
+:root {
+  // 按钮
+  --button-height-sm: 24px;
+  --button-height-md: 32px;
+  --button-height-lg: 40px;
+  --button-padding-sm: 0 8px;
+  --button-padding-md: 0 16px;
+  --button-padding-lg: 0 24px;
+
+  // 卡片
+  --card-padding-sm: 16px;
+  --card-padding-md: 24px;
+  --card-padding-lg: 32px;
+  --card-border-radius: 8px;
+  --card-shadow: var(--shadow-md);
+
+  // 输入框
+  --input-height: 40px;
+  --input-padding: 0 12px;
+  --input-border-radius: 6px;
+  --input-border: 1px solid var(--color-gray-300);
+  --input-border-focus: 1px solid var(--color-primary-500);
+
+  // 表格
+  --table-header-height: 48px;
+  --table-row-height: 56px;
+  --table-cell-padding: 12px 16px;
+  --table-border-color: var(--color-gray-200);
+  --table-header-bg: var(--color-gray-50);
+}
+
+// ========================================
+// 深色模式变量
+// ========================================
+
+[data-theme="dark"] {
+  // 调整深色模式下的颜色
+  --color-gray-50: #1F1F1F;
+  --color-gray-100: #262626;
+  --color-gray-200: #434343;
+  --color-gray-300: #595959;
+  --color-gray-400: #8C8C8C;
+  --color-gray-500: #BFBFBF;
+  --color-gray-600: #D9D9D9;
+  --color-gray-700: #F0F0F0;
+  --color-gray-800: #F5F5F5;
+  --color-gray-900: #FAFAFA;
+
+  // 调整阴影
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}

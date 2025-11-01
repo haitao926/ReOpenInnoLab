@@ -1,0 +1,70 @@
+{
+  "compilerOptions": {
+    // 基础配置
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+
+    // 严格检查
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // 代码生成
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    // 路径映射 - 统一别名
+    "baseUrl": ".",
+    "paths": {
+      // 前端应用
+      "@web-teacher/*": ["apps/web-teacher/src/*"],
+      "@web-student/*": ["apps/web-student/src/*"],
+      "@admin-console/*": ["apps/admin-console/src/*"],
+
+      // 后端服务
+      "@gateway/*": ["services/gateway/src/*"],
+      "@identity-service/*": ["services/identity-service/src/*"],
+      "@course-service/*": ["services/course-service/src/*"],
+      "@classroom-service/*": ["services/classroom-service/src/*"],
+      "@lab-service/*": ["services/lab-service/src/*"],
+      "@experience-service/*": ["services/experience-service/src/*"],
+      "@assignment-service/*": ["services/assignment-service/src/*"],
+      "@insight-service/*": ["services/insight-service/src/*"],
+      "@ai-service/*": ["services/ai-service/src/*"],
+
+      // 共享包
+      "@acl-sdk/*": ["packages/acl-sdk/src/*"],
+      "@ui-kit/*": ["packages/ui-kit/src/*"],
+      "@shared-utils/*": ["packages/shared-utils/src/*"],
+      "@shared-types": ["packages/shared-utils/src/types/index.ts"],
+
+      // 根目录
+      "@/*": ["/*"]
+    }
+  },
+  "exclude": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**",
+    "**/.nuxt/**",
+    "**/.output/**",
+    "**/coverage/**"
+  ]
+}

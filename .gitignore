@@ -1,0 +1,220 @@
+# 依赖文件
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 构建输出
+dist/
+dist-ssr/
+*.local
+.output/
+.nuxt/
+.cache/
+.temp/
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+
+# 日志文件
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 运行时数据
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# 覆盖率报告
+coverage/
+*.lcov
+.nyc_output/
+
+# 依赖锁文件 (保留package-lock.json，忽略yarn.lock)
+yarn.lock
+.pnpm-lock
+
+# IDE和编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.Thumbs.db
+
+# 临时文件
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# 操作系统文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 测试
+.nyc_output
+coverage/
+.jest/
+*.tgz
+*.tar.gz
+
+# 文档构建
+docs/.vitepress/dist
+docs/.vitepress/cache
+
+# TypeScript
+*.tsbuildinfo
+
+# ESLint
+.eslintcache
+
+# Prettier
+.prettierignore
+
+# Turbo
+.turbo
+
+# Docker
+.dockerignore
+
+# Kubernetes
+*.kubeconfig
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# 数据库
+*.db
+*.sqlite
+*.sqlite3
+
+# 备份文件
+*.bak
+*.backup
+
+# 压缩文件
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# 前端特定
+# Vue
+.vite/
+dist-ssr/
+*.local
+
+# Nuxt.js
+.nuxt/
+.output/
+
+# Next.js
+.next/
+out/
+
+# React
+build/
+
+# Angular
+dist/
+
+# 后端特定
+# NestJS
+*.log
+logs/
+
+# 上传文件
+uploads/
+temp/
+
+# AI模型文件
+*.model
+*.weights
+*.onnx
+*.h5
+*.pkl
+*.bin
+
+# 证书文件
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+
+# 监控和性能
+.perf
+*.prof
+
+# 本地配置
+config/local.json
+config/development.json
+config/staging.json
+
+# 微服务特定
+service-logs/
+service-temp/
+service-data/
+
+# 实验室文件
+lab-temp/
+lab-outputs/
+lab-notebooks/
+
+# 缓存
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# 包管理器
+.pnpm-debug.log*
+
+# Storybook
+storybook-static/
+
+# 开发工具
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# 其他
+*.orig
+.merge_file_*
+.rej
+
+# 安全相关
+.env.prod
+.env.staging
+secrets/
+private/
+*.secret
+*.private

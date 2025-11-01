@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 运行测试
+npx turbo run test --filter="!docs" --continueOnError
+
+# 运行构建检查
+npx turbo run build --filter="!docs" --continueOnError

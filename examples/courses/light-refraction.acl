@@ -1,0 +1,598 @@
+{
+  "meta": {
+    "id": "course-light-refraction-001",
+    "version": "1.0.0",
+    "tenant": "school-district-001",
+    "tags": ["物理", "光学", "八年级", "STEAM", "实验"],
+    "contributors": ["teacher-001", "ai-assistant"],
+    "license": "educational-use",
+    "createdAt": "2024-01-15T10:30:00.000Z",
+    "lastModified": "2024-01-15T10:30:00.000Z"
+  },
+  "courseInfo": {
+    "title": "光的折射与反射探索",
+    "description": "通过虚拟实验和互动体验，深入理解光的折射规律，培养学生的科学探究能力和逻辑思维能力。本课程结合理论知识与实践操作，让学生在做中学，在玩中学。",
+    "subject": "physics",
+    "grade": "八年级",
+    "learningObjectives": [
+      {
+        "id": "lo-001",
+        "description": "理解并掌握斯涅尔定律，能够解释光在不同介质间传播时的折射现象",
+        "cognitiveLevel": "understand",
+        "assessmentCriteria": [
+          "能够准确描述斯涅尔定律的数学表达式",
+          "能够解释入射角和折射角的关系",
+          "能够应用斯涅尔定律计算折射角度"
+        ],
+        "prerequisites": []
+      },
+      {
+        "id": "lo-002",
+        "description": "能够识别日常生活中的折射现象，并用所学知识进行解释",
+        "cognitiveLevel": "apply",
+        "assessmentCriteria": [
+          "能举出至少3个生活中的折射现象",
+          "能够用折射原理解释这些现象",
+          "能够预测不同情况下的折射结果"
+        ],
+        "prerequisites": ["lo-001"]
+      },
+      {
+        "id": "lo-003",
+        "description": "培养学生的科学探究能力，能够设计简单的折射实验并进行数据分析",
+        "cognitiveLevel": "analyze",
+        "assessmentCriteria": [
+          "能够设计折射实验方案",
+          "能够准确记录实验数据",
+          "能够分析实验结果并得出结论"
+        ],
+        "prerequisites": ["lo-001", "lo-002"]
+      }
+    ],
+    "targetAudience": {
+      "grade": "八年级",
+      "classSize": "medium",
+      "priorKnowledge": "了解光沿直线传播的基本知识",
+      "learningStyles": ["visual", "kinesthetic"],
+      "specialNeeds": []
+    },
+    "estimatedDuration": 90,
+    "prerequisites": [
+      "学生已经学习过光沿直线传播的知识",
+      "学生具备基本的数学计算能力",
+      "学生对科学实验有基本的了解"
+    ],
+    "aiPrompts": {
+      "generation": "作为一位资深的物理教师，为八年级学生设计关于光的折射和反射的课程内容。要求：1. 内容要符合初中生的认知水平，语言生动有趣；2. 要包含丰富的实例和类比，帮助学生理解抽象概念；3. 要设计适当的互动环节，提高学生的参与度；4. 要考虑不同学习风格的学生需求。",
+      "assessment": "评估学生在学习光的折射概念时的理解程度。重点关注：1. 学生是否能准确理解折射现象的科学原理；2. 学生是否能将所学知识应用到实际生活中；3. 学生是否存在常见的概念错误（如认为光线会弯曲）；4. 学生的科学探究能力是否得到提升。",
+      "intervention": "当学生在学习过程中遇到困难时，提供苏格拉底式的引导。1. 通过提问帮助学生发现问题所在；2. 提供适当的提示而不是直接给出答案；3. 鼓励学生自主思考和解决问题；4. 在学生取得进步时及时给予肯定和鼓励。"
+    }
+  },
+  "structure": [
+    {
+      "id": "phase-introduction",
+      "title": "情境导入 - 光的奇妙世界",
+      "type": "introduction",
+      "duration": 15,
+      "learningGoals": [
+        "激发学生对光学现象的兴趣",
+        "引导学生思考光在生活中的应用",
+        "明确本节课的学习目标"
+      ],
+      "content": {
+        "hookType": "video",
+        "hookContent": "播放一段展示各种光学现象的短视频，包括彩虹、海市蜃楼、水中物体看起来变浅等现象。",
+        "objectives": [
+          "观察生活中的光学现象",
+          "提出关于光学现象的问题",
+          "了解本节课的学习目标"
+        ],
+        "prerequisites": []
+      },
+      "aiStrategy": {
+        "type": "personalizedHook",
+        "dataSources": ["studentInterests", "realWorldApplications"],
+        "fallbackContent": "defaultOpticalPhenomena"
+      },
+      "assessment": {
+        "type": "formative",
+        "indicators": ["engagementLevel", "questionQuality", "participationLevel"],
+        "aiAnalysis": "studentInterestAndPriorKnowledge"
+      },
+      "resourceRefs": [
+        "resource://videos/optical-phenomena-intro",
+        "resource://images/rainbow-demonstration",
+        "resource://interactive/optical-illusions"
+      ]
+    },
+    {
+      "id": "phase-exploration",
+      "title": "知识探究 - 光的传播规律",
+      "type": "chapter",
+      "duration": 30,
+      "learningGoals": [
+        "理解光沿直线传播的原理",
+        "认识反射现象及其规律",
+        "初步了解折射现象"
+      ],
+      "children": [
+        {
+          "id": "activity-001",
+          "title": "光的直线传播",
+          "type": "knowledge",
+          "duration": 10,
+          "learningGoals": [
+            "理解光在均匀介质中沿直线传播",
+            "能够用实例说明光的直线传播"
+          ],
+          "content": {
+            "format": "interactive",
+            "content": {
+              "type": "interactive",
+              "url": "resource://interactive/light-propagation-simulation",
+              "description": "交互式光传播模拟器，展示光在不同介质中的传播路径"
+            },
+            "examples": [
+              {
+                "id": "example-001",
+                "title": "影子形成",
+                "content": "太阳光透过树叶缝隙形成的斑驳影子，说明光的直线传播",
+                "difficulty": "easy"
+              },
+              {
+                "id": "example-002",
+                "title": "小孔成像",
+                "content": "小孔成像实验，进一步证明光的直线传播",
+                "difficulty": "medium"
+              }
+            ],
+            "checkpoints": [
+              {
+                "id": "checkpoint-001",
+                "question": "光在空气中是如何传播的？",
+                "type": "multiple-choice",
+                "options": ["直线传播", "曲线传播", "随机传播", "波浪传播"],
+                "correctAnswer": "直线传播",
+                "explanation": "光在同种均匀介质中是沿直线传播的"
+              }
+            ]
+          },
+          "aiStrategy": {
+            "type": "adaptiveContent",
+            "dataSources": ["studentResponses", "learningProgress"]
+          },
+          "assessment": {
+            "type": "formative",
+            "indicators": ["conceptUnderstanding", "questionResponse", "participation"]
+          },
+          "resourceRefs": [
+            "resource://interactive/light-propagation-simulation",
+            "resource://images/shadow-formation-diagram"
+          ]
+        },
+        {
+          "id": "activity-002",
+          "title": "光的反射",
+          "type": "activity",
+          "duration": 10,
+          "learningGoals": [
+            "理解光的反射现象",
+            "掌握反射定律",
+            "能够制作简单的潜望镜"
+          ],
+          "content": {
+            "activityType": "group",
+            "instructions": "1. 分组进行反射实验：使用手电筒和镜子反射光线；2. 观察入射角和反射角的关系；3. 制作简单的潜望镜并验证其工作原理。",
+            "materials": ["手电筒", "平面镜", "量角器", "纸板", "胶带"],
+            "duration": 10,
+            "collaborationLevel": "medium"
+          },
+          "aiStrategy": {
+            "type": "guidedInquiry",
+            "dataSources": ["experimentData"]
+          },
+          "assessment": {
+            "type": "formative",
+            "indicators": ["experimentExecution", "dataCollection", "collaboration", "conclusion"]
+          },
+          "resourceRefs": [
+            "resource://tools/mirrors",
+            "resource://materials/periscope-kit"
+          ]
+        },
+        {
+          "id": "activity-003",
+          "title": "折射现象初探",
+          "type": "interaction",
+          "duration": 10,
+          "learningGoals": [
+            "观察光的折射现象",
+            "初步理解折射规律",
+            "激发对折射原理的探索欲望"
+          },
+          "content": {
+            "interactionType": "html",
+            "content": "<!DOCTYPE html><html><head><style>body { font-family: Arial, sans-serif; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin: 0; } .container { max-width: 800px; margin: 0 auto; background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; backdrop-filter: blur(10px); } h1 { text-align: center; margin-bottom: 30px; } .demo-area { display: flex; justify-content: space-around; margin: 30px 0; } .demo-item { text-align: center; } .water-glass { width: 200px; height: 200px; border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; position: relative; background: rgba(64, 164, 223, 0.3); overflow: hidden; } .pencil { position: absolute; top: 50%; left: 10px; width: 150px; height: 3px; background: #8B4513; transform: rotate(30deg); transform-origin: left center; } .water { position: absolute; bottom: 0; width: 100%; height: 150px; background: rgba(100, 149, 237, 0.4); } .controls { text-align: center; margin-top: 20px; } .angle-slider { width: 100%; margin: 10px 0; } .info { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-top: 20px; }</style></head><body><div class='container'><h1>光的折射实验演示</h1><div class='demo-area'><div class='demo-item'><h3>空气→水</h3><div class='water-glass'><div class='pencil'></div><div class='water'></div></div></div><div><div class='controls'><label>入射角度: <span id='angle'>30</span>°</label><div class='angle-slider'><input type='range' min='0' max='89' value='30' oninput='updateAngle(this.value)'></div></div><div class='info'><p><strong>观察:</strong>当光线从空气进入水中时，会发生什么现象？</p><p><strong>思考:</strong>为什么筷子在水中看起来变"折"了？</p></div></div></div><script>function updateAngle(angle) { document.getElementById('angle').textContent = angle; const pencil = document.querySelector('.pencil'); pencil.style.transform = `rotate(${angle}deg)`; }</script></body></html>",
+            "previewConfig": {
+              "device": "desktop",
+              "orientation": "landscape",
+              "interactive": true
+            },
+            "tracking": {
+              "events": ["angle_change", "interaction"],
+              "analytics": true,
+              "privacy": "standard"
+            }
+          },
+          "aiStrategy": {
+            "type": "interactiveGuidance",
+            "dataSources": ["userInteractions"]
+          },
+          "assessment": {
+            "type": "formative",
+            "indicators": ["interactionCount", "timeSpent", "questionsAsked"]
+          },
+          "resourceRefs": [
+            "resource://interactive/refraction-demo"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-experiment",
+      "title": "实验探究 - 折射规律研究",
+      "type": "chapter",
+      "duration": 35,
+      "learningGoals": [
+        "通过实验验证斯涅尔定律",
+        "掌握折射角的测量方法",
+        "理解折射率的概念",
+        "培养学生的实验设计和数据分析能力"
+      ],
+      "children": [
+        {
+          "id": "experiment-001",
+          "title": "虚拟实验 - 探究光的折射规律",
+          "type": "experiment",
+          "duration": 20,
+          "learningGoals": [
+            "掌握虚拟实验的使用方法",
+            "收集折射角度数据",
+            "分析数据得出规律"
+          ],
+          "content": {
+            "experimentType": "jupyter",
+            "notebook": "light-refraction-experiment.ipynb",
+            "environment": {
+              "type": "jupyter",
+              "image": "jupyter/scipy-notebook:latest",
+              "resources": {
+                "cpu": "2 cores",
+                "memory": "4GB",
+                "storage": "10GB"
+              },
+              "dependencies": ["numpy", "matplotlib", "pandas", "scipy"]
+            },
+            "aiAssistant": {
+              "capabilities": [
+                "experimentalDesignGuidance",
+                "dataAnalysis",
+                "resultInterpretation",
+                "errorAnalysis",
+                "conceptExplanation"
+              ],
+              "interactionStyle": "socratic",
+              "adaptationLevel": "zoneOfProximalDevelopment",
+              "personality": "encouragingAndPatient"
+            },
+            "safetyLevel": "safe"
+          },
+          "aiStrategy": {
+            "type": "guidedInquiry",
+            "dataSources": ["experimentData", "studentProgress"]
+          },
+          "assessment": {
+            "type": "formative",
+            "indicators": ["experimentCompletion", "dataQuality", "analysisDepth", "conclusionAccuracy"]
+          },
+          "resourceRefs": [
+            "resource://environments/python-physics-001",
+            "resources://datasets/refraction-measurements-001",
+            "resources://tools/virtual-protractor"
+          ]
+        },
+        {
+          "id": "analysis-001",
+          "title": "数据分析 - 发现折射规律",
+          "type": "knowledge",
+          "duration": 15,
+          "learningGoals": [
+            "学习使用Python进行数据分析",
+            "绘制折射角与入射角的关系图",
+            "推导斯涅尔定律的数学表达式"
+          ],
+          "content": {
+            "format": "jupyter",
+            "content": {
+              "type": "jupyter",
+              "notebook": "refraction-analysis.ipynb",
+              "description": "使用Python和Matplotlib分析折射实验数据，发现规律"
+            },
+            "examples": [
+              {
+                "id": "analysis-001",
+                "title": "数据可视化",
+                "content": "使用Matplotlib绘制散射图，展示折射角与入射角的关系",
+                "difficulty": "medium"
+              },
+              {
+                "id": "analysis-002",
+                "title": "线性拟合",
+                "content": "使用NumPy进行线性回归，计算折射率",
+                "difficulty": "medium"
+              }
+            ]
+          },
+          "aiStrategy": {
+            "type": "dataAnalysis",
+            "dataSources": ["experimentResults", "studentProgress"]
+          },
+          "assessment": {
+            "type": "summative",
+            "indicators": ["codeQuality", "analysisAccuracy", "interpretationCorrectness"]
+          },
+          "resourceRefs": [
+            "resources://tools/data-analysis-kit"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-application",
+      "title": "应用拓展 - 光学在生活中的应用",
+      "type": "chapter",
+      "duration": 25,
+      "learningGoals": [
+        "将所学知识应用到实际生活中",
+        "培养学生的科学思维和创新意识",
+        "了解光学技术在现代科技中的应用"
+      ],
+      "children": [
+        {
+          "id": "application-001",
+          "title": "生活应用 - 解释生活中的折射现象",
+          "type": "knowledge",
+          "duration": 15,
+          "learningGoals": [
+            "用科学原理解释日常折射现象",
+            "培养学生的问题解决能力",
+            "增强学生的科学素养"
+          ],
+          "content": {
+            "format": "text",
+            "content": "讨论和分析日常生活中的折射现象，如：\n1. 看水中的物体看起来变浅\n2. 海市蜃楼的形成原理\n3. 太阳光在大气中的折射\n4. 光纤通信的原理"
+          },
+          "aiStrategy": {
+            "type": "discussion",
+            "dataSources": ["studentExamples", "realWorldApplications"]
+          },
+          "assessment": {
+            "type": "formative",
+            "indicators": ["participation", "analysisDepth", "applicationAccuracy"]
+          }
+        },
+        {
+          "id": "project-001",
+          "title": "创新项目 - 制作简易光学仪器",
+          "type": "assignment",
+          "duration": 10,
+          "learningGoals": [
+            "培养学生的动手能力和创新意识",
+            "将理论知识转化为实际应用",
+            "提高团队协作能力"
+          ],
+          "content": {
+            "assignmentType": "project",
+            "description": "以小组为单位，设计并制作一个基于反射或折射原理的光学仪器，如：\n- 潜望镜\n- 万花筒\n- 简易望远镜\n- 光纤通信演示",
+            "submissionFormat": ["设计图纸", "成品照片", "制作说明", "演示视频"],
+            "rubric": {
+              "criteria": [
+                {
+                  "id": "design-creativity",
+                  "description": "设计创意",
+                  "weight": 0.3,
+                  "levels": [
+                    {
+                      "name": "优秀",
+                      "description": "设计独特，具有创新性",
+                      "points": 10
+                    },
+                    {
+                      "name": "良好",
+                      "description": "设计合理，有一定创新",
+                      "points": 8
+                    },
+                    {
+                      "name": "及格",
+                      "description": "设计基本正确",
+                      "points": 6
+                    }
+                  ]
+                },
+                {
+                  "id": "workmanship",
+                  "description": "制作工艺",
+                  "weight": 0.3,
+                  "levels": [
+                    {
+                      "name": "优秀",
+                      "description": "制作精良，功能完善",
+                      "points": 10
+                    },
+                    {
+                      "name": "良好",
+                      "description": "制作良好，功能基本完善",
+                      "points": 8
+                    },
+                    {
+                      "name": "及格",
+                      "description": "制作基本完成",
+                      "points": 6
+                    }
+                  ]
+                },
+                {
+                  "id": "scientific-principle",
+                  "description": "科学原理",
+                  "weight": 0.4,
+                  "levels": [
+                    {
+                      "name": "优秀",
+                      "description": "原理理解深刻，应用准确",
+                      "points": 10
+                    },
+                    {
+                      "name": "良好",
+                      "description": "原理理解基本正确",
+                      "points": 8
+                    },
+                    {
+                      "name": "及格",
+                      "description": "原理基本了解",
+                      "points": 6
+                    }
+                  ]
+                }
+              ],
+              "maxScore": 10
+            }
+          },
+          "aiStrategy": {
+            "type": "projectGuidance",
+            "dataSources": ["projectProgress", "studentNeeds"]
+          },
+          "assessment": {
+            "type": "summative",
+            "indicators": ["projectCompletion", "creativity", "scientificAccuracy", "presentation"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "phase-assessment",
+      "title": "学习评估 - 知识巩固与能力检验",
+      "type": "assessment",
+      "duration": 15,
+      "learningGoals": [
+        "检验学生对折射定律的掌握程度",
+        "评估学生的科学探究能力",
+        "收集学生的学习反馈"
+      ],
+      "content": {
+        "assessmentType": "quiz",
+        "questions": [
+          {
+            "id": "q001",
+            "type": "multiple-choice",
+            "question": "当光从空气(折射率≈1.0)射入水中(折射率≈1.33)时，折射角相对于入射角会：",
+            "options": [
+              "A. 始终小于入射角",
+              "B. 始终大于入射角",
+              "C. 可能大于、等于或小于入射角",
+              "D. 与入射角没有关系"
+            ],
+            "correctAnswer": "A",
+            "points": 10,
+            "explanation": "根据斯涅尔定律，当光从折射率较小的介质进入折射率较大的介质时，折射角小于入射角"
+          },
+          {
+            "id": "q002",
+            "type": "true-false",
+            "question": "全反射现象只能在光从折射率大的介质射向折射率小的介质时发生。",
+            "correctAnswer": true,
+            "points": 5,
+            "explanation": "全反射需要满足光从光密介质射向光疏介质，且入射角大于临界角的条件。"
+          },
+          {
+            "id": "q003",
+            "type": "short-answer",
+            "question": "请简述斯涅尔定律的数学表达式，并说明其中各符号的含义。",
+            "correctAnswer": "n₁sinθ₁ = n₂sinθ₂，其中n₁、n₂为两种介质的折射率，θ₁为入射角，θ₂为折射角。",
+            "points": 15,
+            "explanation": "斯涅尔定律描述了光线在两种不同介质界面上折射时入射角和折射角之间的关系。"
+          }
+        ],
+        "timeLimit": 10,
+        "passingScore": 70
+      },
+      "aiStrategy": {
+        "type": "adaptiveAssessment",
+        "dataSources": ["responsePatterns", "timeManagement"]
+      },
+      "assessment": {
+        "type": "summative",
+        "indicators": ["knowledgeMastery", "problemSolving", "timeManagement"]
+      }
+    }
+  ],
+  "resourceRefs": [
+    {
+      "id": "resource://videos/optical-phenomena-intro",
+      "type": "video",
+      "title": "光学现象介绍视频",
+      "url": "https://example.com/videos/optical-phenomena-intro.mp4",
+      "metadata": {
+        "duration": 180,
+        "size": "25MB",
+        "format": "mp4"
+      }
+    },
+    {
+      "id": "resource://interactive/optical-illusions",
+      "type": "simulation",
+      "title": "光学错觉交互演示",
+      "url": "https://example.com/simulations/optical-illusions",
+      "metadata": {
+        "interactive": true,
+        "responsive": true
+      }
+    },
+    {
+      "id": "resource://environments/python-physics-001",
+      "type": "environment",
+      "title": "Python物理实验环境",
+      "url": "https://jupyter.example.com/env/python-physics-001",
+      "metadata": {
+        "environment": "jupyter",
+        "pythonVersion": "3.9",
+        "libraries": ["numpy", "matplotlib", "pandas", "scipy"]
+      }
+    },
+    {
+      "id": "resource://datasets/refraction-measurements-001",
+      "type": "dataset",
+      "title": "折射实验测量数据",
+      "url": "https://example.com/datasets/refraction-measurements.csv",
+      "metadata": {
+        "format": "csv",
+        "records": 150,
+        "size": "2MB"
+      }
+    }
+  ],
+  "analyticsProfile": {
+    "learningMetrics": [
+      "timeOnTask",
+      "conceptMasteryProgress",
+      "helpSeekingBehavior",
+      "collaborationLevel",
+      "experimentCompletionRate",
+      "assessmentPerformance"
+    ],
+    "aiInsights": {
+      "learningPathOptimization": true,
+      "difficultyAdjustment": true,
+      "recommendationEngine": true
+    }
+  }
+}
