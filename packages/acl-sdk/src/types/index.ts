@@ -77,11 +77,6 @@ export interface AIPrompts {
   intervention?: string
 }
 
-// 课程结构
-export interface CourseStructure extends CourseNode[] {
-  // 这是一个数组，同时也是一个CourseNode的集合
-}
-
 // 课程节点基类
 export interface BaseCourseNode {
   id: string
@@ -106,6 +101,9 @@ export type CourseNode = BaseCourseNode & (
   | { type: 'assessment'; content: AssessmentContent }
   | { type: 'chapter'; children: CourseStructure } & BaseCourseNode
 )
+
+// 课程结构
+export type CourseStructure = CourseNode[]
 
 // 节点类型
 export type NodeType =

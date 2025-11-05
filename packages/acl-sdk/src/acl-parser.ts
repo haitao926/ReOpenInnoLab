@@ -5,6 +5,7 @@
 
 import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
+import * as YAML from 'yaml'
 import { AiCourseLayout, ParseOptions, ValidationResult } from './types'
 import { ACLValidator } from './acl-validator'
 
@@ -45,8 +46,8 @@ export class ACLParser {
       // 1. 预处理内容
       const processedContent = this.preprocessContent(content, options)
 
-      // 2. 解析JSON
-      const jsonData = JSON.parse(processedContent)
+      // 2. 解析内容 (JSON 或 YAML)
+      const jsonData = this.parseContent(processedContent, options)
 
       // 3. 验证结构
       const validation = await this.validate(jsonData)
@@ -77,8 +78,8 @@ export class ACLParser {
       // 1. 预处理内容
       const processedContent = this.preprocessContent(content, options)
 
-      // 2. 解析JSON
-      const jsonData = JSON.parse(processedContent)
+      // 2. 解析内容 (JSON 或 YAML)
+      const jsonData = this.parseContent(processedContent, options)
 
       // 3. 验证结构
       const validation = this.validateSync(jsonData)
@@ -111,6 +112,36 @@ export class ACLParser {
    */
   validateSync(data: any): ValidationResult {
     return this.validator.validateSync(data)
+  }
+
+  /**
+   * 解析内容 (支持JSON和YAML)
+   * @param content 处理后的内容
+   * @param options 解析选项
+   * @returns 解析后的对象
+   */
+  private parseContent(content: string, options: ParseOptions): any {
+    const trimmed = content.trim()
+
+    // 尝试JSON解析
+    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+      try {
+        return JSON.parse(trimmed)
+      } catch (error) {
+        throw new Error(`JSON解析失败: ${error.message}`)
+      }
+    }
+
+    // 尝试YAML解析
+    try {
+      return YAML.parse(trimmed, {
+        strict: false,
+        mapAsMap: false,
+        merge: false
+      })
+    } catch (error) {
+      throw new Error(`YAML解析失败: ${error.message}`)
+    }
   }
 
   /**
@@ -363,15 +394,23 @@ export class ACLParser {
     try {
       const trimmed = content.trim()
 
-      // 检查是否为JSON格式
-      if (!trimmed.startsWith('{') || !trimmed.endsWith('}')) {
-        return false
+      // 检查JSON格式
+      if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+        JSON.parse(trimmed)
+        return true
       }
 
-      // 尝试解析
-      JSON.parse(trimmed)
+      // 检查YAML格式
+      if (/^[a-zA-Z_][a-zA-Z0-9_]*:\s*/m.test(trimmed)) {
+        YAML.parse(trimmed, {
+          strict: false,
+          mapAsMap: false,
+          merge: false
+        })
+        return true
+      }
 
-      return true
+      return false
     } catch {
       return false
     }
@@ -405,12 +444,14 @@ export class ACLParser {
    * @returns 文件格式
    */
   private detectFormat(content: string): string {
-    if (content.trim().startsWith('{')) {
+    const trimmed = content.trim()
+
+    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
       return 'json'
     }
 
     // 检查是否为YAML格式
-    if (/^[a-zA-Z_][a-zA-Z0-9_]*:\s*/.test(content)) {
+    if (/^[a-zA-Z_][a-zA-Z0-9_]*:\s*/m.test(trimmed)) {
       return 'yaml'
     }
 

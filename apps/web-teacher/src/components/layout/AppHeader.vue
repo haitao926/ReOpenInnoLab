@@ -106,12 +106,8 @@
         </template>
       </el-dropdown>
 
-      <!-- 主题切换 -->
-      <el-button
-        :icon="isDarkMode ? Sunny : Moon"
-        circle
-        @click="toggleTheme"
-      />
+      <!-- 主题切换器 -->
+      <ThemeSwitcher @theme-changed="handleThemeChanged" />
     </div>
   </header>
 </template>
@@ -126,8 +122,6 @@ import {
   User,
   Setting,
   SwitchButton,
-  Sunny,
-  Moon,
   ArrowDown,
   Close,
   SuccessFilled,
@@ -137,6 +131,7 @@ import {
 } from '@element-plus/icons-vue'
 import { useAppStore } from '@/stores/app'
 import { useUserStore } from '@/stores/user'
+import ThemeSwitcher from '@/components/common/ThemeSwitcher.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -164,9 +159,8 @@ const toggleSidebar = () => {
   appStore.toggleSidebar()
 }
 
-const toggleTheme = () => {
-  const newTheme = appStore.theme === 'light' ? 'dark' : 'light'
-  appStore.setTheme(newTheme)
+const handleThemeChanged = (theme: string) => {
+  appStore.setTheme(theme)
 }
 
 const toggleAIAssistant = () => {
@@ -230,95 +224,120 @@ const handleUserMenuCommand = (command: string) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 60px;
-  padding: 0 20px;
-  background: var(--el-bg-color);
-  border-bottom: 1px solid var(--el-border-color-light);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  height: var(--edu-header-height);
+  padding: 0 clamp(20px, 4vw, 36px);
+  background: transparent;
+  border-bottom: none;
+  box-shadow: none;
+  position: relative;
+  z-index: var(--edu-z-sticky);
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--spacing-base);
 }
 
 .sidebar-toggle {
-  font-size: 18px;
+  font-size: var(--font-size-lg);
+  padding: 8px;
+  border-radius: 12px;
+  color: var(--edu-text-primary);
+  background: rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(8px);
+  transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
+
+  &:hover {
+    background: rgba(15, 23, 42, 0.12);
+    transform: translateY(-1px);
+  }
 }
 
 .breadcrumb {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: clamp(12px, 1.6vw, 18px);
 }
 
 .ai-assistant-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #5b8ff9, #2b59ff);
   border: none;
-  color: white;
-}
+  color: #ffffff;
+  box-shadow: 0 14px 25px -18px rgba(43, 89, 255, 0.9);
+  transition: all var(--edu-duration-normal) var(--edu-easing-bounce);
 
-.ai-assistant-btn:hover {
-  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 32px -18px rgba(43, 89, 255, 0.95);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }
 
 .user-info {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 20px;
+  gap: var(--spacing-sm);
+  padding: 6px 14px;
+  border-radius: 999px;
   cursor: pointer;
-  transition: background-color 0.3s;
-}
+  transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
+  background: rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(12px);
 
-.user-info:hover {
-  background-color: var(--el-fill-color-light);
+  &:hover {
+    background: rgba(15, 23, 42, 0.12);
+  }
 }
 
 .username {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--edu-text-primary);
 }
 
 .notification-panel {
   width: 100%;
+  background: var(--edu-bg-primary);
 }
 
 .notification-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--el-border-color-lighter);
-  font-weight: 500;
+  padding: var(--spacing-base) var(--spacing-lg);
+  border-bottom: 1px solid var(--edu-border-light);
+  font-weight: var(--font-weight-medium);
+  color: var(--edu-text-primary);
 }
 
 .notification-list {
-  padding: 8px 0;
+  padding: var(--spacing-sm) 0;
 }
 
 .notification-item {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-base) var(--spacing-lg);
   cursor: pointer;
-  transition: background-color 0.3s;
-}
+  transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
 
-.notification-item:hover {
-  background-color: var(--el-fill-color-lighter);
-}
+  &:hover {
+    background-color: var(--edu-bg-tertiary);
+  }
 
-.notification-item.unread {
-  background-color: var(--el-color-primary-light-9);
-  border-left: 3px solid var(--el-color-primary);
+  &.unread {
+    background-color: var(--edu-primary-50);
+    border-left: 3px solid var(--edu-primary-500);
+  }
 }
 
 .notification-icon {
@@ -332,15 +351,93 @@ const handleUserMenuCommand = (command: string) => {
 }
 
 .notification-title {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 4px;
-  color: var(--el-text-color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-xs);
+  color: var(--edu-text-primary);
 }
 
 .notification-message {
-  font-size: 12px;
-  color: var(--el-text-color-regular);
-  line-height: 1.4;
+  font-size: var(--font-size-xs);
+  color: var(--edu-text-secondary);
+  line-height: var(--edu-leading-normal);
+}
+
+/* 深色模式适配 */
+[data-theme="dark"] {
+  .app-header {
+    background: var(--edu-glass-bg-dark);
+    border-color: var(--edu-border-dark);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .sidebar-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .user-info:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .notification-item {
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    &.unread {
+      background-color: rgba(91, 143, 249, 0.1);
+      border-left-color: var(--edu-primary-400);
+    }
+  }
+
+  .notification-header {
+    border-color: var(--edu-border-dark);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0 var(--spacing-base);
+  }
+
+  .header-left {
+    gap: var(--spacing-sm);
+  }
+
+  .header-right {
+    gap: var(--spacing-xs);
+  }
+
+  .breadcrumb {
+    display: none;
+  }
+
+  .username {
+    display: none;
+  }
+}
+
+/* 无障碍优化 */
+.sidebar-toggle:focus-visible,
+.ai-assistant-btn:focus-visible,
+.user-info:focus-visible {
+  outline: 2px solid var(--edu-primary-500);
+  outline-offset: 2px;
+}
+
+/* 减少动画模式 */
+@media (prefers-reduced-motion: reduce) {
+  .app-header,
+  .sidebar-toggle,
+  .ai-assistant-btn,
+  .user-info,
+  .notification-item {
+    transition-duration: 0.01ms !important;
+  }
+
+  .ai-assistant-btn:hover {
+    transform: none;
+  }
 }
 </style>

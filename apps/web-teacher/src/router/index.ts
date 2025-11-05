@@ -24,7 +24,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/dashboard',
         name: 'Dashboard',
-        component: () => import('@/views/dashboard/DashboardView.vue'),
+        component: () => import('@/views/Dashboard/index.vue'),
         meta: {
           title: '控制台',
           icon: 'Dashboard',
@@ -34,7 +34,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/courses',
         name: 'Courses',
-        component: () => import('@/views/courses/CoursesView.vue'),
+        component: () => import('@/views/Courses/List.vue'),
         meta: {
           title: '课程管理',
           icon: 'Reading',
@@ -42,9 +42,49 @@ const routes: RouteRecordRaw[] = [
         }
       },
       {
+        path: '/labs',
+        name: 'LabLibrary',
+        component: () => import('@/views/VirtualLab/LabLibrary.vue'),
+        meta: {
+          title: '实验管理',
+          icon: 'Science',
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/experiences',
+        name: 'ExperienceManagement',
+        component: () => import('@/views/Experience/ExperienceManagementView.vue'),
+        meta: {
+          title: '体验管理',
+          icon: 'Monitor',
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/labs/create',
+        name: 'LabCreate',
+        component: () => import('@/views/VirtualLab/LabEditor.vue'),
+        meta: {
+          title: '创建实验',
+          icon: 'Plus',
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/labs/:id/edit',
+        name: 'LabEdit',
+        component: () => import('@/views/VirtualLab/LabEditor.vue'),
+        meta: {
+          title: '编辑实验',
+          icon: 'Edit',
+          requiresAuth: true
+        }
+      },
+      {
         path: '/courses/create',
         name: 'CourseCreate',
-        component: () => import('@/views/courses/CourseCreateView.vue'),
+        component: () => import('@/views/Courses/CourseCreateView.vue'),
         meta: {
           title: '创建课程',
           requiresAuth: true,
@@ -54,7 +94,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/courses/:id',
         name: 'CourseDetail',
-        component: () => import('@/views/courses/CourseDetailView.vue'),
+        component: () => import('@/views/Courses/CourseDetailView.vue'),
         meta: {
           title: '课程详情',
           requiresAuth: true,
@@ -64,7 +104,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/courses/:id/edit',
         name: 'CourseEdit',
-        component: () => import('@/views/courses/CourseEditView.vue'),
+        component: () => import('@/views/Courses/CourseEditView.vue'),
         meta: {
           title: '编辑课程',
           requiresAuth: true,
@@ -74,10 +114,20 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/classrooms',
         name: 'Classrooms',
-        component: () => import('@/views/classrooms/ClassroomsView.vue'),
+        component: () => import('@/views/Class/ClassManagement.vue'),
         meta: {
-          title: '班级管理',
+          title: '班级控制台',
           icon: 'School',
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/resources',
+        name: 'Resources',
+        component: () => import('@/views/Resources/ResourceVaultView.vue'),
+        meta: {
+          title: '资源中心',
+          icon: 'Collection',
           requiresAuth: true
         }
       },
@@ -92,13 +142,23 @@ const routes: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/labs',
-        name: 'Labs',
-        component: () => import('@/views/labs/LabsView.vue'),
+        path: '/assignments/create',
+        name: 'AssignmentCreate',
+        component: () => import('@/views/assignments/AssignmentCreateView.vue'),
         meta: {
-          title: '虚拟实验',
-          icon: 'Science',
-          requiresAuth: true
+          title: '布置作业',
+          requiresAuth: true,
+          hidden: true
+        }
+      },
+      {
+        path: '/assignments/:id/grade',
+        name: 'AssignmentGrade',
+        component: () => import('@/views/assignments/AssignmentGradeView.vue'),
+        meta: {
+          title: '批改作业',
+          requiresAuth: true,
+          hidden: true
         }
       },
       {
@@ -111,37 +171,47 @@ const routes: RouteRecordRaw[] = [
           requiresAuth: true
         }
       },
+      // {
+      //   path: '/profile',
+      //   name: 'Profile',
+      //   component: () => import('@/views/profile/ProfileView.vue'),
+      //   meta: {
+      //     title: '个人中心',
+      //     icon: 'User',
+      //     requiresAuth: true
+      //   }
+      // },
       {
-        path: '/profile',
-        name: 'Profile',
-        component: () => import('@/views/profile/ProfileView.vue'),
+        path: '/component-showcase',
+        name: 'ComponentShowcase',
+        component: () => import('@/components/ComponentShowcase.vue'),
         meta: {
-          title: '个人中心',
-          icon: 'User',
-          requiresAuth: true
+          title: 'UI组件展示',
+          icon: 'Grid',
+          requiresAuth: false
         }
       },
       {
         path: '/settings',
         name: 'Settings',
-        component: () => import('@/views/settings/SettingsView.vue'),
+        component: () => import('@/views/Settings/index.vue'),
         meta: {
           title: '系统设置',
           icon: 'Setting',
           requiresAuth: true
         }
       },
-      // 404页面
-      {
-        path: '/:pathMatch(.*)*',
-        name: 'NotFound',
-        component: () => import('@/views/error/NotFoundView.vue'),
-        meta: {
-          title: '页面不存在',
-          requiresAuth: true,
-          hidden: true
-        }
-      }
+      // TODO: Create 404 page
+      // {
+      //   path: '/:pathMatch(.*)*',
+      //   name: 'NotFound',
+      //   component: () => import('@/views/error/NotFoundView.vue'),
+      //   meta: {
+      //     title: '页面不存在',
+      //     requiresAuth: true,
+      //     hidden: true
+      //   }
+      // }
     ]
   }
 ]

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="ReOpenInnoLab - 下一代智能教育基础设施" />
+    <meta name="keywords" content="教育,智能,AI,在线学习,教学平台" />
+    <title>ReOpenInnoLab - 智能教育平台</title>
+
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Georgia:wght@400;700&family=SFMono+Regular:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Theme color for mobile browsers -->
+    <meta name="theme-color" content="#5B8FF9">
+
+    <!-- Apple touch icon -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <style>
+      /* Critical CSS for loading state */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        background: #f5f5f5;
+        color: #1f1f1f;
+      }
+
+      /* Loading spinner */
+      .loading-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+        z-index: 9999;
+      }
+
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #e3e3e3;
+        border-top: 4px solid #5B8FF9;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      .loading-text {
+        margin-top: 20px;
+        font-size: 14px;
+        color: #666;
+        font-weight: 500;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      /* Hide loading when app is ready */
+      .app-ready .loading-container {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Loading state -->
+      <div class="loading-container">
+        <div>
+          <div class="loading-spinner"></div>
+          <div class="loading-text">正在加载智能教育平台...</div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+
+    <!-- Remove loading state when app is ready -->
+    <script>
+      window.addEventListener('load', function() {
+        document.body.classList.add('app-ready');
+      });
+
+      // Fallback: remove loading after 10 seconds even if app fails to load
+      setTimeout(function() {
+        document.body.classList.add('app-ready');
+      }, 10000);
+    </script>
+  </body>
+</html>

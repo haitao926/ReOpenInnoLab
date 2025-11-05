@@ -1,0 +1,9 @@
+{
+  "name": "ReOpen InnoLab Teacher",
+  "short_name": "InnoLab Teacher",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f2937",
+  "icons": []
+}

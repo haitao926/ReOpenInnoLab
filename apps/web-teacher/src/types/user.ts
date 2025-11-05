@@ -20,6 +20,7 @@ export interface User {
 export interface LoginRequest {
   username: string
   password: string
+  role?: 'teacher' | 'student'
   remember?: boolean
 }
 

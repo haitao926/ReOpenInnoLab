@@ -38,26 +38,26 @@
 
 @mixin flex-center {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
 @mixin flex-between {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
 @mixin flex-start {
   display: flex;
-  align-items: center;
   justify-content: flex-start;
+  align-items: center;
 }
 
 @mixin flex-end {
   display: flex;
-  align-items: center;
   justify-content: flex-end;
+  align-items: center;
 }
 
 @mixin flex-column {
@@ -68,8 +68,8 @@
 @mixin flex-column-center {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
 @mixin flex-column-between {
@@ -98,27 +98,26 @@
 
 @mixin text-gradient($gradient) {
   background: $gradient;
-  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 @mixin heading($size: 'base') {
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-tight);
+  font-weight: var(--edu-font-weight-semibold);
+  line-height: var(--edu-line-height-tight);
 
   @if $size == 'xs' {
-    font-size: var(--font-size-xl);
+    font-size: var(--edu-font-size-xl);
   } @else if $size == 'sm' {
-    font-size: var(--font-size-2xl);
+    font-size: var(--edu-font-size-2xl);
   } @else if $size == 'base' {
-    font-size: var(--font-size-3xl);
+    font-size: var(--edu-font-size-3xl);
   } @else if $size == 'lg' {
-    font-size: var(--font-size-4xl);
+    font-size: var(--edu-font-size-4xl);
   } @else if $size == 'xl' {
-    font-size: var(--font-size-5xl);
+    font-size: var(--edu-font-size-5xl);
   } @else if $size == '2xl' {
-    font-size: var(--font-size-6xl);
+    font-size: var(--edu-font-size-6xl);
   }
 }
 
@@ -127,7 +126,7 @@
 // ========================================
 
 @mixin spacing($property, $size) {
-  #{$property}: var(--spacing-#{$size});
+  #{$property}: var(--edu-spacing-#{$size});
 }
 
 @mixin margin($size) {
@@ -139,23 +138,23 @@
 }
 
 @mixin margin-y($size) {
-  margin-top: var(--spacing-#{$size});
-  margin-bottom: var(--spacing-#{$size});
+  margin-top: var(--edu-spacing-#{$size});
+  margin-bottom: var(--edu-spacing-#{$size});
 }
 
 @mixin margin-x($size) {
-  margin-left: var(--spacing-#{$size});
-  margin-right: var(--spacing-#{$size});
+  margin-right: var(--edu-spacing-#{$size});
+  margin-left: var(--edu-spacing-#{$size});
 }
 
 @mixin padding-y($size) {
-  padding-top: var(--spacing-#{$size});
-  padding-bottom: var(--spacing-#{$size});
+  padding-top: var(--edu-spacing-#{$size});
+  padding-bottom: var(--edu-spacing-#{$size});
 }
 
 @mixin padding-x($size) {
-  padding-left: var(--spacing-#{$size});
-  padding-right: var(--spacing-#{$size});
+  padding-right: var(--edu-spacing-#{$size});
+  padding-left: var(--edu-spacing-#{$size});
 }
 
 // ========================================
@@ -163,11 +162,13 @@
 // ========================================
 
 @mixin transition($properties: all, $duration: normal, $easing: smooth) {
-  transition: $properties var(--duration-#{$duration}) var(--easing-#{$easing});
+  transition: $properties var(--edu-duration-#{$duration}) var(--edu-easing-#{$easing});
 }
 
 @mixin transition-colors($duration: normal) {
-  @include transition(color, $duration), transition(border-color, $duration), transition(background-color, $duration);
+  transition: color var(--edu-duration-#{$duration}) var(--edu-easing-smooth),
+              border-color var(--edu-duration-#{$duration}) var(--edu-easing-smooth),
+              background-color var(--edu-duration-#{$duration}) var(--edu-easing-smooth);
 }
 
 @mixin transition-transform($duration: normal) {
@@ -199,14 +200,15 @@
 // ========================================
 
 @mixin card($padding: md, $shadow: md, $radius: lg) {
-  background: var(--color-white);
-  border-radius: var(--border-radius-#{$radius});
-  box-shadow: var(--shadow-#{$shadow});
+  border-radius: var(--edu-border-radius-#{$radius});
+  box-shadow: var(--edu-shadow-#{$shadow});
+  background: var(--edu-color-white);
+
   @include padding($padding);
 
   [data-theme="dark"] & {
-    background: var(--color-gray-800);
-    border: 1px solid var(--color-gray-700);
+    border: 1px solid var(--edu-color-gray-700);
+    background: var(--edu-color-gray-800);
   }
 }
 
@@ -214,7 +216,7 @@
   @include transition(box-shadow, normal);
 
   &:hover {
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--edu-shadow-lg);
   }
 }
 
@@ -224,29 +226,36 @@
 
 @mixin button-base($size: md) {
   display: inline-flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   border: none;
-  border-radius: var(--border-radius-md);
-  font-family: var(--font-sans);
-  font-weight: var(--font-weight-medium);
+  border-radius: var(--edu-border-radius-md);
+  font-family: var(--edu-font-sans);
+  font-weight: var(--edu-font-weight-medium);
   text-decoration: none;
   cursor: pointer;
-  @include transition(all, fast);
   user-select: none;
 
+  @include transition(all, fast);
+
   @if $size == sm {
-    height: var(--button-height-sm);
+    height: var(--edu-button-height-sm);
+
     @include padding-x(2);
-    font-size: var(--font-size-xs);
+
+    font-size: var(--edu-font-size-xs);
   } @else if $size == md {
-    height: var(--button-height-md);
+    height: var(--edu-button-height-md);
+
     @include padding-x(4);
-    font-size: var(--font-size-sm);
+
+    font-size: var(--edu-font-size-sm);
   } @else if $size == lg {
-    height: var(--button-height-lg);
+    height: var(--edu-button-height-lg);
+
     @include padding-x(6);
-    font-size: var(--font-size-base);
+
+    font-size: var(--edu-font-size-base);
   }
 
   &:disabled {
@@ -256,12 +265,12 @@
 }
 
 @mixin button-variant($bg-color, $text-color: white, $hover-color: null) {
-  background-color: var(--color-#{$bg-color});
+  background-color: var(--#{$bg-color});
   color: $text-color;
 
   &:hover:not(:disabled) {
     @if $hover-color {
-      background-color: var(--color-#{$hover-color});
+      background-color: var(--#{$hover-color});
     } @else {
       opacity: 0.9;
     }
@@ -273,12 +282,12 @@
 }
 
 @mixin button-outline($color) {
+  border: 1px solid var(--#{$color});
   background: transparent;
-  border: 1px solid var(--color-#{$color});
-  color: var(--color-#{$color});
+  color: var(--#{$color});
 
   &:hover:not(:disabled) {
-    background: var(--color-#{$color});
+    background: var(--#{$color});
     color: white;
   }
 }
@@ -289,44 +298,45 @@
 
 @mixin input-base {
   width: 100%;
-  height: var(--input-height);
-  padding: var(--input-padding);
-  border: var(--input-border);
-  border-radius: var(--input-border-radius);
-  background: var(--color-white);
-  color: var(--color-gray-900);
-  font-family: var(--font-sans);
-  font-size: var(--font-size-sm);
+  height: var(--edu-input-height);
+  padding: var(--edu-input-padding);
+  border: var(--edu-input-border);
+  border-radius: var(--edu-input-border-radius);
+  background: var(--edu-color-white);
+  color: var(--edu-color-gray-900);
+  font-family: var(--edu-font-sans);
+  font-size: var(--edu-font-size-sm);
+
   @include transition(border-color, fast);
 
   &::placeholder {
-    color: var(--color-gray-500);
+    color: var(--edu-color-gray-500);
   }
 
   &:focus {
+    border: var(--edu-input-border-focus);
     outline: none;
-    border: var(--input-border-focus);
-    box-shadow: 0 0 0 2px rgba(91, 143, 249, 0.2);
+    box-shadow: 0 0 0 2px rgb(91 143 249 / 20%);
   }
 
   &:disabled {
-    background: var(--color-gray-100);
-    color: var(--color-gray-500);
+    background: var(--edu-color-gray-100);
+    color: var(--edu-color-gray-500);
     cursor: not-allowed;
   }
 
   [data-theme="dark"] & {
-    background: var(--color-gray-700);
-    border-color: var(--color-gray-600);
-    color: var(--color-gray-200);
+    background: var(--edu-color-gray-700);
+    border-color: var(--edu-color-gray-600);
+    color: var(--edu-color-gray-200);
 
     &::placeholder {
-      color: var(--color-gray-400);
+      color: var(--edu-color-gray-400);
     }
 
     &:disabled {
-      background: var(--color-gray-800);
-      color: var(--color-gray-500);
+      background: var(--edu-color-gray-800);
+      color: var(--edu-color-gray-500);
     }
   }
 }
@@ -336,14 +346,13 @@
 // ========================================
 
 @mixin glass($blur: 12px, $opacity: 0.85) {
+  border: 1px solid rgb(255 255 255 / 18%);
   background: rgba(255, 255, 255, $opacity);
   backdrop-filter: blur($blur);
-  -webkit-backdrop-filter: blur($blur);
-  border: 1px solid rgba(255, 255, 255, 0.18);
 
   [data-theme="dark"] & {
-    background: rgba(0, 0, 0, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgb(255 255 255 / 10%);
+    background: rgb(0 0 0 / 75%);
   }
 }
 
@@ -375,8 +384,9 @@
   0%, 100% {
     opacity: 1;
   }
+
   50% {
-    opacity: $opacity;
+    opacity: 0.6;
   }
 }
 
@@ -384,38 +394,39 @@
 // 滚动条混入
 // ========================================
 
-@mixin scrollbar($width: 6px, $track-color: var(--color-gray-100), $thumb-color: var(--color-gray-400)) {
+@mixin scrollbar($width: 6px, $track-color: var(--edu-color-gray-100), $thumb-color: var(--edu-color-gray-400)) {
   &::-webkit-scrollbar {
     width: $width;
     height: $width;
   }
 
   &::-webkit-scrollbar-track {
-    background: $track-color;
     border-radius: $width / 2;
+    background: $track-color;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: $thumb-color;
     border-radius: $width / 2;
+    background: $thumb-color;
+
     @include transition(background-color, fast);
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    background: var(--color-gray-500);
+    background: var(--edu-color-gray-500);
   }
 
   [data-theme="dark"] & {
     &::-webkit-scrollbar-track {
-      background: var(--color-gray-700);
+      background: var(--edu-color-gray-700);
     }
 
     &::-webkit-scrollbar-thumb {
-      background: var(--color-gray-500);
+      background: var(--edu-color-gray-500);
     }
 
     &::-webkit-scrollbar-thumb:hover {
-      background: var(--color-gray-400);
+      background: var(--edu-color-gray-400);
     }
   }
 }
@@ -428,12 +439,12 @@
   position: absolute !important;
   width: 1px !important;
   height: 1px !important;
-  padding: 0 !important;
   margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: nowrap !important;
   overflow: hidden !important;
   clip: rect(0, 0, 0, 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
 }
 
 @mixin sr-only {

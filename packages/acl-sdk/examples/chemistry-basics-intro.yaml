@@ -1,0 +1,406 @@
+# 化学基础导入课程
+meta:
+  id: chemistry-basics-intro
+  version: "1.2.0"
+  tenant: reopeninnolab
+  tags:
+    - 化学
+    - 基础
+    - 导入
+    - 高中
+  contributors:
+    - chemistry.teacher@reopeninnolab.org
+    - curriculum.designer@reopeninnolab.org
+  license: CC-BY-NC-4.0
+  lastModified: "2024-01-14T14:20:00Z"
+  createdAt: "2024-01-08T09:00:00Z"
+
+courseInfo:
+  title: 高中化学 - 物质的变化与性质
+  description: |
+    本课程通过生动的实验和实例，帮助学生理解物质的基本性质和变化规律，
+    建立化学学习的基础框架，培养科学探究能力。
+  subject: chemistry
+  grade: "10"
+
+  learningObjectives:
+    - id: lo-chem-001
+      description: 区分物理变化和化学变化
+      cognitiveLevel: understand
+      assessmentCriteria:
+        - 能够准确描述物理变化的特征
+        - 能够准确描述化学变化的特征
+        - 能够判断给定变化属于哪种类型
+      prerequisites: []
+
+    - id: lo-chem-002
+      description: 掌握物质的基本性质分类
+      cognitiveLevel: analyze
+      assessmentCriteria:
+        - 能够区分物理性质和化学性质
+        - 能够列举常见物质的性质
+        - 能够运用性质预测物质行为
+      prerequisites: [lo-chem-001]
+
+    - id: lo-chem-003
+      description: 理解质量守恒定律
+      cognitiveLevel: apply
+      assessmentCriteria:
+        - 能够准确陈述质量守恒定律
+        - 能够解释化学反应中的质量关系
+        - 能够运用定律解决实际问题
+      prerequisites: [lo-chem-001, lo-chem-002]
+
+  targetAudience:
+    grade: "10"
+    classSize: medium
+    priorKnowledge: 基础科学知识，对物质世界有基本认识
+    learningStyles:
+      - visual
+      - kinesthetic
+      - auditory
+    specialNeeds: []
+
+  estimatedDuration: 50
+  prerequisites:
+    - 基础数学运算能力
+    - 科学观察方法
+    - 安全实验意识
+
+  aiPrompts:
+    generation: |
+      创建适合高中化学入门的内容，注重实验安全和概念准确性，
+      使用生活实例增强理解，设计互动环节提高参与度
+    assessment: |
+      设计多层次评估，关注概念理解、实验技能和科学思维，
+      提供即时反馈和针对性指导
+    intervention: |
+      针对常见 misconceptions 提供纠正策略，
+      通过类比和实验演示帮助理解
+
+structure:
+  - id: intro-chem-001
+    title: 神奇的化学世界
+    type: introduction
+    duration: 12
+    learningGoals:
+      - 激发化学学习兴趣
+      - 建立化学学习的基本认知
+    aiStrategy:
+      type: curiosity-driven
+      dataSources:
+        - chemistry.wonders
+        - student.experiences
+      fallbackContent: 使用经典化学现象展示
+    resourceRefs:
+      - video-chem-wonders
+      - demo-rainbow-liquid
+    content:
+      hookType: story
+      hookContent: |
+        想象一下，如果你是一位魔法师，能够把一种物质变成另一种物质...
+        其实，化学就是这样一门神奇的"魔法"科学！
+      objectives:
+        - 通过魔术般的化学现象激发好奇心
+        - 引导学生思考物质变化的本质
+        - 建立化学学习的积极态度
+      prerequisites: []
+
+  - id: chapter-chem-001
+    title: 物质的变化
+    type: chapter
+    duration: 25
+    learningGoals:
+      - 理解物理变化和化学变化的区别
+      - 掌握判断变化类型的方法
+      - 认识化学变化的本质特征
+    aiStrategy:
+      type: concept-differentiation
+      adaptationRules:
+        difficulty: adaptive
+        examples: real-world
+    resourceRefs:
+      - experiment-ice-melting
+      - experiment-paper-burning
+      - simulation-change-types
+    children:
+      - id: knowledge-chem-001
+        title: 什么是物理变化？
+        type: knowledge
+        duration: 8
+        learningGoals:
+          - 理解物理变化的定义
+          - 识别生活中的物理变化
+          - 掌握物理变化的特征
+        resourceRefs:
+          - video-ice-melting
+          - image-water-states
+        content:
+          format: text
+          content: |
+            ## 物理变化
+
+            物理变化是指物质的状态或外形发生改变，但物质的化学组成没有改变的变化。
+
+            ### 物理变化的特征：
+            1. **没有新物质生成**
+            2. **变化通常是可逆的**
+            3. **物质的化学性质保持不变**
+
+            ### 生活中的物理变化：
+            - 水结冰、冰融化
+            - 纸张折叠
+            - 玻璃破碎
+            - 食物切碎
+
+            ## 为什么是物理变化？
+
+            以水结冰为例：H₂O分子在冰、液态水、水蒸气中都是相同的，
+            只是分子间的距离和排列方式不同。
+          examples:
+            - id: example-chem-001
+              title: 冰融化成水
+              content: 冰块在室温下逐渐融化成液态水
+              explanation: 水分子的H₂O组成没有改变，只是分子运动状态改变
+              difficulty: easy
+            - id: example-chem-002
+              title: 折纸飞机
+              content: 将一张纸折成纸飞机
+              explanation: 纸的组成成分没有改变，只是形状发生变化
+              difficulty: easy
+          checkpoints:
+            - id: check-chem-001
+              question: 下列变化中，哪一个是物理变化？
+              type: multiple-choice
+              options:
+                - 木材燃烧
+                - 铁生锈
+                - 水沸腾
+                - 食物腐败
+              correctAnswer: 2
+              explanation: 水沸腾只是液态水变为水蒸气，水的化学组成H₂O没有改变
+
+      - id: experiment-chem-001
+        title: 动手实验：观察物理变化
+        type: experiment
+        duration: 10
+        learningGoals:
+          - 通过实验观察物理变化
+          - 培养实验操作技能
+          - 记录实验现象
+        resourceRefs:
+          - lab-physical-changes
+        content:
+          experimentType: physical
+          environment:
+            type: physical
+            resources:
+              cpu: "100m"
+              memory: "128Mi"
+            dependencies:
+              - safety.equipment
+          safetyLevel: safe
+          aiAssistant:
+            capabilities:
+              - 安全指导
+              - 现象分析
+              - 实验建议
+            interactionStyle: guided
+            adaptationLevel: medium
+
+      - id: knowledge-chem-002
+        title: 什么是化学变化？
+        type: knowledge
+        duration: 7
+        learningGoals:
+          - 理解化学变化的定义
+          - 识别化学变化的特征
+          - 区分化学变化与物理变化
+        resourceRefs:
+          - video-paper-burning
+          - image-rust-formation
+        content:
+          format: text
+          content: |
+            ## 化学变化
+
+            化学变化是指物质发生变化后生成了新的物质，也称为化学反应。
+
+            ### 化学变化的特征：
+            1. **有新物质生成**
+            2. **变化通常不可逆**
+            3. **常伴随能量变化**
+            4. **可能产生颜色变化、气体、沉淀等现象**
+
+            ### 生活中的化学变化：
+            - 木材燃烧
+            - 金属生锈
+            - 食物腐败
+            - 面包烘烤
+
+            ## 为什么是化学变化？
+
+            以木材燃烧为例：木材中的纤维素等有机物与氧气反应，
+            生成二氧化碳、水蒸气、灰分等新物质。
+
+  - id: activity-chem-001
+    title: 变化类型判断挑战
+    type: activity
+    duration: 8
+    learningGoals:
+      - 运用所学知识判断变化类型
+      - 培养分析思维能力
+      - 加强概念理解
+    resourceRefs:
+      - cards-change-examples
+    content:
+      activityType: group
+      instructions: |
+        1. 每组获得一套变化现象卡片
+        2. 讨论并判断每个变化属于物理变化还是化学变化
+        3. 说明判断理由
+        4. 准备向全班展示你们的分析结果
+      duration: 6
+      collaborationLevel: high
+
+  - id: assessment-chem-001
+    title: 学习成果检测
+    type: assessment
+    duration: 5
+    learningGoals:
+      - 检查概念掌握程度
+      - 评估应用能力
+      - 提供学习反馈
+    assessment:
+      type: formative
+      indicators:
+        - 概念理解
+        - 判断准确性
+        - 分析能力
+      aiAnalysis: 基于答题模式分析理解深度和常见错误
+    resourceRefs:
+      - quiz-changes
+    content:
+      assessmentType: quiz
+      timeLimit: 300
+      passingScore: 80
+      questions:
+        - id: q-chem-001
+          type: multiple-choice
+          question: 下列现象中，属于化学变化的是？
+          options:
+            - 冰融化成水
+            - 纸张撕碎
+            - 铁制品生锈
+            - 玻璃破碎
+          correctAnswer: 2
+          points: 10
+          explanation: 铁生锈是铁与氧气反应生成氧化铁，有新物质生成
+        - id: q-chem-002
+          type: true-false
+          question: 物理变化一定不会产生新物质
+          correctAnswer: true
+          points: 5
+          explanation: 物理变化的定义就是物质的化学组成不发生改变
+        - id: q-chem-003
+          type: short-answer
+          question: 请举例说明化学变化和物理变化的区别
+          correctAnswer: 示例：水结冰是物理变化（H₂O组成不变），木材燃烧是化学变化（生成CO₂等新物质）
+          points: 15
+
+resourceRefs:
+  - id: video-chem-wonders
+    type: video
+    title: 化学的奇妙世界
+    description: 展示化学在生活中的神奇应用
+    url: https://example.com/videos/chemistry-wonders.mp4
+    metadata:
+      duration: 240
+      format: mp4
+
+  - id: demo-rainbow-liquid
+    type: simulation
+    title: 彩虹液体演示
+    description: 密度分层实验演示
+    url: https://example.com/simulations/rainbow-liquid.html
+
+  - id: experiment-ice-melting
+    type: notebook
+    title: 冰融化实验记录
+    description: 冰融化过程的实验记录表
+    url: https://example.com/notebooks/ice-melting.ipynb
+
+  - id: experiment-paper-burning
+    type: video
+    title: 纸燃烧实验
+    description: 安全的纸燃烧实验演示
+    url: https://example.com/videos/paper-burning.mp4
+    metadata:
+      duration: 120
+      format: mp4
+
+  - id: simulation-change-types
+    type: simulation
+    title: 变化类型交互模拟
+    description: 交互式学习物理变化和化学变化
+    url: https://example.com/simulations/change-types.html
+
+  - id: video-ice-melting
+    type: video
+    title: 冰融化过程
+    description: 展示冰融化的微观过程
+    url: https://example.com/videos/ice-melting.mp4
+    metadata:
+      duration: 90
+      format: mp4
+
+  - id: image-water-states
+    type: image
+    title: 水的三态变化
+    description: 水的固态、液态、气态示意图
+    url: https://example.com/images/water-states.png
+
+  - id: lab-physical-changes
+    type: tool
+    title: 物理变化实验工具包
+    description: 安全的物理变化实验器材清单
+    url: https://example.com/tools/physical-changes-lab.pdf
+
+  - id: video-paper-burning
+    type: video
+    title: 纸燃烧实验
+    description: 控制环境下的纸燃烧实验
+    url: https://example.com/videos/paper-burning-safe.mp4
+    metadata:
+      duration: 150
+      format: mp4
+
+  - id: image-rust-formation
+    type: image
+    title: 铁生锈过程
+    description: 铁生锈的微观示意图
+    url: https://example.com/images/rust-formation.png
+
+  - id: cards-change-examples
+    type: document
+    title: 变化类型判断卡片
+    description: 用于小组活动的变化现象卡片
+    url: https://example.com/documents/change-cards.pdf
+
+  - id: quiz-changes
+    type: tool
+    title: 变化类型在线测验
+    description: 交互式测验系统
+    url: https://example.com/tools/changes-quiz.html
+
+analyticsProfile:
+  learningMetrics:
+    - 概念掌握度
+    - 判断准确率
+    - 实验参与度
+    - 互动频率
+    - 学习进度
+  aiInsights:
+    learningPathOptimization: true
+    difficultyAdjustment: true
+    recommendationEngine: true

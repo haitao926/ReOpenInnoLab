@@ -1,6 +1,7 @@
 // 开源浦育 ReOpenInnoLab - 教师端主样式文件
 // 导入UI Kit主题样式
-@import '@ui-kit/index.scss';
+@import './variables';
+@import './element-plus-theme';
 
 // 全局样式重置
 * {
@@ -14,19 +15,19 @@ html {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+  text-rendering: optimizelegibility;
 }
 
 body {
-  font-family: var(--font-sans);
-  background-color: var(--color-gray-50);
-  color: var(--color-gray-900);
+  background-color: var(--edu-bg-secondary);
+  color: var(--edu-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 [data-theme="dark"] body {
-  background-color: var(--color-gray-900);
-  color: var(--color-gray-100);
+  background-color: var(--edu-bg-primary);
+  color: var(--edu-text-primary);
 }
 
 // 应用根容器
@@ -42,40 +43,40 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-gray-100);
   border-radius: 4px;
+  background: var(--edu-bg-tertiary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-gray-400);
   border-radius: 4px;
+  background: var(--edu-border-medium);
   transition: background-color 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gray-500);
+  background: var(--edu-border-dark);
 }
 
 [data-theme="dark"] {
   ::-webkit-scrollbar-track {
-    background: var(--color-gray-800);
+    background: var(--edu-bg-tertiary);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--color-gray-600);
+    background: var(--edu-border-medium);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-gray-500);
+    background: var(--edu-border-light);
   }
 }
 
 // 教育平台专用CSS变量
 :root {
   // 教育主题色彩
-  --edu-primary: var(--color-primary-500);
-  --edu-primary-light: var(--color-primary-300);
-  --edu-primary-dark: var(--color-primary-700);
+  --edu-primary: var(--edu-primary-500);
+  --edu-primary-light: var(--edu-primary-300);
+  --edu-primary-dark: var(--edu-primary-700);
 
   // 布局相关
   --edu-header-height: 60px;
@@ -83,105 +84,104 @@ body {
   --edu-sidebar-collapsed-width: 64px;
 
   // 背景色
-  --edu-bg-color: var(--color-gray-50);
-  --edu-header-bg: var(--color-white);
-  --edu-sidebar-bg: var(--color-white);
-  --edu-main-bg: var(--color-gray-50);
+  --edu-bg-color: var(--edu-bg-secondary);
+  --edu-header-bg: var(--edu-bg-primary);
+  --edu-sidebar-bg: var(--edu-bg-primary);
+  --edu-main-bg: var(--edu-bg-secondary);
 
   // 边框色
-  --edu-border-color: var(--color-gray-200);
-  --edu-border-color-light: var(--color-gray-100);
+  --edu-border-color: var(--edu-border-light);
+  --edu-border-color-light: var(--edu-bg-tertiary);
 
   // 文字色
-  --edu-text-primary: var(--color-gray-900);
-  --edu-text-secondary: var(--color-gray-600);
-  --edu-text-disabled: var(--color-gray-400);
+  --edu-text-primary: var(--edu-text-primary);
+  --edu-text-secondary: var(--edu-text-secondary);
+  --edu-text-disabled: var(--edu-text-disabled);
 
   // 动效
-  --edu-ease-smooth: var(--easing-smooth);
-  --edu-duration-fast: var(--duration-fast);
-  --edu-duration-normal: var(--duration-normal);
+  --edu-ease-smooth: var(--edu-easing-in-out);
+  --edu-duration-fast: var(--edu-duration-fast);
+  --edu-duration-normal: var(--edu-duration-base);
 
   // 阴影
-  --edu-shadow-sm: var(--shadow-sm);
-  --edu-shadow-md: var(--shadow-md);
-  --edu-shadow-lg: var(--shadow-lg);
-  --edu-shadow-education: var(--shadow-education);
+  --edu-shadow-sm: var(--edu-shadow-sm);
+  --edu-shadow-md: var(--edu-shadow-md);
+  --edu-shadow-lg: var(--edu-shadow-lg);
 }
 
 [data-theme="dark"] {
   // 深色模式背景色
-  --edu-bg-color: var(--color-gray-900);
-  --edu-header-bg: var(--color-gray-800);
-  --edu-sidebar-bg: var(--color-gray-800);
-  --edu-main-bg: var(--color-gray-900);
+  --edu-bg-color: var(--edu-bg-primary);
+  --edu-header-bg: var(--edu-bg-secondary);
+  --edu-sidebar-bg: var(--edu-bg-secondary);
+  --edu-main-bg: var(--edu-bg-primary);
 
   // 深色模式边框色
-  --edu-border-color: var(--color-gray-700);
-  --edu-border-color-light: var(--color-gray-800);
+  --edu-border-color: var(--edu-border-medium);
+  --edu-border-color-light: var(--edu-border-light);
 
   // 深色模式文字色
-  --edu-text-primary: var(--color-gray-100);
-  --edu-text-secondary: var(--color-gray-300);
-  --edu-text-disabled: var(--color-gray-500);
+  --edu-text-primary: var(--edu-text-primary);
+  --edu-text-secondary: var(--edu-text-secondary);
+  --edu-text-disabled: var(--edu-text-disabled);
 
   // 深色模式阴影
-  --edu-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --edu-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-  --edu-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --edu-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 30%);
+  --edu-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 40%), 0 2px 4px -1px rgb(0 0 0 / 30%);
+  --edu-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 40%), 0 4px 6px -2px rgb(0 0 0 / 30%);
 }
 
 // 通用工具类
 .edu-flex-center {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
 .edu-flex-between {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
 .edu-flex-start {
   display: flex;
-  align-items: center;
   justify-content: flex-start;
+  align-items: center;
 }
 
 .edu-flex-end {
   display: flex;
-  align-items: center;
   justify-content: flex-end;
+  align-items: center;
 }
 
 .edu-text-ellipsis {
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  overflow: hidden;
 }
 
 .edu-text-ellipsis-2 {
   display: -webkit-box;
+  text-overflow: ellipsis;
+  overflow: hidden;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-// 学科色彩类
-@each $subject in (math, physics, chemistry, biology, language, history, geography, english, art, music, pe, it) {
-  .edu-subject-#{$subject} {
-    color: var(--color-#{$subject});
-  }
-  .edu-bg-subject-#{$subject} {
-    background-color: var(--color-#{$subject});
-  }
-  .edu-border-subject-#{$subject} {
-    border-color: var(--color-#{$subject});
-  }
-}
+// 学科色彩类 - 简化版本，使用现有的教育主题色彩
+.edu-subject-math { color: var(--edu-warning-500); }
+.edu-subject-physics { color: var(--edu-primary-500); }
+.edu-subject-chemistry { color: var(--edu-success-500); }
+.edu-subject-biology { color: var(--edu-primary-600); }
+.edu-subject-language { color: var(--edu-danger-500); }
+
+.edu-bg-subject-math { background-color: var(--edu-warning-500); }
+.edu-bg-subject-physics { background-color: var(--edu-primary-500); }
+.edu-bg-subject-chemistry { background-color: var(--edu-success-500); }
+.edu-bg-subject-biology { background-color: var(--edu-primary-600); }
+.edu-bg-subject-language { background-color: var(--edu-danger-500); }
 
 // 页面过渡动画
 .edu-page-transition-enter-active,
@@ -190,20 +190,20 @@ body {
 }
 
 .edu-page-transition-enter-from {
-  opacity: 0;
+  opacity: 0%;
   transform: translateX(20px);
 }
 
 .edu-page-transition-leave-to {
-  opacity: 0;
+  opacity: 0%;
   transform: translateX(-20px);
 }
 
 // 加载状态
 .edu-loading {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   min-height: 200px;
 }
 
@@ -216,39 +216,39 @@ body {
 .edu-empty {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   min-height: 300px;
   padding: 40px 20px;
   text-align: center;
 }
 
 .edu-empty-icon {
-  font-size: 48px;
-  color: var(--edu-text-disabled);
   margin-bottom: 16px;
+  color: var(--edu-text-disabled);
+  font-size: 48px;
 }
 
 .edu-empty-title {
+  margin-bottom: 8px;
+  color: var(--edu-text-primary);
   font-size: 18px;
   font-weight: 600;
-  color: var(--edu-text-primary);
-  margin-bottom: 8px;
 }
 
 .edu-empty-description {
-  font-size: 14px;
-  color: var(--edu-text-secondary);
   margin-bottom: 24px;
+  color: var(--edu-text-secondary);
+  font-size: 14px;
 }
 
 // 卡片样式
 .edu-card {
-  background: var(--color-white);
-  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--edu-border-light);
+  border-radius: var(--edu-radius-lg);
   box-shadow: var(--edu-shadow-sm);
-  border: 1px solid var(--edu-border-color);
-  transition: all 0.3s var(--edu-ease-smooth);
+  background: var(--edu-bg-primary);
+  transition: all 0.3s var(--edu-easing-in-out);
 
   &:hover {
     box-shadow: var(--edu-shadow-md);
@@ -258,7 +258,7 @@ body {
 
 .edu-card-header {
   padding: 20px 24px 16px;
-  border-bottom: 1px solid var(--edu-border-color-light);
+  border-bottom: 1px solid var(--edu-border-light);
 }
 
 .edu-card-body {
@@ -267,23 +267,23 @@ body {
 
 .edu-card-footer {
   padding: 16px 24px 20px;
-  border-top: 1px solid var(--edu-border-color-light);
+  border-top: 1px solid var(--edu-border-light);
 }
 
 [data-theme="dark"] {
   .edu-card {
-    background: var(--color-gray-800);
-    border-color: var(--edu-border-color);
+    background: var(--edu-bg-secondary);
+    border-color: var(--edu-border-medium);
   }
 
   .edu-card-header,
   .edu-card-footer {
-    border-color: var(--color-gray-700);
+    border-color: var(--edu-border-light);
   }
 }
 
 // 响应式设计
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .edu-mobile-hidden {
     display: none !important;
   }
@@ -295,8 +295,8 @@ body {
   .edu-card-header,
   .edu-card-body,
   .edu-card-footer {
-    padding-left: 16px;
     padding-right: 16px;
+    padding-left: 16px;
   }
 }
 
@@ -307,8 +307,8 @@ body {
   }
 
   .edu-card {
-    box-shadow: none !important;
     border: 1px solid #ccc !important;
+    box-shadow: none !important;
   }
 }
 

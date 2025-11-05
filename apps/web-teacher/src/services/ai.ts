@@ -9,8 +9,8 @@ export interface AIProvider {
 export interface AIServiceConfig {
   providers: Record<string, AIProvider>
   defaultProvider: string
-  requestTimeout: number
-  maxRetries: number
+  requestTimeout?: number
+  maxRetries?: number
 }
 
 export interface AIMessage {
@@ -176,6 +176,12 @@ export class AIService {
     try {
       const provider = this.config.providers[this.config.defaultProvider]
       if (!provider) return false
+
+      // 在开发环境下，如果使用mock provider，直接返回true
+      if (import.meta.env.DEV && provider.baseUrl.includes('localhost:8080')) {
+        console.log('AI服务: 开发环境mock模式，跳过健康检查')
+        return true
+      }
 
       const response = await fetch(`${provider.baseUrl}/models`, {
         method: 'GET',

@@ -2,8 +2,9 @@
 // 统一的主题和样式系统
 
 // 导入变量和混入
-@import './styles/variables.scss';
-@import './styles/mixins.scss';
+@import './styles/variables';
+@import './styles/mixins';
+@import './styles/components';
 
 // 导出所有样式
 // 其他项目可以通过 @import '@ui-kit/index.scss' 引入
@@ -19,11 +20,10 @@
 }
 
 html {
-  line-height: var(--line-height-normal);
-  -webkit-text-size-adjust: 100%;
-  -moz-tab-size: 4;
+  font-family: var(--edu-font-sans);
+  line-height: var(--edu-line-height-normal);
+  text-size-adjust: 100%;
   tab-size: 4;
-  font-family: var(--font-sans);
   font-feature-settings: normal;
   font-variation-settings: normal;
   -webkit-font-smoothing: antialiased;
@@ -32,16 +32,16 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--font-sans);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-normal);
-  color: var(--color-gray-900);
-  background-color: var(--color-white);
+  background-color: var(--edu-color-white);
+  color: var(--edu-color-gray-900);
+  font-family: var(--edu-font-sans);
+  font-size: var(--edu-font-size-base);
+  line-height: var(--edu-line-height-normal);
 }
 
 [data-theme="dark"] body {
-  color: var(--color-gray-100);
-  background-color: var(--color-gray-900);
+  background-color: var(--edu-color-gray-900);
+  color: var(--edu-color-gray-100);
 }
 
 // ========================================
@@ -61,46 +61,46 @@ body {
 .text-left { text-align: left; }
 .text-center { text-align: center; }
 .text-right { text-align: right; }
-.text-xs { font-size: var(--font-size-xs); }
-.text-sm { font-size: var(--font-size-sm); }
-.text-base { font-size: var(--font-size-base); }
-.text-lg { font-size: var(--font-size-lg); }
-.text-xl { font-size: var(--font-size-xl); }
-.text-2xl { font-size: var(--font-size-2xl); }
+.text-xs { font-size: var(--edu-font-size-xs); }
+.text-sm { font-size: var(--edu-font-size-sm); }
+.text-base { font-size: var(--edu-font-size-base); }
+.text-lg { font-size: var(--edu-font-size-lg); }
+.text-xl { font-size: var(--edu-font-size-xl); }
+.text-2xl { font-size: var(--edu-font-size-2xl); }
 
-.font-normal { font-weight: var(--font-weight-normal); }
-.font-medium { font-weight: var(--font-weight-medium); }
-.font-semibold { font-weight: var(--font-weight-semibold); }
-.font-bold { font-weight: var(--font-weight-bold); }
+.font-normal { font-weight: var(--edu-font-weight-normal); }
+.font-medium { font-weight: var(--edu-font-weight-medium); }
+.font-semibold { font-weight: var(--edu-font-weight-semibold); }
+.font-bold { font-weight: var(--edu-font-weight-bold); }
 
 .text-ellipsis { @include text-ellipsis(1); }
 .text-ellipsis-2 { @include text-ellipsis(2); }
 .text-ellipsis-3 { @include text-ellipsis(3); }
 
 // 颜色
-.text-primary { color: var(--color-primary-500); }
-.text-secondary { color: var(--color-secondary-500); }
-.text-success { color: var(--color-success-default); }
-.text-warning { color: var(--color-warning-default); }
-.text-error { color: var(--color-error-default); }
-.text-info { color: var(--color-info-default); }
+.text-primary { color: var(--edu-color-primary-500); }
+.text-secondary { color: var(--edu-color-secondary-500); }
+.text-success { color: var(--edu-color-success-default); }
+.text-warning { color: var(--edu-color-warning-default); }
+.text-error { color: var(--edu-color-error-default); }
+.text-info { color: var(--edu-color-info-default); }
 
-.text-gray-500 { color: var(--color-gray-500); }
-.text-gray-600 { color: var(--color-gray-600); }
-.text-gray-700 { color: var(--color-gray-700); }
-.text-gray-800 { color: var(--color-gray-800); }
-.text-gray-900 { color: var(--color-gray-900); }
+.text-gray-500 { color: var(--edu-color-gray-500); }
+.text-gray-600 { color: var(--edu-color-gray-600); }
+.text-gray-700 { color: var(--edu-color-gray-700); }
+.text-gray-800 { color: var(--edu-color-gray-800); }
+.text-gray-900 { color: var(--edu-color-gray-900); }
 
-.bg-primary { background-color: var(--color-primary-500); }
-.bg-secondary { background-color: var(--color-secondary-500); }
-.bg-success { background-color: var(--color-success-default); }
-.bg-warning { background-color: var(--color-warning-default); }
-.bg-error { background-color: var(--color-error-default); }
-.bg-info { background-color: var(--color-info-default); }
+.bg-primary { background-color: var(--edu-color-primary-500); }
+.bg-secondary { background-color: var(--edu-color-secondary-500); }
+.bg-success { background-color: var(--edu-color-success-default); }
+.bg-warning { background-color: var(--edu-color-warning-default); }
+.bg-error { background-color: var(--edu-color-error-default); }
+.bg-info { background-color: var(--edu-color-info-default); }
 
-.bg-white { background-color: var(--color-white); }
-.bg-gray-50 { background-color: var(--color-gray-50); }
-.bg-gray-100 { background-color: var(--color-gray-100); }
+.bg-white { background-color: var(--edu-color-white); }
+.bg-gray-50 { background-color: var(--edu-color-gray-50); }
+.bg-gray-100 { background-color: var(--edu-color-gray-100); }
 
 // 间距
 @each $size, $value in (0: 0, 1: 4px, 2: 8px, 3: 12px, 4: 16px, 5: 20px, 6: 24px, 8: 32px, 10: 40px, 12: 48px) {
@@ -109,7 +109,7 @@ body {
   .mr-#{$size} { margin-right: #{$value}; }
   .mb-#{$size} { margin-bottom: #{$value}; }
   .ml-#{$size} { margin-left: #{$value}; }
-  .mx-#{$size} { margin-left: #{$value}; margin-right: #{$value}; }
+  .mx-#{$size} { margin-right: #{$value}; margin-left: #{$value}; }
   .my-#{$size} { margin-top: #{$value}; margin-bottom: #{$value}; }
 
   .p-#{$size} { padding: #{$value}; }
@@ -117,35 +117,35 @@ body {
   .pr-#{$size} { padding-right: #{$value}; }
   .pb-#{$size} { padding-bottom: #{$value}; }
   .pl-#{$size} { padding-left: #{$value}; }
-  .px-#{$size} { padding-left: #{$value}; padding-right: #{$value}; }
+  .px-#{$size} { padding-right: #{$value}; padding-left: #{$value}; }
   .py-#{$size} { padding-top: #{$value}; padding-bottom: #{$value}; }
 }
 
 // 圆角
-.rounded-none { border-radius: var(--border-radius-none); }
-.rounded-sm { border-radius: var(--border-radius-sm); }
-.rounded { border-radius: var(--border-radius-base); }
-.rounded-md { border-radius: var(--border-radius-md); }
-.rounded-lg { border-radius: var(--border-radius-lg); }
-.rounded-xl { border-radius: var(--border-radius-xl); }
-.rounded-2xl { border-radius: var(--border-radius-2xl); }
-.rounded-3xl { border-radius: var(--border-radius-3xl); }
-.rounded-full { border-radius: var(--border-radius-full); }
+.rounded-none { border-radius: var(--edu-border-radius-none); }
+.rounded-sm { border-radius: var(--edu-border-radius-sm); }
+.rounded { border-radius: var(--edu-border-radius-base); }
+.rounded-md { border-radius: var(--edu-border-radius-md); }
+.rounded-lg { border-radius: var(--edu-border-radius-lg); }
+.rounded-xl { border-radius: var(--edu-border-radius-xl); }
+.rounded-2xl { border-radius: var(--edu-border-radius-2xl); }
+.rounded-3xl { border-radius: var(--edu-border-radius-3xl); }
+.rounded-full { border-radius: var(--edu-border-radius-full); }
 
 // 阴影
-.shadow-sm { box-shadow: var(--shadow-sm); }
-.shadow { box-shadow: var(--shadow-base); }
-.shadow-md { box-shadow: var(--shadow-md); }
-.shadow-lg { box-shadow: var(--shadow-lg); }
-.shadow-xl { box-shadow: var(--shadow-xl); }
-.shadow-2xl { box-shadow: var(--shadow-2xl); }
-.shadow-education { box-shadow: var(--shadow-education); }
+.shadow-sm { box-shadow: var(--edu-shadow-sm); }
+.shadow { box-shadow: var(--edu-shadow-base); }
+.shadow-md { box-shadow: var(--edu-shadow-md); }
+.shadow-lg { box-shadow: var(--edu-shadow-lg); }
+.shadow-xl { box-shadow: var(--edu-shadow-xl); }
+.shadow-2xl { box-shadow: var(--edu-shadow-2xl); }
+.shadow-education { box-shadow: var(--edu-shadow-education); }
 
 // 过渡效果
-.transition { @include transition(); }
-.transition-colors { @include transition-colors(); }
-.transition-transform { @include transition-transform(); }
-.transition-opacity { @include transition-opacity(); }
+.transition { @include transition; }
+.transition-colors { @include transition-colors; }
+.transition-transform { @include transition-transform; }
+.transition-opacity { @include transition-opacity; }
 
 // 响应式工具类
 @each $breakpoint in (sm, md, lg, xl, 2xl) {
@@ -179,75 +179,75 @@ body {
 
 // 按钮样式
 .btn {
-  @include button-base();
+  @include button-base;
 
   &--sm { @include button-base(sm); }
   &--md { @include button-base(md); }
   &--lg { @include button-base(lg); }
 
-  &--primary { @include button-variant('primary-500'); }
-  &--secondary { @include button-variant('secondary-500'); }
-  &--success { @include button-variant('success-default'); }
-  &--warning { @include button-variant('warning-default'); }
-  &--error { @include button-variant('error-default'); }
-  &--info { @include button-variant('info-default'); }
+  &--primary { @include button-variant('edu-color-primary-500'); }
+  &--secondary { @include button-variant('edu-color-secondary-500'); }
+  &--success { @include button-variant('edu-color-success-default'); }
+  &--warning { @include button-variant('edu-color-warning-default'); }
+  &--error { @include button-variant('edu-color-error-default'); }
+  &--info { @include button-variant('edu-color-info-default'); }
 
-  &--outline-primary { @include button-outline('primary-500'); }
-  &--outline-secondary { @include button-outline('secondary-500'); }
+  &--outline-primary { @include button-outline('edu-color-primary-500'); }
+  &--outline-secondary { @include button-outline('edu-color-secondary-500'); }
 
   &--ghost {
     background: transparent;
-    color: var(--color-gray-700);
+    color: var(--edu-color-gray-700);
 
     &:hover:not(:disabled) {
-      background: var(--color-gray-100);
+      background: var(--edu-color-gray-100);
     }
   }
 
   &--link {
-    background: transparent;
     border: none;
-    color: var(--color-primary-500);
+    background: transparent;
+    color: var(--edu-color-primary-500);
     text-decoration: underline;
 
     &:hover:not(:disabled) {
-      color: var(--color-primary-600);
+      color: var(--edu-color-primary-600);
     }
   }
 }
 
 // 卡片样式
 .card {
-  @include card();
+  @include card;
 
   &--sm { @include card(sm); }
   &--md { @include card(md); }
   &--lg { @include card(lg); }
 
-  &--hover { @include card-hover(); }
+  &--hover { @include card-hover; }
 
-  &--glass { @include glass(); }
+  &--glass { @include glass; }
 }
 
 // 输入框样式
 .input {
-  @include input-base();
+  @include input-base;
 
   &--error {
-    border-color: var(--color-error-default);
+    border-color: var(--edu-color-error-default);
 
     &:focus {
-      border-color: var(--color-error-default);
-      box-shadow: 0 0 0 2px rgba(245, 34, 45, 0.2);
+      border-color: var(--edu-color-error-default);
+      box-shadow: 0 0 0 2px rgb(245 34 45 / 20%);
     }
   }
 
   &--success {
-    border-color: var(--color-success-default);
+    border-color: var(--edu-color-success-default);
 
     &:focus {
-      border-color: var(--color-success-default);
-      box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.2);
+      border-color: var(--edu-color-success-default);
+      box-shadow: 0 0 0 2px rgb(82 196 26 / 20%);
     }
   }
 }
@@ -295,23 +295,23 @@ body {
 // ========================================
 
 .animate-fade-in {
-  animation: fadeIn var(--duration-normal) var(--easing-out);
+  animation: fadeIn var(--edu-duration-normal) var(--edu-easing-out);
 }
 
 .animate-fade-out {
-  animation: fadeOut var(--duration-normal) var(--easing-out);
+  animation: fadeOut var(--edu-duration-normal) var(--edu-easing-out);
 }
 
 .animate-slide-in-up {
-  animation: slideInUp var(--duration-normal) var(--easing-out);
+  animation: slideInUp var(--edu-duration-normal) var(--edu-easing-out);
 }
 
 .animate-slide-in-down {
-  animation: slideInDown var(--duration-normal) var(--easing-out);
+  animation: slideInDown var(--edu-duration-normal) var(--edu-easing-out);
 }
 
 .animate-bounce {
-  animation: bounce var(--duration-slow) var(--easing-bounce);
+  animation: bounce var(--edu-duration-slow) var(--edu-easing-bounce);
 }
 
 @keyframes fadeIn {
@@ -329,6 +329,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -340,6 +341,7 @@ body {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -350,12 +352,15 @@ body {
   0%, 20%, 53%, 80%, 100% {
     transform: translate3d(0, 0, 0);
   }
+
   40%, 43% {
     transform: translate3d(0, -30px, 0);
   }
+
   70% {
     transform: translate3d(0, -15px, 0);
   }
+
   90% {
     transform: translate3d(0, -4px, 0);
   }

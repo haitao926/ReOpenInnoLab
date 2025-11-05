@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "stylelint-config-standard-scss"
+  ],
+  "rules": {
+    "custom-property-pattern": [
+      "^--edu-[a-z0-9-]+$",
+      {
+        "message": "Custom properties must follow the --edu- naming convention"
+      }
+    ]
+  },
+  "ignoreFiles": [
+    "dist/**/*",
+    "node_modules/**/*",
+    "**/*.vue"
+  ]
+}

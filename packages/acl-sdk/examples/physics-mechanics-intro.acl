@@ -1,0 +1,317 @@
+{
+  "meta": {
+    "id": "physics-mechanics-intro",
+    "version": "1.0.0",
+    "tenant": "reopeninnolab",
+    "tags": ["物理", "力学", "导入", "高中"],
+    "contributors": ["teacher@reopeninnolab.org"],
+    "license": "CC-BY-4.0",
+    "lastModified": "2024-01-15T10:30:00Z",
+    "createdAt": "2024-01-10T08:00:00Z"
+  },
+  "courseInfo": {
+    "title": "高中物理 - 力学基础导入",
+    "description": "通过生动有趣的方式导入力学概念，激发学生学习兴趣",
+    "subject": "physics",
+    "grade": "10",
+    "learningObjectives": [
+      {
+        "id": "lo-001",
+        "description": "理解力的基本概念和力的三要素",
+        "cognitiveLevel": "understand",
+        "assessmentCriteria": [
+          "能够准确描述力的定义",
+          "能够说出力的三要素",
+          "能够举例说明力的作用效果"
+        ],
+        "prerequisites": []
+      },
+      {
+        "id": "lo-002",
+        "description": "掌握牛顿第一定律的内容和应用",
+        "cognitiveLevel": "apply",
+        "assessmentCriteria": [
+          "能够准确陈述牛顿第一定律",
+          "能够解释惯性现象",
+          "能够应用牛顿第一定律分析实际问题"
+        ],
+        "prerequisites": ["lo-001"]
+      }
+    ],
+    "targetAudience": {
+      "grade": "10",
+      "classSize": "medium",
+      "priorKnowledge": "基础数学知识，了解基本物理概念",
+      "learningStyles": ["visual", "kinesthetic"],
+      "specialNeeds": []
+    },
+    "estimatedDuration": 45,
+    "prerequisites": ["基础代数知识", "几何基础"],
+    "aiPrompts": {
+      "generation": "生成适合高中生的力学导入内容，注重概念直观性和生活联系，包含互动环节和实例分析",
+      "assessment": "基于学习目标设计形成性评估，重点关注概念理解和应用能力",
+      "intervention": "当学生遇到困难时，提供更多生活实例和类比解释"
+    }
+  },
+  "structure": [
+    {
+      "id": "intro-001",
+      "title": "力的世界导入",
+      "type": "introduction",
+      "duration": 10,
+      "learningGoals": ["激发学习兴趣", "建立力的概念"],
+      "aiStrategy": {
+        "type": "adaptive-examples",
+        "dataSources": ["real-world-physics", "student-interactions"],
+        "fallbackContent": "使用经典物理案例进行导入"
+      },
+      "resourceRefs": ["video-001", "image-001"],
+      "content": {
+        "hookType": "question",
+        "hookContent": "为什么足球踢出去后会继续运动？为什么最终又会停下来？",
+        "objectives": [
+          "通过生活中的现象激发学生思考",
+          "引导学生关注力的作用",
+          "建立学习力学的基本框架"
+        ],
+        "prerequisites": []
+      }
+    },
+    {
+      "id": "chapter-001",
+      "title": "力的基本概念",
+      "type": "chapter",
+      "duration": 25,
+      "learningGoals": ["理解力的定义", "掌握力的三要素"],
+      "aiStrategy": {
+        "type": "concept-building",
+        "adaptationRules": {
+          "difficulty": "adaptive",
+          "examples": "context-based"
+        }
+      },
+      "resourceRefs": ["simulation-001", "video-002"],
+      "children": [
+        {
+          "id": "knowledge-001",
+          "title": "什么是力？",
+          "type": "knowledge",
+          "duration": 8,
+          "learningGoals": ["理解力的定义", "认识力的作用效果"],
+          "resourceRefs": ["image-002", "image-003"],
+          "content": {
+            "format": "text",
+            "content": "## 力的定义\n\n力是物体之间的相互作用。当一个物体对另一个物体施加作用时，我们就说这个物体对另一个物体施加了力。\n\n### 力的作用效果\n\n1. **改变物体的运动状态**\n   - 使静止的物体运动\n   - 使运动的物体停止\n   - 改变物体运动的速度或方向\n\n2. **改变物体的形状**\n   - 拉伸弹簧\n   - 压缩海绵\n   - 弯曲铁丝\n\n### 力的单位\n\n力的国际单位是牛顿（N），简称牛。",
+            "examples": [
+              {
+                "id": "example-001",
+                "title": "推箱子",
+                "content": "用力推箱子，箱子从静止开始运动",
+                "explanation": "人的手对箱子施加力，改变了箱子的运动状态",
+                "difficulty": "easy"
+              },
+              {
+                "id": "example-002",
+                "title": "拉弹簧",
+                "content": "用手拉伸弹簧，弹簧变长",
+                "explanation": "手对弹簧施加拉力，改变了弹簧的形状",
+                "difficulty": "easy"
+              }
+            ],
+            "checkpoints": [
+              {
+                "id": "check-001",
+                "question": "下列哪种现象不是力的作用效果？",
+                "type": "multiple-choice",
+                "options": ["物体运动", "物体形状改变", "物体温度升高", "物体速度改变"],
+                "correctAnswer": 2,
+                "explanation": "力的作用效果是改变物体的运动状态或形状，不包括温度变化"
+              }
+            ]
+          }
+        },
+        {
+          "id": "activity-001",
+          "title": "感受力的存在",
+          "type": "activity",
+          "duration": 10,
+          "learningGoals": ["通过亲身体验感受力", "观察力的作用效果"],
+          "resourceRefs": [],
+          "content": {
+            "activityType": "individual",
+            "instructions": "1. 用手轻轻按压桌面，感受桌面对手的反作用力\n2. 用力推墙，感受墙对人的反作用力\n3. 两手互相推，感受相互的作用力\n4. 记录你的感受和观察到的现象",
+            "duration": 8,
+            "collaborationLevel": "low"
+          }
+        },
+        {
+          "id": "knowledge-002",
+          "title": "力的三要素",
+          "type": "knowledge",
+          "duration": 7,
+          "learningGoals": ["掌握力的三要素", "理解三要素对力的作用效果的影响"],
+          "resourceRefs": ["image-004"],
+          "content": {
+            "format": "text",
+            "content": "## 力的三要素\n\n力的大小、方向和作用点称为力的三要素。这三个要素共同决定了力的作用效果。\n\n### 1. 力的大小\n\n力的大小表示作用的强弱。力越大，作用效果越明显。\n\n### 2. 力的方向\n\n力的方向表示作用的方向。不同的方向会产生不同的作用效果。\n\n### 3. 力的作用点\n\n力的作用点是力作用在物体上的位置。作用点不同，作用效果也可能不同。\n\n### 力的图示\n\n我们用带箭头的线段来表示力：\n- 线段的长度表示力的大小\n- 箭头的方向表示力的方向\n- 线段的起点表示力的作用点",
+            "examples": [
+              {
+                "id": "example-003",
+                "title": "开门的例子",
+                "content": "推门时，作用在门把手附近比作用在门轴附近更容易开门",
+                "explanation": "力的作用点影响力的作用效果，离门轴越远，力矩越大",
+                "difficulty": "medium"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "experiment-001",
+      "title": "虚拟实验：探究力的作用效果",
+      "type": "experiment",
+      "duration": 8,
+      "learningGoals": ["通过实验验证力的作用效果", "培养科学探究能力"],
+      "aiStrategy": {
+        "type": "guided-experiment",
+        "interactionStyle": "socratic"
+      },
+      "resourceRefs": ["simulation-002"],
+      "content": {
+        "experimentType": "virtual",
+        "environment": {
+          "type": "web",
+          "resources": {
+            "cpu": "500m",
+            "memory": "512Mi"
+          }
+        },
+        "aiAssistant": {
+          "capabilities": ["实验指导", "数据分析", "问题解答"],
+          "interactionStyle": "guided",
+          "adaptationLevel": "high"
+        },
+        "safetyLevel": "safe"
+      }
+    },
+    {
+      "id": "assessment-001",
+      "title": "学习效果评估",
+      "type": "assessment",
+      "duration": 2,
+      "learningGoals": ["检查学习效果", "及时反馈"],
+      "assessment": {
+        "type": "formative",
+        "indicators": ["概念理解", "应用能力", "分析思维"],
+        "aiAnalysis": "基于答题模式分析学生掌握程度"
+      },
+      "resourceRefs": [],
+      "content": {
+        "assessmentType": "quiz",
+        "questions": [
+          {
+            "id": "q-001",
+            "type": "multiple-choice",
+            "question": "力的三要素不包括以下哪项？",
+            "options": ["力的大小", "力的方向", "力的作用点", "力的作用时间"],
+            "correctAnswer": 3,
+            "points": 5,
+            "explanation": "力的三要素是大小、方向和作用点，不包括作用时间"
+          },
+          {
+            "id": "q-002",
+            "type": "true-false",
+            "question": "力只能改变物体的运动状态，不能改变物体的形状",
+            "correctAnswer": false,
+            "points": 5,
+            "explanation": "力既能改变物体的运动状态，也能改变物体的形状"
+          }
+        ]
+      }
+    }
+  ],
+  "resourceRefs": [
+    {
+      "id": "video-001",
+      "type": "video",
+      "title": "生活中的力现象",
+      "description": "展示日常生活中各种力的现象",
+      "url": "https://example.com/videos/forces-in-life.mp4",
+      "metadata": {
+        "duration": 180,
+        "format": "mp4"
+      }
+    },
+    {
+      "id": "image-001",
+      "type": "image",
+      "title": "力的示意图",
+      "description": "力的作用效果示意图",
+      "url": "https://example.com/images/force-diagram.png",
+      "metadata": {
+        "format": "png"
+      }
+    },
+    {
+      "id": "simulation-001",
+      "type": "simulation",
+      "title": "力的作用模拟",
+      "description": "交互式力的作用模拟器",
+      "url": "https://example.com/simulations/force-simulation.html"
+    },
+    {
+      "id": "video-002",
+      "type": "video",
+      "title": "力的三要素讲解",
+      "description": "详细讲解力的三要素",
+      "url": "https://example.com/videos/force-elements.mp4",
+      "metadata": {
+        "duration": 300,
+        "format": "mp4"
+      }
+    },
+    {
+      "id": "image-002",
+      "type": "image",
+      "title": "推箱子示意图",
+      "description": "人推箱子的力的示意图",
+      "url": "https://example.com/images/pushing-box.png"
+    },
+    {
+      "id": "image-003",
+      "type": "image",
+      "title": "拉伸弹簧示意图",
+      "description": "手拉伸弹簧的示意图",
+      "url": "https://example.com/images/stretching-spring.png"
+    },
+    {
+      "id": "image-004",
+      "type": "image",
+      "title": "力的图示方法",
+      "description": "如何用图示法表示力",
+      "url": "https://example.com/images/force-diagram-method.png"
+    },
+    {
+      "id": "simulation-002",
+      "type": "simulation",
+      "title": "力的作用效果虚拟实验",
+      "description": "交互式虚拟实验平台",
+      "url": "https://example.com/simulations/force-effects-lab.html"
+    }
+  ],
+  "analyticsProfile": {
+    "learningMetrics": [
+      "概念掌握度",
+      "应用能力",
+      "学习时长",
+      "互动频率",
+      "错误率分析"
+    ],
+    "aiInsights": {
+      "learningPathOptimization": true,
+      "difficultyAdjustment": true,
+      "recommendationEngine": true
+    }
+  }
+}

@@ -3,6 +3,9 @@
  * 负责.acl文件的结构验证和业务规则验证
  */
 
+import Ajv from 'ajv'
+import addFormats from 'ajv-formats'
+import { aclSchema } from './schemas/index'
 import {
   AiCourseLayout,
   ValidationResult,
@@ -15,9 +18,28 @@ import {
  * ACL验证器类
  */
 export class ACLValidator {
+  private ajv: Ajv
+  private schemaValidator: Ajv.ValidateFunction
   private rules: ValidationRule[]
 
   constructor() {
+    // 初始化AJV验证器
+    this.ajv = new Ajv({
+      allErrors: true,
+      verbose: true,
+      strict: false,
+      removeAdditional: false,
+      useDefaults: false,
+      coerceTypes: false
+    })
+
+    // 添加格式支持
+    addFormats(this.ajv)
+
+    // 编译schema
+    this.schemaValidator = this.ajv.compile(aclSchema)
+
+    // 初始化业务规则
     this.rules = this.initializeRules()
   }
 
@@ -30,7 +52,20 @@ export class ACLValidator {
     const errors: ValidationError[] = []
     const warnings: ValidationWarning[] = []
 
-    // 执行所有验证规则
+    // 1. 执行JSON Schema验证
+    const schemaValid = this.schemaValidator(data)
+    if (!schemaValid && this.schemaValidator.errors) {
+      for (const error of this.schemaValidator.errors) {
+        errors.push({
+          path: error.instancePath || error.schemaPath || 'root',
+          message: error.message || 'Schema validation failed',
+          code: `SCHEMA_${error.keyword?.toUpperCase() || 'VALIDATION_ERROR'}`,
+          severity: 'error'
+        })
+      }
+    }
+
+    // 2. 执行业务规则验证
     for (const rule of this.rules) {
       const result = await rule.validate(data)
       errors.push(...result.errors)
@@ -57,7 +92,20 @@ export class ACLValidator {
     const errors: ValidationError[] = []
     const warnings: ValidationWarning[] = []
 
-    // 执行同步验证规则
+    // 1. 执行JSON Schema验证
+    const schemaValid = this.schemaValidator(data)
+    if (!schemaValid && this.schemaValidator.errors) {
+      for (const error of this.schemaValidator.errors) {
+        errors.push({
+          path: error.instancePath || error.schemaPath || 'root',
+          message: error.message || 'Schema validation failed',
+          code: `SCHEMA_${error.keyword?.toUpperCase() || 'VALIDATION_ERROR'}`,
+          severity: 'error'
+        })
+      }
+    }
+
+    // 2. 执行同步业务规则验证
     for (const rule of this.rules) {
       if (rule.validateSync) {
         const result = rule.validateSync(data)

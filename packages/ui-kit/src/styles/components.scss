@@ -1,0 +1,427 @@
+// 组件统一样式变量
+// 用于统一卡片、标签、摘要等组件的视觉语法
+
+// =============================================
+// 卡片组件 (EduCard, EduSummaryCard)
+// =============================================
+
+// 卡片尺寸规范
+$card-border-radius: (
+  'sm': 8px,
+  'md': 12px,
+  'lg': 16px,
+  'xl': 20px
+);
+
+$card-padding: (
+  'sm': 12px,
+  'md': 16px,
+  'lg': 20px,
+  'xl': 24px
+);
+
+$card-shadow: (
+  'sm': 0 1px 3px rgba(0, 0, 0, 0.12),
+  'md': 0 4px 6px rgba(0, 0, 0, 0.07),
+  'lg': 0 10px 15px rgba(0, 0, 0, 0.1),
+  'xl': 0 20px 25px rgba(0, 0, 0, 0.1),
+  '2xl': 0 25px 50px rgba(0, 0, 0, 0.25)
+);
+
+// 卡片变体样式
+$card-variants: (
+  'default': (
+    'border': 1px solid var(--edu-border-light),
+    'bg': var(--edu-bg-primary),
+    'shadow': map-get($card-shadow, 'sm')
+  ),
+  'bordered': (
+    'border': 2px solid var(--edu-border-base),
+    'bg': var(--edu-bg-primary),
+    'shadow': none
+  ),
+  'shadow': (
+    'border': none,
+    'bg': var(--edu-bg-primary),
+    'shadow': map-get($card-shadow, 'lg')
+  ),
+  'elevated': (
+    'border': none,
+    'bg': var(--edu-bg-primary),
+    'shadow': map-get($card-shadow, 'xl')
+  ),
+  'glass': (
+    'border': var(--edu-glass-border),
+    'bg': var(--edu-glass-bg),
+    'shadow': var(--edu-glass-shadow),
+    'backdrop-filter': var(--edu-glass-blur)
+  )
+);
+
+// =============================================
+// 标签组件 (EduTag)
+// =============================================
+
+// 标签尺寸规范
+$tag-height: (
+  'xs': 20px,
+  'sm': 24px,
+  'base': 28px,
+  'lg': 32px
+);
+
+$tag-padding-x: (
+  'xs': 6px,
+  'sm': 8px,
+  'base': 12px,
+  'lg': 16px
+);
+
+$tag-radius: (
+  'xs': 4px,
+  'sm': 6px,
+  'base': 8px,
+  'lg': 12px
+);
+
+$tag-icon-size: 14px;
+$tag-icon-spacing: 4px;
+
+// 标签颜色规范
+$tag-colors: (
+  'default': (
+    'bg': var(--edu-color-gray-100),
+    'color': var(--edu-color-gray-700),
+    'border': var(--edu-color-gray-200)
+  ),
+  'primary': (
+    'bg': var(--edu-primary-50),
+    'color': var(--edu-primary-700),
+    'border': var(--edu-primary-100)
+  ),
+  'success': (
+    'bg': var(--edu-success-light),
+    'color': var(--edu-success-dark),
+    'border': var(--edu-success-light)
+  ),
+  'warning': (
+    'bg': var(--edu-warning-light),
+    'color': var(--edu-warning-dark),
+    'border': var(--edu-warning-light)
+  ),
+  'error': (
+    'bg': var(--edu-error-light),
+    'color': var(--edu-error-dark),
+    'border': var(--edu-error-light)
+  ),
+  'info': (
+    'bg': var(--edu-info-light),
+    'color': var(--edu-info-dark),
+    'border': var(--edu-info-light)
+  )
+);
+
+// 学科标签颜色
+$tag-subjects: (
+  'physics': (
+    'bg': #e3f2fd,
+    'color': #1565c0,
+    'border': #90caf9,
+    'primary': #1976d2,
+    'light': #e3f2fd
+  ),
+  'chemistry': (
+    'bg': #e8f5e8,
+    'color': #2e7d32,
+    'border': #81c784,
+    'primary': #388e3c,
+    'light': #e8f5e8
+  ),
+  'math': (
+    'bg': #fff3e0,
+    'color': #ef6c00,
+    'border': #ffb74d,
+    'primary': #f57c00,
+    'light': #fff3e0
+  ),
+  'biology': (
+    'bg': #f3e5f5,
+    'color': #7b1fa2,
+    'border': #ba68c8,
+    'primary': #8e24aa,
+    'light': #f3e5f5
+  ),
+  'language': (
+    'bg': #fce4ec,
+    'color': #c2185b,
+    'border': #f48fb1,
+    'primary': #d81b60,
+    'light': #fce4ec
+  )
+);
+
+// =============================================
+// 摘要卡片组件 (EduSummaryCard)
+// =============================================
+
+// 摘要卡片图标尺寸
+$summary-icon-size: (
+  'sm': 36px,
+  'md': 48px,
+  'lg': 56px
+);
+
+$summary-icon-radius: 16px;
+
+// 摘要卡片数值样式
+$summary-value-font-sizes: (
+  'sm': var(--font-size-lg),
+  'md': var(--font-size-xl),
+  'lg': var(--font-size-2xl)
+);
+
+$summary-label-font-sizes: (
+  'sm': var(--font-size-xs),
+  'md': var(--font-size-sm),
+  'lg': var(--font-size-base)
+);
+
+// =============================================
+// 动效规范
+// =============================================
+
+$transition-duration: (
+  'fast': 150ms,
+  'normal': 300ms,
+  'slow': 500ms
+);
+
+$transition-easing: (
+  'in-out': cubic-bezier(0.4, 0, 0.2, 1),
+  'out': cubic-bezier(0, 0, 0.2, 1),
+  'in': cubic-bezier(0.4, 0, 1, 1)
+);
+
+// 悬停变换效果
+$hover-transform: translateY(-2px);
+$active-transform: translateY(0);
+
+// =============================================
+// 响应式断点
+// =============================================
+
+$breakpoints: (
+  'sm': 640px,
+  'md': 768px,
+  'lg': 1024px,
+  'xl': 1280px,
+  '2xl': 1536px
+);
+
+// =============================================
+// 深色模式适配
+// =============================================
+
+$dark-mode-card: (
+  'bg': var(--dark-card-bg),
+  'border': var(--dark-border-color),
+  'shadow': 0 8px 25px rgba(0, 0, 0, 0.4)
+);
+
+$dark-mode-glass: (
+  'bg': var(--edu-dark-glass-bg),
+  'border': var(--edu-dark-glass-border),
+  'shadow': var(--edu-dark-glass-shadow)
+);
+
+// =============================================
+// Mixins
+// =============================================
+
+// 卡片基础样式
+@mixin card-base($variant: 'default') {
+  $config: map-get($card-variants, $variant);
+
+  border: map-get($config, 'border');
+  background: map-get($config, 'bg');
+  box-shadow: map-get($config, 'shadow');
+
+  @if $variant == 'glass' {
+    backdrop-filter: map-get($config, 'backdrop-filter');
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.4) 50%,
+        transparent 100%
+      );
+      z-index: 1;
+    }
+  }
+}
+
+// 标签基础样式
+@mixin tag-base($variant: 'default') {
+  $config: map-get($tag-colors, $variant);
+
+  background-color: map-get($config, 'bg');
+  color: map-get($config, 'color');
+  border: 1px solid map-get($config, 'border');
+
+  &:hover:not(.disabled) {
+    @if $variant == 'success' or $variant == 'warning' or $variant == 'error' or $variant == 'info' {
+      background-color: map-get($config, 'color');
+      color: var(--text-on-primary);
+    } @else {
+      background-color: map-get($config, 'border');
+    }
+  }
+}
+
+// 学科标签样式
+@mixin subject-tag($subject) {
+  $config: map-get($tag-subjects, $subject);
+
+  background-color: map-get($config, 'bg');
+  color: map-get($config, 'color');
+  border: 1px solid map-get($config, 'border');
+
+  &:hover:not(.disabled) {
+    background-color: map-get($config, 'primary');
+    color: var(--text-on-primary);
+  }
+}
+
+// 响应式断点
+@mixin respond-to($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  }
+}
+
+// 动效过渡
+@mixin transition($properties: all, $duration: 'normal', $easing: 'in-out') {
+  transition: $properties
+              map-get($transition-duration, $duration)
+              map-get($transition-easing, $easing);
+}
+
+// 悬停效果
+@mixin hover-lift($shadow-level: 'lg') {
+  cursor: pointer;
+  @include transition(all, 'fast');
+
+  &:hover:not(.disabled) {
+    transform: $hover-transform;
+    box-shadow: map-get($card-shadow, $shadow-level);
+  }
+
+  &:active:not(.disabled) {
+    transform: $active-transform;
+  }
+}
+
+// 波纹效果
+@mixin ripple-effect($color: rgba(255, 255, 255, 0.5)) {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $color;
+    transform: translate(-50%, -50%) scale(0);
+    animation: ripple 0.6s ease-out;
+    pointer-events: none;
+    z-index: 10;
+  }
+}
+
+@keyframes ripple {
+  to {
+    transform: translate(-50%, -50%) scale(4);
+    opacity: 0;
+  }
+}
+
+// 加载动画
+@mixin loading-shimmer() {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 1.5s infinite;
+    z-index: 1;
+    pointer-events: none;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// =============================================
+// 导出变量 (供其他文件使用)
+// =============================================
+
+:root {
+  // 卡片变量
+  --card-border-radius-sm: #{map-get($card-border-radius, 'sm')};
+  --card-border-radius-md: #{map-get($card-border-radius, 'md')};
+  --card-border-radius-lg: #{map-get($card-border-radius, 'lg')};
+  --card-border-radius-xl: #{map-get($card-border-radius, 'xl')};
+
+  --card-padding-sm: #{map-get($card-padding, 'sm')};
+  --card-padding-md: #{map-get($card-padding, 'md')};
+  --card-padding-lg: #{map-get($card-padding, 'lg')};
+  --card-padding-xl: #{map-get($card-padding, 'xl')};
+
+  // 标签变量
+  --tag-height-xs: #{map-get($tag-height, 'xs')};
+  --tag-height-sm: #{map-get($tag-height, 'sm')};
+  --tag-height-base: #{map-get($tag-height, 'base')};
+  --tag-height-lg: #{map-get($tag-height, 'lg')};
+
+  --tag-padding-x-xs: #{map-get($tag-padding-x, 'xs')};
+  --tag-padding-x-sm: #{map-get($tag-padding-x, 'sm')};
+  --tag-padding-x-base: #{map-get($tag-padding-x, 'base')};
+  --tag-padding-x-lg: #{map-get($tag-padding-x, 'lg')};
+
+  --tag-icon-size: #{$tag-icon-size};
+  --tag-icon-spacing: #{$tag-icon-spacing};
+
+  // 过渡变量
+  --edu-duration-fast: #{map-get($transition-duration, 'fast')};
+  --edu-duration-normal: #{map-get($transition-duration, 'normal')};
+  --edu-duration-slow: #{map-get($transition-duration, 'slow')};
+
+  --edu-easing-in-out: #{map-get($transition-easing, 'in-out')};
+  --edu-easing-out: #{map-get($transition-easing, 'out')};
+  --edu-easing-in: #{map-get($transition-easing, 'in')};
+}

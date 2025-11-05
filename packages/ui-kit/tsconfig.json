@@ -19,7 +19,8 @@
     "composite": true
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/theme/tokens.json"
   ],
   "exclude": [
     "node_modules",

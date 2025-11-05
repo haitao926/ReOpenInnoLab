@@ -27,7 +27,7 @@
           </el-button>
           <el-button
             v-if="showDetails"
-            type="text"
+            type="link"
             @click="toggleErrorDetails"
           >
             {{ showErrorDetails ? '隐藏' : '显示' }}错误详情
@@ -50,11 +50,11 @@
         <div class="error-feedback">
           <p class="feedback-text">如果问题持续存在，请联系技术支持：</p>
           <div class="feedback-actions">
-            <el-button type="text" @click="handleReportBug">
+            <el-button type="link" @click="handleReportBug">
               <el-icon><ChatDotSquare /></el-icon>
               报告问题
             </el-button>
-            <el-button type="text" @click="handleContactSupport">
+            <el-button type="link" @click="handleContactSupport">
               <el-icon><Service /></el-icon>
               联系支持
             </el-button>
@@ -75,10 +75,12 @@ import {
   ChatDotSquare,
   Service
 } from '@element-plus/icons-vue'
+import { useUserStore } from '@/stores/user'
 import { useAppStore } from '@/stores/app'
 
 const router = useRouter()
 const appStore = useAppStore()
+const userStore = useUserStore()
 
 // 响应式数据
 const hasError = ref(false)
@@ -89,7 +91,7 @@ const errorInfo = ref<any>(null)
 
 // 计算属性
 const showDetails = computed(() => {
-  return import.meta.env.DEV || appStore.userRole === 'admin'
+  return import.meta.env.DEV || userStore.userRole === 'admin'
 })
 
 // 错误捕获

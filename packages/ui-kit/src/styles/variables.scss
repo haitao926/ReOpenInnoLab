@@ -5,221 +5,324 @@
 // 颜色系统
 // ========================================
 
-// 主色调 - 温暖科技蓝
+// 主色调 - 学术蓝
 :root {
-  // Primary Colors
-  --color-primary-50: #E6F4FF;
-  --color-primary-100: #BAE0FF;
-  --color-primary-200: #91CAFF;
-  --color-primary-300: #69B1FF;
-  --color-primary-400: #4096FF;
-  --color-primary-500: #5B8FF9;
-  --color-primary-600: #597EF7;
-  --color-primary-700: #597EF7;
-  --color-primary-800: #2F54EB;
-  --color-primary-900: #1D39C4;
-  --color-primary-950: #101D4C;
+  // 主色系 - Academic Blue
+  --edu-primary-50: #e3f2fd;
+  --edu-primary-100: #bbdefb;
+  --edu-primary-200: #90caf9;
+  --edu-primary-300: #64b5f6;
+  --edu-primary-400: #42a5f5;
+  --edu-primary-500: #2196f3;  // 主色
+  --edu-primary-600: #1e88e5;
+  --edu-primary-700: #1976d2;
+  --edu-primary-800: #1565c0;
+  --edu-primary-900: #0d47a1;
+
+  // 兼容现有变量名
+  --edu-color-primary-50: #e3f2fd;
+  --edu-color-primary-100: #bbdefb;
+  --edu-color-primary-200: #90caf9;
+  --edu-color-primary-300: #64b5f6;
+  --edu-color-primary-400: #42a5f5;
+  --edu-color-primary-500: #2196f3;
+  --edu-color-primary-600: #1e88e5;
+  --edu-color-primary-700: #1976d2;
+  --edu-color-primary-800: #1565c0;
+  --edu-color-primary-900: #0d47a1;
+  --edu-color-primary-950: #0a2857;
 
   // Secondary Colors
-  --color-secondary-50: #F6FFED;
-  --color-secondary-100: #D9F7BE;
-  --color-secondary-200: #BAF0B4;
-  --color-secondary-300: #95DE64;
-  --color-secondary-400: #73D13D;
-  --color-secondary-500: #52C41A;
-  --color-secondary-600: #389E0D;
-  --color-secondary-700: #237804;
-  --color-secondary-800: #135200;
-  --color-secondary-900: #092B00;
+  --edu-color-secondary-50: #F6FFED;
+  --edu-color-secondary-100: #D9F7BE;
+  --edu-color-secondary-200: #BAF0B4;
+  --edu-color-secondary-300: #95DE64;
+  --edu-color-secondary-400: #73D13D;
+  --edu-color-secondary-500: #52C41A;
+  --edu-color-secondary-600: #389E0D;
+  --edu-color-secondary-700: #237804;
+  --edu-color-secondary-800: #135200;
+  --edu-color-secondary-900: #092B00;
 
   // 中性色
-  --color-white: #FFFFFF;
-  --color-gray-50: #FAFAFA;
-  --color-gray-100: #F5F5F5;
-  --color-gray-200: #F0F0F0;
-  --color-gray-300: #D9D9D9;
-  --color-gray-400: #BFBFBF;
-  --color-gray-500: #8C8C8C;
-  --color-gray-600: #595959;
-  --color-gray-700: #434343;
-  --color-gray-800: #262626;
-  --color-gray-900: #1F1F1F;
-  --color-black: #000000;
+  --edu-color-white: #FFF;
+  --edu-color-gray-50: #FAFAFA;
+  --edu-color-gray-100: #F5F5F5;
+  --edu-color-gray-200: #F0F0F0;
+  --edu-color-gray-300: #D9D9D9;
+  --edu-color-gray-400: #BFBFBF;
+  --edu-color-gray-500: #8C8C8C;
+  --edu-color-gray-600: #595959;
+  --edu-color-gray-700: #434343;
+  --edu-color-gray-800: #262626;
+  --edu-color-gray-900: #1F1F1F;
+  --edu-color-black: #000;
 
   // 语义化颜色
-  --color-success-light: #B7EB8F;
-  --color-success-default: #52C41A;
-  --color-success-dark: #389E0D;
+  --edu-color-success-light: #B7EB8F;
+  --edu-color-success-default: #52C41A;
+  --edu-color-success-dark: #389E0D;
+  --edu-color-warning-light: #FFE58F;
+  --edu-color-warning-default: #FAAD14;
+  --edu-color-warning-dark: #D48806;
+  --edu-color-error-light: #FF7875;
+  --edu-color-error-default: #F5222D;
+  --edu-color-error-dark: #CF1322;
+  --edu-color-info-light: #91D5FF;
+  --edu-color-info-default: #1890FF;
+  --edu-color-info-dark: #0958D9;
 
-  --color-warning-light: #FFE58F;
-  --color-warning-default: #FAAD14;
-  --color-warning-dark: #D48806;
+  // 学科色彩体系 - Subject Colors
+  // 物理蓝色
+  --physics-primary: #1976d2;
+  --physics-light: #e3f2fd;
+  --physics-dark: #0d47a1;
 
-  --color-error-light: #FF7875;
-  --color-error-default: #F5222D;
-  --color-error-dark: #CF1322;
+  // 化学绿色
+  --chemistry-primary: #388e3c;
+  --chemistry-light: #e8f5e8;
+  --chemistry-dark: #1b5e20;
 
-  --color-info-light: #91D5FF;
-  --color-info-default: #1890FF;
-  --color-info-dark: #0958D9;
+  // 数学橙色
+  --math-primary: #f57c00;
+  --math-light: #fff3e0;
+  --math-dark: #e65100;
 
-  // 学科色彩
-  --color-math: #FF6B6B;
-  --color-math-light: #FF8787;
-  --color-math-dark: #E55555;
+  // 生物紫色
+  --biology-primary: #7b1fa2;
+  --biology-light: #f3e5f5;
+  --biology-dark: #4a148c;
 
-  --color-physics: #4ECDC4;
-  --color-physics-light: #6DD8D0;
-  --color-physics-dark: #3DBCB3;
+  // 语文红色
+  --language-primary: #d32f2f;
+  --language-light: #ffebee;
+  --language-dark: #b71c1c;
 
-  --color-chemistry: #45B7D1;
-  --color-chemistry-light: #6BC5DA;
-  --color-chemistry-dark: #35A5C7;
-
-  --color-biology: #96CEB4;
-  --color-biology-light: #AAD8C2;
-  --color-biology-dark: #7ABE9F;
-
-  --color-language: #DDA0DD;
-  --color-language-light: #E8B8E8;
-  --color-language-dark: #D288D2;
-
-  --color-history: #FFB347;
-  --color-history-light: #FFC262;
-  --color-history-dark: #FFA32C;
-
-  --color-geography: #87CEEB;
-  --color-geography-light: #A3D9F0;
-  --color-geography-dark: #6BC3DB;
-
-  --color-english: #98D8C8;
-  --color-english-light: #B5E5D8;
-  --color-english-dark: #7BC8B8;
-
-  --color-art: #FF69B4;
-  --color-art-light: #FF85C4;
-  --color-art-dark: #FF4DA4;
-
-  --color-music: #DDA0DD;
-  --color-music-light: #E8B8E8;
-  --color-music-dark: #D288D2;
-
-  --color-pe: #FFA07A;
-  --color-pe-light: #FFB59C;
-  --color-pe-dark: #FF8B58;
-
-  --color-it: #708090;
-  --color-it-light: #8A9AAA;
-  --color-it-dark: #566676;
+  // 兼容现有学科色彩命名
+  --edu-color-subject-math: #f57c00;
+  --edu-color-subject-math-light: #fff3e0;
+  --edu-color-subject-math-dark: #e65100;
+  --edu-color-subject-physics: #1976d2;
+  --edu-color-subject-physics-light: #e3f2fd;
+  --edu-color-subject-physics-dark: #0d47a1;
+  --edu-color-subject-chemistry: #388e3c;
+  --edu-color-subject-chemistry-light: #e8f5e8;
+  --edu-color-subject-chemistry-dark: #1b5e20;
+  --edu-color-subject-biology: #7b1fa2;
+  --edu-color-subject-biology-light: #f3e5f5;
+  --edu-color-subject-biology-dark: #4a148c;
+  --edu-color-subject-language: #d32f2f;
+  --edu-color-subject-language-light: #ffebee;
+  --edu-color-subject-language-dark: #b71c1c;
+  --edu-color-subject-history: #ff6f00;
+  --edu-color-subject-history-light: #fff3e0;
+  --edu-color-subject-history-dark: #e65100;
+  --edu-color-subject-geography: #0277bd;
+  --edu-color-subject-geography-light: #e1f5fe;
+  --edu-color-subject-geography-dark: #01579b;
+  --edu-color-subject-english: #2e7d32;
+  --edu-color-subject-english-light: #e8f5e8;
+  --edu-color-subject-english-dark: #1b5e20;
+  --edu-color-subject-art: #7b1fa2;
+  --edu-color-subject-art-light: #f3e5f5;
+  --edu-color-subject-art-dark: #4a148c;
+  --edu-color-subject-music: #c2185b;
+  --edu-color-subject-music-light: #fce4ec;
+  --edu-color-subject-music-dark: #880e4f;
+  --edu-color-subject-pe: #f57c00;
+  --edu-color-subject-pe-light: #fff3e0;
+  --edu-color-subject-pe-dark: #e65100;
+  --edu-color-subject-it: #455a64;
+  --edu-color-subject-it-light: #eceff1;
+  --edu-color-subject-it-dark: #263238;
 }
 
 // ========================================
-// 字体系统
+// 字体系统 - Typography System
 // ========================================
 
 :root {
-  // 字体族
-  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', sans-serif;
-  --font-serif: 'Georgia', 'Cambria', 'Times New Roman', 'Times', serif;
-  --font-mono: 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', 'Courier', monospace;
+  // 字体族 - Font Family
+  --font-family-sans: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+  --font-family-serif: "Songti SC", "SimSun", "Noto Serif SC", Georgia, serif;
+  --font-family-mono: "SF Mono", "Monaco", "Inconsolata", "Fira Code", "Source Code Pro", monospace;
 
-  // 字体大小
-  --font-size-xs: 12px;
-  --font-size-sm: 14px;
-  --font-size-base: 16px;
-  --font-size-lg: 18px;
-  --font-size-xl: 20px;
-  --font-size-2xl: 24px;
-  --font-size-3xl: 30px;
-  --font-size-4xl: 36px;
-  --font-size-5xl: 48px;
-  --font-size-6xl: 60px;
-  --font-size-7xl: 72px;
+  // 兼容现有变量名
+  --edu-font-sans: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+  --edu-font-serif: "Songti SC", "SimSun", "Noto Serif SC", Georgia, serif;
+  --edu-font-mono: "SF Mono", "Monaco", "Inconsolata", "Fira Code", "Source Code Pro", monospace;
 
-  // 字体粗细
-  --font-weight-thin: 100;
-  --font-weight-extralight: 200;
-  --font-weight-light: 300;
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-  --font-weight-extrabold: 800;
-  --font-weight-black: 900;
+  // 字号体系 - Font Sizes
+  --font-size-xs: 12px;    // 辅助信息
+  --font-size-sm: 14px;    // 正文小字
+  --font-size-base: 16px;  // 基础字号
+  --font-size-lg: 18px;    // 标题小字
+  --font-size-xl: 20px;    // 小标题
+  --font-size-2xl: 24px;   // 中标题
+  --font-size-3xl: 30px;   // 大标题
+  --font-size-4xl: 36px;   // 超大标题
+  --font-size-5xl: 48px;   // 特大标题
 
-  // 行高
-  --line-height-none: 1;
-  --line-height-tight: 1.25;
-  --line-height-snug: 1.375;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.625;
-  --line-height-loose: 2;
+  // 兼容现有变量名
+  --edu-font-size-xs: 12px;
+  --edu-font-size-sm: 14px;
+  --edu-font-size-base: 16px;
+  --edu-font-size-lg: 18px;
+  --edu-font-size-xl: 20px;
+  --edu-font-size-2xl: 24px;
+  --edu-font-size-3xl: 30px;
+  --edu-font-size-4xl: 36px;
+  --edu-font-size-5xl: 48px;
+  --edu-font-size-6xl: 60px;
+  --edu-font-size-7xl: 72px;
 
-  // 字间距
-  --letter-spacing-tighter: -0.05em;
-  --letter-spacing-tight: -0.025em;
-  --letter-spacing-normal: 0em;
-  --letter-spacing-wide: 0.025em;
-  --letter-spacing-wider: 0.05em;
-  --letter-spacing-widest: 0.1em;
+  // 字重规范 - Font Weights
+  --font-weight-light: 300;      // 轻体
+  --font-weight-normal: 400;     // 常规
+  --font-weight-medium: 500;     // 中等
+  --font-weight-semibold: 600;   // 半粗
+  --font-weight-bold: 700;       // 粗体
+
+  // 兼容现有变量名
+  --edu-font-weight-light: 300;
+  --edu-font-weight-normal: 400;
+  --edu-font-weight-medium: 500;
+  --edu-font-weight-semibold: 600;
+  --edu-font-weight-bold: 700;
+  --edu-font-weight-thin: 100;
+  --edu-font-weight-extralight: 200;
+  --edu-font-weight-extrabold: 800;
+  --edu-font-weight-black: 900;
+
+  // 行高规范 - Line Heights
+  --line-height-tight: 1.25;     // 紧凑行高 - 标题使用
+  --line-height-snug: 1.375;     // 适中行高 - 小文本使用
+  --line-height-normal: 1.5;     // 标准行高 - 正文使用
+  --line-height-relaxed: 1.625;  // 宽松行高 - 长段落使用
+  --line-height-loose: 2;        // 最宽行高 - 特殊场景
+
+  // 兼容现有变量名
+  --edu-line-height-none: 1;
+  --edu-line-height-tight: 1.25;
+  --edu-line-height-snug: 1.375;
+  --edu-line-height-normal: 1.5;
+  --edu-line-height-relaxed: 1.625;
+  --edu-line-height-loose: 2;
+
+  // 字符间距规范 - Letter Spacing
+  --letter-spacing-tighter: -0.05em;  // 更紧密
+  --letter-spacing-tight: -0.025em;   // 紧密
+  --letter-spacing-normal: 0;         // 标准
+  --letter-spacing-wide: 0.025em;     // 宽松
+  --letter-spacing-wider: 0.05em;     // 更宽松
+  --letter-spacing-widest: 0.1em;     // 最宽松
+
+  // 兼容现有变量名
+  --edu-letter-spacing-tighter: -0.05em;
+  --edu-letter-spacing-tight: -0.025em;
+  --edu-letter-spacing-normal: 0em;
+  --edu-letter-spacing-wide: 0.025em;
+  --edu-letter-spacing-wider: 0.05em;
+  --edu-letter-spacing-widest: 0.1em;
+
+  // 文本色彩 - Text Colors
+  --text-primary: rgba(0, 0, 0, 0.87);      // 主要文本
+  --text-secondary: rgba(0, 0, 0, 0.68);    // 次要文本
+  --text-tertiary: rgba(0, 0, 0, 0.38);     // 辅助文本
+  --text-disabled: rgba(0, 0, 0, 0.25);     // 禁用文本
+
+  // 背景色上的文本色
+  --text-on-primary: #ffffff;
+  --text-on-surface: rgba(0, 0, 0, 0.87);
+
+  // 玻璃效果变量
+  --edu-glass-bg: rgba(255, 255, 255, 0.95);
+  --edu-glass-border: 1px solid rgba(255, 255, 255, 0.18);
+  --edu-glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  --edu-glass-blur: saturate(180%) blur(20px);
+
+  // 深色模式玻璃效果
+  --edu-dark-glass-bg: rgba(0, 0, 0, 0.95);
+  --edu-dark-glass-border: 1px solid rgba(255, 255, 255, 0.1);
+  --edu-dark-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
 // ========================================
-// 间距系统
+// 间距系统 - Spacing System
 // ========================================
 
 :root {
-  --spacing-0: 0px;
-  --spacing-px: 1px;
-  --spacing-0-5: 2px;
-  --spacing-1: 4px;
-  --spacing-1-5: 6px;
-  --spacing-2: 8px;
-  --spacing-2-5: 10px;
-  --spacing-3: 12px;
-  --spacing-3-5: 14px;
-  --spacing-4: 16px;
-  --spacing-5: 20px;
-  --spacing-6: 24px;
-  --spacing-7: 28px;
-  --spacing-8: 32px;
-  --spacing-9: 36px;
-  --spacing-10: 40px;
-  --spacing-11: 44px;
-  --spacing-12: 48px;
-  --spacing-14: 56px;
-  --spacing-16: 64px;
-  --spacing-20: 80px;
-  --spacing-24: 96px;
-  --spacing-28: 112px;
-  --spacing-32: 128px;
-  --spacing-36: 144px;
-  --spacing-40: 160px;
-  --spacing-44: 176px;
-  --spacing-48: 192px;
-  --spacing-52: 208px;
-  --spacing-56: 224px;
-  --spacing-60: 240px;
-  --spacing-64: 256px;
-  --spacing-72: 288px;
-  --spacing-80: 320px;
-  --spacing-96: 384px;
+  // 基础间距 - Base Spacing
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-base: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+
+  // 兼容现有变量名
+  --edu-spacing-0: 0px;
+  --edu-spacing-px: 1px;
+  --edu-spacing-0-5: 2px;
+  --edu-spacing-1: 4px;
+  --edu-spacing-1-5: 6px;
+  --edu-spacing-2: 8px;
+  --edu-spacing-2-5: 10px;
+  --edu-spacing-3: 12px;
+  --edu-spacing-3-5: 14px;
+  --edu-spacing-4: 16px;
+  --edu-spacing-5: 20px;
+  --edu-spacing-6: 24px;
+  --edu-spacing-7: 28px;
+  --edu-spacing-8: 32px;
+  --edu-spacing-9: 36px;
+  --edu-spacing-10: 40px;
+  --edu-spacing-11: 44px;
+  --edu-spacing-12: 48px;
+  --edu-spacing-14: 56px;
+  --edu-spacing-16: 64px;
+  --edu-spacing-20: 80px;
+  --edu-spacing-24: 96px;
+  --edu-spacing-28: 112px;
+  --edu-spacing-32: 128px;
+  --edu-spacing-36: 144px;
+  --edu-spacing-40: 160px;
+  --edu-spacing-44: 176px;
+  --edu-spacing-48: 192px;
+  --edu-spacing-52: 208px;
+  --edu-spacing-56: 224px;
+  --edu-spacing-60: 240px;
+  --edu-spacing-64: 256px;
+  --edu-spacing-72: 288px;
+  --edu-spacing-80: 320px;
+  --edu-spacing-96: 384px;
 }
 
 // ========================================
-// 圆角系统
+// 圆角系统 - Border Radius System
 // ========================================
 
 :root {
-  --border-radius-none: 0px;
-  --border-radius-sm: 2px;
-  --border-radius-base: 4px;
-  --border-radius-md: 6px;
-  --border-radius-lg: 8px;
-  --border-radius-xl: 12px;
-  --border-radius-2xl: 16px;
-  --border-radius-3xl: 24px;
-  --border-radius-full: 9999px;
+  // 基础圆角 - Base Radius
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-base: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-full: 9999px;
+
+  // 兼容现有变量名
+  --edu-border-radius-none: 0px;
+  --edu-border-radius-sm: 2px;
+  --edu-border-radius-base: 4px;
+  --edu-border-radius-md: 6px;
+  --edu-border-radius-lg: 8px;
+  --edu-border-radius-xl: 12px;
+  --edu-border-radius-2xl: 16px;
+  --edu-border-radius-3xl: 24px;
+  --edu-border-radius-full: 9999px;
 }
 
 // ========================================
@@ -227,15 +330,15 @@
 // ========================================
 
 :root {
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
-  --shadow-glass: 0 8px 32px rgba(31, 38, 135, 0.15);
-  --shadow-education: 0 4px 20px rgba(91, 143, 249, 0.15);
+  --edu-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 5%);
+  --edu-shadow-base: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%);
+  --edu-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
+  --edu-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -2px rgb(0 0 0 / 5%);
+  --edu-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 10%), 0 10px 10px -5px rgb(0 0 0 / 4%);
+  --edu-shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 25%);
+  --edu-shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 6%);
+  --edu-shadow-glass: 0 8px 32px rgb(31 38 135 / 15%);
+  --edu-shadow-education: 0 4px 20px rgb(91 143 249 / 15%);
 }
 
 // ========================================
@@ -243,19 +346,19 @@
 // ========================================
 
 :root {
-  --z-index-hide: -1;
-  --z-index-auto: auto;
-  --z-index-base: 0;
-  --z-index-docked: 10;
-  --z-index-dropdown: 1000;
-  --z-index-sticky: 1100;
-  --z-index-banner: 1200;
-  --z-index-overlay: 1300;
-  --z-index-modal: 1400;
-  --z-index-popover: 1500;
-  --z-index-skip-link: 1600;
-  --z-index-toast: 1700;
-  --z-index-tooltip: 1800;
+  --edu-z-index-hide: -1;
+  --edu-z-index-auto: auto;
+  --edu-z-index-base: 0;
+  --edu-z-index-docked: 10;
+  --edu-z-index-dropdown: 1000;
+  --edu-z-index-sticky: 1100;
+  --edu-z-index-banner: 1200;
+  --edu-z-index-overlay: 1300;
+  --edu-z-index-modal: 1400;
+  --edu-z-index-popover: 1500;
+  --edu-z-index-skip-link: 1600;
+  --edu-z-index-toast: 1700;
+  --edu-z-index-tooltip: 1800;
 }
 
 // ========================================
@@ -264,23 +367,23 @@
 
 :root {
   // 缓动函数
-  --easing-linear: linear;
-  --easing-in: cubic-bezier(0.4, 0, 1, 1);
-  --easing-out: cubic-bezier(0, 0, 0.2, 1);
-  --easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --easing-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  --easing-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --edu-easing-linear: linear;
+  --edu-easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --edu-easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --edu-easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --edu-easing-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --edu-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --edu-easing-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   // 持续时间
-  --duration-fast: 0.15s;
-  --duration-normal: 0.3s;
-  --duration-slow: 0.5s;
+  --edu-duration-fast: 0.15s;
+  --edu-duration-normal: 0.3s;
+  --edu-duration-slow: 0.5s;
 
   // 延迟时间
-  --delay-short: 0.1s;
-  --delay-normal: 0.2s;
-  --delay-long: 0.3s;
+  --edu-delay-short: 0.1s;
+  --edu-delay-normal: 0.2s;
+  --edu-delay-long: 0.3s;
 }
 
 // ========================================
@@ -288,14 +391,14 @@
 // ========================================
 
 :root {
-  --gradient-primary: linear-gradient(135deg, #5B8FF9 0%, #85BEFF 100%);
-  --gradient-secondary: linear-gradient(135deg, #52C41A 0%, #7ED321 100%);
-  --gradient-warm: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
-  --gradient-cool: linear-gradient(135deg, #4ECDC4 0%, #44A3AA 100%);
-  --gradient-education: linear-gradient(135deg, #5B8FF9 0%, #4ECDC4 100%);
-  --gradient-success: linear-gradient(135deg, #52C41A 0%, #95DE64 100%);
-  --gradient-warning: linear-gradient(135deg, #FAAD14 0%, #FFD666 100%);
-  --gradient-error: linear-gradient(135deg, #F5222D 0%, #FF7875 100%);
+  --edu-gradient-primary: linear-gradient(135deg, #5B8FF9 0%, #85BEFF 100%);
+  --edu-gradient-secondary: linear-gradient(135deg, #52C41A 0%, #7ED321 100%);
+  --edu-gradient-warm: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+  --edu-gradient-cool: linear-gradient(135deg, #4ECDC4 0%, #44A3AA 100%);
+  --edu-gradient-education: linear-gradient(135deg, #5B8FF9 0%, #4ECDC4 100%);
+  --edu-gradient-success: linear-gradient(135deg, #52C41A 0%, #95DE64 100%);
+  --edu-gradient-warning: linear-gradient(135deg, #FAAD14 0%, #FFD666 100%);
+  --edu-gradient-error: linear-gradient(135deg, #F5222D 0%, #FF7875 100%);
 }
 
 // ========================================
@@ -303,71 +406,320 @@
 // ========================================
 
 :root {
-  --breakpoint-xs: 480px;
-  --breakpoint-sm: 768px;
-  --breakpoint-md: 1024px;
-  --breakpoint-lg: 1280px;
-  --breakpoint-xl: 1536px;
-  --breakpoint-2xl: 1920px;
+  --edu-breakpoint-xs: 480px;
+  --edu-breakpoint-sm: 768px;
+  --edu-breakpoint-md: 1024px;
+  --edu-breakpoint-lg: 1280px;
+  --edu-breakpoint-xl: 1536px;
+  --edu-breakpoint-2xl: 1920px;
 }
 
 // ========================================
-// 组件特定变量
+// 组件级Token系统 - Component Tokens
 // ========================================
 
 :root {
-  // 按钮
-  --button-height-sm: 24px;
-  --button-height-md: 32px;
-  --button-height-lg: 40px;
-  --button-padding-sm: 0 8px;
-  --button-padding-md: 0 16px;
-  --button-padding-lg: 0 24px;
+  // 按钮组件Token - Button Component Tokens
+  // 按钮尺寸
+  --btn-height-xs: 24px;
+  --btn-height-sm: 32px;
+  --btn-height-base: 40px;
+  --btn-height-lg: 48px;
+  --btn-height-xl: 56px;
 
-  // 卡片
+  // 按钮内边距
+  --btn-padding-x-sm: 8px;
+  --btn-padding-x-base: 16px;
+  --btn-padding-x-lg: 24px;
+
+  // 按钮图标占位
+  --btn-icon-size-xs: 12px;
+  --btn-icon-size-sm: 16px;
+  --btn-icon-size-base: 20px;
+  --btn-icon-size-lg: 24px;
+
+  // 按钮状态色彩
+  --btn-primary-bg: var(--edu-primary-500);
+  --btn-primary-bg-hover: var(--edu-primary-600);
+  --btn-primary-bg-active: var(--edu-primary-700);
+  --btn-primary-bg-disabled: var(--edu-primary-300);
+
+  --btn-secondary-border: var(--edu-primary-500);
+  --btn-secondary-border-hover: var(--edu-primary-600);
+  --btn-secondary-border-disabled: var(--edu-primary-200);
+
+  // 按钮加载状态
+  --btn-loading-opacity: 0.7;
+  --btn-spinner-size: 16px;
+
+  // 兼容现有按钮变量
+  --edu-button-height-sm: var(--btn-height-sm);
+  --edu-button-height-md: var(--btn-height-base);
+  --edu-button-height-lg: var(--btn-height-lg);
+  --edu-button-padding-sm: 0 var(--btn-padding-x-sm);
+  --edu-button-padding-md: 0 var(--btn-padding-x-base);
+  --edu-button-padding-lg: 0 var(--btn-padding-x-lg);
+
+  // 输入框组件Token - Input Component Tokens
+  // 输入框尺寸
+  --input-height-sm: 32px;
+  --input-height-base: 40px;
+  --input-height-lg: 48px;
+
+  // 输入框内边距
+  --input-padding-x: 12px;
+  --input-padding-y: 8px;
+
+  // 输入框边框
+  --input-border: 1px solid var(--edu-color-gray-300);
+  --input-border-hover: 1px solid var(--edu-primary-400);
+  --input-border-focus: 2px solid var(--edu-primary-500);
+  --input-border-error: 2px solid var(--edu-color-error-default);
+
+  // 输入框背景
+  --input-bg: #ffffff;
+  --input-bg-disabled: var(--edu-color-gray-100);
+  --input-bg-readonly: var(--edu-color-gray-50);
+
+  // 输入框文本
+  --input-color: var(--text-primary);
+  --input-color-placeholder: var(--text-tertiary);
+  --input-color-disabled: var(--text-disabled);
+
+  // 输入框图标
+  --input-icon-size: 16px;
+  --input-icon-color: var(--text-secondary);
+  --input-icon-spacing: 8px;
+
+  // 兼容现有输入框变量
+  --edu-input-height: var(--input-height-base);
+  --edu-input-padding: 0 var(--input-padding-x);
+  --edu-input-border-radius: var(--radius-base);
+  --edu-input-border: var(--input-border);
+  --edu-input-border-focus: var(--input-border-focus);
+
+  // 表格组件Token - Table Component Tokens
+  // 表格尺寸
+  --table-cell-height-sm: 40px;
+  --table-cell-height-base: 48px;
+  --table-cell-height-lg: 56px;
+
+  // 表格内边距
+  --table-cell-padding-x: 16px;
+  --table-cell-padding-y: 12px;
+
+  // 表格边框
+  --table-border: 1px solid var(--edu-color-gray-200);
+  --table-border-header: 2px solid var(--edu-color-gray-200);
+
+  // 表格背景
+  --table-bg-header: var(--edu-color-gray-50);
+  --table-bg-body: #ffffff;
+  --table-bg-striped: var(--edu-color-gray-50);
+  --table-bg-hover: var(--edu-primary-50);
+  --table-bg-selected: var(--edu-primary-100);
+
+  // 表格文本
+  --table-color-header: var(--text-primary);
+  --table-color-body: var(--text-secondary);
+
+  // 排序图标
+  --table-sort-icon-size: 16px;
+  --table-sort-icon-color: var(--text-tertiary);
+  --table-sort-icon-color-active: var(--edu-primary-500);
+
+  // 兼容现有表格变量
+  --edu-table-header-height: var(--table-cell-height-base);
+  --edu-table-row-height: var(--table-cell-height-base);
+  --edu-table-cell-padding: var(--table-cell-padding-y) var(--table-cell-padding-x);
+  --edu-table-border-color: var(--table-border);
+  --edu-table-header-bg: var(--table-bg-header);
+
+  // 标签组件Token - Tag Component Tokens
+  // 标签尺寸
+  --tag-height-xs: 20px;
+  --tag-height-sm: 24px;
+  --tag-height-base: 28px;
+  --tag-height-lg: 32px;
+
+  // 标签内边距
+  --tag-padding-x-sm: 6px;
+  --tag-padding-x-base: 8px;
+  --tag-padding-x-lg: 12px;
+
+  // 标签圆角
+  --tag-radius: var(--radius-full);
+
+  // 标签色彩 - 学科主题
+  --tag-physics-bg: var(--physics-light);
+  --tag-physics-color: var(--physics-primary);
+  --tag-chemistry-bg: var(--chemistry-light);
+  --tag-chemistry-color: var(--chemistry-primary);
+  --tag-math-bg: var(--math-light);
+  --tag-math-color: var(--math-primary);
+
+  // 标签色彩 - 状态主题
+  --tag-success-bg: var(--edu-color-success-light);
+  --tag-success-color: var(--edu-color-success-default);
+  --tag-warning-bg: var(--edu-color-warning-light);
+  --tag-warning-color: var(--edu-color-warning-default);
+  --tag-error-bg: var(--edu-color-error-light);
+  --tag-error-color: var(--edu-color-error-default);
+
+  // 标签图标
+  --tag-icon-size: 12px;
+  --tag-icon-spacing: 4px;
+
+  // 卡片组件Token - Card Component Tokens
   --card-padding-sm: 16px;
-  --card-padding-md: 24px;
+  --card-padding-base: 24px;
   --card-padding-lg: 32px;
-  --card-border-radius: 8px;
-  --card-shadow: var(--shadow-md);
+  --card-border-radius: var(--radius-lg);
+  --card-shadow: var(--edu-shadow-md);
+  --card-bg: #ffffff;
+  --card-bg-hover: #ffffff;
 
-  // 输入框
-  --input-height: 40px;
-  --input-padding: 0 12px;
-  --input-border-radius: 6px;
-  --input-border: 1px solid var(--color-gray-300);
-  --input-border-focus: 1px solid var(--color-primary-500);
+  // 兼容现有卡片变量
+  --edu-card-padding-sm: var(--card-padding-sm);
+  --edu-card-padding-md: var(--card-padding-base);
+  --edu-card-padding-lg: var(--card-padding-lg);
+  --edu-card-border-radius: var(--card-border-radius);
+  --edu-card-shadow: var(--card-shadow);
 
-  // 表格
-  --table-header-height: 48px;
-  --table-row-height: 56px;
-  --table-cell-padding: 12px 16px;
-  --table-border-color: var(--color-gray-200);
-  --table-header-bg: var(--color-gray-50);
+  // 图标组件Token - Icon Component Tokens
+  // 图标尺寸标准
+  --icon-xs: 12px;    // 极小图标 - 用于状态指示器
+  --icon-sm: 16px;    // 小图标 - 用于按钮内、列表项
+  --icon-base: 20px;  // 基础图标 - 用于导航、标签
+  --icon-lg: 24px;    // 大图标 - 用于卡片标题、重要按钮
+  --icon-xl: 32px;    // 特大图标 - 用于空状态、重要提示
+  --icon-2xl: 48px;   // 超大图标 - 用于主视觉
+
+  // 图标色彩规范
+  --icon-color-primary: var(--edu-primary-500);
+  --icon-color-secondary: var(--text-secondary);
+  --icon-color-tertiary: var(--text-tertiary);
+  --icon-color-success: var(--edu-color-success-default);
+  --icon-color-warning: var(--edu-color-warning-default);
+  --icon-color-error: var(--edu-color-error-default);
+  --icon-color-disabled: var(--text-disabled);
+
+  // 图标对齐方式
+  --icon-align-center: vertical-align: middle;
+  --icon-align-text: vertical-align: text-bottom;
 }
 
 // ========================================
-// 深色模式变量
+// 深色主题与高对比度配色 - Dark Theme & High Contrast
 // ========================================
 
+// 深色主题Token
 [data-theme="dark"] {
-  // 调整深色模式下的颜色
-  --color-gray-50: #1F1F1F;
-  --color-gray-100: #262626;
-  --color-gray-200: #434343;
-  --color-gray-300: #595959;
-  --color-gray-400: #8C8C8C;
-  --color-gray-500: #BFBFBF;
-  --color-gray-600: #D9D9D9;
-  --color-gray-700: #F0F0F0;
-  --color-gray-800: #F5F5F5;
-  --color-gray-900: #FAFAFA;
+  // 背景色
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-surface: #262626;
+  --bg-elevated: #2f2f2f;
+
+  // 文本色
+  --text-primary: rgba(255, 255, 255, 0.87);
+  --text-secondary: rgba(255, 255, 255, 0.68);
+  --text-tertiary: rgba(255, 255, 255, 0.38);
+  --text-disabled: rgba(255, 255, 255, 0.25);
+
+  // 边框色
+  --border-color: rgba(255, 255, 255, 0.12);
+  --border-color-strong: rgba(255, 255, 255, 0.2);
+
+  // 组件适配
+  --input-bg: var(--bg-surface);
+  --card-bg: var(--bg-surface);
+  --table-bg-body: var(--bg-surface);
+  --table-bg-hover: rgba(255, 255, 255, 0.04);
+
+  // 调整现有颜色变量
+  --edu-color-gray-50: #1F1F1F;
+  --edu-color-gray-100: #262626;
+  --edu-color-gray-200: #434343;
+  --edu-color-gray-300: #595959;
+  --edu-color-gray-400: #8C8C8C;
+  --edu-color-gray-500: #BFBFBF;
+  --edu-color-gray-600: #D9D9D9;
+  --edu-color-gray-700: #F0F0F0;
+  --edu-color-gray-800: #F5F5F5;
+  --edu-color-gray-900: #FAFAFA;
 
   // 调整阴影
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --edu-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 30%);
+  --edu-shadow-base: 0 1px 3px 0 rgb(0 0 0 / 40%), 0 1px 2px 0 rgb(0 0 0 / 30%);
+  --edu-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 40%), 0 2px 4px -1px rgb(0 0 0 / 30%);
+  --edu-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 40%), 0 4px 6px -2px rgb(0 0 0 / 30%);
+  --edu-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 40%), 0 10px 10px -5px rgb(0 0 0 / 30%);
+  --edu-shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 50%);
+}
+
+// 高对比度主题Token
+[data-theme="high-contrast"] {
+  // 增强对比度
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f8f8;
+
+  // 加强边框
+  --border-color: #666666;
+  --border-width: 2px;
+
+  // 增强按钮对比
+  --btn-primary-bg: #000000;
+  --btn-primary-color: #ffffff;
+  --btn-secondary-border: #000000;
+  --btn-secondary-color: #000000;
+
+  // 焦点状态增强
+  --focus-ring: 3px solid #000000;
+  --focus-offset: 2px;
+}
+
+// 数据可视化配色规范 - Chart Colors
+:root {
+  // 主数据系列色彩
+  --chart-color-1: var(--edu-primary-500);
+  --chart-color-2: var(--edu-color-success-default);
+  --chart-color-3: var(--edu-color-warning-default);
+  --chart-color-4: var(--edu-color-error-default);
+  --chart-color-5: var(--edu-color-info-default);
+  --chart-color-6: var(--physics-primary);
+  --chart-color-7: var(--chemistry-primary);
+  --chart-color-8: var(--math-primary);
+
+  // 中性色彩
+  --chart-neutral-100: #f5f5f5;
+  --chart-neutral-200: #e0e0e0;
+  --chart-neutral-300: #bdbdbd;
+  --chart-neutral-400: #9e9e9e;
+  --chart-neutral-500: #757575;
+  --chart-neutral-600: #616161;
+  --chart-neutral-700: #424242;
+  --chart-neutral-800: #212121;
+  --chart-neutral-900: #000000;
+
+  // 图表网格线
+  --chart-grid-color: var(--chart-neutral-200);
+  --chart-grid-color-thick: var(--chart-neutral-300);
+  --chart-grid-style: solid;
+  --chart-grid-width: 1px;
+
+  // 图表字体
+  --chart-font-size: 12px;
+  --chart-font-size-label: 10px;
+  --chart-font-size-title: 14px;
+  --chart-font-color: var(--text-secondary);
+  --chart-font-color-label: var(--text-tertiary);
+
+  // 图例样式
+  --chart-legend-font-size: 12px;
+  --chart-legend-color: var(--text-secondary);
+  --chart-legend-item-spacing: 16px;
+  --chart-legend-icon-size: 12px;
 }

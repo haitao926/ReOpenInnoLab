@@ -16,7 +16,8 @@
       "@shared-utils/*": ["src/*"]
     },
     "noEmit": false,
-    "composite": true
+    "composite": true,
+    "allowImportingTsExtensions": false
   },
   "include": [
     "src/**/*"

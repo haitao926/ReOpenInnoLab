@@ -6,16 +6,20 @@
 export * from './acl-parser'
 export * from './acl-validator'
 export * from './acl-renderer'
-export * from './acl-version-manager'
 export * from './acl-diff'
-export * from './acl-utils'
 export * from './types'
+
+// TODO: Implement these modules
+// export * from './acl-version-manager'
+// export * from './acl-utils'
 
 // 便捷入口
 export { ACLParser } from './acl-parser'
 export { ACLValidator } from './acl-validator'
 export { ACLRenderer } from './acl-renderer'
-export { ACLVersionManager } from './acl-version-manager'
+
+// TODO: Implement this module
+// export { ACLVersionManager } from './acl-version-manager'
 
 // 主要接口导出
 export type {
@@ -26,6 +30,10 @@ export type {
   CourseNode,
   ResourceReference,
   ValidationResult,
-  RenderOptions,
-  VersionInfo
+  RenderOptions
 } from './types'
+
+// TODO: Implement this type
+// export type {
+//   VersionInfo
+// } from './types'

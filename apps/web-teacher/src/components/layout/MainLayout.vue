@@ -1,64 +1,47 @@
 <template>
-  <div class="main-layout">
-    <!-- 侧边栏 -->
-    <AppSidebar />
+  <div class="main-layout" :class="layoutClasses">
+    <aside class="layout-sidebar">
+      <AppSidebar />
+    </aside>
 
-    <!-- 主内容区 -->
-    <div class="main-content" :class="{ collapsed: appStore.isCollapsed }">
-      <!-- 顶部导航 -->
-      <AppHeader />
+    <div class="layout-main">
+      <header class="layout-header">
+        <AppHeader />
+      </header>
 
-      <!-- 页面内容 -->
-      <main class="page-content">
-        <div class="content-wrapper">
-          <router-view v-slot="{ Component, route }">
-            <transition name="fade" mode="out-in">
-              <component :is="Component" :key="route.path" />
-            </transition>
-          </router-view>
+      <main class="layout-content" role="main">
+        <div class="content-scroller">
+          <div class="content-surface">
+            <router-view v-slot="{ Component, route }">
+              <transition name="fade" mode="out-in">
+                <component :is="Component" :key="route.fullPath" />
+              </transition>
+            </router-view>
+          </div>
         </div>
       </main>
     </div>
 
-    <!-- AI助手浮动组件 -->
     <AIAssistantFloat />
-
-    <!-- 全局通知 -->
-    <GlobalNotification />
-
-    <!-- 错误边界 -->
-    <ErrorBoundary />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
 import AIAssistantFloat from '@/components/ai/AIAssistantFloat.vue'
-import GlobalNotification from '@/components/common/GlobalNotification.vue'
-import ErrorBoundary from '@/components/common/ErrorBoundary.vue'
 import { useAppStore } from '@/stores/app'
-import { useUserStore } from '@/stores/user'
 
 const appStore = useAppStore()
-const userStore = useUserStore()
 
-// 初始化应用
-onMounted(async () => {
-  // 初始化应用设置
-  appStore.initialize()
+const layoutClasses = computed(() => ({
+  'is-collapsed': appStore.isCollapsed
+}))
 
-  // 初始化用户信息
-  userStore.initializeFromStorage()
-
-  // 如果有token，获取用户信息
-  if (userStore.token) {
-    try {
-      await userStore.getUserInfo()
-    } catch (error) {
-      console.error('初始化用户信息失败:', error)
-    }
+onMounted(() => {
+  if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+    appStore.setSidebarCollapsed(true)
   }
 })
 </script>
@@ -66,74 +49,123 @@ onMounted(async () => {
 <style scoped>
 .main-layout {
   min-height: 100vh;
-  background-color: var(--el-bg-color-page);
+  display: grid;
+  grid-template-columns: var(--edu-sidebar-width) 1fr;
+  background: radial-gradient(circle at 0% 0%, rgba(91, 143, 249, 0.08), transparent 55%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 245, 250, 0.9) 100%);
+  transition: grid-template-columns var(--edu-duration-normal) var(--edu-easing-smooth);
 }
 
-.main-content {
-  margin-left: 240px;
-  min-height: 100vh;
+.main-layout.is-collapsed {
+  grid-template-columns: var(--edu-sidebar-collapsed-width) 1fr;
+}
+
+.layout-sidebar {
+  position: relative;
+  background: transparent;
+  border-right: 1px solid var(--edu-border-color-light);
+  backdrop-filter: blur(14px);
+}
+
+.layout-main {
   display: flex;
   flex-direction: column;
-  transition: margin-left 0.3s ease;
+  min-height: 100vh;
+  background: transparent;
 }
 
-.main-content.collapsed {
-  margin-left: 64px;
+.layout-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--edu-z-index-dropdown);
+  backdrop-filter: blur(14px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.82) 100%);
+  border-bottom: 1px solid rgba(209, 213, 219, 0.6);
 }
 
-.page-content {
+.layout-content {
   flex: 1;
-  padding: 20px;
-  background-color: var(--el-bg-color-page);
-}
-
-.content-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: var(--el-bg-color);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
   overflow: hidden;
 }
 
-/* 路由过渡动画 */
+.content-scroller {
+  height: 100%;
+  overflow-y: auto;
+  padding: 32px clamp(24px, 4vw, 48px);
+}
+
+.content-surface {
+  min-height: calc(100vh - var(--edu-header-height));
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  border: none;
+}
+
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity var(--edu-duration-normal) var(--edu-easing-smooth),
+    transform var(--edu-duration-normal) var(--edu-easing-smooth);
 }
 
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+  transform: translateY(12px);
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .main-content {
-    margin-left: 0;
+@media (max-width: 1280px) {
+  .main-layout {
+    grid-template-columns: var(--edu-sidebar-collapsed-width) 1fr;
+  }
+}
+
+@media (max-width: 960px) {
+  .main-layout {
+    grid-template-columns: 1fr;
   }
 
-  .main-content.collapsed {
-    margin-left: 0;
+  .layout-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 260px;
+    z-index: calc(var(--edu-z-index-modal) - 50);
+    transform: translateX(-100%);
+    transition: transform var(--edu-duration-normal) var(--edu-easing-smooth);
+    box-shadow: 12px 0 40px rgba(15, 23, 42, 0.25);
   }
 
-  .page-content {
+  .main-layout.is-collapsed .layout-sidebar {
+    transform: translateX(-100%);
+  }
+
+  .main-layout:not(.is-collapsed) .layout-sidebar {
+    transform: translateX(0);
+  }
+
+  .layout-main {
+    min-height: 100vh;
+    background: var(--edu-color-white);
+  }
+
+  .content-scroller {
     padding: 16px;
   }
 
-  .content-wrapper {
-    border-radius: 0;
-    box-shadow: none;
+  .content-surface {
+    background: transparent;
+    padding: 0;
   }
 }
 
-/* 深色模式适配 */
-.dark .main-layout {
-  background-color: var(--el-bg-color-page);
-}
-
-.dark .content-wrapper {
-  background-color: var(--el-bg-color);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+@media (prefers-reduced-motion: reduce) {
+  .main-layout,
+  .layout-sidebar,
+  .fade-enter-active,
+  .fade-leave-active {
+    transition-duration: 0.01ms !important;
+  }
 }
 </style>

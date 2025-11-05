@@ -4,7 +4,7 @@
  */
 
 // 导入 Design Token
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap';
 
 // 色彩系统
 :root {
@@ -35,13 +35,13 @@
   --el-border-color-dark: #BFBFBF;
 
   // 填充色
-  --el-fill-color-blank: #FFFFFF;
+  --el-fill-color-blank: #FFF;
   --el-fill-color: #FAFAFA;
   --el-fill-color-light: #F5F5F5;
   --el-fill-color-lighter: #F0F2F5;
 
   // 背景色
-  --el-bg-color: #FFFFFF;
+  --el-bg-color: #FFF;
   --el-bg-color-page: #FAFAFA;
 
   // 组件尺寸
@@ -55,9 +55,9 @@
   --el-border-radius-round: 9999px;
 
   // 阴影
-  --el-box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --el-box-shadow-light: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --el-box-shadow-dark: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --el-box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
+  --el-box-shadow-light: 0 1px 2px 0 rgb(0 0 0 / 5%);
+  --el-box-shadow-dark: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -2px rgb(0 0 0 / 5%);
 
   // 字体
   --el-font-size-base: 16px;
@@ -93,10 +93,10 @@
   --edu-subject-it: #708090;
 
   // 玻璃质感
-  --edu-glass-bg: rgba(255, 255, 255, 0.85);
-  --edu-glass-border: 1px solid rgba(255, 255, 255, 0.18);
+  --edu-glass-bg: rgb(255 255 255 / 85%);
+  --edu-glass-border: 1px solid rgb(255 255 255 / 18%);
   --edu-glass-blur: blur(12px);
-  --edu-glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  --edu-glass-shadow: 0 8px 32px rgb(31 38 135 / 15%);
 
   // 渐变
   --edu-gradient-primary: linear-gradient(135deg, #5B8FF9 0%, #85BEFF 100%);
@@ -120,14 +120,14 @@
 // Element Plus 组件定制
 .el-button {
   &.el-button--primary {
-    background: var(--edu-gradient-primary);
     border: none;
-    box-shadow: 0 4px 12px rgba(91, 143, 249, 0.3);
+    box-shadow: 0 4px 12px rgb(91 143 249 / 30%);
+    background: var(--edu-gradient-primary);
     transition: all 0.3s var(--edu-ease-smooth);
 
     &:hover {
+      box-shadow: 0 6px 20px rgb(91 143 249 / 40%);
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(91, 143, 249, 0.4);
     }
 
     &:active {
@@ -136,40 +136,40 @@
   }
 
   &.el-button--success {
-    background: var(--edu-gradient-secondary);
     border: none;
-    box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
+    box-shadow: 0 4px 12px rgb(82 196 26 / 30%);
+    background: var(--edu-gradient-secondary);
   }
 
   &.el-button--warning {
-    background: linear-gradient(135deg, #FAAD14 0%, #FFD666 100%);
     border: none;
-    box-shadow: 0 4px 12px rgba(250, 173, 20, 0.3);
+    box-shadow: 0 4px 12px rgb(250 173 20 / 30%);
+    background: linear-gradient(135deg, #FAAD14 0%, #FFD666 100%);
   }
 
   &.el-button--danger {
-    background: linear-gradient(135deg, #F5222D 0%, #FF7875 100%);
     border: none;
-    box-shadow: 0 4px 12px rgba(245, 34, 45, 0.3);
+    box-shadow: 0 4px 12px rgb(245 34 45 / 30%);
+    background: linear-gradient(135deg, #F5222D 0%, #FF7875 100%);
   }
 }
 
 // 卡片组件
 .el-card {
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   border: 1px solid var(--el-border-color-light);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
   transition: all 0.3s var(--edu-ease-smooth);
 
   &:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -2px rgb(0 0 0 / 5%);
     transform: translateY(-2px);
   }
 
   .el-card__header {
-    background: var(--el-fill-color-blank);
-    border-bottom: 1px solid var(--el-border-color-light);
     padding: var(--edu-spacing-md) var(--edu-spacing-lg);
+    border-bottom: 1px solid var(--el-border-color-light);
+    background: var(--el-fill-color-blank);
     font-weight: 600;
   }
 
@@ -180,17 +180,17 @@
 
 // 教育主题卡片
 .edu-card {
-  background: var(--edu-glass-bg);
-  backdrop-filter: var(--edu-glass-blur);
+  padding: var(--edu-spacing-lg);
   border: var(--edu-glass-border);
   border-radius: 16px;
   box-shadow: var(--edu-glass-shadow);
-  padding: var(--edu-spacing-lg);
+  background: var(--edu-glass-bg);
   transition: all 0.3s var(--edu-ease-smooth);
+  backdrop-filter: var(--edu-glass-blur);
 
   &:hover {
+    box-shadow: 0 12px 40px rgb(31 38 135 / 20%);
     transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.2);
   }
 }
 
@@ -198,13 +198,13 @@
 .edu-subject-tag {
   display: inline-flex;
   align-items: center;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  color: white;
   margin-right: 8px;
   margin-bottom: 8px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
 
   &.math { background-color: var(--edu-subject-math); }
   &.physics { background-color: var(--edu-subject-physics); }
@@ -254,7 +254,7 @@
 
     &.is-focus {
       border-color: var(--edu-primary);
-      box-shadow: 0 0 0 2px rgba(91, 143, 249, 0.2);
+      box-shadow: 0 0 0 2px rgb(91 143 249 / 20%);
     }
   }
 }
@@ -272,7 +272,7 @@
 .el-menu {
   &.el-menu--horizontal {
     border-bottom: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
 
     .el-menu-item {
       border-bottom: 2px solid transparent;
@@ -292,11 +292,11 @@
 
   &.el-menu--vertical {
     border-right: none;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
+    box-shadow: 2px 0 8px rgb(0 0 0 / 6%);
 
     .el-menu-item {
-      border-radius: 8px;
       margin: 4px 8px;
+      border-radius: 8px;
 
       &:hover {
         background: var(--el-fill-color-light);
@@ -333,8 +333,8 @@
   }
 
   .el-tabs__active-bar {
-    background: var(--edu-primary);
     height: 3px;
+    background: var(--edu-primary);
   }
 }
 
@@ -347,8 +347,8 @@
 
   .btn-prev,
   .btn-next {
-    border-radius: 6px;
     margin: 0 2px;
+    border-radius: 6px;
 
     &:hover {
       color: var(--edu-primary);
@@ -356,8 +356,8 @@
   }
 
   .el-pager li {
-    border-radius: 6px;
     margin: 0 2px;
+    border-radius: 6px;
 
     &:hover {
       color: var(--edu-primary);
@@ -373,29 +373,29 @@
 // 消息提示
 .el-message {
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px rgb(0 0 0 / 15%);
   backdrop-filter: var(--edu-glass-blur);
 
   &.el-message--success {
-    background: rgba(82, 196, 26, 0.9);
-    border: 1px solid rgba(82, 196, 26, 0.3);
+    border: 1px solid rgb(82 196 26 / 30%);
+    background: rgb(82 196 26 / 90%);
   }
 
   &.el-message--warning {
-    background: rgba(250, 173, 20, 0.9);
-    border: 1px solid rgba(250, 173, 20, 0.3);
+    border: 1px solid rgb(250 173 20 / 30%);
+    background: rgb(250 173 20 / 90%);
   }
 
   &.el-message--error {
-    background: rgba(245, 34, 45, 0.9);
-    border: 1px solid rgba(245, 34, 45, 0.3);
+    border: 1px solid rgb(245 34 45 / 30%);
+    background: rgb(245 34 45 / 90%);
   }
 }
 
 // 对话框
 .el-dialog {
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 40px rgb(0 0 0 / 15%);
   backdrop-filter: var(--edu-glass-blur);
 
   .el-dialog__header {
@@ -403,8 +403,8 @@
     border-bottom: 1px solid var(--el-border-color-light);
 
     .el-dialog__title {
-      font-weight: 600;
       font-size: 18px;
+      font-weight: 600;
     }
   }
 
@@ -421,13 +421,13 @@
 // 抽屉
 .el-drawer {
   .el-drawer__header {
+    margin-bottom: 0;
     padding: var(--edu-spacing-lg);
     border-bottom: 1px solid var(--el-border-color-light);
-    margin-bottom: 0;
 
     .el-drawer__title {
-      font-weight: 600;
       font-size: 18px;
+      font-weight: 600;
     }
   }
 
@@ -438,7 +438,7 @@
 
 // 加载中
 .el-loading-mask {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgb(255 255 255 / 90%);
   backdrop-filter: var(--edu-glass-blur);
 
   .el-loading-spinner {
@@ -449,7 +449,7 @@
 }
 
 // 响应式设计
-@media (max-width: 768px) {
+@media (width <= 768px) {
   :root {
     --edu-spacing-md: 12px;
     --edu-spacing-lg: 16px;
@@ -477,25 +477,21 @@
 // 深色模式支持
 @media (prefers-color-scheme: dark) {
   :root {
-    --el-text-color-primary: #FFFFFF;
+    --el-text-color-primary: #FFF;
     --el-text-color-regular: #E6E6E6;
     --el-text-color-secondary: #B3B3B3;
-    --el-text-color-placeholder: #666666;
-
+    --el-text-color-placeholder: #666;
     --el-bg-color: #1F1F1F;
     --el-bg-color-page: #141414;
-
     --el-border-color-light: #404040;
-    --el-border-color: #333333;
+    --el-border-color: #333;
     --el-border-color-dark: #262626;
-
     --el-fill-color-blank: #1F1F1F;
     --el-fill-color: #141414;
     --el-fill-color-light: #0A0A0A;
-    --el-fill-color-lighter: #000000;
-
-    --edu-glass-bg: rgba(31, 31, 31, 0.85);
-    --edu-glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --el-fill-color-lighter: #000;
+    --edu-glass-bg: rgb(31 31 31 / 85%);
+    --edu-glass-border: 1px solid rgb(255 255 255 / 10%);
   }
 
   .edu-card {
@@ -512,10 +508,9 @@
 // 高对比度模式
 @media (prefers-contrast: high) {
   :root {
-    --el-border-color-light: #000000;
-    --el-border-color: #000000;
-    --el-border-color-dark: #000000;
-
+    --el-border-color-light: #000;
+    --el-border-color: #000;
+    --el-border-color-dark: #000;
     --el-box-shadow: none;
     --el-box-shadow-light: none;
     --el-box-shadow-dark: none;
@@ -533,9 +528,9 @@
   *,
   *::before,
   *::after {
+    transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
   }
 
   .el-button,

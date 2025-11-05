@@ -6,6 +6,10 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'
 import router from './router'
 
+// UI Kit 主题导入 - 必须在最前面
+import '@reopeninnolab/ui-kit/styles'
+import { themeManager } from '@reopeninnolab/ui-kit/theme'
+
 // 样式导入
 import 'element-plus/dist/index.css'
 import './assets/styles/main.scss'
@@ -32,9 +36,16 @@ app.use(ElementPlus, {
   zIndex: 3000,
 })
 
-// 初始化AI服务
+// 初始化AI服务 - 在开发环境使用mock模式
+const isDevelopment = import.meta.env.DEV
 const aiService = new AIService({
-  providers: {
+  providers: isDevelopment ? {
+    mock: {
+      apiKey: 'mock-key',
+      baseUrl: 'http://localhost:8080/v1',
+      model: 'mock-model',
+    }
+  } : {
     deepseek: {
       apiKey: import.meta.env.VITE_DEEPSEEK_API_KEY,
       baseUrl: import.meta.env.VITE_DEEPSEEK_BASE_URL || 'https://api.deepseek.com/v1',
@@ -46,19 +57,24 @@ const aiService = new AIService({
       model: import.meta.env.VITE_OPENAI_MODEL || 'gpt-4',
     }
   },
-  defaultProvider: 'deepseek'
+  defaultProvider: isDevelopment ? 'mock' : 'deepseek'
 })
 
 // 初始化WebSocket服务
-const wsService = new WebSocketService({
-  url: import.meta.env.VITE_WS_URL || 'ws://localhost:8080/ws',
-  reconnectAttempts: 5,
-  reconnectInterval: 1000
-})
+const wsUrl = import.meta.env.VITE_WS_URL
+const wsService = wsUrl ? new WebSocketService({
+  url: wsUrl,
+  reconnectAttempts: 3,
+  reconnectInterval: 2000
+}) : null
 
 // 全局属性注入
 app.provide('aiService', aiService)
 app.provide('wsService', wsService)
+app.provide('themeManager', themeManager)
+
+// 应用UI Kit主题到DOM
+themeManager.applyFullTheme()
 
 // 全局错误处理
 app.config.errorHandler = (error, instance, info) => {
