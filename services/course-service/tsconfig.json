@@ -21,8 +21,14 @@
       "@shared-utils/*": ["../../packages/shared-utils/src/*"],
       "@acl-sdk/*": ["../../packages/acl-sdk/src/*"]
     },
+    "strict": false,
     "strictPropertyInitialization": false,
-    "strictNullChecks": false
+    "strictNullChecks": true,
+    "exactOptionalPropertyTypes": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": false,
+    "noUncheckedIndexedAccess": false
   },
   "include": [
     "src/**/*"

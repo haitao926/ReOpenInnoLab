@@ -6,16 +6,15 @@
     v-model:rightCollapsed="rightSidebarCollapsed"
   >
     <template #header-controls>
-      <div class="workspace-actions">
-        <el-button type="primary" @click="showUploadModal = true">
-          <el-icon><Plus /></el-icon>
-          上传互动内容
-        </el-button>
-        <el-button @click="refreshList">
-          <el-icon><Refresh /></el-icon>
-          刷新列表
-        </el-button>
-      </div>
+      <WorkspacePrimaryToolbar
+        :create-button-text="'上传互动内容'"
+        :import-button-text="'批量导入'"
+        :show-ai-button="false"
+        :show-refresh-button="true"
+        @create="showUploadModal = true"
+        @import="batchImport"
+        @refresh="refreshList"
+      />
     </template>
 
     <template #summary>
@@ -94,15 +93,15 @@
         <template #quick-actions="{ data }">
           <div class="experience-quick-actions">
             <el-button type="primary" size="small" style="width: 100%; margin-bottom: 8px;" @click="showUploadModal = true">
-              <el-icon><Plus /></el-icon>
+              <el-icon class="upload-icon"><Plus /></el-icon>
               上传互动内容
             </el-button>
             <el-button type="default" size="small" style="width: 100%; margin-bottom: 8px;" @click="refreshList">
-              <el-icon><Refresh /></el-icon>
+              <el-icon class="refresh-icon"><Refresh /></el-icon>
               刷新列表
             </el-button>
             <el-button type="default" size="small" style="width: 100%;" @click="batchExport">
-              <el-icon><Download /></el-icon>
+              <el-icon class="download-icon"><Download /></el-icon>
               批量导出
             </el-button>
           </div>
@@ -150,6 +149,7 @@
     <template #right>
       <ManagementSidebarRight
         :sections="rightSidebarSections"
+        :compact="true"
         @resource-action="handleResourceAction"
         @collaboration-action="handleCollaborationAction"
       >
@@ -195,10 +195,8 @@
     </template>
 
     <div class="interactive-content">
-      <el-tabs v-model="activeTab" type="border-card">
-        <!-- 上传管理 -->
-        <el-tab-pane label="上传管理" name="upload">
-          <EduCard
+      <!-- 上传管理 -->
+      <EduCard
             class="content-section"
             variant="elevated"
             :hoverable="false"
@@ -237,27 +235,24 @@
                       :value="subject.value"
                     />
                   </el-select>
-                </div>
+                  <div class="view-switcher">
+                    <el-segmented
+                      v-model="viewMode"
+                      :options="[
+                        { label: '卡片', value: 'card' },
+                        { label: '列表', value: 'table' }
+                      ]"
+                      size="small"
+                    />
+                  </div>
+                  </div>
               </div>
             </template>
 
-            <div class="upload-actions">
-              <el-button type="primary" @click="showUploadModal = true">
-                <el-icon><Plus /></el-icon>
-                上传新内容
-              </el-button>
-              <el-button @click="batchImport">
-                <el-icon><FolderOpened /></el-icon>
-                批量导入
-              </el-button>
-              <el-button @click="refreshList">
-                <el-icon><Refresh /></el-icon>
-                刷新列表
-              </el-button>
-            </div>
-
+  
         <div class="content-container">
-          <div class="content-grid">
+          <!-- 卡片视图 -->
+          <div v-if="viewMode === 'card'" class="content-grid">
             <div
               v-for="content in filteredContentList"
               :key="content.id"
@@ -339,9 +334,10 @@
                     <el-icon><Clock /></el-icon>
                     <span>{{ formatDate(content.createdAt) }}</span>
                   </div>
-                  <div class="meta-item">
-                    <el-icon><DataAnalysis /></el-icon>
-                    <span>{{ content.usageCount }}次使用</span>
+                  <div class="meta-item usage-badge">
+                    <EduTag variant="primary" size="small">
+                      {{ content.usageCount }}次使用
+                    </EduTag>
                   </div>
                 </div>
 
@@ -357,25 +353,6 @@
                 </div>
 
                 <div class="content-footer">
-                  <div class="content-stats">
-                    <div class="stat-item">
-                      <span class="stat-label">评分</span>
-                      <div class="rating">
-                        <el-icon
-                          v-for="i in 5"
-                          :key="i"
-                          :class="{ 'is-active': i <= content.rating }"
-                        >
-                          <Star />
-                        </el-icon>
-                        <span class="rating-value">{{ content.rating }}/5</span>
-                      </div>
-                    </div>
-                    <div class="stat-item">
-                      <span class="stat-label">时长</span>
-                      <span>{{ content.duration }}分钟</span>
-                    </div>
-                  </div>
                   <div class="content-actions-footer">
                     <el-button size="small" @click.stop="assignToCourse(content)">
                       <el-icon><Plus /></el-icon>
@@ -385,6 +362,55 @@
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- 表格视图 -->
+          <div v-else-if="viewMode === 'table'" class="content-table">
+            <el-table :data="filteredContentList" stripe>
+              <el-table-column label="内容" min-width="200">
+                <template #default="{ row }">
+                  <div class="content-row">
+                    <div class="content-row__title">{{ row.title }}</div>
+                    <div class="content-row__meta">
+                      <el-tag :type="getTypeVariant(row.type)" size="small">
+                        {{ getTypeLabel(row.type) }}
+                      </el-tag>
+                      <span>{{ getSubjectLabel(row.subject) }}</span>
+                    </div>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="author" label="作者" width="120" />
+              <el-table-column label="评分" width="100" align="center">
+                <template #default="{ row }">
+                  <div v-if="row.rating" class="rating-display">
+                    <el-rate
+                      :model-value="row.rating"
+                      disabled
+                      size="small"
+                      show-score
+                    />
+                  </div>
+                  <span v-else>--</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="使用次数" width="100" align="center">
+                <template #default="{ row }">
+                  {{ row.usageCount || 0 }}
+                </template>
+              </el-table-column>
+              <el-table-column label="创建时间" width="140">
+                <template #default="{ row }">
+                  {{ formatDate(row.createdAt) }}
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" width="200" fixed="right">
+                <template #default="{ row }">
+                  <el-button size="small" @click="previewContent(row)">预览</el-button>
+                  <el-button size="small" type="primary" @click="editContent(row)">编辑</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
           </div>
 
           <!-- 空状态 -->
@@ -398,190 +424,8 @@
           </div>
         </div>
       </EduCard>
-        </el-tab-pane>
 
-        <!-- 预览&测试 -->
-        <el-tab-pane label="预览&测试" name="preview">
-          <EduCard
-            class="content-section"
-            variant="elevated"
-            :hoverable="false"
-            body-class="content-section__body"
-          >
-            <template #header>
-              <div class="section-header">
-                <div class="section-info">
-                  <h3 class="section-title">内容预览与测试</h3>
-                  <p class="section-description">实时预览和测试您的互动内容</p>
-                </div>
-                <div class="section-actions">
-                  <el-select v-model="selectedContent" placeholder="选择要预览的内容" style="width: 200px;">
-                    <el-option
-                      v-for="content in contentList"
-                      :key="content.id"
-                      :label="content.title"
-                      :value="content"
-                    />
-                  </el-select>
-                  <el-button @click="openPreviewInNewTab" :disabled="!selectedContent">
-                    <el-icon><View /></el-icon>
-                    新窗口打开
-                  </el-button>
-                  <el-button @click="runTests" :disabled="!selectedContent">
-                    <el-icon><Monitor /></el-icon>
-                    运行测试
-                  </el-button>
-                </div>
-              </div>
-            </template>
-
-            <div class="preview-content">
-              <!-- 预览区域 -->
-              <div class="preview-main">
-                <div class="preview-header">
-                  <div class="preview-info">
-                    <h4>{{ selectedContent?.title || '请选择内容' }}</h4>
-                    <div class="preview-meta">
-                      <span v-if="selectedContent" class="meta-item">
-                        <el-icon><Document /></el-icon>
-                        {{ selectedContent.type }}
-                      </span>
-                      <span v-if="selectedContent" class="meta-item">
-                        <el-icon><User /></el-icon>
-                        {{ selectedContent.author }}
-                      </span>
-                      <span v-if="selectedContent" class="meta-item">
-                        <el-icon><Clock /></el-icon>
-                        {{ formatDate(selectedContent.createdAt) }}
-                      </span>
-                    </div>
-                  </div>
-                  <div class="preview-controls">
-                    <el-button-group>
-                      <el-button size="small" @click="previewFullscreen" :disabled="!selectedContent">
-                        <el-icon><FullScreen /></el-icon>
-                        全屏
-                      </el-button>
-                      <el-button size="small" @click="previewReload" :disabled="!selectedContent">
-                        <el-icon><Refresh /></el-icon>
-                        刷新
-                      </el-button>
-                    </el-button-group>
-                    <el-button-group>
-                      <el-button size="small" @click="togglePreviewMode">
-                        <el-icon><Monitor /></el-icon>
-                        {{ previewMode === 'desktop' ? '移动端' : '桌面端' }}
-                      </el-button>
-                      <el-button size="small" @click="toggleResponsive" :disabled="!selectedContent">
-                        <el-icon><MagicStick /></el-icon>
-                        响应式
-                      </el-button>
-                    </el-button-group>
-                  </div>
-                </div>
-
-                <div class="preview-frame-container">
-                  <div
-                    v-if="selectedContent"
-                    class="preview-frame"
-                    :class="{ 'preview-mobile': previewMode === 'mobile' }"
-                  >
-                    <iframe
-                      :src="selectedContent.url"
-                      :style="getPreviewStyle()"
-                      class="content-iframe"
-                      frameborder="0"
-                      @load="handlePreviewLoad"
-                      @error="handlePreviewError"
-                    />
-                  </div>
-                  <div v-else class="preview-placeholder">
-                    <el-icon><Monitor /></el-icon>
-                    <p>请选择要预览的内容</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 测试区域 -->
-              <div class="test-section">
-                <div class="test-header">
-                  <h4>兼容性测试</h4>
-                  <div class="test-stats">
-                    <el-tag :type="testStatus === 'idle' ? 'info' : testStatus === 'running' ? 'warning' : testStatus === 'success' ? 'success' : 'danger'">
-                      {{ getTestStatusText() }}
-                    </el-tag>
-                  </div>
-                </div>
-                <div class="test-content">
-                  <div class="test-grid">
-                    <div
-                      v-for="test in testResults"
-                      :key="test.name"
-                      class="test-item"
-                      :class="getTestClass(test.status)"
-                    >
-                      <div class="test-icon">
-                        <el-icon>
-                          <component :is="getTestIcon(test.status)" />
-                        </el-icon>
-                      </div>
-                      <div class="test-info">
-                        <div class="test-name">{{ test.name }}</div>
-                        <div class="test-description">{{ test.description }}</div>
-                        <div class="test-result">
-                          <span v-if="test.status === 'success'">✓ 通过</span>
-                          <span v-else-if="test.status === 'failed'">✗ 失败</span>
-                          <span v-else>⏳ 等待中</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="test-actions">
-                  <el-button type="primary" @click="runAllTests" :disabled="testStatus !== 'idle'">
-                    <el-icon><VideoPlay /></el-icon>
-                    运行所有测试
-                  </el-button>
-                  <el-button @click="exportTestReport" :disabled="!hasTestResults">
-                    <el-icon><Download /></el-icon>
-                    导出报告
-                  </el-button>
-                </div>
-              </div>
-            </div>
-
-            <!-- 性能指标 -->
-            <div class="performance-section">
-              <div class="performance-header">
-                <h4>性能指标</h4>
-                <el-button size="small" @click="measurePerformance">
-                  <el-icon><DataAnalysis /></el-icon>
-                  重新测量
-                </el-button>
-              </div>
-              <div class="performance-metrics">
-                <div class="metric-item">
-                  <div class="metric-label">加载时间</div>
-                  <div class="metric-value">{{ performanceMetrics.loadTime }}ms</div>
-                </div>
-                <div class="metric-item">
-                  <div class="metric-label">交互响应</div>
-                  <div class="metric-value">{{ performanceMetrics.responseTime }}ms</div>
-                </div>
-                <div class="metric-item">
-                  <div class="metric-label">内存使用</div>
-                  <div class="metric-value">{{ performanceMetrics.memoryUsage }}MB</div>
-                </div>
-                <div class="metric-item">
-                  <div class="metric-label">CPU使用</div>
-                  <div class="metric-value">{{ performanceMetrics.cpuUsage }}%</div>
-                </div>
-              </div>
-            </div>
-          </EduCard>
-        </el-tab-pane>
-      </el-tabs>
-    </div>
+      </div>
 
     <!-- 上传模态框 -->
     <el-dialog
@@ -605,6 +449,7 @@
                 drag
                 multiple
                 :file-list="uploadFiles"
+                :auto-upload="false"
                 :before-upload="beforeUpload"
                 :http-request="handleFileUpload"
                 :on-change="handleFileChange"
@@ -664,6 +509,27 @@
                   controls-position="right"
                 />
                 <span class="unit">分钟</span>
+              </el-form-item>
+              <el-form-item label="封面图片">
+                <div class="thumbnail-upload">
+                  <el-upload
+                    :file-list="thumbnailFiles"
+                    :auto-upload="false"
+                    :before-upload="beforeThumbnailUpload"
+                    :http-request="handleThumbnailUpload"
+                    :on-change="handleThumbnailChange"
+                    :on-remove="handleThumbnailRemove"
+                    :limit="1"
+                    accept="image/*"
+                    list-type="picture-card"
+                    class="thumbnail-uploader"
+                  >
+                    <el-icon class="thumbnail-uploader-icon"><Plus /></el-icon>
+                  </el-upload>
+                  <div class="thumbnail-tip">
+                    支持 JPG、PNG 格式，建议尺寸 640x360，不超过 5MB
+                  </div>
+                </div>
               </el-form-item>
               <el-form-item label="标签">
                 <el-select
@@ -811,12 +677,13 @@ import {
   Plus, Upload, Refresh, Search, MagicStick, Document, View, MoreFilled,
   Edit, CopyDocument, Download, Delete, User, Clock, DataAnalysis,
   Star, Monitor, Warning, SuccessFilled, CircleCloseFilled, FullScreen,
-  VideoPlay, Picture, TrendCharts
+  VideoPlay, Picture, TrendCharts, Grid, List
 } from '@element-plus/icons-vue'
 
 import TeacherWorkspaceLayout from '@/components/layout/TeacherWorkspaceLayout.vue'
 import ManagementSidebarLeft from '@/components/layout/ManagementSidebarLeft.vue'
 import ManagementSidebarRight from '@/components/layout/ManagementSidebarRight.vue'
+import WorkspacePrimaryToolbar from '@/components/workspace/WorkspacePrimaryToolbar.vue'
 import { EduCard, EduTag } from '@reopeninnolab/ui-kit'
 import { formatDate, formatTime } from '@/utils/date'
 import { subjects, grades, suggestedTags } from '@/config/courseData'
@@ -853,6 +720,7 @@ const activeTab = ref('upload')
 const searchKeyword = ref('')
 const selectedType = ref('')
 const selectedSubject = ref('')
+const viewMode = ref<'card' | 'table'>('card')
 const filterType = ref('')
 const filterSubject = ref('')
 const leftSidebarCollapsed = ref(false)
@@ -869,6 +737,7 @@ const showAssignModal = ref(false)
 const currentPreviewContent = ref<InteractiveContent | null>(null)
 const uploadStep = ref(0)
 const uploadFiles = ref<any[]>([])
+const thumbnailFiles = ref<any[]>([])
 const uploading = ref(false)
 const previewUrl = ref('')
 const selectedContent = ref<InteractiveContent | null>(null)
@@ -931,7 +800,9 @@ const contentForm = ref({
   grade: '',
   duration: 30,
   tags: [],
-  settings: ['fullscreen', 'responsive']
+  settings: ['fullscreen', 'responsive'],
+  assetUrl: '',
+  thumbnailUrl: ''
 })
 
 // 表单验证规则
@@ -956,76 +827,49 @@ const contentRules = {
   ]
 }
 
-// 模拟数据
-const contentList = ref<InteractiveContent[]>([
-  {
-    id: '1',
-    title: '物理电路模拟器',
-    description: '交互式电路搭建和实验模拟器，支持多种电子元件和测量工具',
-    type: 'simulation',
-    subject: 'physics',
-    grade: 'grade10',
-    author: '张老师',
-    thumbnail: '/thumbnails/circuit-simulator.jpg',
-    url: '/interactive/circuit-simulator/index.html',
-    tags: ['物理', '电路', '模拟', '实验'],
-    duration: 45,
-    rating: 5,
-    usageCount: 128,
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-20'),
-    featured: true,
-    settings: {
-      fullscreen: true,
-      responsive: true,
-      resize: true
-    }
-  },
-  {
-    id: '2',
-    title: '化学分子结构3D',
-    description: '3D分子结构可视化工具，支持旋转、缩放和元素信息展示',
-    type: 'html',
-    subject: 'chemistry',
-    grade: 'grade11',
-    author: '李老师',
-    url: '/interactive/molecule-3d/index.html',
-    tags: ['化学', '分子', '3D', '可视化'],
-    duration: 30,
-    rating: 4,
-    usageCount: 89,
-    createdAt: new Date('2024-01-10'),
-    updatedAt: new Date('2024-01-18'),
-    featured: false,
-    settings: {
-      fullscreen: true,
-      responsive: false,
-      resize: true
-    }
-  },
-  {
-    id: '3',
-    title: '数学函数图像绘制',
-    description: '动态数学函数图像绘制工具，支持多种函数类型和参数调节',
-    type: 'html',
-    subject: 'math',
-    grade: 'grade9',
-    author: '王老师',
-    url: '/interactive/function-plotter/index.html',
-    tags: ['数学', '函数', '图像', '绘图'],
-    duration: 25,
-    rating: 4,
-    usageCount: 156,
-    createdAt: new Date('2024-01-08'),
-    updatedAt: new Date('2024-01-22'),
-    featured: true,
-    settings: {
-      fullscreen: true,
-      responsive: true,
-      resize: false
-    }
+// 辅助函数定义 - 必须在contentList之前定义
+const getTypeLabel = (type: string): string => {
+  const map: Record<string, string> = {
+    html: 'HTML单页',
+    package: '互动包',
+    simulation: '模拟器',
+    game: '游戏'
   }
-])
+  return map[type] || type
+}
+
+const generateDefaultThumbnail = (type: string): string => {
+  // 根据内容类型生成默认的base64缩略图
+  const colorMap: Record<string, string> = {
+    html: '#4ecdc4',
+    package: '#45b7d1',
+    simulation: '#96ceb4',
+    game: '#ffb347'
+  }
+
+  const color = colorMap[type] || '#667eea'
+  const typeLabel = getTypeLabel(type)
+
+  // 生成一个简单的SVG缩略图
+  const svg = `
+    <svg width="640" height="360" xmlns="http://www.w3.org/2000/svg">
+      <rect width="640" height="360" fill="${color}"/>
+      <text x="320" y="180" font-family="Arial, sans-serif" font-size="24" fill="white" text-anchor="middle" dy=".3em">
+        ${typeLabel}
+      </text>
+    </svg>
+  `
+
+  try {
+    return 'data:image/svg+xml;base64,' + btoa(encodeURIComponent(svg))
+  } catch (error) {
+    // 降级处理：返回简单的颜色块
+    return `data:image/svg+xml;base64,${btoa('<svg width="640" height="360" xmlns="http://www.w3.org/2000/svg"><rect width="640" height="360" fill="' + color + '"/></svg>')}`
+  }
+}
+
+// 模拟数据 - 简化为空数组，等待用户上传
+const contentList = ref<InteractiveContent[]>([])
 
 const aiSuggestions = ref([
   { id: '1', text: '创建物理实验模拟器', icon: 'Experiment' },
@@ -1152,6 +996,30 @@ const getSubjectVariant = (subject: string): string => {
   return variants[subject] || 'default'
 }
 
+// 表格视图辅助方法
+const getTypeVariant = (type: string): 'success' | 'warning' | 'info' | 'primary' => {
+  const map: Record<string, 'success' | 'warning' | 'info' | 'primary'> = {
+    html: 'primary',
+    package: 'success',
+    simulation: 'warning',
+    game: 'info'
+  }
+  return map[type] || 'info'
+}
+
+const getSubjectLabel = (subject: string): string => {
+  const subjectObj = subjects.value.find(s => s.value === subject)
+  return subjectObj ? subjectObj.label : subject
+}
+
+const formatDate = (date: Date): string => {
+  return new Date(date).toLocaleDateString('zh-CN')
+}
+
+const editContent = (content: any) => {
+  ElMessage.info(`编辑内容：${content.title}`)
+}
+
 const refreshList = () => {
   ElMessage.success('列表已刷新')
 }
@@ -1236,13 +1104,47 @@ const beforeUpload = (file: File) => {
     return false
   }
 
+  // 手动添加文件到列表
+  const newFile = {
+    name: file.name,
+    size: file.size,
+    type: file.type,
+    uid: Date.now() + Math.random(),
+    raw: file,
+    status: 'ready'
+  }
+  uploadFiles.value.push(newFile)
+
   return false
 }
 
 const handleFileUpload = async (options: any) => {
-  const file = options.file
-  await new Promise(resolve => setTimeout(resolve, 1000))
-  ElMessage.success(`文件 ${file.name} 上传成功`)
+  const file = options.file || options.raw
+  try {
+    // 模拟上传过程
+    await new Promise(resolve => setTimeout(resolve, 1500))
+
+    // 模拟生成URL (实际项目中应该是OSS或其他文件服务的URL)
+    const mockUrl = URL.createObjectURL(file)
+
+    // 调用onSuccess回调，确保UI状态正确更新
+    if (options.onSuccess) {
+      options.onSuccess({ url: mockUrl }, file)
+    }
+
+    // 如果文件表单需要URL，设置它
+    if (!contentForm.value.assetUrl) {
+      contentForm.value.assetUrl = mockUrl
+    }
+
+    ElMessage.success(`文件 ${file.name} 处理成功`)
+  } catch (error) {
+    console.error('文件处理失败:', error)
+    if (options.onError) {
+      options.onError(error)
+    }
+    ElMessage.error(`文件 ${file.name} 处理失败`)
+  }
 }
 
 const handleFileChange = (file: any, fileList: any[]) => {
@@ -1253,6 +1155,59 @@ const handleFileRemove = (file: any, fileList: any[]) => {
   uploadFiles.value = fileList
 }
 
+// 缩略图上传相关函数
+const beforeThumbnailUpload = (file: File) => {
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+  const isValidType = allowedTypes.includes(file.type)
+
+  if (!isValidType) {
+    ElMessage.error('只支持 JPG、PNG、GIF、WebP 格式的图片')
+    return false
+  }
+
+  const isLt5M = file.size / 1024 / 1024 < 5
+  if (!isLt5M) {
+    ElMessage.error('图片大小不能超过 5MB')
+    return false
+  }
+
+  return true
+}
+
+const handleThumbnailUpload = async (options: any) => {
+  const file = options.file || options.raw
+  try {
+    // 模拟上传过程
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
+    // 生成缩略图URL
+    const thumbnailUrl = URL.createObjectURL(file)
+    contentForm.value.thumbnailUrl = thumbnailUrl
+
+    // 调用onSuccess回调
+    if (options.onSuccess) {
+      options.onSuccess({ url: thumbnailUrl }, file)
+    }
+
+    ElMessage.success('缩略图上传成功')
+  } catch (error) {
+    console.error('缩略图上传失败:', error)
+    if (options.onError) {
+      options.onError(error)
+    }
+    ElMessage.error('缩略图上传失败')
+  }
+}
+
+const handleThumbnailChange = (file: any, fileList: any[]) => {
+  thumbnailFiles.value = fileList
+}
+
+const handleThumbnailRemove = (file: any, fileList: any[]) => {
+  thumbnailFiles.value = fileList
+  contentForm.value.thumbnailUrl = ''
+}
+
 const handleCloseUpload = () => {
   showUploadModal.value = false
   resetUploadForm()
@@ -1261,6 +1216,7 @@ const handleCloseUpload = () => {
 const resetUploadForm = () => {
   uploadStep.value = 0
   uploadFiles.value = []
+  thumbnailFiles.value = []
   contentForm.value = {
     title: '',
     description: '',
@@ -1269,7 +1225,9 @@ const resetUploadForm = () => {
     grade: '',
     duration: 30,
     tags: [],
-    settings: ['fullscreen', 'responsive']
+    settings: ['fullscreen', 'responsive'],
+    assetUrl: '',
+    thumbnailUrl: ''
   }
   previewUrl.value = ''
 }
@@ -1292,10 +1250,123 @@ const previousStep = () => {
 
 const generatePreview = async () => {
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    previewUrl.value = URL.createObjectURL(new Blob(['<html><body><h1>预览内容</h1></body></html>'], { type: 'text/html' }))
+    if (uploadFiles.value.length === 0) {
+      ElMessage.warning('没有可预览的文件')
+      return
+    }
+
+    const file = uploadFiles.value[0].raw || uploadFiles.value[0]
+
+    if (file.type === 'application/zip' || file.name.toLowerCase().endsWith('.zip')) {
+      // 处理ZIP文件 - 寻找index.html
+      await handleZipPreview(file)
+    } else if (file.type === 'text/html' || file.name.toLowerCase().endsWith('.html')) {
+      // 处理HTML文件
+      await handleHtmlPreview(file)
+    } else {
+      // 其他文件类型，尝试作为文本预览
+      await handleTextPreview(file)
+    }
   } catch (error) {
     console.error('生成预览失败:', error)
+    ElMessage.error('预览生成失败')
+  }
+}
+
+const handleZipPreview = async (zipFile: File) => {
+  try {
+    ElMessage.info('正在解压ZIP文件...')
+    // 使用JSZip处理ZIP文件（需要先安装库）
+    // 这里先做一个简单实现：假设ZIP中包含index.html
+    await new Promise(resolve => setTimeout(resolve, 1500))
+
+    // 临时预览页面
+    const title = contentForm.value.title || '互动内容包'
+    const previewHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>互动内容预览</title><style>body{font-family:Arial,sans-serif;margin:40px;background:#f5f5f5}.preview-container{background:white;padding:30px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1);text-align:center}.preview-title{color:#333;margin-bottom:20px}.preview-info{background:#e3f2fd;padding:20px;border-radius:4px;margin:20px 0;border-left:4px solid #2196f3}.test-button{background:#4caf50;color:white;border:none;padding:12px 24px;border-radius:4px;font-size:16px;cursor:pointer;margin:10px}.test-button:hover{background:#45a049}</style></head><body><div class="preview-container"><h1 class="preview-title">📦 ${title}</h1><div class="preview-info"><h3>互动内容包</h3><p>这是一个打包的互动内容，包含以下文件：</p><ul style="text-align:left;display:inline-block;"><li>index.html - 主页面</li><li>样式文件和脚本</li><li>相关资源文件</li></ul></div><p style="color:#666;">完成上传后即可在预览窗口中测试完整的互动内容</p><button class="test-button" onclick="alert('上传完成后即可测试')">🚀 上传后测试</button></div></body></html>`
+
+    previewUrl.value = URL.createObjectURL(new Blob([previewHtml], { type: 'text/html' }))
+    ElMessage.success('ZIP文件预览已生成')
+  } catch (error) {
+    console.error('ZIP预览处理失败:', error)
+    ElMessage.error('ZIP文件处理失败')
+  }
+}
+
+const handleHtmlPreview = async (htmlFile: File) => {
+  try {
+    ElMessage.info('正在读取HTML文件...')
+    const text = await fileToText(htmlFile)
+
+    // 验证HTML内容
+    if (!text.includes('<html') && !text.includes('<HTML')) {
+      throw new Error('文件不是有效的HTML格式')
+    }
+
+    // 创建带有预览工具的HTML
+    const enhancedHtml = wrapHtmlForPreview(text)
+    previewUrl.value = URL.createObjectURL(new Blob([enhancedHtml], { type: 'text/html' }))
+    ElMessage.success('HTML文件预览已生成')
+  } catch (error) {
+    console.error('HTML预览处理失败:', error)
+    ElMessage.error('HTML文件处理失败')
+  }
+}
+
+const handleTextPreview = async (file: File) => {
+  try {
+    const text = await fileToText(file)
+    const fileName = file.name
+    const escapedText = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    const previewHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>文件预览</title><style>body{font-family:monospace;margin:20px;background:#f5f5f5}.preview-container{background:white;padding:20px;border-radius:8px;white-space:pre-wrap;overflow-x:auto}</style></head><body><div class="preview-container"><h3>📄 ${fileName}</h3><hr><pre>${escapedText}</pre></div></body></html>`
+    previewUrl.value = URL.createObjectURL(new Blob([previewHtml], { type: 'text/html' }))
+  } catch (error) {
+    console.error('文本预览处理失败:', error)
+    ElMessage.error('文件预览失败')
+  }
+}
+
+const fileToText = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = (e) => resolve(e.target?.result as string)
+    reader.onerror = (e) => reject(new Error('文件读取失败'))
+    reader.readAsText(file, 'UTF-8')
+  })
+}
+
+const wrapHtmlForPreview = (originalHtml: string): string => {
+  // 为原始HTML添加预览工具栏
+  const title = contentForm.value.title || '互动内容'
+
+  const previewToolbar = `
+    <div id="preview-toolbar" style="position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 10px 20px; z-index: 9999; font-family: Arial, sans-serif; box-shadow: 0 2px 10px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center;">
+      <div><strong>🚀 预览模式:</strong> ${title}</div>
+      <div>
+        <button onclick="toggleFullscreen()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-right: 10px;">全屏测试</button>
+        <button onclick="showInfo()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer;">使用说明</button>
+      </div>
+    </div>
+    <div style="margin-top: 60px;"></div>
+  `
+
+  const previewScripts = `<script>function toggleFullscreen(){if(!document.fullscreenElement){document.documentElement.requestFullscreen().catch(err=>{alert('全屏模式失败: '+err.message)});}else{document.exitFullscreen();}}function showInfo(){alert('🎯 互动内容测试指南:\\n\\n• 点击全屏按钮进行全屏测试\\n• 测试所有交互功能是否正常\\n• 确认在不同屏幕尺寸下的显示效果\\n• 完成上传后可在实际环境中测试');}document.addEventListener('keydown',function(e){if(e.key==='F11'){e.preventDefault();toggleFullscreen();}});window.addEventListener('load',function(){console.log('🚀 互动内容预览已加载');console.log('💡 按F11或点击全屏按钮进入全屏测试模式');});<\/script>`
+
+  const bodyOpenTag = '<' + 'body'
+  const bodyCloseTag = '</' + 'body'
+
+  // 检查原始HTML是否包含body标签，用于插入预览工具栏
+  if (originalHtml.includes(bodyOpenTag)) {
+    // 找到body标签结束位置
+    const bodyStartIndex = originalHtml.indexOf(bodyOpenTag)
+    const bodyEndIndex = originalHtml.indexOf('>', bodyStartIndex) + 1
+
+    const beforeBody = originalHtml.substring(0, bodyEndIndex)
+    const afterBody = originalHtml.substring(bodyEndIndex)
+
+    return beforeBody + previewToolbar + afterBody.replace(bodyCloseTag, previewScripts + bodyCloseTag)
+  } else {
+    // 如果没有body标签，完整包装HTML结构
+    return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>预览: ${title}</title></head><body>${previewToolbar}${originalHtml}${previewScripts}</body></html>`
   }
 }
 
@@ -1303,7 +1374,27 @@ const completeUpload = async () => {
   try {
     uploading.value = true
 
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    // 实际上传所有文件
+    const uploadPromises = uploadFiles.value.map(async (file: any) => {
+      // 调用真实API或模拟上传
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      const fileUrl = contentForm.value.assetUrl || URL.createObjectURL(file.raw)
+      return { fileName: file.name, url: fileUrl }
+    })
+
+    const uploadedFiles = await Promise.all(uploadPromises)
+
+    // 创建新内容记录 - 使用实际的上传文件URL
+    const file = uploadFiles.value[0]?.raw || uploadFiles.value[0]
+    let contentUrl = ''
+
+    if (file) {
+      // 为上传的文件创建可访问的URL
+      contentUrl = URL.createObjectURL(file)
+    } else {
+      // 降级处理
+      contentUrl = previewUrl.value || `/interactive/${Date.now()}/index.html`
+    }
 
     const newContent: InteractiveContent = {
       id: `content_${Date.now()}`,
@@ -1313,7 +1404,8 @@ const completeUpload = async () => {
       subject: contentForm.value.subject,
       grade: contentForm.value.grade,
       author: '当前用户',
-      url: `/interactive/${Date.now()}/index.html`,
+      url: contentUrl,
+      thumbnail: contentForm.value.thumbnailUrl || generateDefaultThumbnail(contentForm.value.type),
       tags: contentForm.value.tags,
       duration: contentForm.value.duration,
       rating: 0,
@@ -1328,13 +1420,24 @@ const completeUpload = async () => {
       }
     }
 
+    // 添加到列表并刷新数据
     contentList.value.unshift(newContent)
-    ElMessage.success('互动内容上传成功')
+
+    // 更新预览URL为实际的文件URL
+    if (uploadedFiles.length > 0) {
+      previewUrl.value = uploadedFiles[0].url
+    }
+
+    ElMessage.success({ message: '互动内容上传成功' })
     showUploadModal.value = false
     resetUploadForm()
+
+    // 触发列表刷新（如果需要的话）
+    refreshList()
+
   } catch (error) {
     console.error('上传失败:', error)
-    ElMessage.error('上传失败')
+    ElMessage.error({ message: '上传失败，请重试' })
   } finally {
     uploading.value = false
   }
@@ -1379,25 +1482,28 @@ const handlePreviewLoad = () => {
 }
 
 const handlePreviewError = () => {
-  ElMessage.error('预览加载失败')
+  ElMessage.error({ message: '预览加载失败' })
 }
 
 
 const canProceed = computed(() => {
-  if (uploadStep.value === 0) return uploadFiles.value.length > 0
-  if (uploadStep.value === 1) return contentForm.value.title && contentForm.value.subject
+  if (uploadStep.value === 0) {
+    const hasFiles = uploadFiles.value.length > 0
+    if (!hasFiles) {
+      ElMessage.warning({ message: '请先选择要上传的文件' })
+    }
+    return hasFiles
+  }
+  if (uploadStep.value === 1) {
+    const hasRequired = contentForm.value.title && contentForm.value.subject
+    if (!hasRequired) {
+      ElMessage.warning({ message: '请填写标题和适用学科' })
+    }
+    return hasRequired
+  }
   return true
 })
 
-const getTypeLabel = (type: string): string => {
-  const types: Record<string, string> = {
-    html: 'HTML单页',
-    package: '互动包',
-    simulation: '模拟器',
-    game: '游戏'
-  }
-  return types[type] || type
-}
 
 const getTypeColor = (type: string): string => {
   const colors: Record<string, string> = {
@@ -1638,11 +1744,6 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.workspace-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
 
 .summary-card {
   width: 100%;
@@ -1691,52 +1792,101 @@ onMounted(() => {
   gap: 12px;
 }
 
+// 使用标准侧栏样式
 .category-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: rgba(15, 23, 42, 0.04);
+  padding: var(--sidebar-spacing-base) var(--sidebar-spacing-lg);
+  height: var(--sidebar-category-item-height);
+  border-radius: var(--sidebar-radius-lg);
+  background: transparent;
   border: none;
+  color: var(--sidebar-text-primary);
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
-  color: inherit;
+  transition: all var(--sidebar-transition-normal);
+  font-size: var(--sidebar-font-size-base);
+  font-weight: var(--sidebar-font-weight-medium);
+  line-height: var(--sidebar-line-height-normal);
+  width: 100%;
+  text-align: left;
 
   &:hover {
-    transform: translateX(4px);
-    background: rgba(99, 102, 241, 0.12);
+    background: rgba(99, 102, 241, 0.08);
+    transform: translateX(2px);
   }
 
   &.active {
     background: rgba(99, 102, 241, 0.12);
-    color: var(--edu-primary-600);
+    color: #4f46e5;
+    font-weight: var(--sidebar-font-weight-semibold);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #4f46e5;
+    outline-offset: 2px;
   }
 }
 
 .category-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--sidebar-radius-base);
   color: #fff;
+  font-size: var(--sidebar-icon-size-sm);
+  flex-shrink: 0;
+  transition: all var(--sidebar-transition-normal);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity var(--sidebar-transition-normal);
+  }
+}
+
+.category-item:hover .category-icon {
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.category-item:hover .category-icon::before,
+.category-item.active .category-icon::before {
+  opacity: 1;
 }
 
 .category-info {
   flex: 1;
-  margin-left: 12px;
+  margin-left: var(--sidebar-spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .category-name {
-  font-weight: 600;
-  color: var(--edu-text-primary);
+  font-weight: var(--sidebar-font-weight-semibold);
+  color: var(--sidebar-text-primary);
+  font-size: var(--sidebar-font-size-base);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .category-count {
-  font-size: 12px;
-  color: var(--edu-text-secondary);
+  font-size: var(--sidebar-font-size-xs);
+  color: var(--sidebar-text-tertiary);
+  font-weight: var(--sidebar-font-weight-normal);
 }
 
 .subject-filter {
@@ -1794,24 +1944,26 @@ onMounted(() => {
 .upload-history {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--sidebar-spacing-base);
 }
 
 .history-item {
   display: flex;
-  gap: 12px;
+  gap: var(--sidebar-spacing-sm);
   align-items: flex-start;
 }
 
 .history-icon {
   width: 32px;
   height: 32px;
-  border-radius: 12px;
+  border-radius: var(--sidebar-radius-base);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: rgba(99, 102, 241, 0.12);
   color: #4f46e5;
+  flex-shrink: 0;
+  font-size: var(--sidebar-icon-size-base);
 
   &--upload {
     background: rgba(76, 175, 80, 0.12);
@@ -1829,43 +1981,54 @@ onMounted(() => {
   }
 }
 
+.view-switcher {
+  display: flex;
+  align-items: center;
+}
+
 .history-content {
   flex: 1;
+  min-width: 0;
 }
 
 .history-title {
-  font-weight: 600;
-  color: var(--edu-text-primary);
+  font-weight: var(--sidebar-font-weight-semibold);
+  color: var(--sidebar-text-primary);
   margin-bottom: 4px;
+  font-size: var(--sidebar-font-size-sm);
+  line-height: var(--sidebar-line-height-tight);
 }
 
 .history-time {
-  font-size: 12px;
-  color: var(--edu-text-secondary);
+  font-size: var(--sidebar-font-size-xs);
+  color: var(--sidebar-text-tertiary);
+  line-height: var(--sidebar-line-height-normal);
 }
 
 
 .quick-stats {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--sidebar-spacing-base);
 }
 
 .stat-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: var(--sidebar-spacing-sm) 0;
 }
 
 .stat-label {
-  font-size: 13px;
-  color: var(--edu-text-secondary);
+  font-size: var(--sidebar-font-size-sm);
+  color: var(--sidebar-text-secondary);
+  font-weight: var(--sidebar-font-weight-normal);
 }
 
 .stat-value {
-  font-weight: 600;
-  color: var(--edu-text-primary);
+  font-weight: var(--sidebar-font-weight-semibold);
+  color: var(--sidebar-text-primary);
+  font-size: var(--sidebar-font-size-base);
 }
 
 .activity-list {
@@ -1976,7 +2139,7 @@ onMounted(() => {
 
 .content-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
 }
 
@@ -2002,7 +2165,7 @@ onMounted(() => {
 
 .card-thumbnail {
   position: relative;
-  height: 200px;
+  height: 120px;
   background: var(--edu-color-gray-100);
 }
 
@@ -2053,11 +2216,11 @@ onMounted(() => {
 }
 
 .card-content {
-  padding: 20px;
+  padding: 16px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .content-header {
@@ -2103,6 +2266,11 @@ onMounted(() => {
   gap: 6px;
   font-size: 12px;
   color: var(--edu-text-secondary);
+}
+
+.usage-badge {
+  align-self: flex-end;
+  margin-top: 4px;
 }
 
 .content-tags {
@@ -2211,8 +2379,11 @@ onMounted(() => {
 
 .preview-iframe {
   width: 100%;
-  height: 400px;
-  border: none;
+  height: 500px;
+  border: 1px solid var(--edu-color-gray-200);
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .preview-placeholder {
@@ -2287,6 +2458,53 @@ onMounted(() => {
 .unit {
   margin-left: 8px;
   color: var(--edu-text-secondary);
+}
+
+// 缩略图上传样式
+.thumbnail-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.thumbnail-uploader {
+  :deep(.el-upload) {
+    border: 2px dashed var(--edu-color-gray-300);
+    border-radius: 8px;
+    width: 120px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: var(--edu-primary-400);
+    }
+  }
+
+  :deep(.el-upload--picture-card) {
+    background: var(--edu-color-gray-50);
+    border: 2px dashed var(--edu-color-gray-300);
+    border-radius: 8px;
+    width: 120px;
+    height: 80px;
+    line-height: 80px;
+  }
+}
+
+.thumbnail-uploader-icon {
+  font-size: 24px;
+  color: var(--edu-color-gray-400);
+}
+
+.thumbnail-tip {
+  font-size: 12px;
+  color: var(--edu-text-secondary);
+  line-height: 1.4;
 }
 
 // 响应式设计
@@ -2364,6 +2582,39 @@ onMounted(() => {
   }
 }
 
+// 表格视图样式
+.content-table {
+  background: var(--edu-bg-primary);
+  border-radius: var(--edu-radius-lg);
+  border: 1px solid var(--edu-border-light);
+  overflow: hidden;
+}
+
+.content-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+
+  &__title {
+    font-weight: var(--font-weight-semibold);
+    color: var(--edu-text-primary);
+  }
+
+  &__meta {
+    display: flex;
+    gap: var(--spacing-xs);
+    align-items: center;
+    font-size: var(--font-size-xs);
+    color: var(--edu-text-secondary);
+  }
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 // 动画效果
 .content-card,
 .suggestion-item,
@@ -2375,5 +2626,139 @@ onMounted(() => {
 .suggestion-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+// 快捷操作样式
+.experience-quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-sm);
+}
+
+.experience-quick-actions .el-button {
+  display: flex;
+  align-items: center;
+  gap: var(--sidebar-spacing-sm);
+  padding: var(--sidebar-spacing-sm) var(--sidebar-spacing-base);
+  height: var(--sidebar-category-item-height-sm);
+  border-radius: var(--sidebar-radius-base);
+  font-size: var(--sidebar-font-size-sm);
+  font-weight: var(--sidebar-font-weight-medium);
+  transition: all var(--sidebar-transition-normal);
+  width: 100%;
+  justify-content: flex-start;
+
+  .action-icon {
+    width: 16px;
+    height: 16px;
+    color: white;
+    border-radius: 4px;
+    padding: 2px;
+    font-size: 10px;
+    transition: all var(--sidebar-transition-normal);
+  }
+}
+
+.experience-quick-actions .el-button:hover .action-icon {
+  transform: translateY(-1px) scale(1.1);
+}
+
+/* 体验管理页面特殊图标样式 - 使用标准样式增强 */
+.upload-icon,
+.refresh-icon,
+.download-icon {
+  border-radius: 6px;
+  padding: 2px;
+  color: white;
+  font-size: 13px;
+  transition: all var(--sidebar-transition-normal);
+}
+
+.upload-icon {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.refresh-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.download-icon {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+}
+
+.experience-quick-actions .el-button:hover .upload-icon {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  transform: translateY(-1px) scale(1.1);
+  box-shadow: 0 3px 8px rgba(16, 185, 129, 0.4);
+}
+
+.experience-quick-actions .el-button:hover .refresh-icon {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  transform: translateY(-1px) scale(1.1);
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.4);
+}
+
+.experience-quick-actions .el-button:hover .download-icon {
+  background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
+  transform: translateY(-1px) scale(1.1);
+  box-shadow: 0 3px 8px rgba(139, 92, 246, 0.4);
+}
+
+.el-button:hover .upload-icon {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  transform: translateY(-1px) scale(1.1);
+  box-shadow: 0 3px 8px rgba(16, 185, 129, 0.4);
+}
+
+.el-button:hover .refresh-icon {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  transform: translateY(-1px) scale(1.1);
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.4);
+}
+
+.el-button:hover .download-icon {
+  background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
+  transform: translateY(-1px) scale(1.1);
+  box-shadow: 0 3px 8px rgba(139, 92, 246, 0.4);
+}
+
+/* 分类图标增强效果 */
+.category-icon {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.category-icon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.category-item:hover .category-icon {
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.category-item:hover .category-icon::before {
+  opacity: 1;
+}
+
+.category-item.active .category-icon {
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.category-item.active .category-icon::before {
+  opacity: 1;
 }
 </style>

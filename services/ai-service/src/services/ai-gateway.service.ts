@@ -18,6 +18,8 @@ import {
   AIProvider,
   TaskType
 } from '../interfaces/ai.interface'
+import { DeepSeekReasoningService, ReasoningResponse } from './deepseek-reasoning.service'
+import { EDUCATION_AI_CONFIG } from '../config/ai-providers.config'
 
 @Injectable()
 export class AIGatewayService {
@@ -28,7 +30,8 @@ export class AIGatewayService {
 
   constructor(
     private readonly httpService: HttpService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly deepSeekReasoningService: DeepSeekReasoningService
   ) {
     this.providers = new Map()
     this.circuitBreakers = new Map()
@@ -351,6 +354,239 @@ export class AIGatewayService {
 
   private generateRequestId(): string {
     return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  }
+
+  /**
+   * 推理模式调用 - 支持思维链
+   */
+  async generateReasoningResponse(request: AIRequest & { enableReasoning?: boolean }): Promise<AIResponse & { reasoning_content?: string }> {
+    const startTime = Date.now()
+
+    try {
+      // 检查是否启用推理模式或任务类型需要推理
+      const needsReasoning = request.enableReasoning || this.shouldUseReasoning(request)
+
+      if (!needsReasoning) {
+        // 使用普通模式
+        return this.generateResponse(request)
+      }
+
+      // 使用推理模式
+      const reasoningRequest = {
+        messages: this.buildMessages(request),
+        maxTokens: request.maxTokens || 32768,
+        stream: false
+      }
+
+      const reasoningResponse: ReasoningResponse = await this.deepSeekReasoningService.reasoning(reasoningRequest)
+
+      // 更新指标
+      const duration = Date.now() - startTime
+      this.updateMetrics('deepseek_reasoner', { success: true, duration })
+
+      // 记录使用情况
+      await this.logAIUsage('deepseek_reasoner', request, {
+        content: reasoningResponse.content,
+        provider: 'deepseek_reasoner',
+        model: reasoningResponse.model,
+        usage: reasoningResponse.usage
+      } as AIResponse, duration)
+
+      return {
+        content: reasoningResponse.content,
+        reasoning_content: reasoningResponse.reasoning_content,
+        provider: 'deepseek_reasoner',
+        model: reasoningResponse.model,
+        usage: reasoningResponse.usage,
+        finishReason: 'stop',
+        metadata: {
+          requestId: this.generateRequestId(),
+          timestamp: new Date().toISOString(),
+          processingTime: duration,
+          reasoningEnabled: true
+        }
+      }
+    } catch (error) {
+      const duration = Date.now() - startTime
+      this.logger.error(`推理请求失败: ${error.message}`, error.stack)
+
+      // 降级到普通模式
+      this.logger.warn('降级到普通AI模式')
+      return this.generateResponse(request)
+    }
+  }
+
+  /**
+   * 流式推理调用
+   */
+  async *generateReasoningStream(request: AIRequest & { enableReasoning?: boolean }): AsyncGenerator<{
+    type: 'reasoning' | 'content' | 'metadata'
+    content: string
+    done?: boolean
+  }> {
+    try {
+      const needsReasoning = request.enableReasoning || this.shouldUseReasoning(request)
+
+      if (!needsReasoning) {
+        // 普通流式调用 (这里简化处理)
+        const response = await this.generateResponse(request)
+        yield {
+          type: 'content',
+          content: response.content,
+          done: true
+        }
+        return
+      }
+
+      // 推理流式调用
+      const reasoningRequest = {
+        messages: this.buildMessages(request),
+        maxTokens: request.maxTokens || 32768,
+        stream: true
+      }
+
+      const stream = this.deepSeekReasoningService.reasoningStream(reasoningRequest)
+
+      for await (const chunk of stream) {
+        yield {
+          type: chunk.type,
+          content: chunk.content,
+          done: chunk.done
+        }
+      }
+    } catch (error) {
+      this.logger.error(`流式推理失败: ${error.message}`)
+      throw error
+    }
+  }
+
+  /**
+   * 课程设计专用推理
+   */
+  async designCourse(requirements: {
+    subject: string
+    grade: string
+    topic: string
+    duration: string
+    objectives: string[]
+    specialRequirements?: string
+  }): Promise<AIResponse & { reasoning_content?: string }> {
+    try {
+      const reasoningResponse = await this.deepSeekReasoningService.designCourse(requirements)
+
+      return {
+        content: reasoningResponse.content,
+        reasoning_content: reasoningResponse.reasoning_content,
+        provider: 'deepseek_reasoner',
+        model: reasoningResponse.model,
+        usage: reasoningResponse.usage,
+        finishReason: 'stop',
+        metadata: {
+          requestId: this.generateRequestId(),
+          timestamp: new Date().toISOString(),
+          processingTime: 0,
+          taskType: 'courseDesign'
+        }
+      }
+    } catch (error) {
+      this.logger.error(`课程设计失败: ${error.message}`)
+      throw new Error('课程设计失败')
+    }
+  }
+
+  /**
+   * 问题分析专用推理
+   */
+  async analyzeEducationalProblem(problem: {
+    context: string
+    question: string
+    difficulty: 'basic' | 'intermediate' | 'advanced'
+    subject: string
+  }): Promise<AIResponse & { reasoning_content?: string }> {
+    try {
+      const reasoningResponse = await this.deepSeekReasoningService.analyzeEducationalProblem(problem)
+
+      return {
+        content: reasoningResponse.content,
+        reasoning_content: reasoningResponse.reasoning_content,
+        provider: 'deepseek_reasoner',
+        model: reasoningResponse.model,
+        usage: reasoningResponse.usage,
+        finishReason: 'stop',
+        metadata: {
+          requestId: this.generateRequestId(),
+          timestamp: new Date().toISOString(),
+          processingTime: 0,
+          taskType: 'problemAnalysis'
+        }
+      }
+    } catch (error) {
+      this.logger.error(`问题分析失败: ${error.message}`)
+      throw new Error('问题分析失败')
+    }
+  }
+
+  /**
+   * 实验设计专用推理
+   */
+  async designExperiment(requirements: {
+    topic: string
+    subject: string
+    grade: string
+    availableMaterials: string[]
+    safetyConstraints?: string[]
+  }): Promise<AIResponse & { reasoning_content?: string }> {
+    try {
+      const reasoningResponse = await this.deepSeekReasoningService.designExperiment(requirements)
+
+      return {
+        content: reasoningResponse.content,
+        reasoning_content: reasoningResponse.reasoning_content,
+        provider: 'deepseek_reasoner',
+        model: reasoningResponse.model,
+        usage: reasoningResponse.usage,
+        finishReason: 'stop',
+        metadata: {
+          requestId: this.generateRequestId(),
+          timestamp: new Date().toISOString(),
+          processingTime: 0,
+          taskType: 'experimentDesign'
+        }
+      }
+    } catch (error) {
+      this.logger.error(`实验设计失败: ${error.message}`)
+      throw new Error('实验设计失败')
+    }
+  }
+
+  /**
+   * 判断是否应该使用推理模式
+   */
+  private shouldUseReasoning(request: AIRequest): boolean {
+    // 1. 基于任务类型判断
+    if (request.taskType) {
+      const config = EDUCATION_AI_CONFIG[request.taskType]
+      if (config && config.provider === 'deepseek_reasoner') {
+        return true
+      }
+    }
+
+    // 2. 基于内容复杂度判断
+    const contentFeatures = this.analyzeContent(request.content)
+    if (contentFeatures.complexity > 7 || contentFeatures.isLongForm) {
+      return true
+    }
+
+    // 3. 基于关键词判断
+    const text = typeof request.content === 'string' ? request.content : JSON.stringify(request.content)
+    const reasoningKeywords = [
+      '分析', '设计', '推理', '解释', '为什么', '如何', '步骤', '过程',
+      'analyze', 'design', 'reasoning', 'explain', 'why', 'how', 'steps', 'process'
+    ]
+
+    return reasoningKeywords.some(keyword =>
+      text.toLowerCase().includes(keyword.toLowerCase())
+    )
   }
 
   /**

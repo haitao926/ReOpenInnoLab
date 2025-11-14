@@ -1,0 +1,1 @@
+{"version":3,"file":"submit-assignment.dto.d.ts","sourceRoot":"","sources":["submit-assignment.dto.ts"],"names":[],"mappings":"AAGA,qBAAa,mBAAmB;IAG9B,OAAO,EAAE,KAAK,CAAC;QACb,UAAU,EAAE,MAAM,CAAA;QAClB,MAAM,EAAE,GAAG,CAAA;QACX,SAAS,CAAC,EAAE,MAAM,CAAA;KACnB,CAAC,CAAA;IAKF,SAAS,CAAC,EAAE,MAAM,CAAA;CACnB"}

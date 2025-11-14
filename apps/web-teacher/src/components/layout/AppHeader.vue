@@ -2,7 +2,7 @@
   <header class="app-header">
     <div class="header-left">
       <el-button
-        type="text"
+        link
         :icon="Expand"
         class="sidebar-toggle"
         @click="toggleSidebar"
@@ -21,15 +21,6 @@
     </div>
 
     <div class="header-right">
-      <!-- AI助手按钮 -->
-      <el-button
-        type="primary"
-        :icon="MagicStick"
-        circle
-        class="ai-assistant-btn"
-        @click="toggleAIAssistant"
-      />
-
       <!-- 通知 -->
       <el-popover placement="bottom-end" :width="360" trigger="click">
         <template #reference>
@@ -41,7 +32,7 @@
           <div class="notification-header">
             <span>通知</span>
             <el-button
-              type="text"
+              link
               size="small"
               @click="markAllAsRead"
             >
@@ -68,7 +59,7 @@
                   <div class="notification-message">{{ notification.message }}</div>
                 </div>
                 <el-button
-                  type="text"
+                  link
                   :icon="Close"
                   size="small"
                   @click.stop="removeNotification(notification.id)"
@@ -117,7 +108,6 @@ import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
   Expand,
-  MagicStick,
   Bell,
   User,
   Setting,
@@ -139,7 +129,6 @@ const appStore = useAppStore()
 const userStore = useUserStore()
 
 // 计算属性
-const isDarkMode = computed(() => appStore.isDarkMode)
 const userName = computed(() => userStore.userName)
 const userAvatar = computed(() => userStore.userAvatar)
 const notifications = computed(() => appStore.notifications)
@@ -161,15 +150,6 @@ const toggleSidebar = () => {
 
 const handleThemeChanged = (theme: string) => {
   appStore.setTheme(theme)
-}
-
-const toggleAIAssistant = () => {
-  // 触发AI助手显示/隐藏
-  appStore.addNotification({
-    type: 'info',
-    title: 'AI助手',
-    message: 'AI助手功能正在开发中...'
-  })
 }
 
 const markAsRead = (id: string) => {
@@ -262,23 +242,6 @@ const handleUserMenuCommand = (command: string) => {
   display: flex;
   align-items: center;
   gap: clamp(12px, 1.6vw, 18px);
-}
-
-.ai-assistant-btn {
-  background: linear-gradient(135deg, #5b8ff9, #2b59ff);
-  border: none;
-  color: #ffffff;
-  box-shadow: 0 14px 25px -18px rgba(43, 89, 255, 0.9);
-  transition: all var(--edu-duration-normal) var(--edu-easing-bounce);
-
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 16px 32px -18px rgba(43, 89, 255, 0.95);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
 }
 
 .user-info {
@@ -420,7 +383,6 @@ const handleUserMenuCommand = (command: string) => {
 
 /* 无障碍优化 */
 .sidebar-toggle:focus-visible,
-.ai-assistant-btn:focus-visible,
 .user-info:focus-visible {
   outline: 2px solid var(--edu-primary-500);
   outline-offset: 2px;
@@ -430,14 +392,9 @@ const handleUserMenuCommand = (command: string) => {
 @media (prefers-reduced-motion: reduce) {
   .app-header,
   .sidebar-toggle,
-  .ai-assistant-btn,
   .user-info,
   .notification-item {
     transition-duration: 0.01ms !important;
-  }
-
-  .ai-assistant-btn:hover {
-    transform: none;
   }
 }
 </style>

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 
 import { User } from './entities/user.entity'
+import { Tenant } from './entities/tenant.entity'
 import { Role } from './entities/role.entity'
 import { Permission } from './entities/permission.entity'
 import { UserRole } from './entities/user-role.entity'
@@ -14,6 +15,8 @@ import { LoginAttempt } from './entities/login-attempt.entity'
 import { UserSession } from './entities/user-session.entity'
 import { OauthAccount } from './entities/oauth-account.entity'
 import { TwoFactorAuth } from './entities/two-factor-auth.entity'
+import { AuthProvider } from './entities/auth-provider.entity'
+import { AuditLog } from './entities/audit-log.entity'
 
 @Module({
   imports: [
@@ -31,11 +34,13 @@ import { TwoFactorAuth } from './entities/two-factor-auth.entity'
         synchronize: configService.get('database.synchronize'),
         migrationsRun: configService.get('database.migrationsRun'),
         entities: [
+          Tenant,
           User,
           Role,
           Permission,
           UserRole,
           RolePermission,
+          AuthProvider,
           RefreshToken,
           EmailVerification,
           PasswordReset,
@@ -43,6 +48,7 @@ import { TwoFactorAuth } from './entities/two-factor-auth.entity'
           UserSession,
           OauthAccount,
           TwoFactorAuth,
+          AuditLog,
         ],
         migrations: [__dirname + '/migrations/*{.ts,.js}'],
         extra: {
@@ -54,11 +60,13 @@ import { TwoFactorAuth } from './entities/two-factor-auth.entity'
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([
+      Tenant,
       User,
       Role,
       Permission,
       UserRole,
       RolePermission,
+      AuthProvider,
       RefreshToken,
       EmailVerification,
       PasswordReset,
@@ -66,22 +74,26 @@ import { TwoFactorAuth } from './entities/two-factor-auth.entity'
       UserSession,
       OauthAccount,
       TwoFactorAuth,
+      AuditLog,
     ]),
   ],
   exports: [
     TypeOrmModule,
+    Tenant,
     User,
     Role,
     Permission,
     UserRole,
     RolePermission,
+    AuthProvider,
     RefreshToken,
     EmailVerification,
-      PasswordReset,
-      LoginAttempt,
-      UserSession,
-      OauthAccount,
-      TwoFactorAuth,
+    PasswordReset,
+    LoginAttempt,
+    UserSession,
+    OauthAccount,
+    TwoFactorAuth,
+    AuditLog,
   ],
 })
 export class DatabaseModule {}

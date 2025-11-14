@@ -1,0 +1,1 @@
+{"version":3,"file":"grade-submission.dto.d.ts","sourceRoot":"","sources":["grade-submission.dto.ts"],"names":[],"mappings":"AAGA,qBAAa,kBAAkB;IAG7B,KAAK,EAAE,MAAM,CAAA;IAKb,QAAQ,CAAC,EAAE,MAAM,CAAA;IAKjB,OAAO,CAAC,EAAE,KAAK,CAAC;QACd,EAAE,EAAE,MAAM,CAAA;QACV,YAAY,EAAE,MAAM,CAAA;QACpB,cAAc,CAAC,EAAE,MAAM,CAAA;KACxB,CAAC,CAAA;CACH"}

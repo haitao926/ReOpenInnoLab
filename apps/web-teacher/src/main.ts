@@ -5,6 +5,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 import App from './App.vue'
 import router from './router'
+import { useUserStore } from './stores/user'
 
 // UI Kit 主题导入 - 必须在最前面
 import '@reopeninnolab/ui-kit/styles'
@@ -42,7 +43,7 @@ const aiService = new AIService({
   providers: isDevelopment ? {
     mock: {
       apiKey: 'mock-key',
-      baseUrl: 'http://localhost:8080/v1',
+      baseUrl: '/ai/v1',
       model: 'mock-model',
     }
   } : {
@@ -95,8 +96,19 @@ app.config.warnHandler = (msg, instance, trace) => {
   console.warn('组件追踪:', trace)
 }
 
-// 挂载应用
-app.mount('#app')
+// 初始化认证状态并挂载应用
+const initializeApp = async () => {
+  const userStore = useUserStore()
+  try {
+    await userStore.initializeAuth()
+  } catch (error) {
+    console.warn('应用启动时认证初始化失败:', error)
+  }
+
+  app.mount('#app')
+}
+
+initializeApp()
 
 // 开发环境下的热重载支持
 if (import.meta.hot) {

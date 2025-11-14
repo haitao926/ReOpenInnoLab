@@ -314,9 +314,18 @@
                 <el-icon><View /></el-icon>
                 查看详情
               </el-button>
-              <el-button size="small" type="primary" @click="manageClassStudents(classItem)">
+              <el-button size="small" @click="manageClassStudents(classItem)">
                 <el-icon><User /></el-icon>
                 学生管理
+              </el-button>
+              <el-button
+                size="small"
+                type="success"
+                @click="startLesson(classItem)"
+                :disabled="!hasActiveCourses(classItem)"
+              >
+                <el-icon><VideoPlay /></el-icon>
+                开始上课
               </el-button>
             </footer>
           </div>
@@ -343,6 +352,15 @@
             <template #default="{ row }">
               <el-button text size="small" @click="viewClassDetail(row)">详情</el-button>
               <el-button text size="small" @click="manageClassStudents(row)">学生</el-button>
+              <el-button
+                text
+                size="small"
+                type="success"
+                @click="startLesson(row)"
+                :disabled="!hasActiveCourses(row)"
+              >
+                上课
+              </el-button>
               <el-dropdown @command="command => handleClassAction(command, row)">
                 <el-button text size="small">
                   更多<el-icon><ArrowDown /></el-icon>
@@ -482,7 +500,9 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 import {
   Plus,
   Upload,
@@ -499,7 +519,8 @@ import {
   MagicStick,
   ArrowDown,
   Bell,
-  DataAnalysis
+  DataAnalysis,
+  VideoPlay
 } from '@element-plus/icons-vue'
 
 import TeacherWorkspaceLayout from '@/components/layout/TeacherWorkspaceLayout.vue'
@@ -544,6 +565,32 @@ interface Teacher {
   email: string
 }
 
+interface LessonInfo {
+  id: string
+  courseId: string
+  classId: string
+  title: string
+  status: 'preparing' | 'active' | 'paused' | 'completed'
+  startTime: Date
+  endTime?: Date
+  teacherId: string
+  scheduledTime: Date
+  duration: number // 分钟
+  chapters: any[]
+  currentSection: number
+  students: any[]
+  settings: {
+    allowQuestions: boolean
+    enableChat: boolean
+    recordSession: boolean
+    aiAssistance: boolean
+  }
+  createdAt: Date
+  updatedAt: Date
+}
+
+const router = useRouter()
+const userStore = useUserStore()
 const activeTab = ref('students')
 const classViewMode = ref<'card' | 'table'>('card')
 const classSearchKeyword = ref('')
@@ -939,6 +986,136 @@ const viewClassDetail = (classItem: ClassInfo) => {
 
 const handleClassAction = (command: string, classItem: ClassInfo) => {
   ElMessage.info(`操作 ${command}：${classItem.name}`)
+}
+
+const hasActiveCourses = (classItem: ClassInfo): boolean => {
+  return classItem.courseCount > 0
+}
+
+const startLesson = async (classItem: ClassInfo) => {
+  try {
+    // 获取班级的活跃课程
+    const activeCourses = classItem.recentCourses || []
+
+    if (activeCourses.length === 0) {
+      ElMessage.warning('该班级暂无可用课程')
+      return
+    }
+
+    // 如果只有一个课程，直接开始
+    if (activeCourses.length === 1) {
+      await createAndStartLesson(classItem, activeCourses[0])
+    } else {
+      // 显示课程选择对话框
+      await showCourseSelectionDialog(classItem, activeCourses)
+    }
+  } catch (error) {
+    // 用户取消操作
+    console.log('取消开始上课:', error)
+  }
+}
+
+// 创建并开始课程
+const createAndStartLesson = async (classItem: ClassInfo, course: any) => {
+  try {
+    await ElMessageBox.confirm(
+      `确定要为 "${classItem.name}" 开始课程 "${course.title}" 吗？`,
+      '开始上课',
+      {
+        confirmButtonText: '开始上课',
+        cancelButtonText: '取消',
+        type: 'info'
+      }
+    )
+
+    // 创建Lesson实体
+    const lessonId = `lesson_${course.id}_${classItem.id}_${Date.now()}`
+    const lesson: LessonInfo = {
+      id: lessonId,
+      courseId: course.id,
+      classId: classItem.id,
+      title: course.title,
+      status: 'preparing',
+      startTime: new Date(),
+      teacherId: userStore.id,
+      scheduledTime: new Date(),
+      duration: course.duration || 45,
+      chapters: course.chapters || [],
+      currentSection: 0,
+      students: classItem.students || [],
+      settings: {
+        allowQuestions: true,
+        enableChat: true,
+        recordSession: false,
+        aiAssistance: course.aiEnhanced || false
+      },
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+
+    // 保存Lesson到状态管理
+    await saveLessonToStore(lesson)
+
+    // 跳转到Presenter模式
+    router.push(`/presenter/${lessonId}`)
+    ElMessage.success('正在进入课堂播放模式')
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('创建课程失败:', error)
+      ElMessage.error('创建课程失败')
+    }
+  }
+}
+
+// 显示课程选择对话框
+const showCourseSelectionDialog = async (classItem: ClassInfo, courses: any[]) => {
+  try {
+    const { value: selectedCourse } = await ElMessageBox.prompt(
+      '请选择要开始的课程',
+      `为 ${classItem.name} 选择课程`,
+      {
+        confirmButtonText: '开始上课',
+        cancelButtonText: '取消',
+        inputType: 'select',
+        inputOptions: courses.reduce((options, course) => {
+          options[course.id] = `${course.title} (${course.duration || 45}分钟)`
+          return options
+        }, {} as Record<string, string>),
+        inputValidator: (value) => {
+          if (!value) {
+            return '请选择一个课程'
+          }
+          return true
+        }
+      }
+    )
+
+    if (selectedCourse) {
+      const course = courses.find(c => c.id === selectedCourse)
+      if (course) {
+        await createAndStartLesson(classItem, course)
+      }
+    }
+  } catch (error) {
+    console.log('取消课程选择')
+  }
+}
+
+// 保存Lesson到状态管理
+const saveLessonToStore = async (lesson: LessonInfo) => {
+  try {
+    // 这里应该调用API保存到后端
+    // 暂时保存到localStorage作为模拟
+    const existingLessons = JSON.parse(localStorage.getItem('lessons') || '[]')
+    existingLessons.push(lesson)
+    localStorage.setItem('lessons', JSON.stringify(existingLessons))
+
+    // 也可以保存到useClassroomStore（需要创建）
+    console.log('Lesson已保存:', lesson)
+  } catch (error) {
+    console.error('保存Lesson失败:', error)
+    throw error
+  }
 }
 
 

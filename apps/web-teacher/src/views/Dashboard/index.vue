@@ -10,44 +10,10 @@
         <EduTag variant="primary" size="md" class="subject-chip">
           {{ currentSubjectName }}
         </EduTag>
-          <el-button
-          type="primary"
-          class="ai-trigger"
-          :class="{ active: aiAssistantVisible }"
-          @click="toggleAIAssistant"
-        >
-          <el-icon><MagicStick /></el-icon>
-          AI 助手
-        </el-button>
       </div>
     </template>
 
     <template #summary>
-      <!-- 快速操作按钮 -->
-      <EduCard
-        variant="glass"
-        size="sm"
-        class="quick-actions-card"
-        :hoverable="false"
-      >
-        <div class="quick-actions-content">
-          <span class="quick-actions-title">快速操作</span>
-          <div class="quick-actions-buttons">
-            <EduButton size="sm" variant="primary" @click="createNewCourse">
-              <el-icon><Plus /></el-icon>
-              创建课程
-            </EduButton>
-            <EduButton size="sm" variant="secondary" @click="createNewAssignment">
-              <el-icon><EditPen /></el-icon>
-              新建作业
-            </EduButton>
-            <EduButton size="sm" variant="secondary" @click="scheduleExperiment">
-              <el-icon><Monitor /></el-icon>
-              安排实验
-            </EduButton>
-          </div>
-        </div>
-      </EduCard>
       <EduCard
         v-for="card in summaryCards"
         :key="card.id"
@@ -69,109 +35,146 @@
     </template>
 
     <template #left>
-      <div class="dashboard-sidebar">
-        <section class="sidebar-card">
-          <h4 class="sidebar-card__title">分析维度</h4>
-          <div class="category-list">
-            <button
-              v-for="dimension in analysisDimensions"
-              :key="dimension.type"
-              type="button"
-              class="category-item"
-              :class="{ active: selectedDimension === dimension.type }"
-              @click="selectDimension(dimension.type)"
-            >
-              <span class="category-icon" :style="{ backgroundColor: dimension.color }">
-                <el-icon><component :is="dimension.icon" /></el-icon>
-              </span>
-              <span class="category-name">{{ dimension.name }}</span>
-              <span class="category-count">{{ dimension.count }} 项</span>
-            </button>
-          </div>
-        </section>
+      <ManagementSidebarLeft
+        :sections="leftSidebarSections"
+        @quick-action="handleQuickAction"
+        @filter-change="handleFilterChange"
+      >
+        <!-- 筛选器插槽 -->
+        <template #filters="{ data }">
+          <div class="dashboard-filters">
+            <div class="filter-section">
+              <h5 class="sidebar-section-title">分析维度</h5>
+              <div class="category-list">
+                <button
+                  v-for="dimension in analysisDimensions"
+                  :key="dimension.type"
+                  type="button"
+                  class="sidebar-category-item"
+                  :class="{ active: selectedDimension === dimension.type }"
+                  @click="selectDimension(dimension.type)"
+                >
+                  <span class="sidebar-category-icon" :style="{ backgroundColor: dimension.color }">
+                    <el-icon><component :is="dimension.icon" /></el-icon>
+                  </span>
+                  <div class="sidebar-category-info">
+                    <div class="sidebar-category-name">{{ dimension.name }}</div>
+                    <div class="sidebar-category-count">{{ dimension.count }} 项</div>
+                  </div>
+                </button>
+              </div>
+            </div>
 
-        <section class="sidebar-card">
-          <h4 class="sidebar-card__title">时间范围</h4>
-          <div class="filter-tags">
-            <el-tag
-              v-for="range in timeRanges"
-              :key="range.key"
-              :effect="selectedTimeRange === range.key ? 'dark' : 'plain'"
-              :type="selectedTimeRange === range.key ? 'primary' : 'info'"
-              class="filter-tag"
-              @click="selectTimeRange(range.key)"
-            >
-              {{ range.label }}
-            </el-tag>
-          </div>
-        </section>
-
-        <section class="sidebar-card">
-          <h4 class="sidebar-card__title">指标模板</h4>
-          <div class="template-list">
-            <button
-              v-for="template in indicatorTemplates"
-              :key="template.id"
-              type="button"
-              class="template-item"
-              @click="selectTemplate(template)"
-            >
-              <el-icon><Document /></el-icon>
-              <span>{{ template.name }}</span>
-            </button>
-          </div>
-        </section>
-      </div>
-    </template>
-
-    <template #right>
-      <div class="dashboard-sidebar">
-        <section class="sidebar-card">
-          <h4 class="sidebar-card__title">AI 观察报告</h4>
-          <div class="observation-list">
-            <div v-for="report in aiObservationReports" :key="report.id" class="observation-item">
-              <span class="observation-icon">
-                <el-icon><component :is="report.icon" /></el-icon>
-              </span>
-              <div class="observation-content">
-                <div class="observation-text">{{ report.text }}</div>
-                <div class="observation-tag">{{ report.type }}</div>
+            <div class="filter-section">
+              <h5 class="sidebar-section-title">时间范围</h5>
+              <div class="time-range-filters">
+                <div class="filter-tags">
+                  <el-tag
+                    v-for="range in timeRanges"
+                    :key="range.key"
+                    :effect="selectedTimeRange === range.key ? 'dark' : 'plain'"
+                    :type="selectedTimeRange === range.key ? 'primary' : 'info'"
+                    class="filter-tag"
+                    @click="selectTimeRange(range.key)"
+                  >
+                    {{ range.label }}
+                  </el-tag>
+                </div>
               </div>
             </div>
           </div>
-        </section>
+        </template>
 
-        <section class="sidebar-card">
-          <h4 class="sidebar-card__title">建议行动</h4>
-          <div class="action-list">
-            <div v-for="item in actionSuggestions" :key="item.id" class="action-item">
-              <div class="action-text">{{ item.text }}</div>
-              <EduTag :variant="getPriorityVariant(item.priority)" size="sm">
-                {{ getPriorityText(item.priority) }}
-              </EduTag>
+        <!-- 快捷操作插槽 -->
+        <template #quick-actions="{ data }">
+          <div class="sidebar-quick-actions">
+            <el-button type="primary" size="small" class="sidebar-quick-action-btn" @click="createNewCourse">
+              <el-icon class="action-icon"><Plus /></el-icon>
+              创建课程
+            </el-button>
+            <el-button type="default" size="small" class="sidebar-quick-action-btn" @click="createNewAssignment">
+              <el-icon class="action-icon"><EditPen /></el-icon>
+              新建作业
+            </el-button>
+            <el-button type="default" size="small" class="sidebar-quick-action-btn" @click="scheduleExperiment">
+              <el-icon class="action-icon"><Monitor /></el-icon>
+              安排实验
+            </el-button>
+          </div>
+        </template>
+
+        <!-- 教学动态插槽 -->
+        <template #activity="{ data }">
+          <div class="sidebar-activity-list">
+            <div v-for="activity in recentActivities" :key="activity.id" class="sidebar-activity-item">
+              <div class="sidebar-activity-icon">
+                <el-icon><component :is="activity.icon" /></el-icon>
+              </div>
+              <div class="sidebar-activity-content">
+                <div class="sidebar-activity-text">{{ activity.studentName }} {{ activity.description }}</div>
+                <div class="sidebar-activity-time">{{ activity.time }}</div>
+              </div>
             </div>
           </div>
-        </section>
+        </template>
+      </ManagementSidebarLeft>
+    </template>
 
-        <section class="sidebar-card">
-          <h4 class="sidebar-card__title">导出任务</h4>
-          <ul class="export-list">
-            <li v-for="task in exportTasks" :key="task.id" class="export-item">
-              <span class="export-name">{{ task.name }}</span>
-              <el-tag
-                size="small"
-                :type="task.status === 'ready' ? 'success' : 'warning'"
-              >
-                {{ task.status === 'ready' ? '已完成' : '处理中' }}
-              </el-tag>
-            </li>
-          </ul>
-          <el-button type="text" size="small" @click="exportData">
-            <el-icon><Download /></el-icon>
-            导出最新报告
-          </el-button>
-        </section>
-      </div>
+    <template #right>
+      <ManagementSidebarRight
+        :sections="rightSidebarSections"
+        @resource-action="handleResourceAction"
+        @collaboration-action="handleCollaborationAction"
+      >
+        <!-- 数据洞察插槽 -->
+        <template #insights="{ data }">
+          <div class="sidebar-stats">
+            <div class="sidebar-stat-item">
+              <div class="sidebar-stat-label">平均评分</div>
+              <div class="sidebar-stat-value">{{ averageRating }}/5</div>
+            </div>
+            <div class="sidebar-stat-item">
+              <div class="sidebar-stat-label">热门内容</div>
+              <div class="sidebar-stat-value">{{ featuredCount }} 个</div>
+            </div>
+            <div class="sidebar-stat-item">
+              <div class="sidebar-stat-label">总内容数</div>
+              <div class="sidebar-stat-value">{{ contentList.length }} 个</div>
+            </div>
+          </div>
+        </template>
+
+        <!-- 资源参考插槽 -->
+        <template #resources="{ data }">
+          <div class="resource-list">
+            <div v-for="resource in recommendedResources" :key="resource.id" class="resource-item">
+              <div class="resource-icon" :style="{ backgroundColor: resource.color }">
+                <el-icon><component :is="resource.icon" /></el-icon>
+              </div>
+              <div class="resource-content">
+                <div class="resource-title">{{ resource.title }}</div>
+                <div class="resource-desc">{{ resource.description }}</div>
+              </div>
+              <el-button text size="small" @click="openResource(resource)">查看</el-button>
+            </div>
+          </div>
+        </template>
+
+        <!-- 协作动态插槽 -->
+        <template #collaboration="{ data }">
+          <div class="collaboration-list">
+            <div v-for="item in collaborationItems" :key="item.id" class="collaboration-item">
+              <div class="collaboration-icon">
+                <el-icon><component :is="item.icon" /></el-icon>
+              </div>
+              <div class="collaboration-content">
+                <div class="collaboration-text">{{ item.text }}</div>
+                <div class="collaboration-time">{{ item.time }}</div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </ManagementSidebarRight>
     </template>
 
     <div class="insight-content">
@@ -185,7 +188,7 @@
       >
         <template #panel-课堂态势>
           <div class="insight-grid">
-              <EduCard
+            <EduCard
               class="insight-card"
               variant="elevated"
               title="今日课程安排"
@@ -254,12 +257,12 @@
                 </div>
               </div>
             </EduCard>
-            </div>
+          </div>
         </template>
 
         <template #panel-作业提醒>
           <div class="insight-grid">
-              <EduCard
+            <EduCard
               class="insight-card"
               variant="elevated"
               title="本周待办事项"
@@ -341,12 +344,12 @@
                 </div>
               </div>
             </EduCard>
-            </div>
+          </div>
         </template>
 
         <template #panel-教学洞察>
           <div class="insight-grid">
-              <EduCard
+            <EduCard
               class="insight-card"
               variant="glass"
               title="AI 教学建议"
@@ -420,7 +423,7 @@
                 </div>
               </div>
             </EduCard>
-            </div>
+          </div>
         </template>
       </EduTabs>
     </div>
@@ -487,8 +490,11 @@ import {
 } from '@element-plus/icons-vue'
 
 import TeacherWorkspaceLayout from '@/components/layout/TeacherWorkspaceLayout.vue'
+import ManagementSidebarLeft from '@/components/layout/ManagementSidebarLeft.vue'
+import ManagementSidebarRight from '@/components/layout/ManagementSidebarRight.vue'
 import { EduCard, EduTag, EduTabs } from '@reopeninnolab/ui-kit'
 import { useAppStore } from '@/stores/app'
+import { PAGE_SIDEBAR_CONFIGS } from '@/constants/managementSidebar'
 
 interface TodoItem {
   id: string
@@ -517,10 +523,13 @@ const { selectedSubject } = storeToRefs(appStore)
 
 const leftSidebarCollapsed = ref(false)
 const rightSidebarCollapsed = ref(false)
-const aiAssistantVisible = ref(false)
 const selectedDimension = ref('course')
 const selectedTimeRange = ref('week')
 const activeTab = ref('课堂态势')
+
+// 侧边栏配置
+const leftSidebarSections = computed(() => PAGE_SIDEBAR_CONFIGS.dashboard.left)
+const rightSidebarSections = computed(() => PAGE_SIDEBAR_CONFIGS.dashboard.right)
 
 const SUBJECT_LABELS: Record<string, string> = {
   ai: '人工智能'
@@ -648,7 +657,6 @@ const studentHighlights = ref([
 ])
 
 const summaryStats = computed(() => {
-  // 根据学科返回不同的统计数据
   const baseStats = {
     'my-subjects': { keyKPI: '89.1', alertCount: 2, aiSuggestions: 12 },
     'ai': { keyKPI: '89.8', alertCount: 2, aiSuggestions: 14 }
@@ -717,7 +725,7 @@ const aiObservationReports = computed(() => {
 })
 
 const baseActionSuggestions = ref([
-  { id: 'action-1', text: '为 AI 课程配置“提示词对照表”模板', priority: 'high', subject: 'ai' },
+  { id: 'action-1', text: '为 AI 课程配置"提示词对照表"模板', priority: 'high', subject: 'ai' },
   { id: 'action-2', text: '安排 AI 数据洞察实验的助教辅导时段', priority: 'medium', subject: 'ai' },
   { id: 'action-3', text: '整理 AI 视觉项目调试经验供教研分享', priority: 'low', subject: 'ai' }
 ])
@@ -828,7 +836,7 @@ const baseAiSuggestions = ref([
   {
     id: 'suggestion-1',
     title: '引入提示词实战演练',
-    description: '针对 AI 创意编程课程，可安排“优秀提示词对照”环节，预计提升课堂产出 30%。',
+    description: '针对 AI 创意编程课程，可安排"优秀提示词对照"环节，预计提升课堂产出 30%。',
     icon: 'MagicStick',
     impact: 'high',
     subject: 'ai'
@@ -919,18 +927,66 @@ const quickActions = computed(() => [
   { id: 'send-notice', label: '发布公告', icon: Bell, handler: publishNotice }
 ])
 
-const toggleAIAssistant = () => {
-  aiAssistantVisible.value = !aiAssistantVisible.value
-  if (aiAssistantVisible.value) {
-    rightSidebarCollapsed.value = false
+// 协作数据
+const collaborationItems = ref([
+  {
+    id: 'collab-1',
+    text: 'AI 教研小组发布了新的教学模板',
+    time: '2 小时前',
+    icon: 'Document'
+  },
+  {
+    id: 'collab-2',
+    text: '系统推荐了 3 个相关教学资源',
+    time: '5 小时前',
+    icon: 'Collection'
   }
-  appStore.setAIAssistantVisible(aiAssistantVisible.value)
-}
+])
+
+// 推荐资源
+const recommendedResources = ref([
+  {
+    id: 1,
+    title: 'AI 教学最佳实践',
+    description: '基于最新教育理论的 AI 教学指南',
+    color: '#1890ff',
+    icon: 'Document'
+  },
+  {
+    id: 2,
+    title: '互动式学习设计',
+    description: '创建引人入胜的互动学习体验',
+    color: '#52c41a',
+    icon: 'VideoPlay'
+  },
+  {
+    id: 3,
+    title: '数据驱动教学',
+    description: '利用数据分析优化教学效果',
+    color: '#722ed1',
+    icon: 'TrendCharts'
+  }
+])
+
+// 内容数据
+const contentList = ref([
+  { id: '1', title: 'AI 基础课程', subject: 'ai' },
+  { id: '2', title: '机器学习入门', subject: 'ai' },
+  { id: '3', title: '深度学习实践', subject: 'ai' }
+])
+
+const averageRating = computed(() => {
+  if (contentList.value.length === 0) return 0
+  const total = contentList.value.reduce((sum, content) => sum + 5, 0)
+  return (total / contentList.value.length).toFixed(1)
+})
+
+const featuredCount = computed(() => contentList.value.filter(c => true).length)
+
 
 const handleTabChange = (tabId: string) => {
   activeTab.value = tabId
 
-  // 根据不同标签页显示不同的提示信息
   let message = `已切换到${tabId}视图`
   if (teacherSubject.value) {
     message += `（${currentSubjectName.value}）`
@@ -938,24 +994,19 @@ const handleTabChange = (tabId: string) => {
 
   ElMessage.info(message)
 
-  // 可以在这里添加不同标签页的数据刷新逻辑
   refreshTabData(tabId)
 }
 
-// 刷新标签页数据
 const refreshTabData = async (tabId: string) => {
   try {
     switch (tabId) {
       case '课堂态势':
-        // 刷新课程安排数据
         await loadTodaySchedule()
         break
       case '作业提醒':
-        // 刷新待办事项和作业提醒
         await loadTodoItems()
         break
       case '教学洞察':
-        // 刷新AI建议和学习分析
         await loadAIInsights()
         break
     }
@@ -964,19 +1015,15 @@ const refreshTabData = async (tabId: string) => {
   }
 }
 
-// 数据刷新函数（占位符，实际应从API获取）
 const loadTodaySchedule = async () => {
-  // 模拟刷新今日课程安排
   console.log('刷新今日课程安排数据')
 }
 
 const loadTodoItems = async () => {
-  // 模拟刷新待办事项
   console.log('刷新待办事项数据')
 }
 
 const loadAIInsights = async () => {
-  // 模拟刷新AI教学洞察
   console.log('刷新AI教学洞察数据')
 }
 
@@ -1119,7 +1166,6 @@ function publishNotice() {
   ElMessage.success('已创建公告草稿，稍后可在系统公告中查看')
 }
 
-
 const getSubjectKPILabel = (subject: string): string => {
   const labels: Record<string, string> = {
     'my-subjects': '教学综合指数',
@@ -1148,106 +1194,52 @@ const getSubjectGradient = (subject: string, type: 'kpi' | 'ai'): string => {
   return gradients[subject]?.[type] || gradients['my-subjects'][type]
 }
 
-// 快速操作方法
-const createNewCourse = () => {
-  router.push('/courses/create')
-  ElMessage.success('正在跳转到课程创建页面')
+// 侧边栏事件处理
+const handleQuickAction = (action: string) => {
+  switch (action) {
+    case 'create':
+      createCourse()
+      break
+    case 'assignment':
+      createAssignment()
+      break
+    case 'experiment':
+      startLab()
+      break
+    case 'export':
+      exportData()
+      break
+  }
 }
 
-const createNewAssignment = () => {
-  router.push('/assignments/create')
-  ElMessage.success('正在跳转到作业创建页面')
+const handleFilterChange = (filters: any) => {
+  console.log('Dashboard filters changed:', filters)
 }
 
-const scheduleExperiment = () => {
-  router.push('/labs')
-  ElMessage.success('正在跳转到实验管理页面')
+const handleResourceAction = (action: string, id: string | number) => {
+  console.log('Resource action:', action, id)
+  if (action === 'open') {
+    openResource(recommendedResources.value.find(r => r.id === id))
+  }
 }
 
-const viewRecentActivity = () => {
-  ElMessage.info('最近活动功能开发中')
+const handleCollaborationAction = (action: string, data: any) => {
+  console.log('Collaboration action:', action, data)
 }
 
-const exportReport = () => {
-  ElMessage.info('报告导出功能开发中')
+const openResource = (resource: any) => {
+  if (resource) {
+    ElMessage.info(`查看资源: ${resource.title}`)
+  }
 }
 </script>
 
 <style scoped lang="scss">
-// 快速操作条样式
-.quick-actions-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 16px 24px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
-  border-radius: 16px;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  backdrop-filter: blur(14px);
-}
-
-.quick-actions-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  @media (max-width: 768px) {
-    gap: 8px;
-  }
-}
-
+// 工作区操作栏样式
 .workspace-actions {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.ai-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  &.active {
-    background: linear-gradient(135deg, #7f5eff 0%, #45a3ff 100%);
-    border-color: transparent;
-  }
-}
-
-.quick-actions-card {
-  width: 100%;
-  grid-column: 1 / -1; /* Span across all columns */
-
-  :deep(.edu-card__body-content) {
-    padding: 20px;
-  }
-}
-
-.quick-actions-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.quick-actions-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--edu-text-primary);
-}
-
-.quick-actions-buttons {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-
-    .edu-button {
-      width: 100%;
-      justify-content: center;
-    }
-  }
 }
 
 .summary-card {
@@ -1290,187 +1282,134 @@ const exportReport = () => {
   color: var(--edu-text-secondary);
 }
 
-.dashboard-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.sidebar-card {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 16px;
-  border-radius: 18px;
-  background: rgba(15, 23, 42, 0.03);
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  backdrop-filter: blur(12px);
-}
-
-.sidebar-card__title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--edu-text-secondary);
-  letter-spacing: 0.02em;
-  margin: 0;
-}
-
 .subject-chip {
   font-weight: 600;
   text-transform: none;
 }
 
+// 仪表板筛选器样式
+.dashboard-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-lg);
+}
+
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-base);
+}
+
 .category-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--sidebar-spacing-base);
 }
 
-.category-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: rgba(15, 23, 42, 0.04);
-  border: none;
-  cursor: pointer;
-  color: inherit;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.category-item:hover,
-.category-item.active {
-  transform: translateX(4px);
-  background: rgba(99, 102, 241, 0.12);
-}
-
-.category-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-}
-
-.category-name {
-  flex: 1;
-  margin-left: 12px;
-  font-weight: 600;
-  color: var(--edu-text-primary);
-}
-
-.category-count {
-  font-size: 12px;
-  color: var(--edu-text-secondary);
-}
-
-.filter-tags {
+.time-range-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--sidebar-spacing-sm);
 }
 
 .filter-tag {
   cursor: pointer;
 }
 
-.template-list {
+// 侧边栏内容样式
+.sidebar-stats {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--sidebar-spacing-base);
 }
 
-.template-item {
+.resource-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-base);
+}
+
+.resource-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: none;
+  gap: var(--sidebar-spacing-sm);
+  padding: var(--sidebar-spacing-sm);
+  border-radius: var(--sidebar-radius-base);
   background: rgba(15, 23, 42, 0.04);
-  cursor: pointer;
-  text-align: left;
-  color: inherit;
+  transition: all var(--sidebar-transition-normal);
+
+  &:hover {
+    background: rgba(99, 102, 241, 0.08);
+  }
 }
 
-.template-item:hover {
-  background: rgba(79, 70, 229, 0.12);
-}
-
-.observation-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.observation-item {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-.observation-icon {
+.resource-icon {
   width: 32px;
   height: 32px;
-  border-radius: 12px;
+  border-radius: var(--sidebar-radius-base);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(79, 70, 229, 0.12);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.resource-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.resource-title {
+  font-weight: var(--sidebar-font-weight-semibold);
+  color: var(--sidebar-text-primary);
+  margin-bottom: 2px;
+  font-size: var(--sidebar-font-size-sm);
+}
+
+.resource-desc {
+  font-size: var(--sidebar-font-size-xs);
+  color: var(--sidebar-text-tertiary);
+}
+
+.collaboration-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-base);
+}
+
+.collaboration-item {
+  display: flex;
+  gap: var(--sidebar-spacing-sm);
+  align-items: flex-start;
+}
+
+.collaboration-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--sidebar-radius-base);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(99, 102, 241, 0.12);
   color: #4f46e5;
+  flex-shrink: 0;
 }
 
-.observation-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.collaboration-content {
+  flex: 1;
+  min-width: 0;
 }
 
-.observation-text {
-  font-size: 13px;
-  color: var(--edu-text-primary);
-  line-height: 1.5;
+.collaboration-text {
+  font-weight: var(--sidebar-font-weight-semibold);
+  color: var(--sidebar-text-primary);
+  margin-bottom: 2px;
+  font-size: var(--sidebar-font-size-sm);
 }
 
-.observation-tag {
-  font-size: 12px;
-  color: var(--edu-text-secondary);
-}
-
-.action-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.action-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.04);
-}
-
-.export-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.export-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 13px;
-  color: var(--edu-text-primary);
+.collaboration-time {
+  font-size: var(--sidebar-font-size-xs);
+  color: var(--sidebar-text-tertiary);
 }
 
 .insight-content {
@@ -1661,61 +1600,6 @@ const exportReport = () => {
   flex-wrap: wrap;
   color: var(--edu-text-primary);
   font-size: 13px;
-}
-
-.footer-column {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.footer-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--edu-text-primary);
-}
-
-.footer-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.footer-text {
-  font-size: 13px;
-  color: var(--edu-text-secondary);
-}
-
-.footer-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.footer-list__item {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  font-size: 13px;
-  color: var(--edu-text-secondary);
-}
-
-@media (max-width: 960px) {
-  .workspace-actions {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .insight-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.dashboard-tabs {
-  margin-bottom: 24px;
 }
 
 .assignment-alerts {
@@ -1941,64 +1825,105 @@ const exportReport = () => {
   color: var(--edu-text-secondary);
 }
 
-// 学科选择器样式
-.subject-option {
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--edu-text-primary);
+}
+
+.footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-text {
+  font-size: 13px;
+  color: var(--edu-text-secondary);
+}
+
+.footer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-list__item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+  color: var(--edu-text-secondary);
+}
+
+.dashboard-tabs {
+  margin-bottom: 24px;
+}
+
+// 快捷操作图标样式
+.action-icon {
+  border-radius: 8px;
+  padding: 3px;
+  color: white;
+  font-size: 14px;
+  transition: all var(--edu-duration-normal) var(--edu-easing-smooth);
+}
+
+.sidebar-quick-action-btn {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: var(--sidebar-spacing-sm);
   width: 100%;
+  justify-content: flex-start;
+
+  .action-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    padding: 2px;
+    font-size: 10px;
+    transition: all var(--sidebar-transition-normal);
+  }
 }
 
-.subject-option__color {
-  width: 12px;
-  height: 12px;
-  border-radius: var(--radius-sm);
-  flex-shrink: 0;
+.sidebar-quick-action-btn:hover .action-icon {
+  transform: translateY(-1px) scale(1.1);
 }
 
-.subject-option__name {
-  flex: 1;
-  font-weight: var(--font-weight-medium);
+.sidebar-quick-action-btn:hover .action-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  transform: translateY(-1px) scale(1.1);
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.4);
 }
 
-.subject-option__count {
-  font-size: var(--font-size-xs);
-  color: var(--text-tertiary);
-  font-weight: var(--font-weight-normal);
-}
-
-// 学科加载状态
-.el-select .el-select__loading {
-  color: var(--edu-primary-600);
-}
-
-// 学科错误状态
-.subject-error {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-sm);
-  color: var(--edu-color-error-600);
-  font-size: var(--font-size-sm);
-
-  .el-icon {
-    flex-shrink: 0;
+@media (max-width: 960px) {
+  .workspace-actions {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .el-button {
-    margin-left: auto;
-    color: var(--edu-primary-600);
+  .insight-grid {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .category-item,
-  .summary-card,
-  .insight-card,
-  .ai-trigger,
-  .assignment-alert,
-  .suggestion-item {
+  .action-icon,
+  .sidebar-quick-action-btn .action-icon {
     transition: none !important;
+  }
+
+  .sidebar-quick-action-btn:hover .action-icon {
+    transform: none !important;
   }
 }
 </style>

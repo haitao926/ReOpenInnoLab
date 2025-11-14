@@ -571,7 +571,8 @@ export class ACDiffer {
     const target = this.getNestedObject(acl, pathParts.slice(0, -1))
 
     if (target && Array.isArray(target)) {
-      const index = parseInt(pathParts[pathParts.length - 1].match(/\d+/)?.[0] || '0')
+      const match = pathParts[pathParts.length - 1]?.match(/\d+/)
+      const index = parseInt(match?.[0] || '0')
       target.splice(index, 0, addition.content)
     }
   }
@@ -586,7 +587,8 @@ export class ACDiffer {
     const target = this.getNestedObject(acl, pathParts.slice(0, -1))
 
     if (target && Array.isArray(target)) {
-      const index = parseInt(pathParts[pathParts.length - 1].match(/\d+/)?.[0] || '0')
+      const match = pathParts[pathParts.length - 1]?.match(/\d+/)
+      const index = parseInt(match?.[0] || '0')
       target.splice(index, 1)
     }
   }
@@ -617,7 +619,8 @@ export class ACDiffer {
     const oldTarget = this.getNestedObject(acl, oldPathParts.slice(0, -1))
 
     if (oldTarget && Array.isArray(oldTarget)) {
-      const oldIndex = parseInt(oldPathParts[oldPathParts.length - 1].match(/\d+/)?.[0] || '0')
+      const oldMatch = oldPathParts[oldPathParts.length - 1]?.match(/\d+/)
+      const oldIndex = parseInt(oldMatch?.[0] || '0')
       const [movedNode] = oldTarget.splice(oldIndex, 1)
 
       // 在新位置插入节点
@@ -625,7 +628,8 @@ export class ACDiffer {
       const newTarget = this.getNestedObject(acl, newPathParts.slice(0, -1))
 
       if (newTarget && Array.isArray(newTarget)) {
-        const newIndex = parseInt(newPathParts[newPathParts.length - 1].match(/\d+/)?.[0] || '0')
+        const newMatch = newPathParts[newPathParts.length - 1]?.match(/\d+/)
+        const newIndex = parseInt(newMatch?.[0] || '0')
         newTarget.splice(newIndex, 0, movedNode)
       }
     }

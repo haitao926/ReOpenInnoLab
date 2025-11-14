@@ -6,56 +6,16 @@
     v-model:rightCollapsed="rightSidebarCollapsed"
   >
     <template #header-controls>
-      <div class="workspace-actions">
-        <EduButton variant="primary" @click="createNewLab">
-          <el-icon><Plus /></el-icon>
-          创建实验
-        </EduButton>
-        <EduButton variant="secondary" @click="importLab">
-          <el-icon><Upload /></el-icon>
-          导入模板
-        </EduButton>
-      </div>
+      <WorkspacePrimaryToolbar
+        :create-button-text="'创建实验'"
+        :import-button-text="'导入模板'"
+        :show-ai-button="false"
+        @create="createNewLab"
+        @import="importLab"
+      />
     </template>
 
-    <template #summary>
-      <div class="lab-summary-toolbar">
-        <div class="lab-summary-primary">
-          <el-input
-            v-model="searchQuery"
-            placeholder="搜索实验或模板"
-            clearable
-            class="lab-summary-search"
-          >
-            <template #prefix>
-              <el-icon><Search /></el-icon>
-            </template>
-          </el-input>
-          <el-select
-            v-model="storeSubject"
-            placeholder="聚焦学科"
-            class="lab-summary-select"
-            disabled
-          >
-            <el-option :label="subjectDisplayName" :value="teacherSubject" />
-          </el-select>
-          <el-select v-model="selectedType" placeholder="实验类型" clearable class="lab-summary-select">
-            <el-option value="" label="全部类型" />
-            <el-option value="playground" label="编程练习" />
-            <el-option value="data-lab" label="数据实验" />
-            <el-option value="robotics" label="机器人" />
-            <el-option value="model-training" label="模型训练" />
-          </el-select>
-        </div>
-        <el-segmented
-          v-model="viewMode"
-          :options="viewModeSegments"
-          size="small"
-          class="lab-view-toggle"
-        />
-      </div>
-    </template>
-
+  
     <template #left>
       <ManagementSidebarLeft
         :sections="leftSidebarSections"
@@ -190,6 +150,32 @@
               <h3 class="lab-panel__title">实验列表</h3>
               <p class="lab-panel__subtitle">从模板库挑选或自定义实验，并快速发布给班级</p>
             </div>
+            <div class="lab-panel__filters">
+              <el-input
+                v-model="searchQuery"
+                placeholder="搜索实验或模板"
+                clearable
+                style="width: 300px;"
+              >
+                <template #prefix>
+                  <el-icon><Search /></el-icon>
+                </template>
+              </el-input>
+              <el-select v-model="selectedType" placeholder="实验类型" clearable style="width: 150px;">
+                <el-option value="" label="全部类型" />
+                <el-option value="playground" label="编程练习" />
+                <el-option value="data-lab" label="数据实验" />
+                <el-option value="robotics" label="机器人" />
+                <el-option value="model-training" label="模型训练" />
+              </el-select>
+              <div class="view-switcher">
+                <el-segmented
+                  v-model="viewMode"
+                  :options="viewModeSegments"
+                  size="small"
+                />
+              </div>
+            </div>
           </div>
         </template>
 
@@ -222,53 +208,108 @@
           <div
             v-for="lab in filteredLabs"
             :key="lab.id"
-            class="lab-tile"
-            :class="{ 'lab-tile--draft': !lab.published }"
+            class="lab-card"
+            :class="{ 'lab-card--draft': !lab.published }"
           >
-            <header class="lab-tile__header">
-              <div class="lab-tile__badge" :class="`lab-tile__badge--${getStatusClass(lab)}`">
-                {{ getStatusText(lab) }}
+            <!-- 实验封面区域 -->
+            <div class="lab-card__cover">
+              <div class="lab-type-icon" :class="`lab-type-icon--${lab.type}`">
+                <el-icon><component :is="getLabTypeIcon(lab.type)" /></el-icon>
               </div>
-              <el-dropdown @command="command => handleLabAction(command, lab)">
-                <span class="lab-tile__more"><el-icon><MoreFilled /></el-icon></span>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item command="edit">编辑实验</el-dropdown-item>
-                    <el-dropdown-item command="duplicate">复制实验</el-dropdown-item>
-                    <el-dropdown-item command="publish">发布实验</el-dropdown-item>
-                    <el-dropdown-item command="analytics" divided>查看数据</el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </header>
-
-            <div class="lab-tile__body">
-              <h3 class="lab-tile__title">{{ lab.title }}</h3>
-              <p class="lab-tile__description">{{ lab.description }}</p>
-              <div class="lab-tile__meta">
-                <el-tag :type="getSubjectVariant(lab.subject)" size="small">
-                  {{ getSubjectName(lab.subject) }}
-                </el-tag>
-                <el-tag :type="getGradeVariant(lab.grade)" size="small">
-                  {{ getGradeName(lab.grade) }}
-                </el-tag>
-                <el-tag size="small">{{ getTypeName(lab.type) }}</el-tag>
-              </div>
-              <div class="lab-tile__stats">
-                <span>难度：{{ getDifficultyName(lab.difficulty) }}</span>
-                <span>使用 {{ lab.usage }} 次</span>
+              <div class="lab-cover__overlay">
+                <div class="lab-cover__badge">
+                  <el-tag :type="getLabTypeVariant(lab.type)" size="small" effect="dark">
+                    {{ getTypeName(lab.type) }}
+                  </el-tag>
+                </div>
+                <div class="lab-cover__status">
+                  <el-tag :type="lab.published ? 'success' : 'info'" size="small" effect="dark">
+                    {{ lab.published ? '已发布' : '草稿' }}
+                  </el-tag>
+                </div>
               </div>
             </div>
 
-            <footer class="lab-tile__footer">
-              <el-button size="small" type="primary" @click="previewLab(lab)">
-                <el-icon><Monitor /></el-icon>
-                预览
-              </el-button>
-              <el-button size="small" @click="publishLab(lab)">
-                <el-icon><Upload /></el-icon>
-                分配班级
-              </el-button>
+            <!-- 实验内容区域 -->
+            <div class="lab-card__content">
+              <div class="lab-card__header">
+                <h4 class="lab-card__title">{{ lab.title }}</h4>
+                <div class="lab-card__actions">
+                  <el-dropdown @command="command => handleLabAction(command, lab)">
+                    <el-button size="small" text>
+                      <el-icon><MoreFilled /></el-icon>
+                    </el-button>
+                    <template #dropdown>
+                      <el-dropdown-menu>
+                        <el-dropdown-item command="edit">
+                          <el-icon><Edit /></el-icon>
+                          编辑实验
+                        </el-dropdown-item>
+                        <el-dropdown-item command="duplicate">
+                          <el-icon><CopyDocument /></el-icon>
+                          复制实验
+                        </el-dropdown-item>
+                        <el-dropdown-item command="publish">
+                          <el-icon><Upload /></el-icon>
+                          {{ lab.published ? '取消发布' : '发布实验' }}
+                        </el-dropdown-item>
+                        <el-dropdown-item command="analytics" divided>
+                          <el-icon><DataAnalysis /></el-icon>
+                          查看数据
+                        </el-dropdown-item>
+                      </el-dropdown-menu>
+                    </template>
+                  </el-dropdown>
+                </div>
+              </div>
+
+              <p class="lab-card__description">{{ lab.description }}</p>
+
+              <!-- 实验元信息 -->
+              <div class="lab-card__meta">
+                <div class="meta-item">
+                  <el-icon><User /></el-icon>
+                  <span>{{ getGradeName(lab.grade) }}</span>
+                </div>
+                <div class="meta-item">
+                  <el-icon><Collection /></el-icon>
+                  <span>{{ getSubjectName(lab.subject) }}</span>
+                </div>
+              </div>
+
+              <!-- 实验统计信息 -->
+              <div class="lab-card__stats">
+                <div class="stat-group">
+                  <div class="stat-item">
+                    <div class="stat-label">难度</div>
+                    <div class="stat-value" :class="`stat-value--${lab.difficulty}`">
+                      {{ getDifficultyName(lab.difficulty) }}
+                    </div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-label">使用次数</div>
+                    <div class="stat-value">{{ lab.usage }}</div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-label">预计时长</div>
+                    <div class="stat-value">{{ getDurationName(lab.duration) }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 底部操作区域 -->
+            <footer class="lab-card__footer">
+              <div class="lab-card__actions">
+                <el-button size="small" @click="previewLab(lab)">
+                  <el-icon><Monitor /></el-icon>
+                  预览
+                </el-button>
+                <el-button size="small" type="primary" @click="publishLab(lab)">
+                  <el-icon><Upload /></el-icon>
+                  分配班级
+                </el-button>
+              </div>
             </footer>
           </div>
         </div>
@@ -307,40 +348,6 @@
         </el-table>
       </EduCard>
     </div>
-
-    <template #footer>
-      <div class="footer-column">
-        <h4 class="footer-title">实验安排提醒</h4>
-        <div class="footer-list">
-          <div v-for="reminder in footerReminders" :key="reminder.id" class="footer-item">
-            <span class="footer-indicator" :class="`footer-indicator--${reminder.type}`"></span>
-            <span>{{ reminder.text }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="footer-column">
-        <h4 class="footer-title">常用操作</h4>
-        <div class="support-links">
-          <el-button text size="small" @click="openResourceCenter">
-            <el-icon><Collection /></el-icon>
-            进入资源中心
-          </el-button>
-          <el-button text size="small" @click="viewLabAnalytics">
-            <el-icon><TrendCharts /></el-icon>
-            查看实验数据
-          </el-button>
-        </div>
-      </div>
-      <div class="footer-column">
-        <h4 class="footer-title">系统公告</h4>
-        <ul class="footer-announcements">
-          <li v-for="notice in announcements" :key="notice.id">
-            <el-icon><Bell /></el-icon>
-            <span>{{ notice.text }}</span>
-          </li>
-        </ul>
-      </div>
-    </template>
   </TeacherWorkspaceLayout>
 </template>
 
@@ -356,7 +363,6 @@ import {
   Monitor,
   Collection,
   TrendCharts,
-  Bell,
   MagicStick,
   Timer,
   DataAnalysis,
@@ -365,12 +371,18 @@ import {
   Document,
   ChatLineRound,
   Histogram,
-  Link
+  Link,
+  List,
+  Menu,
+  Edit,
+  CopyDocument,
+  User
 } from '@element-plus/icons-vue'
 
 import TeacherWorkspaceLayout from '@/components/layout/TeacherWorkspaceLayout.vue'
 import ManagementSidebarLeft from '@/components/layout/ManagementSidebarLeft.vue'
 import ManagementSidebarRight from '@/components/layout/ManagementSidebarRight.vue'
+import WorkspacePrimaryToolbar from '@/components/workspace/WorkspacePrimaryToolbar.vue'
 import TimelineSectionCard from '@/components/lab/TimelineSectionCard.vue'
 import { EduButton, EduCard } from '@reopeninnolab/ui-kit'
 import { useAppStore } from '@/stores/app'
@@ -655,34 +667,6 @@ const reminders = computed(() => {
   return baseReminders.value.filter(item => item.subject === subject)
 })
 
-const baseFooterReminders = ref([
-  { id: 'f1', text: '今日 15:20 · AI 共创实验开放预约', type: 'info', subject: 'ai' },
-  { id: 'f2', text: '明日 09:00 · AI 数据洞察实验需提交成果包', type: 'warning', subject: 'ai' },
-  { id: 'f3', text: '本周五 · AI 视觉巡线项目需确认设备', type: 'info', subject: 'ai' }
-])
-
-const footerReminders = computed(() => {
-  const subject = teacherSubject.value
-  if (!subject) {
-    return baseFooterReminders.value
-  }
-  return baseFooterReminders.value.filter(item => item.subject === subject)
-})
-
-const baseAnnouncements = ref([
-  { id: 'a1', text: '实验资源库新增 “AI 调试助手” 模块，欢迎试用。', subject: 'ai' },
-  { id: 'a2', text: '周四凌晨 1:00-3:00 进行平台升级，请提前保存实验进度。', subject: '' },
-  { id: 'a3', text: 'AI 实验模板本周更新了最新案例合集。', subject: 'ai' }
-])
-
-const announcements = computed(() => {
-  const subject = teacherSubject.value
-  if (!subject) {
-    return baseAnnouncements.value
-  }
-  return baseAnnouncements.value.filter(item => !item.subject || item.subject === subject)
-})
-
 const previewSuggestion = (suggestion: any) => {
   router.push('/analytics')
 }
@@ -960,13 +944,39 @@ const openResource = (resource: any) => {
     ElMessage.info(`查看资源: ${resource.title}`)
   }
 }
+
+// 新增实验卡片相关函数
+const getLabTypeIcon = (type: Lab['type']) => {
+  const iconMap: Record<Lab['type'], string> = {
+    'playground': 'Monitor',
+    'data-lab': 'DataAnalysis',
+    'robotics': 'Cpu',
+    'model-training': 'TrendCharts'
+  }
+  return iconMap[type] || 'Monitor'
+}
+
+const getLabTypeVariant = (type: Lab['type']): 'primary' | 'success' | 'warning' | 'info' | 'danger' => {
+  const variantMap: Record<Lab['type'], 'primary' | 'success' | 'warning' | 'info' | 'danger'> = {
+    'playground': 'primary',
+    'data-lab': 'success',
+    'robotics': 'warning',
+    'model-training': 'info'
+  }
+  return variantMap[type] || 'primary'
+}
+
+const getDurationName = (duration: Lab['duration']): string => {
+  const durationMap: Record<Lab['duration'], string> = {
+    'short': '30分钟内',
+    'medium': '30-60分钟',
+    'long': '60分钟以上'
+  }
+  return durationMap[duration] || '未知时长'
+}
 </script>
 
 <style scoped lang="scss">
-.workspace-actions {
-  display: flex;
-  gap: 12px;
-}
 
 .summary-card {
   width: 100%;
@@ -1057,6 +1067,11 @@ const openResource = (resource: any) => {
 
 .lab-view-toggle {
   flex: 0 0 auto;
+}
+
+.view-switcher {
+  display: flex;
+  align-items: center;
 }
 
 
@@ -1202,13 +1217,22 @@ const openResource = (resource: any) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .lab-panel__info {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  flex-shrink: 0;
+}
+
+.lab-panel__filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .lab-panel__title {
@@ -1233,10 +1257,16 @@ const openResource = (resource: any) => {
   flex-direction: column;
   gap: 16px;
   padding: 20px;
-  border-radius: 18px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 245, 250, 0.9) 100%);
-  box-shadow: 0 24px 45px -26px rgba(15, 23, 42, 0.4);
+  border-radius: var(--edu-radius-xl);
+  border: 1px solid var(--edu-border-light);
+  background: var(--edu-bg-primary);
+  box-shadow: var(--edu-shadow-sm);
+  transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
+
+  &:hover {
+    box-shadow: var(--edu-shadow-md);
+    transform: translateY(-2px);
+  }
 }
 
 .lab-tile__header {
@@ -1250,18 +1280,23 @@ const openResource = (resource: any) => {
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
-  background: rgba(79, 70, 229, 0.12);
-  color: #4f46e5;
+  background: var(--edu-primary-100);
+  color: var(--edu-primary-600);
 }
 
 .lab-tile__badge--draft {
-  background: rgba(148, 163, 184, 0.16);
-  color: #475569;
+  background: var(--edu-gray-100);
+  color: var(--edu-gray-600);
 }
 
 .lab-tile__more {
   color: var(--edu-text-secondary);
   cursor: pointer;
+  transition: color var(--edu-duration-fast);
+
+  &:hover {
+    color: var(--edu-primary-600);
+  }
 }
 
 .lab-tile__body {
@@ -1272,15 +1307,16 @@ const openResource = (resource: any) => {
 
 .lab-tile__title {
   margin: 0;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--edu-text-primary);
 }
 
 .lab-tile__description {
   margin: 0;
   color: var(--edu-text-secondary);
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--font-size-sm);
+  line-height: var(--edu-leading-normal);
 }
 
 .lab-tile__meta {
@@ -1290,10 +1326,14 @@ const openResource = (resource: any) => {
 }
 
 .lab-tile__stats {
-  display: flex;
-  gap: 12px;
-  font-size: 12px;
-  color: var(--edu-text-secondary);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--edu-bg-secondary);
+  border-radius: var(--edu-radius-base);
+  font-size: var(--font-size-xs);
+  color: var(--edu-text-tertiary);
 }
 
 .lab-tile__footer {
@@ -1304,72 +1344,274 @@ const openResource = (resource: any) => {
 .lab-row {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-xs);
+
+  &__title {
+    font-weight: var(--font-weight-semibold);
+    color: var(--edu-text-primary);
+  }
+
+  &__meta {
+    display: flex;
+    gap: var(--spacing-xs);
+    align-items: center;
+    font-size: var(--font-size-xs);
+    color: var(--edu-text-secondary);
+  }
 }
 
-.lab-row__title {
-  font-weight: 600;
+@media (max-width: 1200px) {
+  .lab-panel__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .lab-panel__filters {
+    justify-content: flex-start;
+    width: 100%;
+  }
 }
 
-.lab-row__meta {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  font-size: 12px;
-  color: var(--edu-text-secondary);
+@media (max-width: 768px) {
+  .lab-panel__filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lab-search-input {
+    min-width: auto;
+  }
+
+  .lab-filter-select {
+    flex: 1;
+  }
 }
 
-.footer-column {
+// 增强实验卡片样式
+.lab-card {
   display: flex;
   flex-direction: column;
+  background: var(--edu-bg-primary);
+  border: 1px solid var(--edu-border-light);
+  border-radius: var(--edu-radius-lg);
+  overflow: hidden;
+  transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
+  cursor: pointer;
+  box-shadow: var(--edu-shadow-sm);
+
+  &:hover {
+    box-shadow: var(--edu-shadow-md);
+    transform: translateY(-2px);
+  }
+
+  &--draft {
+    border-left: 4px solid var(--edu-color-gray-300);
+  }
+}
+
+.lab-card__cover {
+  position: relative;
+  height: 120px;
+  background: linear-gradient(135deg, var(--edu-bg-secondary) 0%, var(--edu-bg-tertiary) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lab-type-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #fff;
+  transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
+
+  &--playground {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  }
+
+  &--data-lab {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  }
+
+  &--robotics {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  }
+
+  &--model-training {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  }
+}
+
+.lab-card:hover .lab-type-icon {
+  transform: scale(1.1);
+}
+
+.lab-cover__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.6) 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px;
+}
+
+.lab-cover__badge,
+.lab-cover__status {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lab-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  flex: 1;
+}
+
+.lab-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 12px;
 }
 
-.footer-title {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.footer-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.footer-item {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  color: var(--edu-text-secondary);
-}
-
-.footer-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-}
-
-.footer-indicator--info { background: #4f46e5; }
-.footer-indicator--warning { background: #f97316; }
-
-.support-links {
-  display: flex;
-  gap: 12px;
-}
-
-.footer-announcements {
-  list-style: none;
+.lab-card__title {
   margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  color: var(--edu-text-secondary);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--edu-text-primary);
+  line-height: 1.4;
 }
 
-@media (max-width: 960px) {
-  .lab-grid {
-    grid-template-columns: 1fr;
+.lab-card__description {
+  color: var(--edu-text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lab-card__meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--edu-text-secondary);
+
+  .el-icon {
+    font-size: 16px;
+    color: var(--edu-primary-500);
+  }
+}
+
+.lab-card__stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stat-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  flex: 1;
+  padding: 8px;
+  background: var(--edu-bg-secondary);
+  border-radius: var(--edu-radius-base);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--edu-text-tertiary);
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--edu-text-primary);
+
+  &--beginner {
+    color: var(--edu-success-600);
+  }
+
+  &--intermediate {
+    color: var(--edu-warning-600);
+  }
+
+  &--advanced {
+    color: var(--edu-danger-600);
+  }
+}
+
+.lab-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--edu-border-light);
+  background: var(--edu-bg-secondary);
+}
+
+.lab-card__actions {
+  display: flex;
+  gap: 8px;
+}
+
+// 兼容旧的 lab-tile 样式
+.lab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.lab-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border-radius: var(--edu-radius-xl);
+  border: 1px solid var(--edu-border-light);
+  background: var(--edu-bg-primary);
+  box-shadow: var(--edu-shadow-sm);
+  transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
+
+  &:hover {
+    box-shadow: var(--edu-shadow-md);
+    transform: translateY(-2px);
+  }
+
+  &--draft {
+    border-left: 4px solid var(--edu-color-gray-300);
   }
 }
 
@@ -1377,6 +1619,7 @@ const openResource = (resource: any) => {
   .summary-card,
   .template-item,
   .lab-tile,
+  .lab-card,
   .suggestion-item {
     transition: none !important;
   }

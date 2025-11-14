@@ -11,9 +11,6 @@
         <component :is="Component" :key="route.fullPath" />
       </transition>
     </router-view>
-
-    <GlobalNotification />
-    <ErrorBoundary />
   </div>
 </template>
 
@@ -25,8 +22,6 @@ import { ElMessage } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
 import type { WebSocketService } from '@/services/websocket'
 
-import GlobalNotification from '@/components/common/GlobalNotification.vue'
-import ErrorBoundary from '@/components/common/ErrorBoundary.vue'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
@@ -74,6 +69,9 @@ const handleKeyboardShortcut = (event: KeyboardEvent) => {
 onMounted(async () => {
   try {
     globalLoading.value = true
+
+    // 清理可能损坏的认证数据
+    userStore.clearCorruptedData()
 
     if (!userStore.isAuthenticated) {
       await userStore.initializeAuth()

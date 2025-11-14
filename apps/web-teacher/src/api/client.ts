@@ -3,7 +3,8 @@ import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 
 // 创建axios实例
 const createApiClient = (): AxiosInstance => {
-  const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
+  // 在开发环境下使用相对路径以利用Vite代理，生产环境使用完整URL
+  const baseURL = import.meta.env.DEV ? '/api/v1' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1')
 
   const client = axios.create({
     baseURL,

@@ -22,7 +22,7 @@
             :aria-label="item.label"
             @click="navigateTo(item.path)"
           >
-            <span class="nav-item-icon">
+            <span class="nav-item-icon" :class="`nav-icon-${item.path.replace('/', '')}`">
               <el-icon>
                 <component :is="item.icon" />
               </el-icon>
@@ -51,7 +51,7 @@
             :aria-label="item.label"
             @click="navigateTo(item.path)"
           >
-            <span class="nav-item-icon">
+            <span class="nav-item-icon" :class="`nav-icon-${item.path.replace('/', '')}`">
               <el-icon>
                 <component :is="item.icon" />
               </el-icon>
@@ -139,12 +139,6 @@ const primaryNav: NavItem[] = [
     label: '作业管理',
     description: '作业批改与反馈闭环',
     icon: 'EditPen'
-  },
-  {
-    path: '/analytics',
-    label: '学习分析',
-    description: '数据洞察与预警提醒',
-    icon: 'TrendCharts'
   }
 ]
 
@@ -160,6 +154,12 @@ const secondaryNav: NavItem[] = [
     label: '资源中心',
     description: '素材资产与版权管理',
     icon: 'Collection'
+  },
+  {
+    path: '/analytics',
+    label: '学习分析',
+    description: '数据洞察与预警提醒',
+    icon: 'TrendCharts'
   },
   {
     path: '/settings',
@@ -198,15 +198,15 @@ const navigateTo = (path: string) => {
 
 <style scoped>
 .sidebar {
-  height: 100%;
-  padding: 24px clamp(12px, 2.5vw, 20px);
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.78) 0%, rgba(15, 23, 42, 0.9) 100%);
-  color: rgba(255, 255, 255, 0.88);
+  height: 100vh;
+  padding: 20px clamp(10px, 2vw, 16px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
   position: relative;
   overflow: hidden;
+  border-right: 1px solid #334155;
 }
 
 .sidebar::before {
@@ -232,16 +232,21 @@ const navigateTo = (path: string) => {
 .sidebar-top {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px; /* 为滚动条留出空间 */
+  margin-bottom: 20px; /* 与底部区域的间距 */
+  min-height: 0; /* 允许flex子元素缩小 */
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   cursor: pointer;
-  padding: 12px;
-  border-radius: 16px;
+  padding: 10px;
+  border-radius: 12px;
   transition: background-color var(--edu-duration-fast) var(--edu-easing-in-out);
 }
 
@@ -263,11 +268,12 @@ const navigateTo = (path: string) => {
 .brand-name {
   font-size: 16px;
   font-weight: 600;
+  color: #f1f5f9 !important;
 }
 
 .brand-tagline {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.65);
+  color: #cbd5e1 !important;
   letter-spacing: 0.01em;
 }
 
@@ -279,25 +285,25 @@ const navigateTo = (path: string) => {
 .sidebar-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .nav-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .nav-item {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
-  border-radius: 16px;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid transparent;
-  color: inherit;
+  color: #e2e8f0 !important;
   cursor: pointer;
   transition: all var(--edu-duration-normal) var(--edu-easing-smooth);
   text-align: left;
@@ -319,22 +325,55 @@ const navigateTo = (path: string) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.12);
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%);
   color: rgba(255, 255, 255, 0.92);
   flex-shrink: 0;
+  font-size: 18px;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--edu-duration-normal) var(--edu-easing-smooth);
+}
+
+.nav-item-icon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity var(--edu-duration-normal) var(--edu-easing-smooth);
+}
+
+.nav-item:hover .nav-item-icon {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.12) 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nav-item:hover .nav-item-icon::before {
+  opacity: 1;
 }
 
 .nav-item.active .nav-item-icon {
-  background: rgba(255, 255, 255, 0.16);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.16) 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+.nav-item.active .nav-item-icon::before {
+  opacity: 1;
 }
 
 .nav-item-text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .nav-item-title {
@@ -344,11 +383,12 @@ const navigateTo = (path: string) => {
 }
 
 .nav-item-description {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.68);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.64);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 .nav-item--compact {
@@ -360,15 +400,20 @@ const navigateTo = (path: string) => {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: rgba(255, 255, 255, 0.45);
+  color: #94a3b8 !important;
   padding: 0 4px;
 }
 
 .sidebar-bottom {
-  margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+  padding: 20px;
+  margin: 0 -20px -20px -20px; /* 扩展到容器边缘，底部贴边 */
+  border-top: 1px solid rgba(255, 255, 255, 0.08); /* 分隔线 */
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+  margin-top: auto; /* 推到底部 */
+  flex-shrink: 0; /* 防止底部区域被压缩 */
 }
 
 .sidebar-meta {
@@ -378,13 +423,13 @@ const navigateTo = (path: string) => {
 
 .meta-card {
   width: 100%;
-  padding: 16px;
-  border-radius: 16px;
+  padding: 12px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .meta-status {
@@ -392,6 +437,7 @@ const navigateTo = (path: string) => {
   align-items: center;
   gap: 8px;
   font-size: 13px;
+  color: #cbd5e1 !important;
 }
 
 .status-dot {
@@ -409,7 +455,7 @@ const navigateTo = (path: string) => {
 
 .meta-version {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.55);
+  color: #94a3b8 !important;
 }
 
 .meta-toggle {
@@ -493,5 +539,70 @@ const navigateTo = (path: string) => {
   .list-leave-active {
     transition-duration: 0.01ms !important;
   }
+}
+
+/* 导航项特定颜色主题 */
+.nav-icon-dashboard {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+}
+
+.nav-icon-courses {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
+}
+
+.nav-icon-experiences {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+}
+
+.nav-icon-labs {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+}
+
+.nav-icon-assignments {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+}
+
+.nav-icon-analytics {
+  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
+}
+
+.nav-icon-classrooms {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+}
+
+.nav-icon-resources {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%) !important;
+}
+
+.nav-icon-settings {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important;
+}
+
+/* 激活状态的特殊效果 */
+.nav-item.active .nav-icon-dashboard,
+.nav-item.active .nav-icon-courses,
+.nav-item.active .nav-icon-experiences,
+.nav-item.active .nav-icon-labs,
+.nav-item.active .nav-icon-assignments,
+.nav-item.active .nav-icon-analytics,
+.nav-item.active .nav-icon-classrooms,
+.nav-item.active .nav-icon-resources,
+.nav-item.active .nav-icon-settings {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.16) 100%) !important;
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* 悬停状态的特殊效果 */
+.nav-item:hover .nav-icon-dashboard,
+.nav-item:hover .nav-icon-courses,
+.nav-item:hover .nav-icon-experiences,
+.nav-item:hover .nav-icon-labs,
+.nav-item:hover .nav-icon-assignments,
+.nav-item:hover .nav-icon-analytics,
+.nav-item:hover .nav-icon-classrooms,
+.nav-item:hover .nav-icon-resources,
+.nav-item:hover .nav-icon-settings {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
 }
 </style>

@@ -1,0 +1,200 @@
+/**
+ * 教师登录页专用主题变量 - 蓝/紫/橙科技感配色
+ * 为登录页面提供统一的色彩体系和视觉风格
+ */
+
+// 蓝/紫/橙 主色调定义
+:root {
+  // 品牌蓝色系
+  --brand-blue: #2563eb;
+  --brand-blue-rgb: 37, 99, 235;
+  --brand-blue-light: #3b82f6;
+  --brand-blue-light-rgb: 59, 130, 246;
+  --brand-blue-dark: #1d4ed8;
+  --brand-blue-dark-rgb: 29, 78, 216;
+
+  // 品牌紫色系
+  --brand-purple: #7c3aed;
+  --brand-purple-rgb: 124, 58, 237;
+  --brand-purple-light: #8b5cf6;
+  --brand-purple-light-rgb: 139, 92, 246;
+  --brand-purple-dark: #6d28d9;
+  --brand-purple-dark-rgb: 109, 40, 217;
+
+  // 品牌橙色系
+  --brand-orange: #fb923c;
+  --brand-orange-rgb: 251, 146, 60;
+  --brand-orange-light: #fdba74;
+  --brand-orange-light-rgb: 253, 186, 116;
+  --brand-orange-dark: #f97316;
+  --brand-orange-dark-rgb: 249, 115, 22;
+  --brand-orange-deep: #ea580c;
+  --brand-orange-deep-rgb: 234, 88, 12;
+
+  // 渐变色彩定义
+  --gradient-primary: linear-gradient(135deg,
+    var(--brand-blue) 0%,
+    var(--brand-purple) 50%,
+    var(--brand-orange) 100%
+  );
+
+  --gradient-blue-purple: linear-gradient(135deg,
+    var(--brand-blue) 0%,
+    var(--brand-purple) 100%
+  );
+
+  --gradient-purple-orange: linear-gradient(135deg,
+    var(--brand-purple) 0%,
+    var(--brand-orange) 100%
+  );
+
+  --gradient-blue-orange: linear-gradient(135deg,
+    var(--brand-blue) 0%,
+    var(--brand-orange) 100%
+  );
+
+  // 径向渐变
+  --radial-gradient-blue: radial-gradient(circle,
+    rgba(var(--brand-blue-rgb), 0.8) 0%,
+    rgba(var(--brand-blue-rgb), 0.3) 50%,
+    transparent 70%
+  );
+
+  --radial-gradient-purple: radial-gradient(circle,
+    rgba(var(--brand-purple-rgb), 0.8) 0%,
+    rgba(var(--brand-purple-rgb), 0.3) 50%,
+    transparent 70%
+  );
+
+  --radial-gradient-orange: radial-gradient(circle,
+    rgba(var(--brand-orange-rgb), 0.8) 0%,
+    rgba(var(--brand-orange-rgb), 0.3) 50%,
+    transparent 70%
+  );
+
+  // 背景渐变组合
+  --background-layer-1: linear-gradient(135deg,
+    rgba(var(--brand-blue-rgb), 0.98) 0%,
+    rgba(var(--brand-blue-light-rgb), 0.96) 20%,
+    rgba(var(--brand-purple-rgb), 0.94) 45%,
+    rgba(var(--brand-purple-light-rgb), 0.92) 70%,
+    rgba(var(--brand-orange-rgb), 0.90) 85%,
+    rgba(var(--brand-orange-deep-rgb), 0.88) 100%
+  );
+
+  --background-layer-2: radial-gradient(circle at 30% 20%,
+    rgba(var(--brand-blue-rgb), 0.65) 0%,
+    rgba(var(--brand-purple-rgb), 0.45) 30%,
+    rgba(var(--brand-orange-rgb), 0.25) 55%,
+    transparent 70%
+  );
+
+  --background-layer-3: radial-gradient(circle at 70% 80%,
+    rgba(var(--brand-orange-rgb), 0.55) 0%,
+    rgba(var(--brand-purple-rgb), 0.35) 35%,
+    rgba(var(--brand-blue-rgb), 0.20) 60%,
+    transparent 75%
+  );
+
+  // 发光效果
+  --glow-blue: 0 0 40px rgba(var(--brand-blue-rgb), 0.6);
+  --glow-purple: 0 0 40px rgba(var(--brand-purple-rgb), 0.6);
+  --glow-orange: 0 0 40px rgba(var(--brand-orange-rgb), 0.6);
+  --glow-combined: 0 0 60px rgba(var(--brand-blue-rgb), 0.4),
+                   0 0 40px rgba(var(--brand-purple-rgb), 0.3),
+                   0 0 20px rgba(var(--brand-orange-rgb), 0.2);
+
+  // 阴影效果
+  --shadow-brand: 0 8px 32px rgba(var(--brand-blue-rgb), 0.25),
+                  0 4px 16px rgba(var(--brand-purple-rgb), 0.15),
+                  0 2px 8px rgba(var(--brand-orange-rgb), 0.1);
+
+  --shadow-brand-hover: 0 16px 48px rgba(var(--brand-blue-rgb), 0.35),
+                       0 8px 24px rgba(var(--brand-purple-rgb), 0.25),
+                       0 4px 12px rgba(var(--brand-orange-rgb), 0.15);
+
+  // 玻璃质感
+  --glass-bg-light: rgba(255, 255, 255, 0.25);
+  --glass-bg-medium: rgba(255, 255, 255, 0.15);
+  --glass-bg-dark: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --glass-blur: blur(20px);
+
+  // 文字色彩
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.9);
+  --text-tertiary: rgba(255, 255, 255, 0.75);
+  --text-accent: #f8fafc;
+
+  // 表单区域色彩
+  --form-bg: rgba(255, 255, 255, 0.98);
+  --form-border: rgba(15, 23, 42, 0.08);
+  --form-text-primary: #0f172a;
+  --form-text-secondary: #64748b;
+  --form-text-accent: #334155;
+
+  // 动画时间
+  --animation-slow: 15s;
+  --animation-medium: 8s;
+  --animation-fast: 0.4s;
+  --animation-hover: 0.3s;
+
+  // 缓动函数
+  --ease-smooth: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-sharp: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+// 深色模式适配
+[data-theme="dark"] {
+  --glass-bg-light: rgba(255, 255, 255, 0.1);
+  --glass-bg-medium: rgba(255, 255, 255, 0.05);
+  --glass-bg-dark: rgba(255, 255, 255, 0.02);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --form-bg: rgba(15, 23, 42, 0.95);
+  --form-border: rgba(255, 255, 255, 0.1);
+  --form-text-primary: #f8fafc;
+  --form-text-secondary: #cbd5e1;
+  --form-text-accent: #94a3b8;
+}
+
+// 主题指示器颜色
+.theme-indicators {
+  --dot-blue: var(--brand-blue);
+  --dot-purple: var(--brand-purple);
+  --dot-orange: var(--brand-orange);
+}
+
+// 按钮悬停效果
+.btn-brand-effect {
+  transition: all var(--animation-hover) var(--ease-smooth);
+
+  &:hover {
+    box-shadow: var(--glow-combined);
+    transform: translateY(-2px);
+  }
+}
+
+// 品牌发光边框
+.brand-glow-border {
+  position: relative;
+  background: var(--glass-bg-light);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: var(--gradient-primary);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.6;
+    transition: opacity var(--animation-hover) ease;
+  }
+
+  &:hover::before {
+    opacity: 1;
+    box-shadow: var(--glow-combined);
+  }
+}

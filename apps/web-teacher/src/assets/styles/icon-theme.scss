@@ -1,0 +1,329 @@
+/**
+ * 教师端图标样式统一规范
+ * 定义统一的图标颜色主题、动画效果和交互状态
+ */
+
+/* ====== 图标颜色主题定义 ====== */
+
+/* 功能型图标颜色 */
+:root {
+  /* 主色调 - 蓝色系 */
+  --icon-primary-start: #3b82f6;
+  --icon-primary-end: #2563eb;
+  --icon-primary-hover-start: #60a5fa;
+  --icon-primary-hover-end: #3b82f6;
+
+  /* 成功色 - 绿色系 */
+  --icon-success-start: #10b981;
+  --icon-success-end: #059669;
+  --icon-success-hover-start: #34d399;
+  --icon-success-hover-end: #10b981;
+
+  /* 警告色 - 橙色系 */
+  --icon-warning-start: #f59e0b;
+  --icon-warning-end: #d97706;
+  --icon-warning-hover-start: #fbbf24;
+  --icon-warning-hover-end: #f59e0b;
+
+  /* 错误色 - 红色系 */
+  --icon-error-start: #ef4444;
+  --icon-error-end: #dc2626;
+  --icon-error-hover-start: #f87171;
+  --icon-error-hover-end: #ef4444;
+
+  /* 信息色 - 青色系 */
+  --icon-info-start: #14b8a6;
+  --icon-info-end: #0d9488;
+  --icon-info-hover-start: #2dd4bf;
+  --icon-info-hover-end: #14b8a6;
+
+  /* 辅助色 - 紫色系 */
+  --icon-secondary-start: #8b5cf6;
+  --icon-secondary-end: #7c3aed;
+  --icon-secondary-hover-start: #a855f7;
+  --icon-secondary-hover-end: #8b5cf6;
+
+  /* 中性色 - 灰色系 */
+  --icon-neutral-start: #64748b;
+  --icon-neutral-end: #475569;
+  --icon-neutral-hover-start: #94a3b8;
+  --icon-neutral-hover-end: #64748b;
+}
+
+/* ====== 基础图标样式类 ====== */
+
+/* 标准图标容器 */
+.icon-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--icon-border-radius, 8px);
+  color: white;
+  transition: all var(--edu-duration-normal, 0.3s) var(--edu-easing-smooth, cubic-bezier(0.4, 0, 0.2, 1));
+  position: relative;
+  overflow: hidden;
+  font-size: var(--icon-size, 16px);
+  width: var(--icon-container-size, 32px);
+  height: var(--icon-container-size, 32px);
+  padding: var(--icon-padding, 4px);
+  background: linear-gradient(135deg, var(--icon-start) 0%, var(--icon-end) 100%);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 图标光泽效果 */
+.icon-base::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity var(--edu-duration-normal, 0.3s) var(--edu-easing-smooth, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+/* 悬停效果 */
+.icon-base:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.icon-base:hover::before {
+  opacity: 1;
+}
+
+/* 圆形图标 */
+.icon-circle {
+  border-radius: 50%;
+  --icon-border-radius: 50%;
+}
+
+/* 大图标 */
+.icon-large {
+  --icon-size: 24px;
+  --icon-container-size: 48px;
+  --icon-padding: 8px;
+}
+
+/* 小图标 */
+.icon-small {
+  --icon-size: 12px;
+  --icon-container-size: 24px;
+  --icon-padding: 2px;
+}
+
+/* ====== 颜色主题变体 ====== */
+
+/* 主色调图标 */
+.icon-primary {
+  --icon-start: var(--icon-primary-start);
+  --icon-end: var(--icon-primary-end);
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+.icon-primary:hover {
+  --icon-start: var(--icon-primary-hover-start);
+  --icon-end: var(--icon-primary-hover-end);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+}
+
+/* 成功色图标 */
+.icon-success {
+  --icon-start: var(--icon-success-start);
+  --icon-end: var(--icon-success-end);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+}
+
+.icon-success:hover {
+  --icon-start: var(--icon-success-hover-start);
+  --icon-end: var(--icon-success-hover-end);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+}
+
+/* 警告色图标 */
+.icon-warning {
+  --icon-start: var(--icon-warning-start);
+  --icon-end: var(--icon-warning-end);
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+}
+
+.icon-warning:hover {
+  --icon-start: var(--icon-warning-hover-start);
+  --icon-end: var(--icon-warning-hover-end);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.5);
+}
+
+/* 错误色图标 */
+.icon-error {
+  --icon-start: var(--icon-error-start);
+  --icon-end: var(--icon-error-end);
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+}
+
+.icon-error:hover {
+  --icon-start: var(--icon-error-hover-start);
+  --icon-end: var(--icon-error-hover-end);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+}
+
+/* 信息色图标 */
+.icon-info {
+  --icon-start: var(--icon-info-start);
+  --icon-end: var(--icon-info-end);
+  box-shadow: 0 2px 6px rgba(20, 184, 166, 0.3);
+}
+
+.icon-info:hover {
+  --icon-start: var(--icon-info-hover-start);
+  --icon-end: var(--icon-info-hover-end);
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.5);
+}
+
+/* 辅助色图标 */
+.icon-secondary {
+  --icon-start: var(--icon-secondary-start);
+  --icon-end: var(--icon-secondary-end);
+  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.3);
+}
+
+.icon-secondary:hover {
+  --icon-start: var(--icon-secondary-hover-start);
+  --icon-end: var(--icon-secondary-hover-end);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5);
+}
+
+/* 中性色图标 */
+.icon-neutral {
+  --icon-start: var(--icon-neutral-start);
+  --icon-end: var(--icon-neutral-end);
+  box-shadow: 0 2px 6px rgba(100, 116, 139, 0.3);
+}
+
+.icon-neutral:hover {
+  --icon-start: var(--icon-neutral-hover-start);
+  --icon-end: var(--icon-neutral-hover-end);
+  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.5);
+}
+
+/* ====== 特殊动画效果 ====== */
+
+/* 脉冲动画 */
+@keyframes iconPulse {
+  0%, 100% {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.icon-pulse {
+  animation: iconPulse 2s infinite;
+}
+
+/* 旋转动画 */
+@keyframes iconRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.icon-rotate:hover {
+  animation: iconRotate 1s linear infinite;
+}
+
+/* 呼吸效果 */
+@keyframes iconBreathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.icon-breathe {
+  animation: iconBreathe 3s ease-in-out infinite;
+}
+
+/* ====== 响应式适配 ====== */
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-base,
+  .icon-primary:hover,
+  .icon-success:hover,
+  .icon-warning:hover,
+  .icon-error:hover,
+  .icon-info:hover,
+  .icon-secondary:hover,
+  .icon-neutral:hover {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .icon-pulse,
+  .icon-rotate:hover,
+  .icon-breathe {
+    animation: none !important;
+  }
+
+  .icon-base:hover::before {
+    opacity: 0 !important;
+  }
+}
+
+/* ====== 主题适配 ====== */
+
+/* 深色主题 */
+[data-theme="dark"] .icon-base {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .icon-base:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .icon-base {
+    border: 2px solid currentColor;
+    box-shadow: none;
+  }
+
+  .icon-base:hover {
+    transform: scale(1.1);
+    box-shadow: none;
+  }
+}
+
+/* ====== 工具类 ====== */
+
+/* 仅图标，无背景 */
+.icon-ghost {
+  background: transparent;
+  box-shadow: none;
+  color: var(--icon-text-color, currentColor);
+  padding: 0;
+}
+
+.icon-ghost:hover {
+  transform: scale(1.1);
+  box-shadow: none;
+}
+
+/* 轮廓图标 */
+.icon-outline {
+  background: transparent;
+  border: 2px solid currentColor;
+  color: currentColor;
+}
+
+/* 实心图标 */
+.icon-solid {
+  background: currentColor;
+  color: white;
+}

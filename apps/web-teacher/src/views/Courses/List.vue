@@ -6,22 +6,15 @@
     v-model:rightCollapsed="rightSidebarCollapsed"
   >
     <template #header-controls>
-      <div class="workspace-actions">
-        <el-segmented
-          v-model="viewMode"
-          :options="viewModeOptions"
-          size="large"
-        />
-        <el-button
-          type="primary"
-          class="ai-trigger"
-          :class="{ active: aiAssistantVisible }"
-          @click="toggleAIAssistant"
-        >
-          <el-icon><MagicStick /></el-icon>
-          AI 助手
-        </el-button>
-      </div>
+      <WorkspacePrimaryToolbar
+        :create-button-text="'创建课程'"
+        :import-button-text="'导入课程'"
+        :show-ai-button="true"
+        :ai-active="aiAssistantVisible"
+        @create="createCourse"
+        @import="importCourse"
+        @ai="toggleAIAssistant"
+      />
     </template>
 
     <template #summary>
@@ -252,44 +245,6 @@
       </ManagementSidebarRight>
     </template>
 
-    <template #footer>
-      <div class="footer-column">
-        <h4 class="footer-title">最近活动</h4>
-        <div class="footer-list">
-          <div
-            v-for="activity in footerActivities"
-            :key="activity.id"
-            class="footer-item"
-          >
-            <span class="footer-indicator" :class="`footer-indicator--${activity.type}`"></span>
-            <span class="footer-text">{{ activity.text }}</span>
-            <span class="footer-time">{{ formatTime(activity.timestamp) }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="footer-column">
-        <h4 class="footer-title">系统公告</h4>
-        <div class="footer-list">
-          <div
-            v-for="notice in systemNotices"
-            :key="notice.id"
-            class="footer-item"
-          >
-            <el-icon><Bell /></el-icon>
-            <span class="footer-text">{{ notice.text }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="footer-column">
-        <h4 class="footer-title">支持与反馈</h4>
-        <div class="support-links">
-          <el-button text size="small">使用帮助</el-button>
-          <el-button text size="small">问题反馈</el-button>
-          <el-button text size="small">联系运营</el-button>
-        </div>
-      </div>
-    </template>
-
     <div class="course-content">
       <section class="course-main">
         <EduCard
@@ -305,34 +260,18 @@
                 <p class="section-description">管理和编排您的教学课程</p>
               </div>
               <div class="section-actions">
-                <el-button type="primary" @click="createCourse">
-                  <el-icon><Plus /></el-icon>
-                  创建课程
-                </el-button>
-                <el-button @click="importCourse">
-                  <el-icon><Upload /></el-icon>
-                  导入课程
-                </el-button>
-              </div>
-            </div>
-          </template>
-
-          <div class="filter-bar">
-            <el-row :gutter="16" align="middle">
-              <el-col :xs="24" :sm="12" :md="6">
                 <el-input
                   v-model="filters.keyword"
                   placeholder="搜索课程名称..."
                   clearable
+                  style="width: 300px;"
                   @change="searchCourses"
                 >
                   <template #prefix>
                     <el-icon><Search /></el-icon>
                   </template>
                 </el-input>
-              </el-col>
-              <el-col :xs="24" :sm="12" :md="4">
-                <el-select v-model="filters.grade" placeholder="选择年级" clearable @change="searchCourses">
+                <el-select v-model="filters.grade" placeholder="选择年级" style="width: 150px;" clearable @change="searchCourses">
                   <el-option
                     v-for="grade in gradeOptions"
                     :key="grade.value"
@@ -340,26 +279,6 @@
                     :value="grade.value"
                   />
                 </el-select>
-              </el-col>
-              <el-col :xs="24" :sm="12" :md="6" class="filter-actions">
-                <div class="filter-buttons">
-                  <el-button
-                    :type="hasActiveFilters ? 'primary' : 'default'"
-                    :icon="Filter"
-                    @click="openFilterDrawer"
-                    class="advanced-filter-btn"
-                  >
-                    高级筛选
-                    <el-badge v-if="getActiveFiltersCount() > 0" :value="getActiveFiltersCount()" class="filter-badge" />
-                  </el-button>
-                  <el-button
-                    v-if="hasActiveFilters"
-                    :icon="RefreshRight"
-                    @click="resetFilters"
-                    circle
-                    class="reset-filter-btn"
-                  />
-                </div>
                 <div class="view-switcher">
                   <el-segmented
                     v-model="viewMode"
@@ -370,77 +289,78 @@
                     size="small"
                   />
                 </div>
-              </el-col>
-            </el-row>
-          </div>
+              </div>
+            </div>
+          </template>
 
-          <div class="courses-container">
-            <el-table
-              v-if="viewMode === 'table'"
-              :data="paginatedCourses"
-              style="width: 100%"
-              v-loading="loading"
+          <!-- Default slot content -->
+        <div class="courses-container">
+          <el-table
+            v-if="viewMode === 'table'"
+            :data="paginatedCourses"
+            style="width: 100%"
+            v-loading="loading"
             >
-              <el-table-column prop="title" label="课程名称" min-width="220">
+              <el-table-column label="课程信息" min-width="400">
                 <template #default="{ row }">
-                  <div class="course-info">
-                    <h4 class="course-title">{{ row.title }}</h4>
+                  <div class="course-main-info">
+                    <div class="course-header">
+                      <h4 class="course-title">{{ row.title }}</h4>
+                      <div class="course-actions">
+                        <el-button size="small" @click="viewCourse(row.id)">
+                          <el-icon><View /></el-icon>
+                          查看
+                        </el-button>
+                        <el-button size="small" type="primary" @click="editCourse(row.id)">
+                          <el-icon><Edit /></el-icon>
+                          编辑
+                        </el-button>
+                        <el-dropdown trigger="click" @command="handleCourseAction">
+                          <el-button size="small" text>
+                            <el-icon><MoreFilled /></el-icon>
+                          </el-button>
+                          <template #dropdown>
+                            <el-dropdown-menu>
+                              <el-dropdown-item :command="{ action: 'copy', id: row.id }">复制课程</el-dropdown-item>
+                              <el-dropdown-item :command="{ action: 'export', id: row.id }">导出数据</el-dropdown-item>
+                              <el-dropdown-item :command="{ action: 'archive', id: row.id }">归档课程</el-dropdown-item>
+                              <el-dropdown-item :command="{ action: 'delete', id: row.id }" divided>
+                                <span class="danger-text">删除课程</span>
+                              </el-dropdown-item>
+                            </el-dropdown-menu>
+                          </template>
+                        </el-dropdown>
+                      </div>
+                    </div>
                     <div class="course-meta">
-                      <el-tag :type="getSubjectTagType(row.subject)" size="small">
-                        {{ getSubjectName(row.subject) }}
-                      </el-tag>
-                      <span class="course-grade">{{ row.grade }} 年级</span>
-                      <el-tag v-if="row.isPublic" type="info" size="small">公开</el-tag>
+                      <span class="course-grade">{{ row.gradeBand || row.grade || '未设置' }} 年级</span>
+                      <span class="course-teacher">{{ row.teacher || '当前用户' }}</span>
+                      <span class="course-students">{{ row.enrolledCount || row.students || 0 }}/{{ row.maxStudents || 30 }} 学生</span>
+                      <span class="course-updated">{{ formatDate(row.updatedAt) }}</span>
+                    </div>
+                    <div class="course-progress">
+                      <el-progress
+                        :percentage="row.progress"
+                        :stroke-width="6"
+                        :color="getProgressColor(row.progress)"
+                        :show-text="false"
+                      />
+                      <span class="progress-text">{{ row.progress }}%</span>
                     </div>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="teacher" label="授课教师" width="120" />
-              <el-table-column prop="students" label="学生数" width="120">
+                            <el-table-column label="标签" width="180" align="right">
                 <template #default="{ row }">
-                  {{ row.students }}/{{ row.maxStudents }}
-                </template>
-              </el-table-column>
-              <el-table-column prop="progress" label="进度" width="140">
-                <template #default="{ row }">
-                  <el-progress
-                    :percentage="row.progress"
-                    :stroke-width="8"
-                    :color="getProgressColor(row.progress)"
-                  />
-                </template>
-              </el-table-column>
-              <el-table-column prop="status" label="状态" width="120">
-                <template #default="{ row }">
-                  <el-tag :type="getStatusTagType(row.status)">
-                    {{ getStatusText(row.status) }}
-                  </el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="updatedAt" label="最后更新" width="160">
-                <template #default="{ row }">
-                  {{ formatDate(row.updatedAt) }}
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" width="220" fixed="right">
-                <template #default="{ row }">
-                  <el-button type="text" @click="viewCourse(row.id)">查看</el-button>
-                  <el-button type="text" @click="editCourse(row.id)">编辑</el-button>
-                  <el-dropdown trigger="click" @command="handleCourseAction">
-                    <el-button type="text">
-                      更多<el-icon><ArrowDown /></el-icon>
-                    </el-button>
-                    <template #dropdown>
-                      <el-dropdown-menu>
-                        <el-dropdown-item :command="{ action: 'copy', id: row.id }">复制课程</el-dropdown-item>
-                        <el-dropdown-item :command="{ action: 'export', id: row.id }">导出数据</el-dropdown-item>
-                        <el-dropdown-item :command="{ action: 'archive', id: row.id }">归档课程</el-dropdown-item>
-                        <el-dropdown-item :command="{ action: 'delete', id: row.id }" divided>
-                          <span class="danger-text">删除课程</span>
-                        </el-dropdown-item>
-                      </el-dropdown-menu>
-                    </template>
-                  </el-dropdown>
+                  <div class="course-tags">
+                    <el-tag :type="getSubjectTagType(row.subject)" size="small" effect="light">
+                      {{ getSubjectName(row.subject) }}
+                    </el-tag>
+                    <el-tag v-if="row.isPublic" type="info" size="small" effect="light">公开</el-tag>
+                    <el-tag :type="getStatusTagType(row.status)" size="small" effect="light">
+                      {{ getStatusText(row.status) }}
+                    </el-tag>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -452,65 +372,135 @@
                 class="course-card"
                 @click="viewCourse(course.id)"
               >
-                <header class="course-card__header">
-                  <h4 class="course-card__title">{{ course.title }}</h4>
-                  <el-tag :type="getSubjectTagType(course.subject)" size="small">
-                    {{ getSubjectName(course.subject) }}
-                  </el-tag>
-                </header>
-                <p class="course-card__description">{{ course.description }}</p>
-                <div class="course-card__stats">
-                  <div class="stat-item">
-                    <span class="stat-label">学生</span>
-                    <span class="stat-value">{{ course.students }}/{{ course.maxStudents }}</span>
-                  </div>
-                  <div class="stat-item">
-                    <span class="stat-label">进度</span>
-                    <el-progress
-                      :percentage="course.progress"
-                      :stroke-width="6"
-                      :color="getProgressColor(course.progress)"
+                <!-- 课程封面区域 -->
+                <div class="course-card__cover">
+                  <div class="course-thumbnail">
+                    <img
+                      v-if="course.thumbnail"
+                      :src="course.thumbnail"
+                      :alt="course.title"
+                      class="course-thumbnail__image"
                     />
+                    <div v-else class="course-thumbnail__placeholder">
+                      <el-icon><Document /></el-icon>
+                    </div>
+                  </div>
+                  <div class="course-cover__overlay">
+                    <div class="course-cover__badge">
+                      <el-tag :type="getSubjectTagType(course.subject)" size="small" effect="dark">
+                        {{ getSubjectName(course.subject) }}
+                      </el-tag>
+                    </div>
+                    <div class="course-cover__status">
+                      <el-tag :type="getStatusTagType(course.status)" size="small" effect="dark">
+                        {{ getStatusText(course.status) }}
+                      </el-tag>
+                    </div>
                   </div>
                 </div>
-                <footer class="course-card__footer">
-                  <el-tag :type="getStatusTagType(course.status)" size="small">
-                    {{ getStatusText(course.status) }}
-                  </el-tag>
-                  <span class="course-card__date">{{ formatDate(course.updatedAt) }}</span>
-                </footer>
-                <div class="course-card__actions">
-                  <el-button text size="small" @click.stop="editCourse(course.id)">编辑</el-button>
-                  <el-dropdown trigger="click" @command="handleCourseAction">
-                    <el-button text size="small" @click.stop>
-                      更多<el-icon><ArrowDown /></el-icon>
+
+                <!-- 课程内容区域 -->
+                <div class="course-card__content">
+                  <div class="course-card__header">
+                    <h4 class="course-card__title">{{ course.title }}</h4>
+                    <div class="course-card__meta">
+                      <span class="course-grade">{{ course.gradeBand || course.grade || '未设置' }}</span>
+                      <el-rate
+                        v-if="course.rating"
+                        :model-value="course.rating"
+                        disabled
+                        size="small"
+                        show-score
+                      />
+                    </div>
+                  </div>
+
+                  <p class="course-card__description">{{ course.description }}</p>
+
+                  <!-- 课程统计信息 -->
+                  <div class="course-card__stats">
+                    <div class="stat-group">
+                      <div class="stat-item">
+                        <el-icon><User /></el-icon>
+                        <span class="stat-value">{{ course.enrolledCount || course.students || 0 }}</span>
+                        <span class="stat-label">学生</span>
+                      </div>
+                      <div class="stat-item">
+                        <el-icon><Clock /></el-icon>
+                        <span class="stat-value">{{ course.duration || 0 }}h</span>
+                        <span class="stat-label">课时</span>
+                      </div>
+                      <div class="stat-item">
+                        <el-icon><FolderOpened /></el-icon>
+                        <span class="stat-value">{{ getChapterCount(course) }}</span>
+                        <span class="stat-label">章节</span>
+                      </div>
+                    </div>
+
+                    <div class="progress-section">
+                      <div class="progress-header">
+                        <span class="progress-label">课程进度</span>
+                        <span class="progress-value">{{ course.progress || 0 }}%</span>
+                      </div>
+                      <el-progress
+                        :percentage="course.progress || 0"
+                        :stroke-width="8"
+                        :color="getProgressColor(course.progress || 0)"
+                        :show-text="false"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 底部操作区域 -->
+                <div class="course-card__footer">
+                  <div class="course-card__actions">
+                    <el-button size="small" @click.stop="viewCourse(course.id)">
+                      <el-icon><View /></el-icon>
+                      查看
                     </el-button>
-                    <template #dropdown>
-                      <el-dropdown-menu>
-                        <el-dropdown-item :command="{ action: 'copy', id: course.id }">复制课程</el-dropdown-item>
-                        <el-dropdown-item :command="{ action: 'archive', id: course.id }">归档课程</el-dropdown-item>
+                    <el-button size="small" type="primary" @click.stop="editCourse(course.id)">
+                      <el-icon><Edit /></el-icon>
+                      编辑
+                    </el-button>
+                    <el-dropdown trigger="click" @command="handleCourseAction">
+                      <el-button size="small" text @click.stop>
+                        <el-icon><MoreFilled /></el-icon>
+                      </el-button>
+                      <template #dropdown>
+                        <el-dropdown-menu>
+                          <el-dropdown-item :command="{ action: 'copy', id: course.id }">
+                            <el-icon><CopyDocument /></el-icon>
+                            复制课程
+                          </el-dropdown-item>
+                          <el-dropdown-item :command="{ action: 'archive', id: course.id }">
+                            <el-icon><FolderRemove /></el-icon>
+                            归档课程
+                          </el-dropdown-item>
                         <el-dropdown-item :command="{ action: 'delete', id: course.id }">
                           <span class="danger-text">删除课程</span>
                         </el-dropdown-item>
                       </el-dropdown-menu>
-                    </template>
+          </template>
+
                   </el-dropdown>
                 </div>
               </div>
             </div>
-
-            <div class="pagination-container">
-              <el-pagination
-                v-model:current-page="pagination.page"
-                v-model:page-size="pagination.pageSize"
-                :total="filteredCourses.length"
-                :page-sizes="[12, 24, 48, 96]"
-                layout="total, sizes, prev, pager, next, jumper"
-                @size-change="handleSizeChange"
-                @current-change="handlePageChange"
-              />
-            </div>
           </div>
+        </div>
+
+        <div class="pagination-container">
+          <el-pagination
+            v-model:current-page="pagination.page"
+            v-model:page-size="pagination.pageSize"
+            :total="filteredCourses.length"
+            :page-sizes="[12, 24, 48, 96]"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
+            @current-change="handlePageChange"
+          />
+        </div>
         </EduCard>
       </section>
 
@@ -584,7 +574,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive, watch } from 'vue'
+import { ref, computed, reactive, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
@@ -609,15 +599,23 @@ import {
   DataAnalysis,
   Monitor,
   Guide,
-  Document
+  Document,
+  Clock,
+  FolderOpened,
+  CopyDocument,
+  FolderRemove,
+  View,
+  MoreFilled
 } from '@element-plus/icons-vue'
 
 import TeacherWorkspaceLayout from '@/components/layout/TeacherWorkspaceLayout.vue'
 import ManagementSidebarLeft from '@/components/layout/ManagementSidebarLeft.vue'
 import ManagementSidebarRight from '@/components/layout/ManagementSidebarRight.vue'
+import WorkspacePrimaryToolbar from '@/components/workspace/WorkspacePrimaryToolbar.vue'
 import { EduCard, EduAccordion, EduTabs } from '@reopeninnolab/ui-kit'
 import FilterDrawer from '@/components/course/FilterDrawer.vue'
 import { useAppStore } from '@/stores/app'
+import { useCourseStore } from '@/stores/course'
 import { storeToRefs } from 'pinia'
 import { formatDate } from '@/utils/date'
 import { PAGE_SIDEBAR_CONFIGS, DEFAULT_LEFT_SIDEBAR_SECTIONS, DEFAULT_RIGHT_SIDEBAR_SECTIONS, type LeftSidebarSectionConfig, type RightSidebarSectionConfig } from '@/constants/managementSidebar'
@@ -626,16 +624,23 @@ interface Course {
   id: string
   title: string
   subject: string
-  grade: string
-  teacher: string
-  students: number
-  maxStudents: number
-  progress: number
-  status: 'active' | 'completed' | 'archived'
-  isPublic: boolean
-  description: string
-  createdAt: Date
-  updatedAt: Date
+  gradeBand?: string  // API可能使用gradeBand而不是grade
+  grade?: string
+  teacher?: string
+  students?: number
+  enrolledCount?: number  // API可能使用enrolledCount
+  maxStudents?: number
+  progress?: number
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED' | 'active' | 'completed' | 'archived'
+  isPublic?: boolean
+  description?: string
+  thumbnail?: string
+  rating?: number
+  duration?: number
+  modules?: any[]
+  aclContent?: any
+  createdAt: string | Date
+  updatedAt: string | Date
 }
 
 interface Filters {
@@ -655,6 +660,7 @@ interface CourseForm {
 
 const router = useRouter()
 const appStore = useAppStore()
+const courseStore = useCourseStore()
 
 const loading = ref(false)
 const viewMode = ref<'table' | 'grid'>('table')
@@ -662,6 +668,14 @@ const courseDialogVisible = ref(false)
 const courseDialogMode = ref<'create' | 'edit'>('create')
 const saving = ref(false)
 const courseFormRef = ref<FormInstance>()
+const courseForm = ref({
+  title: '',
+  subject: '',
+  grade: '',
+  maxStudents: 30,
+  description: '',
+  isPublic: false
+})
 const selectedCourses = ref<string[]>([])
 const leftSidebarCollapsed = ref(false)
 const rightSidebarCollapsed = ref(false)
@@ -728,109 +742,35 @@ const pagination = reactive({
   pageSize: 12
 })
 
-const allCourses = ref<Course[]>([
-  {
-    id: 'ai-workshop',
-    title: 'AI 创意编程工作坊',
-    subject: 'ai',
-    grade: '10',
-    teacher: '陈老师',
-    students: 28,
-    maxStudents: 32,
-    progress: 72,
-    status: 'active',
-    isPublic: true,
-    description: '结合大语言模型与图形化编程，带领学生完成智能互动项目。',
-    createdAt: new Date('2024-02-18'),
-    updatedAt: new Date('2024-02-22')
-  },
-  {
-    id: 'ai-data-lab',
-    title: 'AI 数据洞察实验班',
-    subject: 'ai',
-    grade: '11',
-    teacher: '刘老师',
-    students: 26,
-    maxStudents: 30,
-    progress: 64,
-    status: 'active',
-    isPublic: false,
-    description: '围绕校园真实数据集，训练学生使用 AI 工具完成数据分析与可视化。',
-    createdAt: new Date('2024-02-12'),
-    updatedAt: new Date('2024-02-21')
-  },
-  {
-    id: 'ai-robotics',
-    title: 'AI 驱动智能机器人项目',
-    subject: 'ai',
-    grade: '10',
-    teacher: '周老师',
-    students: 22,
-    maxStudents: 28,
-    progress: 58,
-    status: 'active',
-    isPublic: true,
-    description: '使用视觉识别与智能规划算法，完成机器人自主巡线任务。',
-    createdAt: new Date('2024-02-05'),
-    updatedAt: new Date('2024-02-19')
-  },
-  {
-    id: 'ai-cloud-native',
-    title: 'AI 应用云端部署实训',
-    subject: 'ai',
-    grade: '12',
-    teacher: '孙老师',
-    students: 31,
-    maxStudents: 36,
-    progress: 81,
-    status: 'active',
-    isPublic: true,
-    description: '引导学生使用容器与无服务器平台部署 AI 应用。',
-    createdAt: new Date('2024-01-28'),
-    updatedAt: new Date('2024-02-20')
-  }
-])
-
-const courseForm = reactive<CourseForm>({
-  title: '',
-  subject: teacherSubject.value,
-  grade: '',
-  maxStudents: 30,
-  description: '',
-  isPublic: false
-})
-
-watch(teacherSubject, (subject) => {
-  courseForm.subject = subject
-  filters.keyword = ''
-  pagination.page = 1
-})
-
-const courseRules: FormRules = {
-  title: [
-    { required: true, message: '请输入课程名称', trigger: 'blur' },
-    { min: 2, max: 50, message: '课程名称长度在 2 到 50 个字符', trigger: 'blur' }
-  ],
-  subject: [
-    { required: true, message: '请选择学科', trigger: 'change' }
-  ],
-  grade: [
-    { required: true, message: '请选择年级', trigger: 'change' }
-  ],
-  maxStudents: [
-    { required: true, message: '请输入最大学生数', trigger: 'blur' }
-  ],
-  description: [
-    { required: true, message: '请输入课程描述', trigger: 'blur' },
-    { min: 10, max: 500, message: '课程描述长度在 10 到 500 个字符', trigger: 'blur' }
-  ]
-}
+// 使用真实课程数据
+const courses = computed(() => courseStore.courses)
 
 const filteredCourses = computed(() => {
-  return allCourses.value.filter(course => course.subject === teacherSubject.value).filter(course => {
-    if (filters.grade && course.grade !== filters.grade) return false
-    if (filters.status && course.status !== filters.status) return false
-    if (filters.keyword && !course.title.includes(filters.keyword)) return false
+  return courses.value.filter(course => {
+    if (teacherSubject.value !== 'all' && course.subject !== teacherSubject.value) return false
+
+    // 处理年级筛选，兼容不同的字段名
+    const courseGrade = course.gradeBand || course.grade
+    if (filters.grade && courseGrade !== filters.grade) return false
+
+    // 处理状态筛选，兼容不同的状态值
+    if (filters.status) {
+      const courseStatus = course.status?.toLowerCase()
+      const filterStatus = filters.status.toLowerCase()
+
+      // 映射状态值
+      const statusMap: Record<string, string[]> = {
+        'active': ['active', 'published'],
+        'completed': ['completed'],
+        'archived': ['archived'],
+        'draft': ['draft']
+      }
+
+      const matchingStatuses = statusMap[filterStatus] || [filterStatus]
+      if (!matchingStatuses.includes(courseStatus)) return false
+    }
+
+    if (filters.keyword && !course.title.toLowerCase().includes(filters.keyword.toLowerCase())) return false
     return true
   })
 })
@@ -842,8 +782,8 @@ const paginatedCourses = computed(() => {
 })
 
 const summaryStats = computed(() => {
-  const courses = filteredCourses.value
-  if (courses.length === 0) {
+  const courseList = filteredCourses.value
+  if (courseList.length === 0) {
     return {
       totalCourses: 0,
       avgProgress: 0,
@@ -851,13 +791,18 @@ const summaryStats = computed(() => {
     }
   }
 
-  const totalStudents = courses.reduce((sum, course) => sum + course.students, 0)
+  // 基于真实课程数据结构
+  const totalCourses = courseList.length
+  const totalStudents = courseList.reduce((sum, course) => {
+    // 从课程数据中获取学生数，如果没有则使用maxStudents或默认值
+    return sum + (course.students || course.enrolledCount || course.maxStudents || 0)
+  }, 0)
   const avgProgress = Math.round(
-    courses.reduce((sum, course) => sum + course.progress, 0) / courses.length
+    courseList.reduce((sum, course) => sum + (course.progress || 0), 0) / courseList.length
   )
 
   return {
-    totalCourses: courses.length,
+    totalCourses,
     avgProgress,
     totalStudents
   }
@@ -987,16 +932,6 @@ const addCollaborationRecord = (name: string, text: string) => {
   }
 }
 
-const footerActivities = ref([
-  { id: '1', text: '陈老师完善了 “AI 创意编程工作坊” 项目模板', type: 'success', timestamp: Date.now() - 1800000 },
-  { id: '2', text: '系统已同步最新 AI 助手提示词库', type: 'system', timestamp: Date.now() - 3600000 },
-  { id: '3', text: '有 2 名学生加入 “AI 数据洞察实验”', type: 'info', timestamp: Date.now() - 5400000 }
-])
-
-const systemNotices = ref([
-  { id: '1', text: '周三 20:00 举办 “AI 教学设计” 线上分享会' },
-  { id: '2', text: '实验资源中心新增 AI 视觉调试指南' }
-])
 
 // Filter accordion items
 const filterAccordionItems = computed(() => [
@@ -1131,18 +1066,28 @@ const getProgressColor = (progress: number): string => {
 
 const getStatusText = (status: string): string => {
   const statusTexts: Record<string, string> = {
-    active: '进行中',
-    completed: '已完成',
-    archived: '已归档'
+    'active': '进行中',
+    'published': '已发布',
+    'PUBLISHED': '已发布',
+    'completed': '已完成',
+    'archived': '已归档',
+    'ARCHIVED': '已归档',
+    'draft': '草稿',
+    'DRAFT': '草稿'
   }
-  return statusTexts[status] || status
+  return statusTexts[status] || status || '未知'
 }
 
 const getStatusTagType = (status: string): string => {
   const tagTypes: Record<string, string> = {
-    active: 'success',
-    completed: 'info',
-    archived: 'warning'
+    'active': 'success',
+    'published': 'success',
+    'PUBLISHED': 'success',
+    'completed': 'info',
+    'archived': 'warning',
+    'ARCHIVED': 'warning',
+    'draft': 'info',
+    'DRAFT': 'info'
   }
   return tagTypes[status] || 'info'
 }
@@ -1162,15 +1107,15 @@ const createCourse = () => {
 
 const editCourse = (id: string) => {
   courseDialogMode.value = 'edit'
-  const course = allCourses.value.find(c => c.id === id)
+  const course = courses.value.find(c => c.id === id)
   if (course) {
     Object.assign(courseForm, {
       title: course.title,
       subject: course.subject,
-      grade: course.grade,
-      maxStudents: course.maxStudents,
+      grade: course.gradeBand,
+      maxStudents: 30,
       description: course.description,
-      isPublic: course.isPublic
+      isPublic: false
     })
     courseDialogVisible.value = true
   }
@@ -1182,7 +1127,36 @@ const submitCourse = async () => {
     saving.value = true
     await courseFormRef.value.validate()
 
-    await new Promise(resolve => setTimeout(resolve, 800))
+    if (courseDialogMode.value === 'create') {
+      // 初始化编辑器数据
+      courseStore.initializeEditor()
+
+      // 设置基本信息
+      if (courseStore.editor) {
+        courseStore.editor.basicInfo = {
+          title: courseForm.title,
+          description: courseForm.description,
+          code: courseForm.title.toUpperCase().replace(/\s+/g, '_'),
+          subject: courseForm.subject,
+          grade: courseForm.grade
+        }
+      }
+
+      await courseStore.createCourse(true)
+    } else {
+      // 编辑模式更新基本信息
+      if (courseStore.editor && courseStore.currentCourse) {
+        courseStore.editor.basicInfo = {
+          ...courseStore.editor.basicInfo,
+          title: courseForm.title,
+          description: courseForm.description,
+          subject: courseForm.subject,
+          grade: courseForm.grade
+        }
+      }
+      await courseStore.updateCourse()
+    }
+
     ElMessage.success(courseDialogMode.value === 'create' ? '课程创建成功' : '课程更新成功')
     courseDialogVisible.value = false
     await loadCourses()
@@ -1236,8 +1210,9 @@ const handleCourseAction = async ({ action, id }: { action: string; id: string }
 
 const copyCourse = async (id: string) => {
   try {
-    await new Promise(resolve => setTimeout(resolve, 600))
+    await courseStore.duplicateCourse(id)
     ElMessage.success('课程复制成功')
+    await loadCourses()
   } catch (error) {
     ElMessage.error('课程复制失败')
   }
@@ -1245,7 +1220,19 @@ const copyCourse = async (id: string) => {
 
 const exportCourse = async (id: string) => {
   try {
-    await new Promise(resolve => setTimeout(resolve, 600))
+    const exportData = await courseStore.exportCourse(id)
+
+    // 创建下载链接
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+      type: 'application/json'
+    })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `course_${id}_export.json`
+    link.click()
+    URL.revokeObjectURL(url)
+
     ElMessage.success('课程导出成功')
   } catch (error) {
     ElMessage.error('课程导出失败')
@@ -1259,8 +1246,9 @@ const archiveCourse = async (id: string) => {
       cancelButtonText: '取消',
       type: 'warning'
     })
-    await new Promise(resolve => setTimeout(resolve, 600))
+    await courseStore.archiveCourse(id)
     ElMessage.success('课程归档成功')
+    await loadCourses()
   } catch (error) {
     if (error !== 'cancel') {
       ElMessage.error('课程归档失败')
@@ -1275,8 +1263,9 @@ const deleteCourse = async (id: string) => {
       cancelButtonText: '取消',
       type: 'error'
     })
-    await new Promise(resolve => setTimeout(resolve, 600))
+    await courseStore.deleteCourse(id)
     ElMessage.success('课程删除成功')
+    await loadCourses()
   } catch (error) {
     if (error !== 'cancel') {
       ElMessage.error('课程删除失败')
@@ -1300,12 +1289,84 @@ const handlePageChange = (page: number) => {
 const loadCourses = async () => {
   try {
     loading.value = true
-    await new Promise(resolve => setTimeout(resolve, 600))
+
+    // TODO: 暂时使用mock数据，等服务修复后切换回真实API
+    const mockCourses: CourseResponse[] = [
+      {
+        id: '1',
+        title: '演示课程 - 物理基础',
+        description: '这是一个演示课程，展示五环节教学结构',
+        code: 'DEMO-PHYS-001',
+        subject: '物理',
+        gradeBand: '高中1年级',
+        status: 'DRAFT',
+        thumbnail: '',
+        metadata: {},
+        tenantId: 'demo-tenant',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        versions: []
+      },
+      {
+        id: '2',
+        title: '演示课程 - 化学实验',
+        description: '化学实验操作演示课程',
+        code: 'DEMO-CHEM-001',
+        subject: '化学',
+        gradeBand: '高中2年级',
+        status: 'PUBLISHED',
+        thumbnail: '',
+        metadata: {},
+        tenantId: 'demo-tenant',
+        createdAt: new Date(Date.now() - 86400000).toISOString(),
+        updatedAt: new Date().toISOString(),
+        versions: []
+      }
+    ]
+
+    // 临时使用mock数据
+    courses.value = mockCourses
+
+    // 真实API调用（暂时注释，等服务修复后启用）
+    // await courseStore.fetchCourses()
   } catch (error) {
-    ElMessage.error('加载课程失败，请稍后重试')
+    console.error('Failed to load courses:', error)
+    ElMessage.warning('使用演示数据，后端服务连接中...')
+    // 即使出错也提供mock数据
+    const mockCourses: CourseResponse[] = [
+      {
+        id: '1',
+        title: '演示课程 - 物理基础',
+        description: '这是一个演示课程，展示五环节教学结构',
+        code: 'DEMO-PHYS-001',
+        subject: '物理',
+        gradeBand: '高中1年级',
+        status: 'DRAFT',
+        thumbnail: '',
+        metadata: {},
+        tenantId: 'demo-tenant',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        versions: []
+      }
+    ]
+    courses.value = mockCourses
   } finally {
     loading.value = false
   }
+}
+
+// 辅助方法
+const getChapterCount = (course: any) => {
+  // 从课程数据中获取章节数量，如果没有则根据五环节结构返回5
+  if (course.modules && Array.isArray(course.modules)) {
+    return course.modules.length
+  }
+  if (course.aclContent && course.aclContent.modules) {
+    return Object.keys(course.aclContent.modules).length
+  }
+  // 默认返回5个环节
+  return 5
 }
 
 // 快速操作函数
@@ -1313,6 +1374,11 @@ const createNewCourse = () => {
   courseDialogMode.value = 'create'
   courseDialogVisible.value = true
 }
+
+// 生命周期
+onMounted(async () => {
+  await loadCourses()
+})
 
 const batchExport = () => {
   ElMessage.info('批量导出功能开发中...')
@@ -1441,21 +1507,6 @@ const handleHelpAction = (action: string, data: any) => {
 </script>
 
 <style scoped lang="scss">
-.workspace-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.ai-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  &.active {
-    background: linear-gradient(135deg, #7f5eff 0%, #45a3ff 100%);
-    border-color: transparent;
-  }
-}
 
 .summary-card {
   width: 100%;
@@ -1754,54 +1805,6 @@ const handleHelpAction = (action: string, data: any) => {
   gap: 8px;
 }
 
-.footer-column {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.footer-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--edu-text-primary);
-}
-
-.footer-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.footer-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--edu-text-secondary);
-  font-size: 13px;
-}
-
-.footer-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-}
-
-.footer-indicator--success {
-  background: #22c55e;
-}
-
-.footer-indicator--system {
-  background: #0ea5e9;
-}
-
-.footer-indicator--info {
-  background: #6366f1;
-}
-
-.support-links {
-  display: flex;
-  gap: 8px;
-}
 
 .course-content {
   display: flex;
@@ -1812,16 +1815,25 @@ const handleHelpAction = (action: string, data: any) => {
 .course-main {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0; /* 确保flex子元素可以缩小 */
 }
 
 .course-section-card {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 :deep(.course-section-card__body) {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  flex: 1;
+  min-height: 0;
+  overflow: visible; // 让父容器控制滚动
 }
 
 .section-header {
@@ -1845,7 +1857,9 @@ const handleHelpAction = (action: string, data: any) => {
 
 .section-actions {
   display: flex;
+  align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .filter-bar {
@@ -1864,6 +1878,8 @@ const handleHelpAction = (action: string, data: any) => {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  width: 100%;
+  min-height: 0; // 防止flex子项溢出
 }
 
 .course-info {
@@ -1872,10 +1888,93 @@ const handleHelpAction = (action: string, data: any) => {
   gap: 8px;
 }
 
+.course-main-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.course-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
 .course-title {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.course-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.course-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.course-grade,
+.course-teacher,
+.course-students,
+.course-updated {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.course-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progress-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  min-width: 40px;
+}
+
+.course-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .course-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .course-actions {
+    align-self: flex-end;
+  }
+
+  .course-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .course-tags {
+    align-items: flex-start;
+  }
 }
 
 .course-meta {
@@ -1900,70 +1999,187 @@ const handleHelpAction = (action: string, data: any) => {
 .course-card {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-  border-radius: 18px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 245, 250, 0.92) 100%);
-  box-shadow: 0 20px 45px -26px rgba(15, 23, 42, 0.45);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: var(--edu-bg-primary);
+  border: 1px solid var(--edu-border-light);
+  border-radius: var(--edu-radius-lg);
+  overflow: hidden;
+  transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
+  cursor: pointer;
 }
 
 .course-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 28px 60px -28px rgba(79, 70, 229, 0.45);
+  box-shadow: var(--edu-shadow-md);
+  transform: translateY(-2px);
+}
+
+.course-card__cover {
+  position: relative;
+  height: 120px;
+  background: var(--edu-bg-secondary);
+}
+
+.course-thumbnail {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.course-thumbnail__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.course-thumbnail__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--edu-text-tertiary);
+  font-size: 48px;
+  background: linear-gradient(135deg, var(--edu-bg-secondary) 0%, var(--edu-bg-tertiary) 100%);
+}
+
+.course-cover__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.6) 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px;
+}
+
+.course-cover__badge {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.course-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  flex: 1;
 }
 
 .course-card__header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .course-card__title {
-  font-size: 16px;
-  font-weight: 600;
   margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--edu-text-primary);
+  line-height: 1.4;
+}
+
+.course-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.course-grade {
+  font-size: 13px;
+  color: var(--edu-text-secondary);
+  font-weight: 500;
+  background: var(--edu-bg-secondary);
+  padding: 4px 8px;
+  border-radius: var(--radius-base);
 }
 
 .course-card__description {
-  margin: 0;
   color: var(--edu-text-secondary);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .course-card__stats {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
+}
+
+.stat-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .stat-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--edu-text-secondary);
+  gap: 4px;
+  text-align: center;
+  flex: 1;
+}
+
+.stat-item .el-icon {
+  font-size: 16px;
+  color: var(--edu-primary-500);
 }
 
 .stat-value {
+  font-size: 16px;
   font-weight: 600;
   color: var(--edu-text-primary);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--edu-text-tertiary);
+}
+
+.progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-label {
+  font-size: 13px;
+  color: var(--edu-text-secondary);
+}
+
+.progress-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--edu-primary-600);
 }
 
 .course-card__footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
-  color: var(--edu-text-secondary);
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--edu-border-light);
+  background: var(--edu-bg-secondary);
 }
 
 .course-card__actions {
   display: flex;
-  justify-content: flex-end;
   gap: 8px;
 }
 
@@ -1974,6 +2190,9 @@ const handleHelpAction = (action: string, data: any) => {
 .pagination-container {
   display: flex;
   justify-content: flex-end;
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--el-border-color-lighter);
 }
 
 .dialog-footer {
@@ -2066,7 +2285,8 @@ const handleHelpAction = (action: string, data: any) => {
 
   .view-switcher {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
+    align-items: center;
   }
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <aside class="management-sidebar-right">
+  <aside class="management-sidebar-right" :class="{ compact }">
     <!-- 数据洞察区块 -->
     <SidebarSection
       v-if="hasSection(RightSidebarSection.INSIGHTS)"
@@ -99,6 +99,7 @@ import {
 
 interface Props {
   sections?: RightSidebarSectionConfig[]
+  compact?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -223,6 +224,17 @@ const defaultCollaboration = [
   flex-direction: column;
   gap: var(--density-gap-base, 16px);
   height: 100%;
+
+  &.compact {
+    .resource-title {
+      font-size: 12px !important;
+    }
+
+    .resource-desc {
+      font-size: 11px !important;
+      line-height: 1.2 !important;
+    }
+  }
 }
 
 // 数据洞察样式
@@ -337,12 +349,13 @@ const defaultCollaboration = [
   font-weight: var(--font-weight-medium);
   color: var(--edu-text-primary);
   margin-bottom: 2px;
+  font-size: var(--density-font-size-sm, 13px);
 }
 
 .resource-desc {
-  font-size: var(--density-font-size-sm, 14px);
+  font-size: var(--density-font-size-xs, 11px);
   color: var(--edu-text-secondary);
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 // 协作记录样式

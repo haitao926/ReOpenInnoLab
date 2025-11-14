@@ -573,3 +573,131 @@ export interface ReflectionAssessment {
   criteria: string[]
   frequency: string
 }
+
+// ==================== Lesson Management ====================
+
+export interface LessonInfo {
+  id: string
+  courseId: string
+  classId: string
+  title: string
+  description?: string
+  status: LessonStatus
+  startTime: Date
+  endTime?: Date
+  teacherId: string
+  scheduledTime: Date
+  duration: number // 分钟
+  chapters: CourseChapter[]
+  currentSection: number
+  students: LessonStudent[]
+  settings: LessonSettings
+  resources: LessonResource[]
+  activities: LessonActivity[]
+  createdAt: Date
+  updatedAt: Date
+}
+
+export type LessonStatus = 'preparing' | 'active' | 'paused' | 'completed' | 'cancelled'
+
+export interface LessonStudent {
+  id: string
+  name: string
+  studentId: string
+  avatar?: string
+  status: 'joined' | 'online' | 'offline' | 'away'
+  joinedAt: Date
+  lastActivity: Date
+  progress: LessonProgress
+  interactions: StudentInteraction[]
+  deviceInfo?: DeviceInfo
+}
+
+export interface LessonProgress {
+  currentSection: number
+  completionRate: number
+  timeSpent: number // 秒
+  sectionsCompleted: string[]
+  quizScores: QuizScore[]
+  assignmentSubmissions: AssignmentSubmission[]
+}
+
+export interface QuizScore {
+  quizId: string
+  score: number
+  maxScore: number
+  completedAt: Date
+  attempts: number
+}
+
+export interface AssignmentSubmission {
+  assignmentId: string
+  submittedAt: Date
+  status: 'submitted' | 'graded' | 'late'
+  score?: number
+  feedback?: string
+}
+
+export interface StudentInteraction {
+  id: string
+  type: 'question' | 'answer' | 'chat' | 'poll' | 'annotation' | 'experiment'
+  timestamp: Date
+  content: string
+  metadata?: Record<string, any>
+}
+
+export interface DeviceInfo {
+  userAgent: string
+  platform: string
+  screenResolution: string
+  browser: string
+  connectionType?: string
+}
+
+export interface LessonSettings {
+  allowQuestions: boolean
+  enableChat: boolean
+  recordSession: boolean
+  aiAssistance: boolean
+  maxParticipants: number
+  autoSave: boolean
+  publicLink: string
+  requireLogin: boolean
+  allowScreenShare: boolean
+  enableBreakoutRooms: boolean
+}
+
+export interface LessonResource {
+  id: string
+  type: 'slide' | 'video' | 'audio' | 'document' | 'interactive' | 'notebook'
+  title: string
+  url: string
+  duration?: number
+  order: number
+  sectionId: string
+  metadata?: Record<string, any>
+}
+
+export interface LessonActivity {
+  id: string
+  type: 'quiz' | 'poll' | 'discussion' | 'breakout' | 'experiment' | 'assignment'
+  title: string
+  description?: string
+  sectionId: string
+  startTime?: Date
+  endTime?: Date
+  participants: string[]
+  settings: Record<string, any>
+  results?: ActivityResults
+}
+
+export interface ActivityResults {
+  participants: string[]
+  scores?: Record<string, number>
+  responses?: Array<{
+    studentId: string
+    response: any
+    timestamp: Date
+  }>
+  completionRate?: number
+}

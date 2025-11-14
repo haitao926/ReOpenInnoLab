@@ -1,0 +1,207 @@
+// 颜色变量
+:root {
+  // 主色调
+  --edu-primary-50: #eff6ff;
+  --edu-primary-100: #dbeafe;
+  --edu-primary-200: #bfdbfe;
+  --edu-primary-300: #93c5fd;
+  --edu-primary-400: #60a5fa;
+  --edu-primary-500: #3b82f6;
+  --edu-primary-600: #2563eb;
+  --edu-primary-700: #1d4ed8;
+  --edu-primary-800: #1e40af;
+  --edu-primary-900: #1e3a8a;
+
+  // 灰色
+  --edu-gray-50: #f9fafb;
+  --edu-gray-100: #f3f4f6;
+  --edu-gray-200: #e5e7eb;
+  --edu-gray-300: #d1d5db;
+  --edu-gray-400: #9ca3af;
+  --edu-gray-500: #6b7280;
+  --edu-gray-600: #4b5563;
+  --edu-gray-700: #374151;
+  --edu-gray-800: #1f2937;
+  --edu-gray-900: #111827;
+
+  // 成功色
+  --edu-success-50: #f0fdf4;
+  --edu-success-100: #dcfce7;
+  --edu-success-200: #bbf7d0;
+  --edu-success-300: #86efac;
+  --edu-success-400: #4ade80;
+  --edu-success-500: #22c55e;
+  --edu-success-600: #16a34a;
+  --edu-success-700: #15803d;
+  --edu-success-800: #166534;
+  --edu-success-900: #14532d;
+
+  // 警告色
+  --edu-warning-50: #fffbeb;
+  --edu-warning-100: #fef3c7;
+  --edu-warning-200: #fde68a;
+  --edu-warning-300: #fcd34d;
+  --edu-warning-400: #fbbf24;
+  --edu-warning-500: #f59e0b;
+  --edu-warning-600: #d97706;
+  --edu-warning-700: #b45309;
+  --edu-warning-800: #92400e;
+  --edu-warning-900: #78350f;
+
+  // 错误色
+  --edu-error-50: #fef2f2;
+  --edu-error-100: #fee2e2;
+  --edu-error-200: #fecaca;
+  --edu-error-300: #fca5a5;
+  --edu-error-400: #f87171;
+  --edu-error-500: #ef4444;
+  --edu-error-600: #dc2626;
+  --edu-error-700: #b91c1c;
+  --edu-error-800: #991b1b;
+  --edu-error-900: #7f1d1d;
+
+  // 信息色
+  --edu-info-50: #eff6ff;
+  --edu-info-100: #dbeafe;
+  --edu-info-200: #bfdbfe;
+  --edu-info-300: #93c5fd;
+  --edu-info-400: #60a5fa;
+  --edu-info-500: #3b82f6;
+  --edu-info-600: #2563eb;
+  --edu-info-700: #1d4ed8;
+  --edu-info-800: #1e40af;
+  --edu-info-900: #1e3a8a;
+
+  // 语义化颜色
+  --edu-text-primary: var(--edu-gray-900);
+  --edu-text-secondary: var(--edu-gray-600);
+  --edu-text-tertiary: var(--edu-gray-500);
+  --edu-text-inverse: #ffffff;
+
+  --edu-bg-color: #ffffff;
+  --edu-bg-color-secondary: var(--edu-gray-50);
+  --edu-bg-color-tertiary: var(--edu-gray-100);
+
+  --edu-border-color: var(--edu-gray-200);
+  --edu-border-color-light: var(--edu-gray-100);
+  --edu-border-color-dark: var(--edu-gray-300);
+
+  // 字体
+  --edu-font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --edu-font-family-mono: 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', 'Source Code Pro', monospace;
+
+  // 字体大小
+  --edu-text-size-xs: 0.75rem;    // 12px
+  --edu-text-size-sm: 0.875rem;   // 14px
+  --edu-text-size-base: 1rem;     // 16px
+  --edu-text-size-lg: 1.125rem;   // 18px
+  --edu-text-size-xl: 1.25rem;    // 20px
+  --edu-text-size-2xl: 1.5rem;    // 24px
+  --edu-text-size-3xl: 1.875rem;  // 30px
+  --edu-text-size-4xl: 2.25rem;   // 36px
+  --edu-text-size-5xl: 3rem;      // 48px
+
+  // 字体权重
+  --edu-font-weight-light: 300;
+  --edu-font-weight-normal: 400;
+  --edu-font-weight-medium: 500;
+  --edu-font-weight-semibold: 600;
+  --edu-font-weight-bold: 700;
+  --edu-font-weight-extrabold: 800;
+
+  // 行高
+  --edu-line-height-tight: 1.25;
+  --edu-line-height-base: 1.5;
+  --edu-line-height-relaxed: 1.75;
+
+  // 间距
+  --edu-spacing-xs: 0.25rem;   // 4px
+  --edu-spacing-sm: 0.5rem;    // 8px
+  --edu-spacing-md: 1rem;      // 16px
+  --edu-spacing-lg: 1.5rem;    // 24px
+  --edu-spacing-xl: 2rem;      // 32px
+  --edu-spacing-2xl: 2.5rem;   // 40px
+  --edu-spacing-3xl: 3rem;     // 48px
+  --edu-spacing-4xl: 4rem;     // 64px
+  --edu-spacing-5xl: 5rem;     // 80px
+
+  // 圆角
+  --edu-radius-sm: 0.25rem;     // 4px
+  --edu-radius-md: 0.5rem;     // 8px
+  --edu-radius-lg: 0.75rem;    // 12px
+  --edu-radius-xl: 1rem;       // 16px
+  --edu-radius-2xl: 1.5rem;    // 24px
+  --edu-radius-full: 9999px;
+
+  // 阴影
+  --edu-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --edu-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --edu-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --edu-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --edu-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  // 过渡
+  --edu-duration-fast: 150ms;
+  --edu-duration-normal: 300ms;
+  --edu-duration-slow: 500ms;
+
+  --edu-easing-linear: linear;
+  --edu-easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --edu-easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --edu-easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --edu-easing-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  // Z-index
+  --edu-z-index-dropdown: 1000;
+  --edu-z-index-sticky: 1020;
+  --edu-z-index-fixed: 1030;
+  --edu-z-index-modal-backdrop: 1040;
+  --edu-z-index-modal: 1050;
+  --edu-z-index-popover: 1060;
+  --edu-z-index-tooltip: 1070;
+  --edu-z-index-toast: 1080;
+
+  // 布局尺寸
+  --edu-sidebar-width: 320px;
+  --edu-sidebar-collapsed-width: 80px;
+  --edu-header-height: 64px;
+
+  // 断点
+  --edu-breakpoint-sm: 640px;
+  --edu-breakpoint-md: 768px;
+  --edu-breakpoint-lg: 1024px;
+  --edu-breakpoint-xl: 1280px;
+  --edu-breakpoint-2xl: 1536px;
+
+  // 玻璃效果
+  --edu-glass-bg: rgba(255, 255, 255, 0.8);
+  --edu-glass-border: rgba(255, 255, 255, 0.2);
+  --edu-glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  --edu-glass-blur: blur(20px);
+
+  // 渐变
+  --edu-gradient-primary: linear-gradient(135deg, var(--edu-primary-500) 0%, var(--edu-primary-600) 100%);
+  --edu-gradient-secondary: linear-gradient(135deg, var(--edu-gray-500) 0%, var(--edu-gray-600) 100%);
+  --edu-gradient-success: linear-gradient(135deg, var(--edu-success-500) 0%, var(--edu-success-600) 100%);
+  --edu-gradient-warning: linear-gradient(135deg, var(--edu-warning-500) 0%, var(--edu-warning-600) 100%);
+  --edu-gradient-error: linear-gradient(135deg, var(--edu-error-500) 0%, var(--edu-error-600) 100%);
+}
+
+// 深色模式变量
+[data-theme="dark"] {
+  --edu-text-primary: var(--edu-gray-100);
+  --edu-text-secondary: var(--edu-gray-300);
+  --edu-text-tertiary: var(--edu-gray-400);
+
+  --edu-bg-color: var(--edu-gray-900);
+  --edu-bg-color-secondary: var(--edu-gray-800);
+  --edu-bg-color-tertiary: var(--edu-gray-700);
+
+  --edu-border-color: var(--edu-gray-700);
+  --edu-border-color-light: var(--edu-gray-600);
+  --edu-border-color-dark: var(--edu-gray-800);
+
+  --edu-glass-bg: rgba(31, 41, 55, 0.8);
+  --edu-glass-border: rgba(75, 85, 99, 0.3);
+}

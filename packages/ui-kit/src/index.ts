@@ -15,6 +15,8 @@ import EduAccordion from './components/base/EduAccordion.vue'
 import EduTabs from './components/base/EduTabs.vue'
 import EduCourseCard from './components/base/EduCourseCard.vue'
 import EduSummaryCard from './components/base/EduSummaryCard.vue'
+import EnhancedAuthLayout from './components/EnhancedAuthLayout.vue'
+import EnhancedLoginForm from './components/EnhancedLoginForm.vue'
 
 // 导出样式文件
 import './index.scss'
@@ -33,7 +35,7 @@ export { registerKeyboardNavigationDirectives }
 export { vKeyboardNavigation, vAutoFocus, vFocusTrap, vAriaLabel, vAriaDescribedBy, vSkipLink } from './directives/keyboardNavigation'
 
 // 导出组件
-export { EduButton, EduCard, EduModal, EduTag, EduInput, EduAccordion, EduTabs, EduCourseCard, EduSummaryCard }
+export { EduButton, EduCard, EduModal, EduTag, EduInput, EduAccordion, EduTabs, EduCourseCard, EduSummaryCard, EnhancedAuthLayout, EnhancedLoginForm }
 
 // 导出主题工具函数
 export const useTheme = () => {

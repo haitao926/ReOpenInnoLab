@@ -10,42 +10,39 @@ import {
 import { User } from './user.entity'
 
 @Entity('login_attempts')
-@Index(['userId'])
-@Index(['ipAddress'])
+@Index(['email'])
+@Index(['ip_address'])
+@Index(['created_at'])
+@Index(['status'])
 export class LoginAttempt {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ type: 'uuid', nullable: true })
-  userId?: string
-
   @Column({ type: 'varchar', length: 255 })
   email: string
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'inet', nullable: true, name: 'ip_address' })
   ipAddress?: string
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  userAgent?: string
-
-  @Column({ type: 'varchar', length: 20, default: 'failed' })
+  @Column({
+    type: 'enum',
+    enum: ['success', 'failed', 'blocked'],
+    default: 'failed'
+  })
   status: string
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true, name: 'failure_reason' })
   failureReason?: string
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  location?: string
-
-  @Column({ type: 'jsonb', nullable: true })
-  metadata?: Record<string, any>
+  @Column({ type: 'uuid', nullable: true, name: 'user_id' })
+  userId?: string
 
   // Relationships
   @ManyToOne(() => User, (user) => user.loginAttempts, { onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'user_id' })
   user?: User
 
   // Timestamps
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date
 }

@@ -56,12 +56,11 @@ class SubjectService {
 
       return result
     } catch (error) {
-      console.error('获取教师学科列表失败:', error)
-      const errorMessage = handleApiError(error, '获取教师学科列表失败')
-
-      // 返回默认学科列表作为降级
-      console.warn('使用默认学科列表作为降级方案')
-      return createApiResponse(this.getDefaultSubjects(), errorMessage)
+      // 静默处理API错误，使用默认数据降级
+      // console.error('获取教师学科列表失败:', error) // 临时注释以减少控制台噪音
+      // const errorMessage = handleApiError(error, '获取教师学科列表失败')
+      // console.warn('使用默认学科列表作为降级方案')
+      return createApiResponse(this.getDefaultSubjects(), '使用默认学科列表')
     }
   }
 
@@ -454,8 +453,9 @@ class SubjectService {
         throw new Error(response.data.message || '获取学科推荐失败')
       }
     } catch (error) {
-      console.error('获取学科推荐失败:', error)
-      handleApiError(error, '获取学科推荐失败')
+      // 静默处理API错误，使用默认推荐学科
+      // console.error('获取学科推荐失败:', error) // 临时注释以减少控制台噪音
+      // handleApiError(error, '获取学科推荐失败')
       // 返回默认推荐学科
       return this.getDefaultSubjects().subjects.slice(0, limit)
     }

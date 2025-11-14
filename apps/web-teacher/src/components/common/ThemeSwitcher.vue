@@ -2,7 +2,7 @@
   <div class="theme-switcher">
     <el-tooltip :content="getTooltipText()" placement="bottom">
       <el-button
-        type="text"
+        type="link"
         class="theme-toggle-btn"
         @click="toggleTheme"
       >
@@ -22,7 +22,7 @@
       class="theme-popover"
     >
       <template #reference>
-        <el-button type="text" class="theme-settings-btn" @click="openThemeSettings">
+        <el-button type="link" class="theme-settings-btn" @click="openThemeSettings">
           <el-icon size="16">
             <Setting />
           </el-icon>
@@ -256,7 +256,7 @@ const toggleTheme = () => {
   applyTheme(newTheme)
 }
 
-const applyTheme = (theme: string) => {
+const applyTheme = (theme: string, showMessage: boolean = true) => {
   currentTheme.value = theme as 'light' | 'dark'
 
   // 应用主题到DOM
@@ -281,9 +281,11 @@ const applyTheme = (theme: string) => {
   // 通知父组件
   emit('themeChanged', theme)
 
-  // 显示提示
-  const themeName = themePresets.value.find(p => p.id === theme)?.name || theme
-  ElMessage.success(`已切换到${themeName}`)
+  // 显示提示（仅在手动切换时）
+  if (showMessage) {
+    const themeName = themePresets.value.find(p => p.id === theme)?.name || theme
+    ElMessage.success(`已切换到${themeName}`)
+  }
 }
 
 const applyCustomSettings = () => {
@@ -384,7 +386,13 @@ const loadSettings = () => {
   if (savedAutoSwitch) {
     autoSwitch.value = savedAutoSwitch === 'true'
     if (autoSwitch.value) {
-      handleAutoSwitchChange(true)
+      // 在初始化时直接应用系统主题，不显示消息
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      const systemTheme = prefersDark ? 'dark' : 'light'
+      applyTheme(systemTheme, false)
+
+      // 监听系统主题变化
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', handleSystemThemeChange)
     }
   }
 
@@ -398,13 +406,9 @@ const loadSettings = () => {
     }
   }
 
-  // 应用初始主题
-  if (autoSwitch.value) {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const systemTheme = prefersDark ? 'dark' : 'light'
-    applyTheme(systemTheme)
-  } else {
-    applyTheme(currentTheme.value)
+  // 应用初始主题（仅在没有自动切换时应用，不显示消息）
+  if (!autoSwitch.value) {
+    applyTheme(currentTheme.value, false)
   }
 }
 

@@ -1,7 +1,10 @@
+@use './variables';
+@use './element-plus-theme';
+@use './icon-theme';
+@use './sidebar-tokens';
+
 // 开源浦育 ReOpenInnoLab - 教师端主样式文件
 // 导入UI Kit主题样式
-@import './variables';
-@import './element-plus-theme';
 
 // 全局样式重置
 * {
@@ -33,10 +36,57 @@ body {
 // 应用根容器
 #app {
   height: 100vh;
-  overflow: hidden;
+  overflow: hidden; // 防止整体页面滚动，只让内容区域滚动
 }
 
-// 自定义滚动条
+// 确保所有工作区主内容区域都支持滚动
+.workspace-main,
+.layout-content .content-scroller,
+.main-content,
+.content-area {
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--edu-bg-tertiary);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--edu-border-medium);
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background: var(--edu-border-dark);
+    }
+  }
+}
+
+[data-theme="dark"] {
+  .workspace-main,
+  .layout-content .content-scroller,
+  .main-content,
+  .content-area {
+    &::-webkit-scrollbar-track {
+      background: var(--edu-bg-secondary);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--edu-border-light);
+
+      &:hover {
+        background: var(--edu-border-medium);
+      }
+    }
+  }
+}
+
+// 全局滚动条样式（覆盖默认样式）
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -57,19 +107,21 @@ body {
   background: var(--edu-border-dark);
 }
 
+// 深色模式滚动条
 [data-theme="dark"] {
   ::-webkit-scrollbar-track {
-    background: var(--edu-bg-tertiary);
+    background: var(--edu-bg-secondary);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--edu-border-medium);
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
     background: var(--edu-border-light);
+
+    &:hover {
+      background: var(--edu-border-medium);
+    }
   }
 }
+
 
 // 教育平台专用CSS变量
 :root {

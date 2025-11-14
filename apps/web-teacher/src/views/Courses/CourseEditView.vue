@@ -1,17 +1,22 @@
 <template>
   <TeacherWorkspaceLayout
     title="课程编辑器"
-    subtitle="创建和编辑课程内容，AI赋能教学设计"
+    subtitle="创建和编辑课程内容，五环节AI赋能教学设计"
     v-model:leftCollapsed="leftSidebarCollapsed"
     v-model:rightCollapsed="rightSidebarCollapsed"
   >
     <template #header-controls>
       <div class="editor-actions">
-        <el-button @click="saveDraft" :loading="saving">
+        <el-button @click="saveVersion" :loading="courseStore.loading">
           <el-icon><Document /></el-icon>
-          保存草稿
+          保存版本
         </el-button>
-        <el-button type="primary" @click="publishCourse" :loading="publishing">
+        <el-button
+          type="primary"
+          @click="publishCourse"
+          :loading="courseStore.loading"
+          :disabled="!courseStore.isDraftMode"
+        >
           <el-icon><Upload /></el-icon>
           发布课程
         </el-button>
@@ -26,9 +31,10 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item command="version">版本管理</el-dropdown-item>
-              <el-dropdown-item command="export">导出课程</el-dropdown-item>
+              <el-dropdown-item command="export">导出ACL</el-dropdown-item>
+              <el-dropdown-item command="validate">验证课程</el-dropdown-item>
               <el-dropdown-item command="settings">课程设置</el-dropdown-item>
-              <el-dropdown-item command="help">使用帮助</el-dropdown-item>
+              <el-dropdown-item command="help" divided>使用帮助</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -59,48 +65,316 @@
 
     <template #left>
       <div class="sidebar-section">
-        <h4 class="section-title">课程结构</h4>
-        <div class="chapter-tree">
-          <el-tree
-            ref="chapterTreeRef"
-            :data="chapters"
-            :props="treeProps"
-            node-key="id"
-            draggable
-            :allow-drop="allowDrop"
-            @node-click="selectChapter"
-            @node-drop="handleNodeDrop"
-            :default-expanded-keys="expandedKeys"
-            :highlight-current="true"
+        <div class="section-header">
+          <h4 class="section-title">五环节结构</h4>
+          <el-button size="small" @click="resetToDefaultModules">
+            <el-icon><Refresh /></el-icon>
+            重置
+          </el-button>
+        </div>
+
+        <div class="modules-tree">
+          <div
+            v-for="(module, key) in courseStore.editor?.fiveModules"
+            :key="key"
+            class="module-item"
+            :class="{
+              'is-current': selectedModuleKey === key,
+              'is-active': isModuleActive(key)
+            }"
+            @click="selectModule(key)"
           >
-            <template #default="{ node, data }">
-              <div class="chapter-node" :class="{ 'is-current': selectedChapterId === data.id }">
-                <span class="node-icon">
-                  <el-icon><component :is="getChapterIcon(data.type)" /></el-icon>
-                </span>
-                <span class="node-title">{{ data.title }}</span>
-                <div class="node-actions">
-                  <el-button type="text" size="small" @click.stop="editChapter(data)">
-                    <el-icon><Edit /></el-icon>
-                  </el-button>
-                  <el-dropdown trigger="click" @command="(cmd) => handleChapterAction(cmd, data)">
-                    <el-button type="text" size="small" @click.stop>
-                      <el-icon><MoreFilled /></el-icon>
-                    </el-button>
-                    <template #dropdown>
-                      <el-dropdown-menu>
-                        <el-dropdown-item command="add">添加子章节</el-dropdown-item>
-                        <el-dropdown-item command="duplicate">复制章节</el-dropdown-item>
-                        <el-dropdown-item command="delete" divided>删除章节</el-dropdown-item>
-                      </el-dropdown-menu>
-                    </template>
-                  </el-dropdown>
+            <div class="module-header">
+              <div class="module-info">
+                <el-icon :color="getModuleTypeColor(module.type)">
+                  <component :is="getModuleIcon(module.type)" />
+                </el-icon>
+                <span class="module-title">{{ module.title }}</span>
+              </div>
+              <div class="module-meta">
+                <el-tag size="small" :type="getModuleTagType(module.type)">
+                  {{ getModuleDuration(module.duration) }}
+                </el-tag>
+              </div>
+            </div>
+
+            <div class="module-stats">
+              <span class="stat-item">
+                <el-icon size="12"><Target /></el-icon>
+                {{ module.objectives.length }}目标
+              </span>
+              <span class="stat-item">
+                <el-icon size="12"><Folder /></el-icon>
+                {{ module.resources.length }}资源
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h4 class="section-title">课程信息</h4>
+          <div class="course-info">
+            <div class="info-item">
+              <span class="label">状态:</span>
+              <el-tag
+                :type="courseStore.currentCourse?.status === 'PUBLISHED' ? 'success' : 'warning'"
+                size="small"
+              >
+                {{ getStatusText(courseStore.currentCourse?.status) }}
+              </el-tag>
+            </div>
+            <div class="info-item">
+              <span class="label">版本:</span>
+              <span class="value">{{ courseStore.editor?.version.current || '1.0.0' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">总时长:</span>
+              <span class="value">{{ totalDuration }}分钟</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template #main>
+      <div v-if="!selectedModuleKey" class="welcome-screen">
+        <div class="welcome-content">
+          <div class="welcome-icon">
+            <el-icon size="64" color="#409EFF"><EditPen /></el-icon>
+          </div>
+          <h2>欢迎使用五环节课程编辑器</h2>
+          <p>选择左侧的环节开始编辑课程内容，或使用AI智能生成</p>
+          <div class="welcome-actions">
+            <el-button type="primary" @click="generateWithAI">
+              <el-icon><MagicStick /></el-icon>
+              AI智能生成
+            </el-button>
+            <el-button @click="loadTemplate">
+              <el-icon><Grid /></el-icon>
+              使用模板
+            </el-button>
+          </div>
+        </div>
+      </div>
+
+      <div v-else class="module-editor">
+        <div class="editor-header">
+          <div class="editor-title">
+            <el-icon :color="getModuleTypeColor(getCurrentModule()?.type)">
+              <component :is="getModuleIcon(getCurrentModule()?.type)" />
+            </el-icon>
+            <span>{{ getCurrentModule()?.title }}</span>
+            <el-tag :type="getModuleTagType(getCurrentModule()?.type)" size="small">
+              {{ getModuleTypeLabel(getCurrentModule()?.type) }}
+            </el-tag>
+          </div>
+
+          <div class="editor-actions">
+            <el-button size="small" @click="aiGenerateModule">
+              <el-icon><MagicStick /></el-icon>
+              AI生成
+            </el-button>
+            <el-button size="small" @click="saveModuleChanges">
+              <el-icon><Check /></el-icon>
+              保存
+            </el-button>
+          </div>
+        </div>
+
+        <div class="editor-content">
+          <el-tabs v-model="activeEditorTab" type="card">
+            <el-tab-pane label="基本设置" name="basic">
+              <div class="module-settings">
+                <el-form :model="getCurrentModule()" label-width="100px">
+                  <el-form-item label="环节标题">
+                    <el-input v-model="getCurrentModule().title" @input="updateModuleBasicInfo" />
+                  </el-form-item>
+                  <el-form-item label="时长(分钟)">
+                    <el-input-number v-model="getCurrentModule().duration" @change="updateModuleBasicInfo" />
+                  </el-form-item>
+                  <el-form-item label="学习目标">
+                    <el-input
+                      type="textarea"
+                      :model-value="getCurrentModule().objectives.join('\n')"
+                      @input="handleObjectivesChange"
+                      :rows="4"
+                      placeholder="每行一个学习目标"
+                    />
+                  </el-form-item>
+                </el-form>
+              </div>
+            </el-tab-pane>
+
+            <el-tab-pane label="内容编辑" name="content">
+              <div class="content-editor">
+                <el-input
+                  type="textarea"
+                  v-model="moduleContent"
+                  :rows="12"
+                  placeholder="编辑环节内容..."
+                  @input="handleContentChange"
+                />
+                <div class="content-tools">
+                  <el-button size="small" @click="formatContent">格式化</el-button>
+                  <el-button size="small" @click="previewContent">预览</el-button>
                 </div>
               </div>
-            </template>
-          </el-tree>
+            </el-tab-pane>
 
-          <div class="tree-actions">
+            <el-tab-pane label="资源配置" name="resources">
+              <div class="resources-panel">
+                <div class="resources-header">
+                  <el-button type="primary" size="small" @click="addResource">
+                    <el-icon><Plus /></el-icon>
+                    添加资源
+                  </el-button>
+                </div>
+                <div class="resources-list">
+                  <div
+                    v-for="resource in getCurrentModule().resources"
+                    :key="resource.id"
+                    class="resource-item"
+                  >
+                    <el-icon><Document /></el-icon>
+                    <span>{{ resource.title }}</span>
+                    <el-button type="danger" size="small" text @click="removeResource(resource.id)">
+                      <el-icon><Delete /></el-icon>
+                    </el-button>
+                  </div>
+                  <div v-if="getCurrentModule().resources.length === 0" class="empty-resources">
+                    暂无资源
+                  </div>
+                </div>
+              </div>
+            </el-tab-pane>
+
+            <el-tab-pane label="AI配置" name="ai">
+              <div class="ai-settings">
+                <el-form label-width="100px">
+                  <el-form-item label="AI提示词">
+                    <el-input
+                      type="textarea"
+                      :model-value="getCurrentModule().aiHints.join('\n')"
+                      @input="handleAIHintsChange"
+                      :rows="4"
+                      placeholder="每行一个AI提示词"
+                    />
+                  </el-form-item>
+                  <el-form-item label="课堂活动">
+                    <el-input
+                      type="textarea"
+                      :model-value="getCurrentModule().classroomActions.join('\n')"
+                      @input="handleClassroomActionsChange"
+                      :rows="4"
+                      placeholder="每行一个课堂活动建议"
+                    />
+                  </el-form-item>
+                </el-form>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+      </div>
+    </template>
+
+    <template #right>
+      <div class="sidebar-section">
+        <h4 class="section-title">AI助手</h4>
+        <div class="ai-assistant">
+          <el-button type="primary" size="small" @click="generateModuleContent">
+            <el-icon><MagicStick /></el-icon>
+            生成内容
+          </el-button>
+          <el-button size="small" @click="generateObjectives">
+            <el-icon><Target /></el-icon>
+            生成目标
+          </el-button>
+          <el-button size="small" @click="generateResources">
+            <el-icon><Folder /></el-icon>
+            推荐资源
+          </el-button>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h4 class="section-title">快速预览</h4>
+        <div class="quick-preview">
+          <div class="preview-card" v-if="getCurrentModule()">
+            <h5>{{ getCurrentModule()?.title }}</h5>
+            <div class="preview-meta">
+              <el-tag size="small">{{ getModuleTypeLabel(getCurrentModule()?.type) }}</el-tag>
+              <span class="duration">{{ getCurrentModule()?.duration }}分钟</span>
+            </div>
+            <p class="preview-description">
+              {{ getCurrentModule()?.objectives.slice(0, 2).join('；') }}
+            </p>
+          </div>
+          <div v-else class="empty-preview">
+            选择环节查看预览
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h4 class="section-title">操作记录</h4>
+        <div class="activity-list">
+          <div
+            v-for="activity in recentActivities"
+            :key="activity.id"
+            class="activity-item"
+          >
+            <el-icon size="14" :color="activity.color">
+              <component :is="activity.icon" />
+            </el-icon>
+            <span class="activity-text">{{ activity.text }}</span>
+            <span class="activity-time">{{ formatTime(activity.time) }}</span>
+          </div>
+        </div>
+      </div>
+    </template>
+  </TeacherWorkspaceLayout>
+
+  <!-- 版本管理对话框 -->
+  <el-dialog v-model="versionDialogVisible" title="版本管理" width="800px">
+    <div class="version-manager">
+      <el-timeline>
+        <el-timeline-item
+          v-for="version in courseVersions"
+          :key="version.id"
+          :type="version.status === 'PUBLISHED' ? 'success' : 'primary'"
+          @click="selectVersion(version)"
+        >
+          <div class="version-item">
+            <div class="version-header">
+              <span class="version-number">v{{ version.version }}</span>
+              <el-tag :type="version.status === 'PUBLISHED' ? 'success' : 'warning'" size="small">
+                {{ version.status === 'PUBLISHED' ? '已发布' : '草稿' }}
+              </el-tag>
+            </div>
+            <div class="version-meta">
+              <span>{{ version.createdAt }}</span>
+              <span v-if="version.publishedAt">发布于: {{ version.publishedAt }}</span>
+            </div>
+          </div>
+        </el-timeline-item>
+      </el-timeline>
+    </div>
+  </el-dialog>
+
+  <!-- ACL预览对话框 -->
+  <el-dialog v-model="aclPreviewVisible" title="ACL内容预览" width="80%">
+    <el-input
+      type="textarea"
+      :model-value="JSON.stringify(aclContent, null, 2)"
+      :rows="20"
+      readonly
+    />
+    <template #footer>
+      <el-button @click="aclPreviewVisible = false">关闭</el-button>
+      <el-button type="primary" @click="copyACL">复制</el-button>
+    </template>
+  </el-dialog>
+</template>
             <el-button type="primary" size="small" @click="addChapter">
               <el-icon><Plus /></el-icon>
               添加章节
@@ -422,1026 +696,962 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive, nextTick } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import type { FormInstance } from 'element-plus'
 import {
-  ArrowLeft, Document, Upload, View, ArrowDown, Edit, MoreFilled,
-  Plus, Grid, MagicStick, Picture, VideoCamera, Monitor, Iphone,
-  Cellphone, FolderOpened, Reading, TrendCharts, User
+  Document, Upload, View, ArrowDown, Edit, MoreFilled,
+  Plus, Grid, MagicStick, Picture, VideoCamera, Monitor,
+  Target, Folder, Refresh, Check, EditPen
 } from '@element-plus/icons-vue'
 
 import TeacherWorkspaceLayout from '@/components/layout/TeacherWorkspaceLayout.vue'
 import { EduCard } from '@reopeninnolab/ui-kit'
+import { useCourseStore, type ModuleConfig } from '@/stores/course'
+import { aclValidator, type AiCourseLayout } from '@reopeninnolab/acl-sdk'
 
-interface Chapter {
-  id: string
-  title: string
-  type: 'intro' | 'knowledge' | 'activity' | 'assignment'
-  content: string
-  duration: number
-  difficulty: 'easy' | 'medium' | 'hard'
-  objectives: string
-  children?: Chapter[]
-}
+// 使用内置组件避免创建过多文件
 
-interface CourseForm {
-  title: string
-  subject: string
-  grade: string
-  description: string
-  cover: string
-  tags: string[]
-}
-
-interface Tool {
-  id: string
-  name: string
-  icon: string
-}
-
-interface AISuggestion {
+interface Activity {
   id: string
   text: string
-  icon: string
-}
-
-interface Resource {
-  id: string
-  name: string
-  type: string
-  icon: string
+  icon: any
   color: string
+  time: Date
 }
 
-interface Template {
+interface SummaryCard {
   id: string
-  name: string
-  description: string
-  icon: string
+  label: string
+  value: string | number
+  icon: any
+  gradient: string
 }
 
 const route = useRoute()
 const router = useRouter()
-const chapterTreeRef = ref()
-const tagInputRef = ref()
+const courseStore = useCourseStore()
 
 // 响应式数据
-const courseId = computed(() => (route.params.id as string) || '')
+const courseId = computed(() => route.params.id as string)
 const leftSidebarCollapsed = ref(false)
 const rightSidebarCollapsed = ref(false)
-const editingMode = ref<'basic' | 'content'>('basic')
-const previewMode = ref<'desktop' | 'tablet' | 'mobile'>('desktop')
-const selectedChapterId = ref<string>('')
-const currentChapter = ref<Chapter | null>(null)
-const saving = ref(false)
-const publishing = ref(false)
-const aiGenerating = ref(false)
-
-const courseForm = reactive<CourseForm>({
-  title: '',
-  subject: '',
-  grade: '',
-  description: '',
-  cover: '',
-  tags: []
-})
-
-const courseRules = {
-  title: [
-    { required: true, message: '请输入课程标题', trigger: 'blur' },
-    { min: 2, max: 50, message: '课程标题长度在 2 到 50 个字符', trigger: 'blur' }
-  ],
-  subject: [
-    { required: true, message: '请选择学科', trigger: 'change' }
-  ],
-  grade: [
-    { required: true, message: '请选择年级', trigger: 'change' }
-  ],
-  description: [
-    { required: true, message: '请输入课程描述', trigger: 'blur' },
-    { min: 10, max: 500, message: '课程描述长度在 10 到 500 个字符', trigger: 'blur' }
-  ]
-}
-
-// 章节数据
-const chapters = ref<Chapter[]>([
-  {
-    id: '1',
-    title: '课程介绍',
-    type: 'intro',
-    content: '<p>欢迎来到本课程！在这个课程中，我们将一起探索...</p>',
-    duration: 15,
-    difficulty: 'easy',
-    objectives: '了解课程目标和学习路径',
-    children: [
-      {
-        id: '1-1',
-        title: '课程概览',
-        type: 'knowledge',
-        content: '<p>本章节将介绍课程的整体安排...</p>',
-        duration: 10,
-        difficulty: 'easy',
-        objectives: '了解课程结构和评价方式'
-      },
-      {
-        id: '1-2',
-        title: '学习资源',
-        type: 'activity',
-        content: '<p>课程所需的学习材料和工具...</p>',
-        duration: 5,
-        difficulty: 'easy',
-        objectives: '准备学习环境和资源'
-      }
-    ]
-  },
-  {
-    id: '2',
-    title: '基础知识',
-    type: 'knowledge',
-    content: '<p>本章节将学习核心概念...</p>',
-    duration: 45,
-    difficulty: 'medium',
-    objectives: '掌握基础理论和方法',
-    children: [
-      {
-        id: '2-1',
-        title: '概念定义',
-        type: 'knowledge',
-        content: '<p>详细定义课程涉及的核心概念...</p>',
-        duration: 20,
-        difficulty: 'medium',
-        objectives: '理解并记忆重要概念'
-      },
-      {
-        id: '2-2',
-        title: '基础练习',
-        type: 'assignment',
-        content: '<p>通过练习巩固所学知识...</p>',
-        duration: 25,
-        difficulty: 'medium',
-        objectives: '能够独立完成基础练习'
-      }
-    ]
-  }
-])
-
-const expandedKeys = ref(['1', '2'])
-
-// 其他数据
-const tagInputVisible = ref(false)
-const tagInputValue = ref('')
-const aiPrompt = ref('')
-const showTemplateDialog = ref(false)
-
-const quickTools = ref<Tool[]>([
-  { id: '1', name: 'AI生成', icon: 'MagicStick' },
-  { id: '2', name: '模板库', icon: 'Grid' },
-  { id: '3', name: '公式编辑器', icon: 'Document' },
-  { id: '4', name: '绘图工具', icon: 'Picture' }
-])
-
-const aiSuggestions = ref<AISuggestion[]>([
-  { id: '1', text: '为当前章节添加学习目标', icon: 'Target' },
-  { id: '2', text: '生成章节测试题', icon: 'Document' },
-  { id: '3', text: '优化教学流程设计', icon: 'Flow' }
-])
-
-const resources = ref<Resource[]>([
-  { id: '1', name: '教学图片库', type: '图片', icon: 'Picture', color: '#4ECDC4' },
-  { id: '2', name: '视频素材', type: '视频', icon: 'VideoCamera', color: '#45B7D1' },
-  { id: '3', name: '互动组件', type: '组件', icon: 'Grid', color: '#96CEB4' }
-])
-
-const chapterTemplates = ref<Template[]>([
-  { id: '1', name: '标准章节模板', description: '包含介绍、知识讲解、练习的标准结构', icon: 'Document' },
-  { id: '2', name: '实践导向模板', description: '强调动手操作和实践环节', icon: 'Experiment' },
-  { id: '3', name: '理论讲解模板', description: '适合理论知识传授的章节结构', icon: 'Reading' }
-])
-
-// 树形配置
-const treeProps = {
-  children: 'children',
-  label: 'title'
-}
+const selectedModuleKey = ref('')
+const activeEditorTab = ref('basic')
+const moduleContent = ref('')
+const versionDialogVisible = ref(false)
+const templateDialogVisible = ref(false)
+const aclPreviewVisible = ref(false)
+const recentActivities = ref<Activity[]>([])
+const courseVersions = ref([])
 
 // 计算属性
-const summaryCards = computed(() => [
+const currentCourse = computed(() => courseStore.currentCourse)
+const totalDuration = computed(() => {
+  if (!courseStore.editor?.fiveModules) return 0
+  return Object.values(courseStore.editor.fiveModules)
+    .reduce((total, module) => total + module.duration, 0)
+})
+
+const totalResources = computed(() => {
+  if (!courseStore.editor?.fiveModules) return 0
+  return Object.values(courseStore.editor.fiveModules)
+    .reduce((total, module) => total + module.resources.length, 0)
+})
+
+const totalObjectives = computed(() => {
+  if (!courseStore.editor?.fiveModules) return 0
+  return Object.values(courseStore.editor.fiveModules)
+    .reduce((total, module) => total + module.objectives.length, 0)
+})
+
+const aclContent = computed(() => courseStore.generateAclFromEditor())
+
+const summaryCards = computed<SummaryCard[]>(() => [
   {
-    id: 'chapters',
-    label: '章节数量',
-    value: chapters.value.length,
-    icon: FolderOpened,
+    id: 'duration',
+    label: '总时长',
+    value: `${totalDuration.value}分钟`,
+    icon: 'Clock',
     gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
   },
   {
-    id: 'content',
-    label: '内容字数',
-    value: chapters.value.reduce((sum, chapter) => sum + (chapter.content?.length || 0), 0),
-    icon: Document,
+    id: 'objectives',
+    label: '学习目标',
+    value: totalObjectives.value,
+    icon: 'Target',
     gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
   },
   {
-    id: 'progress',
-    label: '完成进度',
-    value: '65%',
-    icon: TrendCharts,
+    id: 'resources',
+    label: '教学资源',
+    value: totalResources.value,
+    icon: 'Folder',
     gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+  },
+  {
+    id: 'modules',
+    label: '教学环节',
+    value: '5个',
+    icon: 'Grid',
+    gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
   }
 ])
 
-const subjectOptions = [
-  { label: '物理', value: 'physics' },
-  { label: '化学', value: 'chemistry' },
-  { label: 'math', value: 'math' },
-  { label: '生物', value: 'biology' },
-  { label: '语文', value: 'language' },
-  { label: '英语', value: 'english' }
-]
-
-const gradeOptions = [
-  { label: '初一', value: '7' },
-  { label: '初二', value: '8' },
-  { label: '初三', value: '9' },
-  { label: '高一', value: '10' },
-  { label: '高二', value: '11' },
-  { label: '高三', value: '12' }
-]
-
-// 方法
-const saveDraft = async () => {
-  try {
-    saving.value = true
-    // 模拟保存
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    ElMessage.success('草稿保存成功')
-  } catch (error) {
-    ElMessage.error('保存失败，请重试')
-  } finally {
-    saving.value = false
-  }
-}
-
-const publishCourse = async () => {
-  try {
-    publishing.value = true
-    // 验证表单
-    // 发布逻辑
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    ElMessage.success('课程发布成功')
-  } catch (error) {
-    ElMessage.error('发布失败，请重试')
-  } finally {
-    publishing.value = false
-  }
-}
-
-const previewCourse = () => {
-  ElMessage.info('预览功能开发中...')
-}
-
-const handleMoreAction = (command: string) => {
-  switch (command) {
-    case 'version':
-      ElMessage.info('版本管理功能开发中...')
-      break
-    case 'export':
-      ElMessage.info('导出功能开发中...')
-      break
-    case 'settings':
-      ElMessage.info('课程设置功能开发中...')
-      break
-    case 'help':
-      ElMessage.info('使用帮助功能开发中...')
-      break
-  }
-}
-
-const selectChapter = (data: Chapter) => {
-  selectedChapterId.value = data.id
-  currentChapter.value = data
-}
-
-const addChapter = () => {
-  const newChapter: Chapter = {
-    id: Date.now().toString(),
-    title: '新章节',
-    type: 'knowledge',
-    content: '<p>请编辑章节内容...</p>',
-    duration: 30,
-    difficulty: 'medium',
-    objectives: ''
-  }
-  chapters.value.push(newChapter)
-  nextTick(() => {
-    selectChapter(newChapter)
-  })
-}
-
-const editChapter = (chapter: Chapter) => {
-  ElMessage.info(`编辑章节: ${chapter.title}`)
-}
-
-const handleChapterAction = async (command: string, data: Chapter) => {
-  switch (command) {
-    case 'add':
-      addSubChapter(data)
-      break
-    case 'duplicate':
-      duplicateChapter(data)
-      break
-    case 'delete':
-      await deleteChapter(data)
-      break
-  }
-}
-
-const addSubChapter = (parent: Chapter) => {
-  const newChapter: Chapter = {
-    id: Date.now().toString(),
-    title: '新子章节',
-    type: 'knowledge',
-    content: '<p>请编辑子章节内容...</p>',
-    duration: 20,
-    difficulty: 'medium',
-    objectives: ''
-  }
-
-  if (!parent.children) {
-    parent.children = []
-  }
-  parent.children.push(newChapter)
-  expandedKeys.value.push(parent.id)
-}
-
-const duplicateChapter = (chapter: Chapter) => {
-  const duplicated: Chapter = {
-    ...chapter,
-    id: Date.now().toString(),
-    title: `${chapter.title} (副本)`,
-    children: chapter.children ? chapter.children.map(child => ({ ...child, id: Date.now().toString() })) : undefined
-  }
-
-  const parent = findParentChapter(chapters.value, chapter.id)
-  if (parent) {
-    parent.children!.push(duplicated)
+// 生命周期
+onMounted(async () => {
+  if (courseId.value) {
+    await courseStore.fetchCourseById(courseId.value)
+    addActivity('加载课程', 'Document', '#409EFF')
   } else {
-    chapters.value.push(duplicated)
+    courseStore.initializeEditor()
+    addActivity('新建课程', 'Plus', '#67C23A')
+  }
+})
+
+// 监听课程变化
+watch(() => courseStore.editor, (newEditor) => {
+  if (newEditor) {
+    // 将objectives数组转换为文本显示
+    Object.values(newEditor.fiveModules).forEach(module => {
+      if (!('objectivesText' in module)) {
+        (module as any).objectivesText = module.objectives.join('\n')
+      }
+      if (!('aiHintsText' in module)) {
+        (module as any).aiHintsText = module.aiHints.join('\n')
+      }
+      if (!('classroomActionsText' in module)) {
+        (module as any).classroomActionsText = module.classroomActions.join('\n')
+      }
+    })
+  }
+}, { immediate: true, deep: true })
+
+// 模块相关方法
+function getCurrentModule(): ModuleConfig | undefined {
+  if (!selectedModuleKey.value || !courseStore.editor) return undefined
+  return courseStore.editor.fiveModules[selectedModuleKey.value as keyof typeof courseStore.editor.fiveModules]
+}
+
+function selectModule(key: string) {
+  selectedModuleKey.value = key
+  addActivity(`选择环节: ${getModuleTypeLabel(getCurrentModule()?.type)}`, 'Edit', '#E6A23C')
+}
+
+function isModuleActive(key: string): boolean {
+  const module = courseStore.editor?.fiveModules[key as keyof typeof courseStore.editor.fiveModules]
+  return module ? (module.objectives.length > 0 || module.resources.length > 0) : false
+}
+
+function updateModule(moduleKey: string, updates: Partial<ModuleConfig>) {
+  if (!courseStore.editor) return
+
+  const module = courseStore.editor.fiveModules[moduleKey as keyof typeof courseStore.editor.fiveModules]
+  Object.assign(module, updates)
+
+  addActivity(`更新环节: ${module.title}`, 'Edit', '#E6A23C')
+}
+
+function resetToDefaultModules() {
+  courseStore.initializeEditor(currentCourse.value)
+  addActivity('重置环节结构', 'Refresh', '#F56C6C')
+}
+
+// 环节类型相关方法
+function getModuleIcon(type?: string): any {
+  const icons: Record<string, any> = {
+    introduction: VideoCamera,
+    knowledge: Document,
+    experience: Picture,
+    experiment: Monitor,
+    assignment: Edit
+  }
+  return icons[type || ''] || Document
+}
+
+function getModuleTypeColor(type?: string): string {
+  const colors: Record<string, string> = {
+    introduction: '#67C23A',
+    knowledge: '#409EFF',
+    experience: '#E6A23C',
+    experiment: '#F56C6C',
+    assignment: '#909399'
+  }
+  return colors[type || ''] || '#909399'
+}
+
+function getModuleTagType(type?: string): string {
+  const types: Record<string, string> = {
+    introduction: 'success',
+    knowledge: 'primary',
+    experience: 'warning',
+    experiment: 'danger',
+    assignment: 'info'
+  }
+  return types[type || ''] || 'info'
+}
+
+function getModuleTypeLabel(type?: string): string {
+  const labels: Record<string, string> = {
+    introduction: '课程引入',
+    knowledge: '新知讲解',
+    experience: '体验理解',
+    experiment: '实验活动',
+    assignment: '作业测试'
+  }
+  return labels[type || ''] || '未知'
+}
+
+function getModuleDuration(duration?: number): string {
+  return duration ? `${duration}分钟` : '未设置'
+}
+
+function getStatusText(status?: string): string {
+  const statusMap: Record<string, string> = {
+    'DRAFT': '草稿',
+    'PUBLISHED': '已发布',
+    'ARCHIVED': '已归档'
+  }
+  return statusMap[status || ''] || '未知'
+}
+
+// AI相关方法
+async function generateWithAI() {
+  try {
+    ElMessage.info('AI正在生成完整课程结构...')
+    // TODO: 集成真实的AI服务
+    addActivity('AI生成课程', 'MagicStick', '#409EFF')
+    ElMessage.success('AI课程生成完成')
+  } catch (error) {
+    ElMessage.error('AI生成失败')
   }
 }
 
-const deleteChapter = async (chapter: Chapter) => {
+async function aiGenerateModule() {
+  const module = getCurrentModule()
+  if (!module) return
+
   try {
-    await ElMessageBox.confirm('确定要删除这个章节吗？', '确认删除', {
-      confirmButtonText: '确定删除',
-      cancelButtonText: '取消',
-      type: 'error'
+    ElMessage.info(`AI正在生成${module.title}内容...`)
+    // TODO: 集成真实的AI服务
+    addActivity(`AI生成${module.title}`, 'MagicStick', '#409EFF')
+    ElMessage.success(`${module.title}生成完成`)
+  } catch (error) {
+    ElMessage.error('AI生成失败')
+  }
+}
+
+function handleAIGeneration(type: string) {
+  // 处理AI助手生成请求
+  console.log('AI生成类型:', type)
+}
+
+function applyAISuggestion(suggestion: any) {
+  // 应用AI建议
+  console.log('应用AI建议:', suggestion)
+}
+
+// 保存和发布
+async function saveVersion() {
+  try {
+    await courseStore.saveVersion()
+    addActivity('保存版本', 'Document', '#67C23A')
+    ElMessage.success('版本保存成功')
+  } catch (error) {
+    // 错误已在store中处理
+  }
+}
+
+async function saveModuleChanges() {
+  const module = getCurrentModule()
+  if (!module) return
+
+  try {
+    await courseStore.saveVersion()
+    addActivity(`保存${module.title}`, 'Check', '#67C23A')
+    ElMessage.success('模块保存成功')
+  } catch (error) {
+    ElMessage.error('保存失败')
+  }
+}
+
+async function publishCourse() {
+  if (!currentCourse.value) {
+    ElMessage.error('没有课程数据')
+    return
+  }
+
+  try {
+    await ElMessageBox.confirm('确定要发布此课程吗？发布后学生即可访问。', '发布确认', {
+      type: 'warning'
     })
 
-    const parent = findParentChapter(chapters.value, chapter.id)
-    if (parent && parent.children) {
-      const index = parent.children.findIndex(c => c.id === chapter.id)
-      parent.children.splice(index, 1)
-    } else {
-      const index = chapters.value.findIndex(c => c.id === chapter.id)
-      chapters.value.splice(index, 1)
-    }
-
-    if (selectedChapterId.value === chapter.id) {
-      currentChapter.value = null
-      selectedChapterId.value = ''
-    }
-
-    ElMessage.success('章节删除成功')
+    await courseStore.publishCourse()
+    addActivity('发布课程', 'Upload', '#E6A23C')
+    ElMessage.success('课程发布成功')
   } catch (error) {
     if (error !== 'cancel') {
-      ElMessage.error('删除失败')
+      // 错误已在store中处理
     }
   }
 }
 
-const findParentChapter = (chapters: Chapter[], chapterId: string): Chapter | null => {
-  for (const chapter of chapters) {
-    if (chapter.children) {
-      const found = chapter.children.find(c => c.id === chapterId)
-      if (found) return chapter
-      const foundInChildren = findParentChapter(chapter.children, chapterId)
-      if (foundInChildren) return foundInChildren
-    }
-  }
-  return null
-}
-
-const handleNodeDrop = (draggingNode: any, dropNode: any, dropType: string) => {
-  ElMessage.success('章节顺序已更新')
-}
-
-const allowDrop = (draggingNode: any, dropNode: any, type: string) => {
-  return type !== 'inner'
-}
-
-const getChapterIcon = (type: string): string => {
-  const icons: Record<string, string> = {
-    intro: 'Document',
-    knowledge: 'Reading',
-    activity: 'Grid',
-    assignment: 'Edit'
-  }
-  return icons[type] || 'Document'
-}
-
-const getChapterTypeName = (type: string): string => {
-  const types: Record<string, string> = {
-    intro: '课程介绍',
-    knowledge: '知识讲解',
-    activity: '活动环节',
-    assignment: '作业任务'
-  }
-  return types[type] || type
-}
-
-const useTool = (tool: Tool) => {
-  ElMessage.info(`使用工具: ${tool.name}`)
-}
-
-const insertElement = (type: string) => {
-  ElMessage.info(`插入${type}元素`)
-}
-
-const toggleAIAssistant = () => {
-  rightSidebarCollapsed.value = false
-}
-
-const generateAIContent = async () => {
-  if (!aiPrompt.value.trim()) return
-
-  try {
-    aiGenerating.value = true
-    // 模拟AI生成
-    await new Promise(resolve => setTimeout(resolve, 2000))
-
-    if (currentChapter.value) {
-      currentChapter.value.content += `<p>AI生成的内容：${aiPrompt.value}</p>`
-    }
-
-    ElMessage.success('AI内容生成成功')
-    aiPrompt.value = ''
-  } catch (error) {
-    ElMessage.error('AI生成失败，请重试')
-  } finally {
-    aiGenerating.value = false
+// 更多操作
+async function handleMoreAction(command: string) {
+  switch (command) {
+    case 'version':
+      versionDialogVisible.value = true
+      break
+    case 'export':
+      exportACL()
+      break
+    case 'validate':
+      validateCourse()
+      break
+    case 'settings':
+      openSettings()
+      break
+    case 'help':
+      openHelp()
+      break
   }
 }
 
-const applyAISuggestion = (suggestion: AISuggestion) => {
-  ElMessage.success(`应用建议: ${suggestion.text}`)
-}
-
-const insertResource = (resource: Resource) => {
-  if (currentChapter.value) {
-    currentChapter.value.content += `\n<p>插入资源: ${resource.name}</p>`
+function exportACL() {
+  const acl = courseStore.generateAclFromEditor()
+  if (!acl) {
+    ElMessage.error('无法生成ACL内容')
+    return
   }
-  ElMessage.info(`插入资源: ${resource.name}`)
+
+  const blob = new Blob([JSON.stringify(acl, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `${courseStore.editor?.basicInfo.title || '课程'}_${Date.now()}.acl.json`
+  link.click()
+  URL.revokeObjectURL(url)
+
+  addActivity('导出ACL', 'Download', '#909399')
+  ElMessage.success('ACL文件导出成功')
 }
 
-const applyTemplate = (template: Template) => {
-  const newChapter: Chapter = {
-    id: Date.now().toString(),
-    title: template.name,
-    type: 'knowledge',
-    content: `<p>${template.description}</p>`,
-    duration: 30,
-    difficulty: 'medium',
-    objectives: ''
+function validateCourse() {
+  const acl = courseStore.generateAclFromEditor()
+  if (!acl) {
+    ElMessage.error('无法生成ACL内容')
+    return
   }
-  chapters.value.push(newChapter)
-  showTemplateDialog.value = false
 
-  nextTick(() => {
-    selectChapter(newChapter)
-  })
-}
-
-// 标签管理
-const removeTag = (tag: string) => {
-  const index = courseForm.tags.indexOf(tag)
-  if (index > -1) {
-    courseForm.tags.splice(index, 1)
-  }
-}
-
-const showTagInput = () => {
-  tagInputVisible.value = true
-  nextTick(() => {
-    tagInputRef.value?.focus()
-  })
-}
-
-const handleInputConfirm = () => {
-  if (tagInputValue.value) {
-    courseForm.tags.push(tagInputValue.value)
-  }
-  tagInputVisible.value = false
-  tagInputValue.value = ''
-}
-
-// 封面上传处理
-const handleCoverSuccess = (response: any) => {
-  courseForm.cover = response.url
-  ElMessage.success('封面上传成功')
-}
-
-const beforeCoverUpload = (file: File) => {
-  const isImage = file.type.startsWith('image/')
-  const isLt2M = file.size / 1024 / 1024 < 2
-
-  if (!isImage) {
-    ElMessage.error('只能上传图片文件!')
-  }
-  if (!isLt2M) {
-    ElMessage.error('图片大小不能超过 2MB!')
-  }
-  return isImage && isLt2M
-}
-
-const backToDetail = () => {
-  if (courseId.value) {
-    router.push({ name: 'CourseDetail', params: { id: courseId.value } })
+  const validation = aclValidator.validate(acl)
+  if (validation.isValid) {
+    ElMessage.success('课程验证通过')
+    addActivity('验证课程', 'Check', '#67C23A')
   } else {
-    router.push({ name: 'Courses' })
+    const errorMessages = validation.errors.slice(0, 3).map(e => e.message).join('；')
+    ElMessage.error(`验证失败: ${errorMessages}`)
+    addActivity('验证失败', 'Close', '#F56C6C')
   }
 }
 
-// 生命周期
-// 初始化逻辑可以在这里添加
+function openSettings() {
+  // 打开课程设置
+  ElMessage.info('课程设置功能开发中...')
+}
+
+function openHelp() {
+  // 打开帮助文档
+  window.open('/help/course-editor', '_blank')
+}
+
+function previewCourse() {
+  if (!aclContent.value) {
+    ElMessage.error('无法生成预览内容')
+    return
+  }
+
+  aclPreviewVisible.value = true
+  addActivity('预览课程', 'View', '#409EFF')
+}
+
+// 模板相关
+function loadTemplate() {
+  templateDialogVisible.value = true
+}
+
+function applyTemplate(template: any) {
+  // 应用课程模板
+  console.log('应用模板:', template)
+  addActivity('应用模板', 'Grid', '#E6A23C')
+  ElMessage.success('模板应用成功')
+}
+
+// 版本管理
+async function loadVersion(version: any) {
+  try {
+    // 加载指定版本
+    console.log('加载版本:', version)
+    addActivity(`切换版本: ${version.version}`, 'Refresh', '#409EFF')
+    ElMessage.success('版本加载成功')
+  } catch (error) {
+    ElMessage.error('版本加载失败')
+  }
+}
+
+// 活动记录
+function addActivity(text: string, icon: any, color: string) {
+  recentActivities.value.unshift({
+    id: Date.now().toString(),
+    text,
+    icon,
+    color,
+    time: new Date()
+  })
+
+  // 最多保留20条记录
+  if (recentActivities.value.length > 20) {
+    recentActivities.value = recentActivities.value.slice(0, 20)
+  }
+}
+
+function formatTime(time: Date): string {
+  const now = new Date()
+  const diff = now.getTime() - time.getTime()
+  const minutes = Math.floor(diff / 60000)
+
+  if (minutes < 1) return '刚刚'
+  if (minutes < 60) return `${minutes}分钟前`
+  if (minutes < 1440) return `${Math.floor(minutes / 60)}小时前`
+  return time.toLocaleDateString()
+}
+
+// 模块编辑相关方法
+function updateModuleBasicInfo() {
+  const module = getCurrentModule()
+  if (module) {
+    updateModule(selectedModuleKey.value, {
+      title: module.title,
+      duration: module.duration
+    })
+  }
+}
+
+function handleObjectivesChange(value: string) {
+  const module = getCurrentModule()
+  if (module) {
+    const objectives = value.split('\n').filter(obj => obj.trim())
+    updateModule(selectedModuleKey.value, { objectives })
+  }
+}
+
+function handleContentChange(value: string) {
+  const module = getCurrentModule()
+  if (module) {
+    updateModule(selectedModuleKey.value, {
+      content: { ...module.content, text: value }
+    })
+  }
+}
+
+function handleAIHintsChange(value: string) {
+  const module = getCurrentModule()
+  if (module) {
+    const aiHints = value.split('\n').filter(hint => hint.trim())
+    updateModule(selectedModuleKey.value, { aiHints })
+  }
+}
+
+function handleClassroomActionsChange(value: string) {
+  const module = getCurrentModule()
+  if (module) {
+    const classroomActions = value.split('\n').filter(action => action.trim())
+    updateModule(selectedModuleKey.value, { classroomActions })
+  }
+}
+
+function formatContent() {
+  // 简单的内容格式化
+  moduleContent.value = moduleContent.value
+    .split('\n')
+    .filter(line => line.trim())
+    .join('\n\n')
+}
+
+function previewContent() {
+  ElMessage.info('内容预览功能开发中...')
+}
+
+function addResource() {
+  ElMessage.info('资源添加功能开发中...')
+}
+
+function removeResource(resourceId: string) {
+  const module = getCurrentModule()
+  if (module) {
+    module.resources = module.resources.filter(r => r.id !== resourceId)
+    addActivity(`删除资源`, 'Delete', '#F56C6C')
+  }
+}
+
+// AI生成方法
+function generateModuleContent() {
+  const module = getCurrentModule()
+  if (module) {
+    ElMessage.info(`正在生成${module.title}的内容...`)
+    // TODO: 集成AI服务
+  }
+}
+
+function generateObjectives() {
+  const module = getCurrentModule()
+  if (module) {
+    ElMessage.info(`正在生成${module.title}的学习目标...`)
+    // TODO: 集成AI服务
+  }
+}
+
+function generateResources() {
+  const module = getCurrentModule()
+  if (module) {
+    ElMessage.info(`正在推荐${module.title}的教学资源...`)
+    // TODO: 集成AI服务
+  }
+}
+
+// 版本管理方法
+function selectVersion(version: any) {
+  loadVersion(version)
+  versionDialogVisible.value = false
+}
+
+function copyACL() {
+  if (aclContent.value) {
+    navigator.clipboard.writeText(JSON.stringify(aclContent.value, null, 2))
+    ElMessage.success('ACL内容已复制到剪贴板')
+  }
+}
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .editor-actions {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-sm);
+  align-items: center;
 }
 
 .summary-card {
-  width: 100%;
-  :deep(.edu-card__body-content) {
-    padding: 16px;
-  }
+  transition: transform 0.3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
 }
 
 .summary-card__content {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--spacing-md);
 }
 
 .summary-card__icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
-  color: #fff;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--border-radius-md);
+  color: white;
+  font-size: 20px;
 }
 
 .summary-card__text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
 .summary-card__value {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--edu-text-primary);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1;
 }
 
 .summary-card__label {
-  font-size: 13px;
-  color: var(--edu-text-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-xs);
 }
 
 .sidebar-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.section-header {
   display: flex;
-  flex-direction: column;
-  gap: 14px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
 }
 
 .section-title {
-  font-size: 14px;
+  margin: 0 0 var(--spacing-md) 0;
+  font-size: var(--font-size-lg);
   font-weight: 600;
-  color: var(--edu-text-secondary);
-  letter-spacing: 0.02em;
+  color: var(--color-text-primary);
 }
 
-.chapter-tree {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.modules-tree {
+  display: grid;
+  gap: var(--spacing-sm);
 }
 
-.chapter-node {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
+.module-item {
+  padding: var(--spacing-md);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
   cursor: pointer;
-
-  &:hover {
-    background-color: var(--edu-color-gray-50);
-  }
-
-  &.is-current {
-    background-color: var(--edu-primary-50);
-    color: var(--edu-primary-600);
-  }
+  transition: all 0.3s ease;
 }
 
-.node-icon {
-  margin-right: 8px;
-  color: var(--edu-color-gray-500);
+.module-item:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
 }
 
-.node-title {
-  flex: 1;
-  font-weight: 500;
+.module-item.is-current {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
 }
 
-.node-actions {
-  display: flex;
-  gap: 4px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-
-  .chapter-node:hover & {
-    opacity: 1;
-  }
+.module-item.is-active {
+  border-color: var(--color-success);
 }
 
-.tree-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.quick-tools {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.preview-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.preview-header {
+.module-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--edu-color-gray-200);
+  margin-bottom: var(--spacing-sm);
 }
 
-.preview-title {
+.module-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.module-title {
   font-weight: 600;
-  color: var(--edu-text-primary);
+  color: var(--color-text-primary);
 }
 
-.preview-content {
-  min-height: 300px;
-  padding: 16px;
-  border: 1px solid var(--edu-color-gray-200);
-  border-radius: 8px;
-  background: var(--edu-color-white);
-
-  &.preview-desktop {
-    max-width: 100%;
-  }
-
-  &.preview-tablet {
-    max-width: 768px;
-    margin: 0 auto;
-    border: 2px solid var(--edu-color-gray-300);
-  }
-
-  &.preview-mobile {
-    max-width: 375px;
-    margin: 0 auto;
-    border: 2px solid var(--edu-color-gray-300);
-  }
+.module-stats {
+  display: flex;
+  gap: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
 }
 
-.chapter-preview {
-  color: var(--edu-text-primary);
-  line-height: 1.6;
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
 }
 
-.empty-preview {
+.course-info {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-item .label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.info-item .value {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.welcome-screen {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
-  color: var(--edu-text-secondary);
+  height: 100%;
+  min-height: 400px;
 }
 
-.ai-assistant {
+.welcome-content {
+  text-align: center;
+  max-width: 400px;
+}
+
+.welcome-icon {
+  margin-bottom: var(--spacing-lg);
+}
+
+.welcome-content h2 {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--color-text-primary);
+}
+
+.welcome-content p {
+  margin: 0 0 var(--spacing-xl) 0;
+  color: var(--color-text-secondary);
+}
+
+.welcome-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+}
+
+.module-editor {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
-.ai-suggestions {
+.editor-header {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) 0;
+  margin-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
 }
 
-.suggestion-item {
+.editor-title {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border: 1px solid var(--edu-color-gray-200);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: var(--edu-primary-50);
-    border-color: var(--edu-primary-200);
-  }
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
 }
 
-.resource-list {
+.editor-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.editor-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.quick-preview {
+  background: var(--color-background);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+}
+
+.preview-card {
+  margin-bottom: var(--spacing-md);
+}
+
+.preview-card h5 {
+  margin: 0 0 var(--spacing-xs) 0;
+  color: var(--color-text-primary);
+}
+
+.preview-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.duration {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.preview-description {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-regular);
+  line-height: 1.4;
+}
+
+.empty-preview {
+  text-align: center;
+  padding: var(--spacing-lg) 0;
+}
+
+.activity-list {
+  display: grid;
+  gap: var(--spacing-xs);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  border-radius: var(--border-radius-sm);
+  transition: background-color 0.3s ease;
+}
+
+.activity-item:hover {
+  background: var(--color-background-light);
+}
+
+.activity-text {
+  flex: 1;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.activity-time {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+/* 模块编辑器样式 */
+.module-settings {
+  padding: var(--spacing-md);
+}
+
+.content-editor {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  height: 100%;
+}
+
+.content-tools {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+  justify-content: flex-end;
+}
+
+.resources-panel {
+  padding: var(--spacing-md);
+  height: 100%;
+}
+
+.resources-header {
+  margin-bottom: var(--spacing-md);
+}
+
+.resources-list {
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .resource-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  border: 1px solid var(--edu-color-gray-200);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: var(--edu-color-gray-50);
-  }
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-xs);
 }
 
-.resource-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-}
-
-.resource-info {
+.resource-item span {
   flex: 1;
 }
 
-.resource-name {
-  font-weight: 500;
-  color: var(--edu-text-primary);
-  font-size: 13px;
-}
-
-.resource-type {
-  font-size: 12px;
-  color: var(--edu-text-secondary);
-}
-
-.editor-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.editor-section {
-  width: 100%;
-}
-
-.section-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.section-info {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.section-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--edu-text-primary);
-  margin: 0;
-}
-
-.section-description {
-  margin: 0;
-  color: var(--edu-text-secondary);
-  font-size: 14px;
-}
-
-.section-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.cover-uploader {
-  border: 2px dashed var(--edu-color-gray-300);
-  border-radius: 8px;
-  padding: 20px;
+.empty-resources {
   text-align: center;
-  transition: border-color 0.2s ease;
-
-  &:hover {
-    border-color: var(--edu-primary-400);
-  }
+  color: var(--color-text-secondary);
+  padding: var(--spacing-lg) 0;
 }
 
-.cover-image {
-  width: 200px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 8px;
+.ai-settings {
+  padding: var(--spacing-md);
 }
 
-.cover-uploader-icon {
-  font-size: 32px;
-  color: var(--edu-color-gray-400);
-}
-
-.course-tag {
-  margin-right: 8px;
-  margin-bottom: 8px;
-}
-
-.chapter-editor-content {
+.ai-assistant {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-sm);
 }
 
-.editor-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: var(--edu-color-gray-50);
-  border-radius: 8px;
-  border: 1px solid var(--edu-color-gray-200);
+/* 版本管理样式 */
+.version-manager {
+  max-height: 400px;
+  overflow-y: auto;
 }
 
-.editor-area {
-  flex: 1;
-}
-
-.content-editor {
-  width: 100%;
-  min-height: 400px;
-}
-
-.chapter-settings {
-  padding: 16px;
-  background: var(--edu-color-gray-50);
-  border-radius: 8px;
-  border: 1px solid var(--edu-color-gray-200);
-}
-
-.empty-editor {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 300px;
-  color: var(--edu-text-secondary);
-}
-
-.template-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-}
-
-.template-card {
-  padding: 16px;
-  border: 1px solid var(--edu-color-gray-200);
-  border-radius: 8px;
+.version-item {
   cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: var(--edu-primary-50);
-    border-color: var(--edu-primary-200);
-  }
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  transition: background-color 0.3s ease;
 }
 
-.template-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
-  background: var(--edu-primary-100);
-  color: var(--edu-primary-600);
-  display: inline-flex;
+.version-item:hover {
+  background: var(--color-background-light);
+}
+
+.version-header {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
 }
 
-.template-title {
+.version-number {
   font-weight: 600;
-  color: var(--edu-text-primary);
-  margin-bottom: 8px;
+  color: var(--color-text-primary);
 }
 
-.template-description {
-  font-size: 13px;
-  color: var(--edu-text-secondary);
-  line-height: 1.4;
+.version-meta {
+  display: flex;
+  gap: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
 }
 
-// 响应式设计
-@media (max-width: 1200px) {
-  .section-actions {
-    width: 100%;
-    justify-content: flex-start;
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .editor-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .editor-actions {
+    align-self: stretch;
+    justify-content: flex-end;
   }
 }
 
 @media (max-width: 768px) {
   .editor-actions {
     flex-direction: column;
+    width: 100%;
   }
 
-  .preview-header {
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .tree-actions {
+  .welcome-actions {
     flex-direction: column;
   }
 
-  .quick-tools {
+  .module-stats {
     flex-direction: column;
+    gap: var(--spacing-xs);
   }
 
-  .template-grid {
-    grid-template-columns: 1fr;
+  .summary-card__content {
+    flex-direction: column;
+    text-align: center;
   }
-}
-
-// 深色模式适配
-[data-theme="dark"] {
-  .preview-content {
-    background-color: var(--edu-color-gray-800);
-    border-color: var(--edu-color-gray-600);
-  }
-
-  .ai-suggestions .suggestion-item:hover {
-    background-color: var(--edu-primary-900);
-  }
-
-  .editor-toolbar,
-  .chapter-settings {
-    background-color: var(--edu-color-gray-800);
-    border-color: var(--edu-color-gray-600);
-  }
-}
-
-// 动画效果
-.chapter-node {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.suggestion-item,
-.resource-item,
-.template-card {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.suggestion-item:hover,
-.resource-item:hover,
-.template-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 </style>

@@ -1,0 +1,349 @@
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="5.0" etag="course-classroom-erd" version="22.1.0" type="device">
+  <diagram name="课程班级系统 ERD" id="course-classroom-erd">
+    <mxGraphModel dx="1426" dy="766" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Courses 表 -->
+        <mxCell id="2" value="courses" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="340" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="2">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4" value="tenant_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="2">
+          <mxGeometry x="90" width="100" height="30" as="geometry">
+            <mxRectangle width="100" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5" value="code" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="2">
+          <mxGeometry x="190" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6" value="title" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="2">
+          <mxGeometry x="250" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7" value="subject" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="2">
+          <mxGeometry x="310" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Course Versions 表 -->
+        <mxCell id="8" value="course_versions" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="290" width="340" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="8">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="10" value="course_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="8">
+          <mxGeometry x="90" width="100" height="30" as="geometry">
+            <mxRectangle width="100" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="11" value="version" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="8">
+          <mxGeometry x="190" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="12" value="content" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="8">
+          <mxGeometry x="250" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Course Modules 表 -->
+        <mxCell id="13" value="course_modules" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="500" width="340" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="13">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="15" value="course_version_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="13">
+          <mxGeometry x="90" width="140" height="30" as="geometry">
+            <mxRectangle width="140" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="16" value="title" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="13">
+          <mxGeometry x="230" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="17" value="order" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="13">
+          <mxGeometry x="290" width="50" height="30" as="geometry">
+            <mxRectangle width="50" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Course Activities 表 -->
+        <mxCell id="18" value="course_activities" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="710" width="340" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="19" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="18">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="20" value="module_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="18">
+          <mxGeometry x="90" width="100" height="30" as="geometry">
+            <mxRectangle width="100" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="21" value="type" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="18">
+          <mxGeometry x="190" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="22" value="title" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="18">
+          <mxGeometry x="250" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Classrooms 表 -->
+        <mxCell id="23" value="classrooms" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="40" width="340" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="24" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="23">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="25" value="tenant_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="23">
+          <mxGeometry x="90" width="100" height="30" as="geometry">
+            <mxRectangle width="100" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="26" value="name" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="23">
+          <mxGeometry x="190" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="27" value="type" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="23">
+          <mxGeometry x="250" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="28" value="status" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="23">
+          <mxGeometry x="310" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Class Members 表 -->
+        <mxCell id="29" value="class_members" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="290" width="340" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="30" value="classroom_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="29">
+          <mxGeometry x="20" width="110" height="30" as="geometry">
+            <mxRectangle width="110" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="31" value="user_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="29">
+          <mxGeometry x="130" width="80" height="30" as="geometry">
+            <mxRectangle width="80" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="32" value="role" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="29">
+          <mxGeometry x="210" width="50" height="30" as="geometry">
+            <mxRectangle width="50" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="33" value="status" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="29">
+          <mxGeometry x="260" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Class Sessions 表 -->
+        <mxCell id="34" value="class_sessions" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="500" width="340" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="35" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="34">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="36" value="classroom_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="34">
+          <mxGeometry x="90" width="110" height="30" as="geometry">
+            <mxRectangle width="110" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="37" value="start_at" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="34">
+          <mxGeometry x="200" width="70" height="30" as="geometry">
+            <mxRectangle width="70" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="38" value="end_at" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="34">
+          <mxGeometry x="270" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Assignments 表 -->
+        <mxCell id="39" value="assignments" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="840" y="40" width="340" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="40" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="39">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="41" value="classroom_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="39">
+          <mxGeometry x="90" width="110" height="30" as="geometry">
+            <mxRectangle width="110" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="42" value="course_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="39">
+          <mxGeometry x="200" width="90" height="30" as="geometry">
+            <mxRectangle width="90" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="43" value="title" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="39">
+          <mxGeometry x="290" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="44" value="type" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="39">
+          <mxGeometry x="350" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Assignment Submissions 表 -->
+        <mxCell id="45" value="assignment_submissions" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="840" y="290" width="340" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="46" value="assignment_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="45">
+          <mxGeometry x="20" width="120" height="30" as="geometry">
+            <mxRectangle width="120" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="47" value="student_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="45">
+          <mxGeometry x="140" width="90" height="30" as="geometry">
+            <mxRectangle width="90" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="48" value="status" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="45">
+          <mxGeometry x="230" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="49" value="score" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="45">
+          <mxGeometry x="290" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Lab Device Agents 表 -->
+        <mxCell id="50" value="lab_device_agents" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="840" y="500" width="340" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="51" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="50">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="52" value="classroom_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="50">
+          <mxGeometry x="90" width="110" height="30" as="geometry">
+            <mxRectangle width="110" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="53" value="device_type" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="50">
+          <mxGeometry x="200" width="80" height="30" as="geometry">
+            <mxRectangle width="80" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="54" value="status" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="50">
+          <mxGeometry x="280" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 关系线 -->
+        <!-- Courses -> Course Versions -->
+        <mxCell id="55" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="2" target="8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="380" y="385" as="sourcePoint" />
+            <mxPoint x="40" y="385" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Course Versions -> Course Modules -->
+        <mxCell id="56" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="8" target="13">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="380" y="595" as="sourcePoint" />
+            <mxPoint x="40" y="595" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Course Modules -> Course Activities -->
+        <mxCell id="57" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="13" target="18">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="380" y="805" as="sourcePoint" />
+            <mxPoint x="40" y="805" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Classrooms -> Class Members -->
+        <mxCell id="58" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="23" target="29">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="780" y="385" as="sourcePoint" />
+            <mxPoint x="440" y="385" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Classrooms -> Class Sessions -->
+        <mxCell id="59" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="23" target="34">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="780" y="595" as="sourcePoint" />
+            <mxPoint x="440" y="595" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Classrooms -> Assignments -->
+        <mxCell id="60" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="23" target="39">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1180" y="150" as="sourcePoint" />
+            <mxPoint x="840" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Courses -> Assignments (Optional) -->
+        <mxCell id="61" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#2196F3;dashed=1;" edge="1" parent="1" source="2" target="39">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="380" y="260" as="sourcePoint" />
+            <mxPoint x="840" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Assignments -> Assignment Submissions -->
+        <mxCell id="62" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="39" target="45">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1180" y="385" as="sourcePoint" />
+            <mxPoint x="840" y="385" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Classrooms -> Lab Device Agents -->
+        <mxCell id="63" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="23" target="50">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1180" y="595" as="sourcePoint" />
+            <mxPoint x="840" y="595" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

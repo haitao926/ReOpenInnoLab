@@ -8,14 +8,18 @@ export enum LeftSidebarSection {
   FILTERS = 'filters',           // 筛选器：搜索+分类筛选
   QUICK_ACTIONS = 'quickActions', // 快捷操作：按钮区
   ACTIVITY = 'activity',         // 教学动态：时间线/提醒动态
-  RESOURCES = 'resources'        // 模板资源：模板/资源列表
+  RESOURCES = 'resources',       // 模板资源：模板/资源列表
+  ANALYSIS_DIMENSIONS = 'analysisDimensions', // 分析维度：Dashboard特有
+  TIME_RANGE = 'timeRange'       // 时间范围：Dashboard特有
 }
 
 // 右侧栏区块类型枚举
 export enum RightSidebarSection {
   INSIGHTS = 'insights',          // 数据洞察：统计/分析
   COLLABORATION = 'collaboration', // 协作动态：协作记录
-  RESOURCES = 'resources'         // 资源参考：资源/链接
+  RESOURCES = 'resources',        // 资源参考：资源/链接
+  AI_REPORT = 'aiReport',         // AI报告：Dashboard特有
+  RECOMMENDATIONS = 'recommendations' // 建议行动：Dashboard特有
 }
 
 // 左侧栏区块配置接口
@@ -69,6 +73,20 @@ export const LEFT_SIDEBAR_DEFAULTS: Record<LeftSidebarSection, Omit<LeftSidebarS
     visible: true,
     collapsible: true,
     defaultCollapsed: false
+  },
+  [LeftSidebarSection.ANALYSIS_DIMENSIONS]: {
+    title: '分析维度',
+    icon: 'PieChart',
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false
+  },
+  [LeftSidebarSection.TIME_RANGE]: {
+    title: '时间范围',
+    icon: 'Clock',
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false
   }
 }
 
@@ -91,6 +109,20 @@ export const RIGHT_SIDEBAR_DEFAULTS: Record<RightSidebarSection, Omit<RightSideb
   [RightSidebarSection.RESOURCES]: {
     title: '资源参考',
     icon: 'Collection',
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false
+  },
+  [RightSidebarSection.AI_REPORT]: {
+    title: 'AI报告',
+    icon: 'MagicStick',
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false
+  },
+  [RightSidebarSection.RECOMMENDATIONS]: {
+    title: '建议行动',
+    icon: 'Guide',
     visible: true,
     collapsible: true,
     defaultCollapsed: false
@@ -131,6 +163,36 @@ export const DEFAULT_RIGHT_SIDEBAR_SECTIONS: RightSidebarSectionConfig[] = [
 
 // 页面特定的侧边栏配置
 export const PAGE_SIDEBAR_CONFIGS = {
+  dashboard: {
+    left: [
+      {
+        type: LeftSidebarSection.FILTERS,
+        ...LEFT_SIDEBAR_DEFAULTS[LeftSidebarSection.FILTERS]
+      },
+      {
+        type: LeftSidebarSection.QUICK_ACTIONS,
+        ...LEFT_SIDEBAR_DEFAULTS[LeftSidebarSection.QUICK_ACTIONS]
+      },
+      {
+        type: LeftSidebarSection.ACTIVITY,
+        ...LEFT_SIDEBAR_DEFAULTS[LeftSidebarSection.ACTIVITY]
+      }
+    ],
+    right: [
+      {
+        type: RightSidebarSection.INSIGHTS,
+        ...RIGHT_SIDEBAR_DEFAULTS[RightSidebarSection.INSIGHTS]
+      },
+      {
+        type: RightSidebarSection.RESOURCES,
+        ...RIGHT_SIDEBAR_DEFAULTS[RightSidebarSection.RESOURCES]
+      },
+      {
+        type: RightSidebarSection.COLLABORATION,
+        ...RIGHT_SIDEBAR_DEFAULTS[RightSidebarSection.COLLABORATION]
+      }
+    ]
+  },
   courses: {
     left: DEFAULT_LEFT_SIDEBAR_SECTIONS,
     right: DEFAULT_RIGHT_SIDEBAR_SECTIONS
@@ -253,33 +315,7 @@ export const PAGE_SIDEBAR_CONFIGS = {
       }
     ]
   },
-  dashboard: {
-    left: [
-      {
-        type: LeftSidebarSection.FILTERS,
-        ...LEFT_SIDEBAR_DEFAULTS[LeftSidebarSection.FILTERS]
-      },
-      {
-        type: LeftSidebarSection.QUICK_ACTIONS,
-        ...LEFT_SIDEBAR_DEFAULTS[LeftSidebarSection.QUICK_ACTIONS]
-      },
-      {
-        type: LeftSidebarSection.RESOURCES,
-        ...LEFT_SIDEBAR_DEFAULTS[LeftSidebarSection.RESOURCES]
-      }
-    ],
-    right: [
-      {
-        type: RightSidebarSection.INSIGHTS,
-        ...RIGHT_SIDEBAR_DEFAULTS[RightSidebarSection.INSIGHTS]
-      },
-      {
-        type: RightSidebarSection.COLLABORATION,
-        ...RIGHT_SIDEBAR_DEFAULTS[RightSidebarSection.COLLABORATION]
-      }
-    ]
-  },
-  analytics: {
+    analytics: {
     left: [
       {
         type: LeftSidebarSection.FILTERS,

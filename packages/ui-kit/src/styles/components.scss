@@ -1,3 +1,5 @@
+@use "sass:map";
+
 // 组件统一样式变量
 // 用于统一卡片、标签、摘要等组件的视觉语法
 
@@ -302,7 +304,7 @@ $dark-mode-glass: (
 
 // 响应式断点
 @mixin respond-to($breakpoint) {
-  @if map-has-key($breakpoints, $breakpoint) {
+  @if map.has-key($breakpoints, $breakpoint) {
     @media (min-width: map-get($breakpoints, $breakpoint)) {
       @content;
     }

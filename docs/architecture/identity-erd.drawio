@@ -1,0 +1,271 @@
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="5.0" etag="identity-erd" version="22.1.0" type="device">
+  <diagram name="身份认证系统 ERD" id="identity-erd">
+    <mxGraphModel dx="1426" dy="766" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Tenants 表 -->
+        <mxCell id="2" value="tenants" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="280" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="2">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4" value="code" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="2">
+          <mxGeometry x="90" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5" value="name" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="2">
+          <mxGeometry x="150" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6" value="status" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="2">
+          <mxGeometry x="210" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Users 表 -->
+        <mxCell id="7" value="users" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="40" width="320" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="7">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="9" value="tenant_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="7">
+          <mxGeometry x="90" width="100" height="30" as="geometry">
+            <mxRectangle width="100" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="10" value="email" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="7">
+          <mxGeometry x="190" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="11" value="name" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="7">
+          <mxGeometry x="250" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Roles 表 -->
+        <mxCell id="12" value="roles" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="320" width="280" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="12">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="14" value="tenant_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="12">
+          <mxGeometry x="90" width="100" height="30" as="geometry">
+            <mxRectangle width="100" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="15" value="name" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="12">
+          <mxGeometry x="190" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- User Roles 关联表 -->
+        <mxCell id="16" value="user_roles" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="320" width="240" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="user_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="16">
+          <mxGeometry x="20" width="90" height="30" as="geometry">
+            <mxRectangle width="90" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="18" value="role_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="16">
+          <mxGeometry x="110" width="90" height="30" as="geometry">
+            <mxRectangle width="90" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Permissions 表 -->
+        <mxCell id="19" value="permissions" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="520" width="280" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="20" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="19">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="21" value="name" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="19">
+          <mxGeometry x="90" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="22" value="resource" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="19">
+          <mxGeometry x="150" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="23" value="action" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="19">
+          <mxGeometry x="210" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- User Sessions 表 -->
+        <mxCell id="24" value="user_sessions" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="40" width="280" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="25" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="24">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="26" value="user_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="24">
+          <mxGeometry x="90" width="80" height="30" as="geometry">
+            <mxRectangle width="80" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="27" value="token_hash" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="24">
+          <mxGeometry x="170" width="80" height="30" as="geometry">
+            <mxRectangle width="80" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Login Attempts 表 -->
+        <mxCell id="28" value="login_attempts" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="260" width="280" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="29" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="28">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="30" value="email" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="28">
+          <mxGeometry x="90" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="31" value="user_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="28">
+          <mxGeometry x="150" width="80" height="30" as="geometry">
+            <mxRectangle width="80" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Two Factor Auth 表 -->
+        <mxCell id="32" value="two_factor_auth" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="450" width="280" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="33" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="32">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="34" value="user_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="32">
+          <mxGeometry x="90" width="80" height="30" as="geometry">
+            <mxRectangle width="80" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="35" value="secret" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="32">
+          <mxGeometry x="170" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 关系线 -->
+        <!-- Tenants -> Users -->
+        <mxCell id="36" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="2" target="7">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="135" as="sourcePoint" />
+            <mxPoint x="400" y="135" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Tenants -> Roles -->
+        <mxCell id="37" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="2" target="12">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="400" as="sourcePoint" />
+            <mxPoint x="400" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Users -> User Roles -->
+        <mxCell id="38" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="7" target="16">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="720" y="165" as="sourcePoint" />
+            <mxPoint x="720" y="385" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Roles -> User Roles -->
+        <mxCell id="39" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="12" target="16">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="385" as="sourcePoint" />
+            <mxPoint x="400" y="385" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Users -> User Sessions -->
+        <mxCell id="40" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="7" target="24">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="720" y="135" as="sourcePoint" />
+            <mxPoint x="760" y="135" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Users -> Login Attempts -->
+        <mxCell id="41" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="7" target="28">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="720" y="340" as="sourcePoint" />
+            <mxPoint x="760" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Users -> Two Factor Auth -->
+        <mxCell id="42" value="1:1" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#2196F3;" edge="1" parent="1" source="7" target="32">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="720" y="530" as="sourcePoint" />
+            <mxPoint x="760" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Audit Logs 表 -->
+        <mxCell id="43" value="audit_logs" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="520" width="320" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="44" value="ID" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=1;right=0;align=center;verticalAlign=top;spacingLeft=5;spacingTop=5;spacingRight=5;spacingBottom=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;strokeColor=#666633;fontColor=#ffffff;" vertex="1" parent="43">
+          <mxGeometry x="30" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="45" value="tenant_id" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="43">
+          <mxGeometry x="90" width="70" height="30" as="geometry">
+            <mxRectangle width="70" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="46" value="user_id (FK)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;fontColor=#FF6B6B;" vertex="1" parent="43">
+          <mxGeometry x="160" width="80" height="30" as="geometry">
+            <mxRectangle width="80" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="47" value="action" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=center;verticalAlign=middle;spacingLeft=5;spacingRight=5;rotatable=0;labelPosition=center;horizontal=1;labelBackgroundColor=none;" vertex="1" parent="43">
+          <mxGeometry x="240" width="60" height="30" as="geometry">
+            <mxRectangle width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Users -> Audit Logs -->
+        <mxCell id="48" value="1:N" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=#4CAF50;" edge="1" parent="1" source="7" target="43">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="720" y="615" as="sourcePoint" />
+            <mxPoint x="720" y="615" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

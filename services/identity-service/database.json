@@ -1,0 +1,116 @@
+{
+  "users": [
+    {
+      "id": "user_1762503158574_jb8kb77hq",
+      "email": "admin@reopenlab.dev",
+      "password": "$2b$10$YI7xlun3w/URTwQ566ki/OYHrvi7pUxxHHxP3hIDbBgDPA8oK8Ovu",
+      "name": "Admin User",
+      "roleType": "admin",
+      "tenantId": "default-tenant",
+      "permissions": [
+        "read",
+        "write",
+        "admin"
+      ],
+      "status": "active",
+      "createdAt": "2025-11-07T08:12:38.574Z",
+      "updatedAt": "2025-11-07T08:27:58.306Z",
+      "lastLoginAt": "2025-11-07T08:27:58.306Z"
+    },
+    {
+      "id": "user_1762503511946_unuzzmptn",
+      "email": "teacher@reopenlab.dev",
+      "password": "$2b$10$cB5iTOJGzLsWQYbHaXAOZ.hd8lYJZBNz4ZAkfrFw9cqQjYmImLD3q",
+      "name": "Test Teacher",
+      "roleType": "teacher",
+      "tenantId": "default-tenant",
+      "permissions": [
+        "read",
+        "write"
+      ],
+      "status": "active",
+      "createdAt": "2025-11-07T08:18:31.946Z",
+      "updatedAt": "2025-11-07T08:45:12.961Z",
+      "lastLoginAt": "2025-11-07T08:45:12.961Z"
+    },
+    {
+      "id": "user_1762503639967_nww74ty6e",
+      "email": "student@reopenlab.dev",
+      "password": "$2b$10$v2pjPoRVb2pXPMLW9ENxVO.F7KfNZoVjabiCXOnBx5bbYTQZwEnLe",
+      "name": "Test Student",
+      "roleType": "user",
+      "tenantId": "default-tenant",
+      "permissions": [
+        "read"
+      ],
+      "status": "active",
+      "createdAt": "2025-11-07T08:20:39.967Z",
+      "updatedAt": "2025-11-07T08:21:12.434Z",
+      "lastLoginAt": "2025-11-07T08:21:12.434Z"
+    }
+  ],
+  "sessions": [],
+  "refreshTokens": [
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzE3NjI1MDMxNTg1NzRfamI4a2I3N2hxIiwiZW1haWwiOiJhZG1pbkByZW9wZW5sYWIuZGV2IiwidHlwZSI6InJlZnJlc2giLCJpYXQiOjE3NjI1MDMxNzl9.c2ltcGxlLXNpZ25hdHVyZQ",
+      "userId": "user_1762503158574_jb8kb77hq",
+      "isActive": true,
+      "createdAt": "2025-11-07T08:12:59.690Z"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzE3NjI1MDMxNTg1NzRfamI4a2I3N2hxIiwiZW1haWwiOiJhZG1pbkByZW9wZW5sYWIuZGV2IiwidHlwZSI6InJlZnJlc2giLCJpYXQiOjE3NjI1MDMxOTR9.c2ltcGxlLXNpZ25hdHVyZQ",
+      "userId": "user_1762503158574_jb8kb77hq",
+      "isActive": true,
+      "createdAt": "2025-11-07T08:13:14.155Z"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzE3NjI1MDM2Mzk5Njdfbnd3NzR0eTZlIiwiZW1haWwiOiJzdHVkZW50QHJlb3BlbmxhYi5kZXYiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc2MjUwMzY3Mn0.c2ltcGxlLXNpZ25hdHVyZQ",
+      "userId": "user_1762503639967_nww74ty6e",
+      "isActive": false,
+      "createdAt": "2025-11-07T08:21:12.432Z",
+      "revokedAt": "2025-11-07T08:21:31.916Z"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzE3NjI1MDM2Mzk5Njdfbnd3NzR0eTZlIiwiZW1haWwiOiJzdHVkZW50QHJlb3BlbmxhYi5kZXYiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc2MjUwMzY5MX0.c2ltcGxlLXNpZ25hdHVyZQ",
+      "userId": "user_1762503639967_nww74ty6e",
+      "isActive": true,
+      "createdAt": "2025-11-07T08:21:31.914Z"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzE3NjI1MDMxNTg1NzRfamI4a2I3N2hxIiwiZW1haWwiOiJhZG1pbkByZW9wZW5sYWIuZGV2IiwidHlwZSI6InJlZnJlc2giLCJpYXQiOjE3NjI1MDQwNzh9.c2ltcGxlLXNpZ25hdHVyZQ",
+      "userId": "user_1762503158574_jb8kb77hq",
+      "isActive": true,
+      "createdAt": "2025-11-07T08:27:58.305Z"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzE3NjI1MDM1MTE5NDZfdW51enptcHRuIiwiZW1haWwiOiJ0ZWFjaGVyQHJlb3BlbmxhYi5kZXYiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc2MjUwNDEyOX0.c2ltcGxlLXNpZ25hdHVyZQ",
+      "userId": "user_1762503511946_unuzzmptn",
+      "isActive": true,
+      "createdAt": "2025-11-07T08:28:49.783Z"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzE3NjI1MDM1MTE5NDZfdW51enptcHRuIiwiZW1haWwiOiJ0ZWFjaGVyQHJlb3BlbmxhYi5kZXYiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc2MjUwNDU5NH0.c2ltcGxlLXNpZ25hdHVyZQ",
+      "userId": "user_1762503511946_unuzzmptn",
+      "isActive": true,
+      "createdAt": "2025-11-07T08:36:34.935Z"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzE3NjI1MDM1MTE5NDZfdW51enptcHRuIiwiZW1haWwiOiJ0ZWFjaGVyQHJlb3BlbmxhYi5kZXYiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc2MjUwNDk3OX0.c2ltcGxlLXNpZ25hdHVyZQ",
+      "userId": "user_1762503511946_unuzzmptn",
+      "isActive": true,
+      "createdAt": "2025-11-07T08:42:59.659Z"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzE3NjI1MDM1MTE5NDZfdW51enptcHRuIiwiZW1haWwiOiJ0ZWFjaGVyQHJlb3BlbmxhYi5kZXYiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc2MjUwNTAwNX0.c2ltcGxlLXNpZ25hdHVyZQ",
+      "userId": "user_1762503511946_unuzzmptn",
+      "isActive": true,
+      "createdAt": "2025-11-07T08:43:25.980Z"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzE3NjI1MDM1MTE5NDZfdW51enptcHRuIiwiZW1haWwiOiJ0ZWFjaGVyQHJlb3BlbmxhYi5kZXYiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc2MjUwNTExMn0.c2ltcGxlLXNpZ25hdHVyZQ",
+      "userId": "user_1762503511946_unuzzmptn",
+      "isActive": true,
+      "createdAt": "2025-11-07T08:45:12.960Z"
+    }
+  ]
+}

@@ -7,7 +7,6 @@ import MarkdownIt from 'markdown-it'
 import {
   AiCourseLayout,
   RenderOptions,
-  RenderFormat,
   CourseNode,
   LearningObjective,
   ResourceReference
@@ -187,7 +186,7 @@ ${options.includeMetadata ? this.renderMetadataMarkdown(acl) : ''}
    * @param options 渲染选项
    * @returns HTML字符串
    */
-  private renderHeader(acl: AiCourseLayout, options: RenderOptions): string {
+  private renderHeader(acl: AiCourseLayout, _options: RenderOptions): string {
     return `
 <header class="course-header">
     <div class="header-content">
@@ -222,7 +221,7 @@ ${options.includeMetadata ? this.renderMetadataMarkdown(acl) : ''}
    * @param options 渲染选项
    * @returns HTML字符串
    */
-  private renderOverview(acl: AiCourseLayout, options: RenderOptions): string {
+  private renderOverview(acl: AiCourseLayout, _options: RenderOptions): string {
     return `
 <section class="course-overview">
     <h2>课程概览</h2>
@@ -239,7 +238,7 @@ ${options.includeMetadata ? this.renderMetadataMarkdown(acl) : ''}
    * @param options 渲染选项
    * @returns HTML字符串
    */
-  private renderStructure(acl: AiCourseLayout, options: RenderOptions): string {
+  private renderStructure(acl: AiCourseLayout, _options: RenderOptions): string {
     return `
 <section class="course-structure">
     <h2>课程结构</h2>
@@ -304,23 +303,21 @@ ${options.includeMetadata ? this.renderMetadataMarkdown(acl) : ''}
    * @returns HTML字符串
    */
   private renderNodeContent(node: CourseNode): string {
-    if (!node.content) return ''
+    if ('content' in node && !node.content) return ''
 
     switch (node.type) {
       case 'knowledge':
-        return this.renderKnowledgeContent(node.content)
-      case 'activity':
-        return this.renderActivityContent(node.content)
+        return this.renderKnowledgeContent((node as any).content)
+      case 'experience':
+        return this.renderExperienceContent((node as any).content)
       case 'experiment':
-        return this.renderExperimentContent(node.content)
-      case 'interaction':
-        return this.renderInteractionContent(node.content)
+        return this.renderExperimentContent((node as any).content)
       case 'assignment':
-        return this.renderAssignmentContent(node.content)
-      case 'assessment':
-        return this.renderAssessmentContent(node.content)
+        return this.renderAssignmentContent((node as any).content)
       case 'introduction':
-        return this.renderIntroductionContent(node.content)
+        return this.renderIntroductionContent((node as any).content)
+      case 'chapter':
+        return this.renderChapterContent(node)
       default:
         return ''
     }
@@ -392,11 +389,11 @@ ${options.includeMetadata ? this.renderMetadataMarkdown(acl) : ''}
   }
 
   /**
-   * 渲染活动内容
-   * @param content 活动内容
+   * 渲染体验内容
+   * @param content 体验内容
    * @returns HTML字符串
    */
-  private renderActivityContent(content: any): string {
+  private renderExperienceContent(content: any): string {
     return `
 <div class="node-content activity-content">
     <div class="activity-instructions">
@@ -471,34 +468,7 @@ ${options.includeMetadata ? this.renderMetadataMarkdown(acl) : ''}
 </div>`
   }
 
-  /**
-   * 渲染交互内容
-   * @param content 交互内容
-   * @returns HTML字符串
-   */
-  private renderInteractionContent(content: any): string {
-    return `
-<div class="node-content interaction-content">
-    <div class="interaction-type">
-        <strong>交互类型:</strong> ${this.getInteractionTypeName(content.interactionType)}
-    </div>
-    <div class="interaction-content">
-        ${content.interactionType === 'html' ?
-          content.content :
-          `<iframe src="${content.content}" frameborder="0"></iframe>`
-        }
-    </div>
-    ${content.previewConfig ? `
-    <div class="preview-config">
-        <h5>预览配置</h5>
-        <div>设备: ${content.previewConfig.device}</div>
-        <div>方向: ${content.previewConfig.orientation}</div>
-        <div>交互: ${content.previewConfig.interactive ? '是' : '否'}</div>
-    </div>
-    ` : ''}
-</div>`
-  }
-
+  
   /**
    * 渲染作业内容
    * @param content 作业内容
@@ -539,42 +509,7 @@ ${options.includeMetadata ? this.renderMetadataMarkdown(acl) : ''}
 </div>`
   }
 
-  /**
-   * 渲染评估内容
-   * @param content 评估内容
-   * @returns HTML字符串
-   */
-  private renderAssessmentContent(content: any): string {
-    return `
-<div class="node-content assessment-content">
-    <div class="assessment-type">
-        <strong>评估类型:</strong> ${this.getAssessmentTypeName(content.assessmentType)}
-    </div>
-    ${content.timeLimit ? `<div class="time-limit"><strong>时间限制:</strong> ${content.timeLimit} 分钟</div>` : ''}
-    ${content.passingScore ? `<div class="passing-score"><strong>及格分数:</strong> ${content.passingScore}%</div>` : ''}
-
-    <div class="assessment-questions">
-        <h5>评估题目</h5>
-        ${content.questions.map((question: any, index: number) => `
-        <div class="question">
-            <h6>题目 ${index + 1} (${question.points}分)</h6>
-            <div class="question-content">${this.md.render(question.question)}</div>
-            ${question.options ? `
-            <div class="question-options">
-                ${question.options.map((option: string, optIndex: number) => `
-                <label class="question-option">
-                    <input type="radio" name="assessment_${question.id}" value="${optIndex}">
-                    ${option}
-                </label>
-                `).join('')}
-            </div>
-            ` : ''}
-        </div>
-        `).join('')}
-    </div>
-</div>`
-  }
-
+  
   /**
    * 渲染导入内容
    * @param content 导入内容
@@ -778,7 +713,7 @@ ${options.includeMetadata ? this.renderMetadataMarkdown(acl) : ''}
    * @param options 渲染选项
    * @returns HTML字符串
    */
-  private renderMetadata(acl: AiCourseLayout, options: RenderOptions): string {
+  private renderMetadata(acl: AiCourseLayout, _options: RenderOptions): string {
     return `
 <section class="metadata">
     <h2>元数据</h2>
@@ -818,7 +753,7 @@ ${options.includeMetadata ? this.renderMetadataMarkdown(acl) : ''}
    * @param options 渲染选项
    * @returns HTML字符串
    */
-  private renderAnalytics(acl: AiCourseLayout, options: RenderOptions): string {
+  private renderAnalytics(acl: AiCourseLayout, _options: RenderOptions): string {
     if (!acl.analyticsProfile) return ''
 
     return `
@@ -863,8 +798,8 @@ ${indent}  *类型: ${this.getNodeTypeName(node.type)}*
 ${node.learningGoals.length > 0 ?
   `${indent}  *学习目标: ${node.learningGoals.join(', ')}*\n` : ''
 }
-${node.type === 'chapter' && node.children ?
-  this.renderStructureMarkdown(node.children, level + 1) : ''
+${node.type === 'chapter' && 'children' in node && (node as any).children ?
+  this.renderStructureMarkdown((node as any).children, level + 1) : ''
 }`
     }).join('')
   }
@@ -1302,16 +1237,7 @@ h2 {
     return levels[level] || level
   }
 
-  private getInteractionTypeName(type: string): string {
-    const types: Record<string, string> = {
-      html: 'HTML',
-      simulation: '模拟',
-      game: '游戏',
-      vr: 'VR'
-    }
-    return types[type] || type
-  }
-
+  
   private getAssignmentTypeName(type: string): string {
     const types: Record<string, string> = {
       quiz: '测验',
@@ -1369,5 +1295,19 @@ h2 {
 
   private countSections(markdown: string): number {
     return (markdown.match(/^#+\s/gm) || []).length
+  }
+
+  /**
+   * 渲染章节内容
+   * @param node 章节节点
+   * @returns HTML字符串
+   */
+  private renderChapterContent(node: any): string {
+    return `
+      <div class="chapter-content">
+        <h3>${node.title}</h3>
+        ${node.children ? this.renderNodes(node.children, 1) : ''}
+      </div>
+    `
   }
 }

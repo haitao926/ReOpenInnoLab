@@ -8,7 +8,7 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm'
-import { IsString, IsOptional } from 'class-validator'
+import { IsOptional } from 'class-validator'
 
 import { User } from './user.entity'
 import { Role } from './role.entity'

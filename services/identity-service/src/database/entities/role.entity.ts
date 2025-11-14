@@ -6,51 +6,43 @@ import {
   UpdateDateColumn,
   OneToMany,
   Index,
+  JoinColumn,
+  ManyToOne,
 } from 'typeorm'
-import { IsString, IsOptional, MaxLength } from 'class-validator'
+import { IsString, IsOptional, MaxLength, IsUUID } from 'class-validator'
 
 import { UserRole } from './user-role.entity'
 import { RolePermission } from './role-permission.entity'
+import { Tenant } from './tenant.entity'
 
 @Entity('roles')
-@Index(['name'], { unique: true })
+@Index(['tenantId', 'name'], { unique: true })
 export class Role {
   @PrimaryGeneratedColumn('uuid')
   id: string
+
+  @Column({ type: 'uuid', name: 'tenant_id', nullable: true })
+  @IsOptional()
+  @IsUUID()
+  tenantId?: string
 
   @Column({ type: 'varchar', length: 100 })
   @IsString()
   @MaxLength(100)
   name: string
 
-  @Column({ type: 'varchar', length: 255 })
-  @IsString()
-  @MaxLength(255)
-  displayName: string
-
   @Column({ type: 'text', nullable: true })
   @IsOptional()
   description?: string
 
-  @Column({ type: 'varchar', length: 50, nullable: true })
-  @IsOptional()
-  @MaxLength(50)
-  category?: string
-
-  @Column({ type: 'jsonb', nullable: true })
-  @IsOptional()
-  metadata?: Record<string, any>
-
-  @Column({ type: 'integer', default: 0 })
-  level: number
-
-  @Column({ type: 'boolean', default: true })
+  @Column({ type: 'boolean', name: 'is_system', default: false })
   isSystem: boolean
 
-  @Column({ type: 'boolean', default: true })
-  isActive: boolean
-
   // Relationships
+  @ManyToOne(() => Tenant, { nullable: true })
+  @JoinColumn({ name: 'tenant_id' })
+  tenant?: Tenant
+
   @OneToMany(() => UserRole, (userRole) => userRole.role)
   userRoles: UserRole[]
 
@@ -58,9 +50,9 @@ export class Role {
   rolePermissions: RolePermission[]
 
   // Timestamps
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
   updatedAt: Date
 }

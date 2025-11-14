@@ -62,8 +62,8 @@ onMounted(() => {
 
 .layout-sidebar {
   position: relative;
-  background: transparent;
-  border-right: 1px solid var(--edu-border-color-light);
+  background: #1e293b !important; /* 强制设置深色背景 */
+  border-right: 1px solid #334155;
   backdrop-filter: blur(14px);
 }
 
@@ -86,17 +86,16 @@ onMounted(() => {
 .layout-content {
   flex: 1;
   position: relative;
-  overflow: hidden;
+  /* 移除overflow限制，让内容自然流动 */
 }
 
 .content-scroller {
-  height: 100%;
-  overflow-y: auto;
+  /* 移除高度限制，让内容充分展开 */
+  min-height: calc(100vh - var(--edu-header-height));
   padding: 32px clamp(24px, 4vw, 48px);
 }
 
 .content-surface {
-  min-height: calc(100vh - var(--edu-header-height));
   background: transparent;
   border-radius: 0;
   box-shadow: none;
@@ -152,11 +151,7 @@ onMounted(() => {
 
   .content-scroller {
     padding: 16px;
-  }
-
-  .content-surface {
-    background: transparent;
-    padding: 0;
+    min-height: auto; /* 移动端不限制最小高度 */
   }
 }
 

@@ -60,7 +60,7 @@ export class ACLParser {
         validation
       }
     } catch (error) {
-      throw new Error(`ACL解析失败: ${error.message}`)
+      throw new Error(`ACL解析失败: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
@@ -92,7 +92,7 @@ export class ACLParser {
         validation
       }
     } catch (error) {
-      throw new Error(`ACL解析失败: ${error.message}`)
+      throw new Error(`ACL解析失败: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
@@ -120,7 +120,7 @@ export class ACLParser {
    * @param options 解析选项
    * @returns 解析后的对象
    */
-  private parseContent(content: string, options: ParseOptions): any {
+  private parseContent(content: string, _options: ParseOptions): any {
     const trimmed = content.trim()
 
     // 尝试JSON解析
@@ -128,7 +128,7 @@ export class ACLParser {
       try {
         return JSON.parse(trimmed)
       } catch (error) {
-        throw new Error(`JSON解析失败: ${error.message}`)
+        throw new Error(`JSON解析失败: ${error instanceof Error ? error.message : String(error)}`)
       }
     }
 
@@ -140,7 +140,7 @@ export class ACLParser {
         merge: false
       })
     } catch (error) {
-      throw new Error(`YAML解析失败: ${error.message}`)
+      throw new Error(`YAML解析失败: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
@@ -282,17 +282,17 @@ export class ACLParser {
     // 规范化标签
     if (data.meta?.tags && Array.isArray(data.meta.tags)) {
       data.meta.tags = data.meta.tags
-        .filter(tag => typeof tag === 'string' && tag.trim())
-        .map(tag => tag.trim())
-        .filter((tag, index, arr) => arr.indexOf(tag) === index)
+        .filter((tag: any) => typeof tag === 'string' && tag.trim())
+        .map((tag: string) => tag.trim())
+        .filter((tag: string, index: number, arr: string[]) => arr.indexOf(tag) === index)
     }
 
     // 规范化贡献者
     if (data.meta?.contributors && Array.isArray(data.meta.contributors)) {
       data.meta.contributors = data.meta.contributors
-        .filter(contributor => typeof contributor === 'string' && contributor.trim())
-        .map(contributor => contributor.trim())
-        .filter((contributor, index, arr) => arr.indexOf(contributor) === index)
+        .filter((contributor: any) => typeof contributor === 'string' && contributor.trim())
+        .map((contributor: string) => contributor.trim())
+        .filter((contributor: string, index: number, arr: string[]) => arr.indexOf(contributor) === index)
     }
   }
 

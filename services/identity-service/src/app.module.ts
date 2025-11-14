@@ -1,68 +1,55 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
-import { TypeOrmModule } from '@nestjs/typeorm'
+import { ConfigModule } from '@nestjs/config'
 import { ThrottlerModule } from '@nestjs/throttler'
-import { TerminusModule } from '@nestjs/terminus'
-
-import configuration from './config/configuration'
-import { validationSchema } from './config/validation.schema'
-// TODO: Implement these modules
-// import { HealthModule } from './health/health.module'
-// import { AuthModule } from './auth/auth.module'
-// import { UsersModule } from './users/users.module'
-// import { RolesModule } from './roles/roles.module'
-// import { PermissionsModule } from './permissions/permissions.module'
-// import { OauthModule } from './oauth/oauth.module'
-// import { TwoFactorAuthModule } from './two-factor-auth/two-factor-auth.module'
-import { DatabaseModule } from './database/database.module'
-// import { LoggerModule } from './common/logger/logger.module'
+import { SecureAuthModule } from './auth/auth.module.secure'
+import { SubjectsModule } from './subjects/subjects.module'
+import { AuditModule } from './audit/audit.module'
+import { TenantModule } from './tenant/tenant.module'
+import { APP_INTERCEPTOR } from '@nestjs/core'
+import { TransformInterceptor } from './common/interceptors/transform.interceptor'
 
 @Module({
   imports: [
     // Configuration
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [configuration],
-      validationSchema,
-      validationOptions: {
-        allowUnknown: false,
-        abortEarly: true,
+      envFilePath: ['.env.development', '.env'],
+    }),
+
+    // Rate limiting - more conservative settings
+    ThrottlerModule.forRoot([
+      {
+        // General API rate limiting
+        name: 'general',
+        ttl: 60000, // 1 minute
+        limit: 60, // 60 requests per minute
       },
-    }),
+      {
+        // More restrictive for auth endpoints
+        name: 'auth',
+        ttl: 900000, // 15 minutes
+        limit: 10, // 10 auth attempts per 15 minutes
+      },
+    ]),
 
-    // Database
-    DatabaseModule,
+    // Auth module with database integration
+    SecureAuthModule,
 
-    // Security
-    ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (config: ConfigService) => [
-        {
-          ttl: config.get('THROTTLE_TTL', 60) * 1000,
-          limit: config.get('THROTTLE_LIMIT', 100),
-        },
-      ],
-      inject: [ConfigService],
-    }),
+    // Subjects module
+    SubjectsModule,
 
-    // TODO: Implement these modules when ready
-    // Health Check
-    // HealthModule,
+    // Audit module
+    AuditModule,
 
-    // Business Modules
-    // AuthModule,
-    // UsersModule,
-    // RolesModule,
-    // PermissionsModule,
-    // OauthModule,
-    // TwoFactorAuthModule,
-
-    // Common
-    // LoggerModule,
+    // Tenant module
+    TenantModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
+    },
+  ],
 })
-export class AppModule {
-  static port: number | string = process.env.PORT || 3002
-}
+export class AppModule {}

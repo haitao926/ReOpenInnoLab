@@ -12,6 +12,9 @@ export interface AIProvider {
   temperature?: number
   timeout?: number
   retryAttempts?: number
+  supportsReasoning?: boolean // 新增：是否支持推理模式
+  reasoningModel?: boolean // 新增：是否为推理模型
+  systemPrompt?: string // 新增：系统提示词
 }
 
 export interface AIProvidersConfig {
@@ -26,12 +29,28 @@ export const AI_PROVIDERS_CONFIG: AIProvidersConfig = {
     deepseek: {
       name: 'DeepSeek',
       apiKey: process.env.DEEPSEEK_API_KEY || '',
-      baseUrl: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com/v1',
+      baseUrl: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com',
       model: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
       maxTokens: 4096,
       temperature: 0.7,
       timeout: 30000,
-      retryAttempts: 3
+      retryAttempts: 3,
+      supportsReasoning: false,
+      reasoningModel: false
+    },
+
+    // DeepSeek Reasoner - 支持思维链推理的模型
+    deepseek_reasoner: {
+      name: 'DeepSeek Reasoner',
+      apiKey: process.env.DEEPSEEK_API_KEY || '',
+      baseUrl: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com',
+      model: 'deepseek-reasoner',
+      maxTokens: 65536, // 最大支持64K
+      temperature: undefined, // 推理模型不支持温度调节
+      timeout: 60000,
+      retryAttempts: 3,
+      supportsReasoning: true,
+      reasoningModel: true
     },
 
     // OpenAI GPT-4 - 高质量内容生成
@@ -89,18 +108,40 @@ export const AI_PROVIDERS_CONFIG: AIProvidersConfig = {
 
 // 教育场景专用配置
 export const EDUCATION_AI_CONFIG = {
-  // 课程设计 - 使用DeepSeek（性价比高，适合长文本）
+  // 课程设计 - 使用DeepSeek推理模型（适合复杂教学设计）
   courseDesign: {
-    provider: 'deepseek',
-    model: 'deepseek-chat',
-    temperature: 0.8,
-    maxTokens: 4096,
+    provider: 'deepseek_reasoner',
+    model: 'deepseek-reasoner',
+    temperature: undefined, // 推理模型不支持
+    maxTokens: 32768,
     systemPrompt: `你是一位专业的教学设计师，具有以下特点：
 1. 深度理解认知科学和学习理论
 2. 熟悉中小学课程标准
 3. 能够根据学生认知水平设计合适的教学内容
 4. 注重教学目标的可测量性
-5. 考虑不同学习风格的学生需求`
+5. 考虑不同学习风格的学生需求
+
+请详细分析课程设计需求，并提供完整的设计方案，包括：
+- 学情分析
+- 教学目标设定
+- 教学策略选择
+- 评价体系设计
+- 可能的难点和解决方案`
+  },
+
+  // 复杂问题解答 - 使用推理模型
+  complexProblemSolving: {
+    provider: 'deepseek_reasoner',
+    model: 'deepseek-reasoner',
+    temperature: undefined,
+    maxTokens: 32768,
+    systemPrompt: `你是一位资深的教育专家和问题解决专家。
+对于复杂的教育问题，请：
+1. 仔细分析问题的各个方面
+2. 考虑不同的解决方案
+3. 评估每种方案的优缺点
+4. 提供最佳的解决建议
+5. 说明理由和实施步骤`
   },
 
   // 内容生成 - 使用OpenAI（质量高）
@@ -197,6 +238,13 @@ export const AI_MODEL_CAPABILITIES = {
     costLevel: 'low',
     speedLevel: 'medium',
     qualityLevel: 'high'
+  },
+  deepseek_reasoner: {
+    strengths: ['复杂推理', '问题分析', '思维链推理', '教育设计'],
+    costLevel: 'low',
+    speedLevel: 'slow',
+    qualityLevel: 'very-high',
+    reasoning: true
   },
   openai: {
     strengths: ['创意写作', '逻辑推理', '多语言', '复杂问题解决'],

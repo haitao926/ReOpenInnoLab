@@ -4,12 +4,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  DeleteDateColumn,
   OneToMany,
-  ManyToMany,
   Index,
+  JoinColumn,
+  ManyToOne,
 } from 'typeorm'
-import { IsEmail, IsEnum, IsOptional } from 'class-validator'
+import { IsEmail, IsEnum, IsOptional, IsUUID } from 'class-validator'
 
 import { UserRole } from './user-role.entity'
 import { RefreshToken } from './refresh-token.entity'
@@ -19,6 +19,7 @@ import { LoginAttempt } from './login-attempt.entity'
 import { UserSession } from './user-session.entity'
 import { OauthAccount } from './oauth-account.entity'
 import { TwoFactorAuth } from './two-factor-auth.entity'
+import { Tenant } from './tenant.entity'
 
 export enum UserStatus {
   ACTIVE = 'active',
@@ -32,139 +33,75 @@ export enum UserType {
   STUDENT = 'student',
   TEACHER = 'teacher',
   ADMIN = 'admin',
-  SUPER_ADMIN = 'super_admin',
+  PARENT = 'parent',
+  RESEARCHER = 'researcher',
 }
 
 @Entity('users')
-@Index(['email'], { unique: true })
-@Index(['username'], { unique: true })
+@Index(['tenantId', 'email'], { unique: true })
 @Index(['status'])
 @Index(['type'])
+@Index(['lastLoginAt'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  @IsOptional()
-  username?: string
+  @Column({ type: 'uuid', name: 'tenant_id' })
+  @IsUUID()
+  tenantId: string
 
   @Column({ type: 'varchar', length: 255 })
   @IsEmail()
   email: string
 
-  @Column({ type: 'varchar', length: 255 })
-  password: string
-
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  @IsOptional()
-  firstName?: string
-
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  @IsOptional()
-  lastName?: string
-
   @Column({ type: 'varchar', length: 20, nullable: true })
   @IsOptional()
   phone?: string
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  @IsOptional()
-  avatar?: string
+  @Column({ type: 'varchar', length: 255, name: 'password_hash' })
+  passwordHash: string
 
-  @Column({
-    type: 'enum',
-    enum: UserStatus,
-    default: UserStatus.PENDING,
-  })
-  @IsEnum(UserStatus)
-  status: UserStatus
+  @Column({ type: 'varchar', length: 255 })
+  name: string
 
   @Column({
     type: 'enum',
     enum: UserType,
+    name: 'role_type',
     default: UserType.STUDENT,
   })
   @IsEnum(UserType)
-  type: UserType
+  roleType: UserType
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  @IsOptional()
-  department?: string
+  @Column({
+    type: 'enum',
+    enum: UserStatus,
+    default: UserStatus.ACTIVE,
+  })
+  @IsEnum(UserStatus)
+  status: UserStatus
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  @IsOptional()
-  grade?: string
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  @IsOptional()
-  school?: string
-
-  @Column({ type: 'text', nullable: true })
-  @IsOptional()
-  bio?: string
-
-  @Column({ type: 'jsonb', nullable: true })
-  @IsOptional()
-  preferences?: Record<string, any>
-
-  @Column({ type: 'jsonb', nullable: true })
-  @IsOptional()
-  metadata?: Record<string, any>
-
-  @Column({ type: 'boolean', default: false })
-  emailVerified: boolean
-
-  @Column({ type: 'boolean', default: false })
-  twoFactorEnabled: boolean
-
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamp', nullable: true, name: 'last_login_at' })
   @IsOptional()
   lastLoginAt?: Date
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'jsonb', nullable: true, name: 'profile_json' })
   @IsOptional()
-  lastLoginIp?: string
+  profileJson?: Record<string, any>
 
-  @Column({ type: 'timestamp', nullable: true })
-  @IsOptional()
-  passwordChangedAt?: Date
-
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamp', nullable: true, name: 'email_verified_at' })
   @IsOptional()
   emailVerifiedAt?: Date
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamp', nullable: true, name: 'phone_verified_at' })
   @IsOptional()
-  suspendedAt?: Date
-
-  @Column({ type: 'text', nullable: true })
-  @IsOptional()
-  suspendedReason?: string
-
-  @Column({ type: 'timestamp', nullable: true })
-  @IsOptional()
-  deletedAt?: Date
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  @IsOptional()
-  deletedBy?: string
-
-  @Column({ type: 'text', nullable: true })
-  @IsOptional()
-  deleteReason?: string
-
-  @Column({ type: 'timestamp', nullable: true })
-  @IsOptional()
-  lockedAt?: Date
-
-  @Column({ type: 'timestamp', nullable: true })
-  @IsOptional()
-  lockedUntil?: Date
-
-  @Column({ type: 'integer', default: 0 })
-  failedLoginAttempts: number
+  phoneVerifiedAt?: Date
 
   // Relationships
+  @ManyToOne(() => Tenant, { nullable: false })
+  @JoinColumn({ name: 'tenant_id' })
+  tenant: Tenant
+
   @OneToMany(() => UserRole, (userRole) => userRole.user)
   userRoles: UserRole[]
 
@@ -190,33 +127,27 @@ export class User {
   twoFactorAuths: TwoFactorAuth[]
 
   // Timestamps
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
   updatedAt: Date
 
-  @DeleteDateColumn({ type: 'timestamp' })
-  deletedAt?: Date
-
   // Virtual fields
-  get fullName(): string {
-    if (this.firstName && this.lastName) {
-      return `${this.firstName} ${this.lastName}`
-    }
-    return this.firstName || this.lastName || this.username || this.email
-  }
-
   get displayName(): string {
-    return this.fullName || this.username || this.email
+    return this.name || this.email
   }
 
   get isActive(): boolean {
-    return this.status === UserStatus.ACTIVE && !this.lockedUntil
+    return this.status === UserStatus.ACTIVE
   }
 
-  get isLocked(): boolean {
-    return this.lockedUntil && this.lockedUntil > new Date()
+  get isEmailVerified(): boolean {
+    return !!this.emailVerifiedAt
+  }
+
+  get isPhoneVerified(): boolean {
+    return !!this.phoneVerifiedAt
   }
 
   // Helper methods
@@ -233,5 +164,23 @@ export class User {
   canAccess(resource: string, action: string): boolean {
     const permission = `${resource}:${action}`
     return this.hasPermission(permission) || this.hasPermission('*') || this.hasPermission(`${resource}:*`)
+  }
+
+  // Get profile from JSON or return default
+  getProfile(): Record<string, any> {
+    return this.profileJson || {
+      avatar: null,
+      timezone: 'Asia/Shanghai',
+      language: 'zh-CN',
+      notifications: {
+        email: true,
+        push: true,
+        sms: false
+      },
+      preferences: {
+        theme: 'auto',
+        workspace_layout: 'default'
+      }
+    }
   }
 }

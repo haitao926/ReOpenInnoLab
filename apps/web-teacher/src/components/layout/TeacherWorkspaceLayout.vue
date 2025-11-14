@@ -142,6 +142,10 @@ const handleToggleRight = () => {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  height: 100vh; // 确保工作区占满视口高度
+  overflow: hidden; // 防止工作区本身滚动
+  padding: 24px; // 添加一些内边距
+  box-sizing: border-box; // 确保padding包含在高度内
 }
 
 .workspace-header {
@@ -196,13 +200,15 @@ const handleToggleRight = () => {
 }
 
 .workspace-body {
-  display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
+  display: flex;
   gap: 20px;
+  flex: 1; // 让工作区主体占用剩余空间
+  min-height: 0; // 防止flex溢出
+  overflow: hidden; // 防止整个flex容器溢出
 
   // 当有右栏时的布局
   &.has-right-sidebar {
-    grid-template-columns: 300px minmax(0, 1fr) 320px;
+    gap: 20px;
   }
 }
 
@@ -212,11 +218,22 @@ const handleToggleRight = () => {
   border: none;
   box-shadow: none;
   transition: width 0.3s var(--edu-easing-smooth), padding 0.3s var(--edu-easing-smooth);
+  flex-shrink: 0; // 防止侧边栏收缩
+  width: 300px; // 固定宽度
+
+  &.collapsed {
+    width: 72px;
+  }
+
+  &--right {
+    width: 320px; // 右侧边栏宽度
+
+    &.collapsed {
+      width: 72px;
+    }
+  }
 }
 
-.workspace-sidebar.collapsed {
-  width: 72px;
-}
 
 .workspace-sidebar .sidebar-inner {
   position: relative;
@@ -254,7 +271,7 @@ const handleToggleRight = () => {
 }
 
 .workspace-main {
-  min-height: 640px;
+  flex: 1;
   background: transparent;
   border-radius: 0;
   border: none;
@@ -263,6 +280,28 @@ const handleToggleRight = () => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  /* 只有这个区域可以滚动 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0; // 重要：防止flex子项溢出容器
+  min-width: 0; // 防止flex子项溢出容器
+
+  /* 确保标签页内容能够自然展开 */
+  .main-tabs {
+    flex: 1;
+    min-height: 0; // 防止flex子项溢出
+    display: flex;
+    flex-direction: column;
+
+    .el-tabs__content {
+      flex: 1;
+      min-height: 0; // 让标签页内容能够正确计算高度
+    }
+
+    .tab-content {
+      min-height: 0; // 让标签页内容能够正确计算高度
+    }
+  }
 }
 
 .workspace-footer {
@@ -350,7 +389,6 @@ const handleToggleRight = () => {
   @media (max-width: 768px) {
     order: 1;
     padding: 20px;
-    min-height: auto;
   }
 
   @media (min-width: 769px) and (max-width: 1023px) {

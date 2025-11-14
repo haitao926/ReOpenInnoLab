@@ -5,10 +5,11 @@ export interface User {
   name: string
   avatar?: string
   role: 'admin' | 'teacher' | 'student' | 'guest'
-  status: 'active' | 'inactive' | 'suspended'
-  created_at: string
-  updated_at: string
+  status?: 'active' | 'inactive' | 'suspended'
+  created_at?: string
+  updated_at?: string
   last_login_at?: string
+  permissions?: string[]
   profile?: {
     bio?: string
     phone?: string
@@ -34,12 +35,11 @@ export interface RegisterRequest {
 }
 
 export interface AuthResponse {
-  access_token: string
-  refresh_token: string
-  token_type: string
-  expires_in: number
+  accessToken: string
+  refreshToken: string
+  expiresIn: string
   user: User
-  permissions: string[]
+  permissions?: string[]
 }
 
 export interface ChangePasswordRequest {

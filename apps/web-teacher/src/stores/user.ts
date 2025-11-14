@@ -13,8 +13,17 @@ export const useUserStore = defineStore('user', () => {
   const isLoading = ref(false)
   const permissions = ref<string[]>([])
 
+  // 数据源标记
+  const dataSource = computed(() => import.meta.env.VITE_ENABLE_MOCK_API === 'true' ? 'Mock' : 'Live')
+
   // 计算属性
-  const isAuthenticated = computed(() => !!token.value && !!user.value)
+  const isAuthenticated = computed(() => {
+    const result = !!token.value && !!user.value
+    if (import.meta.env.DEV) {
+      console.log(`[用户Store] isAuthenticated 计算结果: ${result}, token: ${!!token.value}, user: ${!!user.value}`)
+    }
+    return result
+  })
   const userRole = computed(() => user.value?.role || 'guest')
   const userName = computed(() => user.value?.name || '未登录用户')
   const userAvatar = computed(() => user.value?.avatar || '')
@@ -27,18 +36,39 @@ export const useUserStore = defineStore('user', () => {
     try {
       isLoading.value = true
 
-      const response = await authApi.login(credentials)
-      const { access_token, user: userData, permissions: userPermissions } = response.data
+      // 确保email和username字段都有值，防止undefined
+      const email = credentials.username || credentials.email
+      const password = credentials.password
 
-      // 保存认证信息
-      token.value = access_token
+      // 严格验证，防止undefined或空值调用
+      if (!email || !password || email === 'undefined' || password === 'undefined') {
+        throw new Error('用户名和密码不能为空')
+      }
+
+      console.log('Attempting login with email:', email)
+      console.log('Original credentials being passed to authApi.login:', {
+        username: credentials.username,
+        email: credentials.email,
+        password: password ? '[HIDDEN]' : 'EMPTY',
+        role: credentials.role,
+        remember: credentials.remember
+      })
+
+      const response = await authApi.login({
+        username: email,  // Use username field to match mock API expectations
+        email: email,     // Also include email for compatibility
+        password: password,
+        role: credentials.role,
+        remember: credentials.remember
+      })
+
+      // authApi.login 已经处理了localStorage存储，这里只需要更新store状态
+      const { accessToken, user: userData, permissions: userPermissions } = response
+
+      // 更新store状态
+      token.value = accessToken
       user.value = userData
-      permissions.value = userPermissions
-
-      // 保存到本地存储
-      localStorage.setItem('auth_token', access_token)
-      localStorage.setItem('user_info', JSON.stringify(userData))
-      localStorage.setItem('user_permissions', JSON.stringify(userPermissions))
+      permissions.value = userPermissions || []
 
       return response
     } catch (error) {
@@ -84,10 +114,10 @@ export const useUserStore = defineStore('user', () => {
       isLoading.value = true
 
       const response = await authApi.getUserInfo()
-      const { user: userData, permissions: userPermissions } = response.data
+      const { data: userData, permissions: userPermissions } = response
 
       user.value = userData
-      permissions.value = userPermissions
+      permissions.value = userPermissions || userData?.permissions || []
 
       // 更新本地存储
       localStorage.setItem('user_info', JSON.stringify(userData))
@@ -107,10 +137,9 @@ export const useUserStore = defineStore('user', () => {
       isLoading.value = true
 
       const response = await authApi.updateUserInfo(userData)
-      const updatedUser = response.data
 
-      user.value = { ...user.value!, ...updatedUser }
-      localStorage.setItem('user_info', JSON.stringify(user.value))
+      // 重新获取用户信息以确保数据一致性
+      await getUserInfo()
 
       return response
     } catch (error) {
@@ -141,9 +170,8 @@ export const useUserStore = defineStore('user', () => {
 
   const refreshPermissions = async () => {
     try {
-      const response = await authApi.getPermissions()
-      permissions.value = response.data.permissions
-      localStorage.setItem('user_permissions', JSON.stringify(permissions.value))
+      // 重新获取用户信息来刷新权限
+      await getUserInfo()
     } catch (error) {
       console.error('刷新权限失败:', error)
       throw error
@@ -157,48 +185,90 @@ export const useUserStore = defineStore('user', () => {
 
     // 清理本地存储
     localStorage.removeItem('auth_token')
+    localStorage.removeItem('access_token')
     localStorage.removeItem('user_info')
     localStorage.removeItem('user_permissions')
   }
 
+  const clearCorruptedData = () => {
+    // 清理所有可能的损坏认证数据
+    localStorage.removeItem('auth_token')
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
+    localStorage.removeItem('user_info')
+    localStorage.removeItem('user_permissions')
+    localStorage.removeItem('token_expires_at')
+    localStorage.removeItem('tenant_info')
+
+    // 重置状态
+    user.value = null
+    token.value = null
+    permissions.value = []
+
+    console.log('已清理所有损坏的认证数据')
+  }
+
   const initializeAuth = async () => {
     try {
-      const savedToken = localStorage.getItem('auth_token')
+      // 检查两种可能的token键，确保向后兼容
+      const savedToken = localStorage.getItem('auth_token') || localStorage.getItem('access_token')
       const savedUserInfo = localStorage.getItem('user_info')
       const savedPermissions = localStorage.getItem('user_permissions')
 
-      if (savedToken && savedUserInfo) {
+      if (savedToken && savedUserInfo && savedUserInfo !== 'undefined' && savedUserInfo !== 'null') {
         token.value = savedToken
 
         try {
           user.value = JSON.parse(savedUserInfo)
-          permissions.value = savedPermissions ? JSON.parse(savedPermissions) : []
+          permissions.value = savedPermissions && savedPermissions !== 'undefined' ? JSON.parse(savedPermissions) : []
 
-          // 验证token有效性并获取最新用户信息
-          await getUserInfo()
+          // 统一token存储键为auth_token
+          if (localStorage.getItem('access_token')) {
+            localStorage.setItem('auth_token', savedToken)
+            localStorage.removeItem('access_token')
+          }
+
+          // 仅在有有效用户数据时验证token有效性
+          if (user.value && user.value.email) {
+            await getUserInfo()
+          }
         } catch (error) {
           console.error('解析用户数据失败:', error)
           clearAuthData()
-          throw error
+          // 不抛出错误，允许应用继续运行
         }
       }
     } catch (error) {
       console.error('初始化认证失败:', error)
       clearAuthData()
-      throw error
+      // 不抛出错误，允许应用继续运行
     }
   }
 
   const initializeFromStorage = () => {
-    const savedToken = localStorage.getItem('auth_token')
+    // 检查两种可能的token键，确保向后兼容
+    const savedToken = localStorage.getItem('auth_token') || localStorage.getItem('access_token')
     const savedUserInfo = localStorage.getItem('user_info')
     const savedPermissions = localStorage.getItem('user_permissions')
 
-    if (savedToken && savedUserInfo) {
+    if (savedToken && savedUserInfo && savedUserInfo !== 'undefined' && savedUserInfo !== 'null') {
       try {
         token.value = savedToken
         user.value = JSON.parse(savedUserInfo)
-        permissions.value = savedPermissions ? JSON.parse(savedPermissions) : []
+        permissions.value = savedPermissions && savedPermissions !== 'undefined' ? JSON.parse(savedPermissions) : []
+
+        // 验证用户数据完整性
+        if (user.value && !user.value.email) {
+          console.warn('用户数据不完整，清空认证信息')
+          clearAuthData()
+          return
+        }
+
+        // 统一token存储键为auth_token
+        if (localStorage.getItem('access_token')) {
+          localStorage.setItem('auth_token', savedToken)
+          localStorage.removeItem('access_token')
+        }
       } catch (error) {
         console.error('解析本地用户数据失败:', error)
         clearAuthData()
@@ -208,13 +278,15 @@ export const useUserStore = defineStore('user', () => {
 
   const refreshToken = async () => {
     try {
-      const response = await authApi.refreshToken()
-      const { access_token } = response.data
+      const response = await authApi._refreshToken()
+      const { accessToken } = response
 
-      token.value = access_token
-      localStorage.setItem('auth_token', access_token)
+      token.value = accessToken
+      localStorage.setItem('auth_token', accessToken)
+      // 确保向后兼容性
+      localStorage.setItem('access_token', accessToken)
 
-      return access_token
+      return accessToken
     } catch (error) {
       console.error('刷新Token失败:', error)
       clearAuthData()
@@ -235,6 +307,7 @@ export const useUserStore = defineStore('user', () => {
     userName,
     userAvatar,
     hasPermission,
+    dataSource,
 
     // 动作
     login,
@@ -245,6 +318,7 @@ export const useUserStore = defineStore('user', () => {
     changePassword,
     refreshPermissions,
     clearAuthData,
+    clearCorruptedData,
     initializeAuth,
     initializeFromStorage,
     refreshToken

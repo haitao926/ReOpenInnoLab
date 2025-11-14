@@ -17,904 +17,403 @@
       </div>
     </div>
 
-    <div class="wizard-content">
-      <!-- 步骤1: 基本信息 -->
-      <div v-if="currentStep === 0" class="wizard-step">
-        <div class="step-header">
-          <h3>课程基本信息</h3>
-          <p>设置课程的基本属性和目标受众</p>
-        </div>
-
-        <el-form
-          ref="basicInfoRef"
-          :model="courseForm.info"
-          :rules="basicInfoRules"
-          label-width="120px"
-          class="wizard-form"
-        >
-          <el-row :gutter="24">
-            <el-col :span="12">
-              <el-form-item label="课程标题" prop="title">
-                <el-input
-                  v-model="courseForm.info.title"
-                  placeholder="请输入课程标题"
-                  maxlength="100"
-                  show-word-limit
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="学科" prop="subject">
-                <el-select v-model="courseForm.info.subject" placeholder="选择学科">
-                  <el-option
-                    v-for="subject in subjects"
-                    :key="subject.value"
-                    :label="subject.label"
-                    :value="subject.value"
-                  >
-                    <span class="subject-option">
-                      <el-icon :color="subject.color">
-                        <component :is="subject.icon" />
-                      </el-icon>
-                      {{ subject.label }}
-                    </span>
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item label="年级" prop="grade">
-                <el-select v-model="courseForm.info.grade" placeholder="选择年级">
-                  <el-option
-                    v-for="grade in grades"
-                    :key="grade.value"
-                    :label="grade.label"
-                    :value="grade.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="课时" prop="duration">
-                <el-input-number
-                  v-model="courseForm.info.duration"
-                  :min="1"
-                  :max="200"
-                  controls-position="right"
-                />
-                <span class="unit">课时</span>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item label="难度等级" prop="difficulty">
-                <el-select v-model="courseForm.info.difficulty" placeholder="选择难度">
-                  <el-option label="入门" value="beginner" />
-                  <el-option label="进阶" value="intermediate" />
-                  <el-option label="高级" value="advanced" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="课程封面">
-                <el-upload
-                  class="cover-uploader"
-                  :show-file-list="false"
-                  :before-upload="beforeCoverUpload"
-                  :http-request="handleCoverUpload"
+    <div class="wizard-layout">
+      <div class="wizard-content">
+        <!-- Step 1: Basic Info -->
+        <div v-if="currentStep === 0" class="wizard-step">
+          <div class="step-header">
+            <div class="header-content">
+              <div class="header-text">
+                <h3>课程基本信息</h3>
+                <p>设置课程的基本属性和目标受众</p>
+              </div>
+              <div class="ai-actions">
+                <el-button
+                  type="primary"
+                  :icon="MagicStick"
+                  @click="generateCourseDesign"
+                  :loading="aiGenerating"
+                  class="ai-design-button"
                 >
-                  <img v-if="courseForm.info.coverImage" :src="courseForm.info.coverImage" class="cover-preview" />
-                  <div v-else class="cover-upload-btn">
-                    <el-icon><Plus /></el-icon>
-                    <div>上传封面</div>
-                  </div>
-                </el-upload>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="24">
-              <el-form-item label="课程描述" prop="description">
-                <el-input
-                  v-model="courseForm.info.description"
-                  type="textarea"
-                  :rows="4"
-                  placeholder="请输入课程描述"
-                  maxlength="500"
-                  show-word-limit
-                />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="24">
-              <el-form-item label="课程标签">
-                <el-select
-                  v-model="courseForm.info.tags"
-                  multiple
-                  filterable
-                  allow-create
-                  placeholder="添加标签"
-                  class="tag-select"
-                >
-                  <el-option
-                    v-for="tag in suggestedTags"
-                    :key="tag"
-                    :label="tag"
-                    :value="tag"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-
-        <!-- AI生成建议 -->
-        <div class="ai-suggestions">
-          <div class="suggestions-header">
-            <el-icon><MagicStick /></el-icon>
-            <span>AI课程建议</span>
-            <div class="suggestion-actions">
-              <el-button size="small" @click="toggleMultiSubjectMode">
-                <el-icon><Collection /></el-icon>
-                {{ showMultiSubjectMode ? '单学科模式' : '多学科模式' }}
-              </el-button>
-              <el-button size="small" type="primary" @click="generateAISuggestions">
-                获取建议
-              </el-button>
-            </div>
-          </div>
-
-          <!-- 多学科模板模式 -->
-          <div v-if="showMultiSubjectMode" class="multi-subject-mode">
-            <EnhancedCourseWizard
-              v-if="showEnhancedWizard"
-              @template-applied="onMultiSubjectTemplateApplied"
-              @template-saved="onTemplateSaved"
-            />
-          </div>
-
-          <!-- 传统AI建议模式 -->
-          <div v-else-if="aiSuggestions.length > 0" class="suggestions-content">
-            <div
-              v-for="suggestion in aiSuggestions"
-              :key="suggestion.title"
-              class="suggestion-item"
-              @click="applySuggestion(suggestion)"
-            >
-              <h4>{{ suggestion.title }}</h4>
-              <p>{{ suggestion.description }}</p>
-              <div class="suggestion-tags">
-                <el-tag
-                  v-for="tag in suggestion.targetAudience.split('、')"
-                  :key="tag"
-                  size="small"
-                >
-                  {{ tag }}
-                </el-tag>
+                  <el-icon><MagicStick /></el-icon>
+                  AI 智能设计
+                </el-button>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- 步骤2: 章节结构 -->
-      <div v-if="currentStep === 1" class="wizard-step">
-        <div class="step-header">
-          <h3>课程章节结构</h3>
-          <p>设计课程的学习路径和章节安排</p>
-        </div>
+          <el-form :model="courseStore.editor?.basicInfo" :rules="basicInfoRules" ref="basicInfoRef" label-width="120px">
+            <el-form-item label="课程名称" prop="title">
+              <el-input v-model="courseStore.editor!.basicInfo.title" placeholder="请输入课程名称" />
+            </el-form-item>
 
-        <div class="chapter-structure">
-          <div class="structure-toolbar">
-            <el-button type="primary" @click="addChapter">
-              <el-icon><Plus /></el-icon>
-              添加章节
-            </el-button>
-            <el-button @click="generateAIChapterStructure">
-              <el-icon><MagicStick /></el-icon>
-              AI生成结构
-            </el-button>
-            <el-button @click="importChapterTemplate">
-              <el-icon><Upload /></el-icon>
-              导入模板
-            </el-button>
-          </div>
+            <el-form-item label="课程代码" prop="code">
+              <el-input v-model="courseStore.editor!.basicInfo.code" placeholder="请输入课程代码" />
+            </el-form-item>
 
-          <div class="chapters-list">
-            <draggable
-              v-model="courseForm.chapters"
-              item-key="id"
-              @end="handleChapterReorder"
-            >
-              <template #item="{ element: chapter, index }">
-                <div class="chapter-item" :class="{ 'is-ai-enhanced': chapter.aiEnhanced }">
-                  <div class="chapter-header">
-                    <div class="chapter-info">
-                      <div class="chapter-number">第{{ index + 1 }}章</div>
-                      <div class="chapter-title">
-                        <el-input
-                          v-model="chapter.title"
-                          placeholder="章节标题"
-                          class="title-input"
-                        />
-                      </div>
-                      <div class="chapter-type">
-                        <el-select v-model="chapter.type" size="small">
-                          <el-option label="知识讲授" value="content" />
-                          <el-option label="实验操作" value="experiment" />
-                          <el-option label="互动体验" value="interactive" />
-                          <el-option label="考核评估" value="assessment" />
-                        </el-select>
-                      </div>
-                    </div>
-                    <div class="chapter-actions">
-                      <el-button
-                        v-if="chapter.type === 'experiment'"
-                        size="small"
-                        type="success"
-                        @click="configureExperiment(chapter)"
-                      >
-                        <el-icon><Operation /></el-icon>
-                        配置实验
-                      </el-button>
-                      <el-button
-                        v-if="chapter.type === 'interactive'"
-                        size="small"
-                        type="warning"
-                        @click="uploadInteractive(chapter)"
-                      >
-                        <el-icon><Upload /></el-icon>
-                        上传互动
-                      </el-button>
-                      <el-button
-                        size="small"
-                        :type="chapter.aiEnhanced ? 'primary' : 'default'"
-                        @click="toggleAIEnhancement(chapter)"
-                      >
-                        <el-icon><MagicStick /></el-icon>
-                        AI增强
-                      </el-button>
-                      <el-button size="small" type="danger" @click="removeChapter(index)">
-                        <el-icon><Delete /></el-icon>
-                      </el-button>
-                    </div>
-                  </div>
-                  <div class="chapter-content">
-                    <el-input
-                      v-model="chapter.description"
-                      type="textarea"
-                      :rows="2"
-                      placeholder="章节描述"
-                    />
-                    <div class="chapter-meta">
-                      <div class="meta-item">
-                        <label>预计时长:</label>
-                        <el-input-number
-                          v-model="chapter.duration"
-                          :min="5"
-                          :max="180"
-                          size="small"
-                          controls-position="right"
-                        />
-                        <span>分钟</span>
-                      </div>
-                      <div class="meta-item">
-                        <label>学习目标:</label>
-                        <el-input
-                          v-model="chapter.objectivesText"
-                          placeholder="用逗号分隔多个目标"
-                          size="small"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </template>
-            </draggable>
-          </div>
-        </div>
-      </div>
+            <el-form-item label="课程描述" prop="description">
+              <el-input type="textarea" v-model="courseStore.editor!.basicInfo.description" :rows="4" placeholder="请输入课程描述" />
+            </el-form-item>
 
-      <!-- 步骤3: 内容设计 -->
-      <div v-if="currentStep === 2" class="wizard-step">
-        <div class="step-header">
-          <h3>课程内容设计</h3>
-          <p>为每个章节设计具体的教学内容</p>
-        </div>
-
-        <div class="content-design">
-          <el-tabs v-model="activeChapterTab" tab-position="left">
-            <el-tab-pane
-              v-for="(chapter, index) in courseForm.chapters"
-              :key="chapter.id"
-              :label="`第${index + 1}章: ${chapter.title}`"
-              :name="chapter.id"
-            >
-              <div class="chapter-editor">
-                <div class="editor-toolbar">
-                  <el-button-group>
-                    <el-button
-                      v-for="tool in editorTools"
-                      :key="tool.type"
-                      :type="activeEditorTool === tool.type ? 'primary' : 'default'"
-                      @click="activeEditorTool = tool.type"
-                    >
-                      <el-icon>
-                        <component :is="tool.icon" />
-                      </el-icon>
-                      {{ tool.name }}
-                    </el-button>
-                  </el-button-group>
-                  <div class="editor-actions">
-                    <el-button @click="saveChapterContent(chapter)">
-                      <el-icon><Check /></el-icon>
-                      保存
-                    </el-button>
-                    <el-button @click="previewChapter(chapter)">
-                      <el-icon><View /></el-icon>
-                      预览
-                    </el-button>
-                  </div>
-                </div>
-
-                <div class="editor-content">
-                  <!-- 知识内容编辑器 -->
-                  <div v-if="activeEditorTool === 'knowledge'" class="knowledge-editor">
-                    <div class="section-title">概念定义</div>
-                    <div class="concepts-list">
-                      <div
-                        v-for="(concept, idx) in chapter.content?.knowledge?.concepts || []"
-                        :key="idx"
-                        class="concept-item"
-                      >
-                        <el-input
-                          v-model="concept.name"
-                          placeholder="概念名称"
-                          class="concept-name"
-                        />
-                        <el-input
-                          v-model="concept.definition"
-                          type="textarea"
-                          placeholder="概念定义"
-                          :rows="2"
-                        />
-                        <el-button size="small" type="danger" @click="removeConcept(chapter, idx)">
-                          删除
-                        </el-button>
-                      </div>
-                      <el-button size="small" @click="addConcept(chapter)">
-                        <el-icon><Plus /></el-icon>
-                        添加概念
-                      </el-button>
-                    </div>
-
-                    <div class="section-title">示例</div>
-                    <div class="examples-list">
-                      <div
-                        v-for="(example, idx) in chapter.content?.knowledge?.examples || []"
-                        :key="idx"
-                        class="example-item"
-                      >
-                        <el-input
-                          v-model="example.title"
-                          placeholder="示例标题"
-                          class="example-title"
-                        />
-                        <el-input
-                          v-model="example.description"
-                          type="textarea"
-                          placeholder="示例描述"
-                          :rows="3"
-                        />
-                        <div class="example-media">
-                          <el-select v-model="example.type" size="small">
-                            <el-option label="文本" value="text" />
-                            <el-option label="图片" value="image" />
-                            <el-option label="视频" value="video" />
-                            <el-option label="音频" value="audio" />
-                          </el-select>
-                          <el-input
-                            v-if="example.type !== 'text'"
-                            v-model="example.mediaUrl"
-                            placeholder="媒体URL"
-                            size="small"
-                          />
-                        </div>
-                      </div>
-                      <el-button size="small" @click="addExample(chapter)">
-                        <el-icon><Plus /></el-icon>
-                        添加示例
-                      </el-button>
-                    </div>
-                  </div>
-
-                  <!-- 实验配置 -->
-                  <div v-else-if="activeEditorTool === 'experiment'" class="experiment-editor">
-                    <div class="experiment-type-selector">
-                      <el-radio-group v-model="chapter.experimentType" @change="handleExperimentTypeChange">
-                        <el-radio-button label="jupyter">Jupyter Notebook</el-radio-button>
-                        <el-radio-button label="ai-generated">AI生成实验</el-radio-button>
-                        <el-radio-button label="uploaded">上传文件</el-radio-button>
-                      </el-radio-group>
-                    </div>
-
-                    <div v-if="chapter.experimentType === 'jupyter'" class="jupyter-config">
-                      <div class="section-title">Jupyter环境配置</div>
-                      <el-form :model="chapter.experimentConfig" label-width="120px">
-                        <el-form-item label="镜像版本">
-                          <el-select v-model="chapter.experimentConfig.image">
-                            <el-option
-                              v-for="image in jupyterImages"
-                              :key="image.value"
-                              :label="image.label"
-                              :value="image.value"
-                            />
-                          </el-select>
-                        </el-form-item>
-                        <el-form-item label="Python包">
-                          <el-select
-                            v-model="chapter.experimentConfig.packages"
-                            multiple
-                            filterable
-                            allow-create
-                            placeholder="选择或输入Python包"
-                          >
-                            <el-option
-                              v-for="pkg in commonPackages"
-                              :key="pkg"
-                              :label="pkg"
-                              :value="pkg"
-                            />
-                          </el-select>
-                        </el-form-item>
-                        <el-form-item label="资源配置">
-                          <el-row :gutter="16">
-                            <el-col :span="8">
-                              <el-input-number
-                                v-model="chapter.experimentConfig.resources.cpu"
-                                :min="0.5"
-                                :max="8"
-                                :step="0.5"
-                                controls-position="right"
-                              />
-                              <span class="resource-label">CPU核</span>
-                            </el-col>
-                            <el-col :span="8">
-                              <el-input-number
-                                v-model="chapter.experimentConfig.resources.memory"
-                                :min="1"
-                                :max="32"
-                                controls-position="right"
-                              />
-                              <span class="resource-label">GB内存</span>
-                            </el-col>
-                            <el-col :span="8">
-                              <el-input-number
-                                v-model="chapter.experimentConfig.resources.storage"
-                                :min="1"
-                                :max="100"
-                                controls-position="right"
-                              />
-                              <span class="resource-label">GB存储</span>
-                            </el-col>
-                          </el-row>
-                        </el-form-item>
-                      </el-form>
-                    </div>
-
-                    <div v-else-if="chapter.experimentType === 'ai-generated'" class="ai-experiment">
-                      <div class="ai-prompt-section">
-                        <div class="section-title">AI实验生成</div>
-                        <el-input
-                          v-model="chapter.aiExperimentPrompt"
-                          type="textarea"
-                          :rows="4"
-                          placeholder="描述您想要生成的实验内容，例如：创建一个物理实验，展示牛顿第二定律..."
-                        />
-                        <div class="ai-options">
-                          <el-checkbox v-model="chapter.aiIncludeCode">包含代码示例</el-checkbox>
-                          <el-checkbox v-model="chapter.aiIncludeData">包含示例数据</el-checkbox>
-                          <el-checkbox v-model="chapter.aiIncludeQuestions">包含思考题</el-checkbox>
-                        </div>
-                        <el-button type="primary" @click="generateAIExperiment(chapter)">
-                          <el-icon><MagicStick /></el-icon>
-                          生成实验
-                        </el-button>
-                      </div>
-                    </div>
-
-                    <div v-else-if="chapter.experimentType === 'uploaded'" class="uploaded-experiment">
-                      <div class="upload-section">
-                        <div class="section-title">上传实验文件</div>
-                        <el-upload
-                          drag
-                          multiple
-                          :file-list="chapter.uploadedFiles"
-                          :before-upload="beforeExperimentUpload"
-                          :http-request="handleExperimentUpload"
-                          :on-change="handleExperimentFileChange"
-                        >
-                          <el-icon class="el-icon--upload"><Upload /></el-icon>
-                          <div class="el-upload__text">
-                            将文件拖到此处，或<em>点击上传</em>
-                          </div>
-                          <template #tip>
-                            <div class="el-upload__tip">
-                              支持 .ipynb, .py, .json, .csv 等格式文件
-                            </div>
-                          </template>
-                        </el-upload>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 互动体验 -->
-                  <div v-else-if="activeEditorTool === 'interactive'" class="interactive-editor">
-                    <div class="upload-interactive">
-                      <div class="section-title">互动体验上传</div>
-                      <el-upload
-                        drag
-                        accept=".html,.css,.js,.zip"
-                        :before-upload="beforeInteractiveUpload"
-                        :http-request="handleInteractiveUpload"
-                        :on-change="handleInteractiveFileChange"
-                      >
-                        <el-icon class="el-icon--upload"><Upload /></el-icon>
-                        <div class="el-upload__text">
-                          上传HTML文件或包含HTML/CSS/JS的ZIP包
-                        </div>
-                        <template #tip>
-                          <div class="el-upload__tip">
-                            支持 .html 单文件或 .zip 压缩包
-                          </div>
-                        </template>
-                      </el-upload>
-
-                      <div v-if="chapter.interactiveFiles?.length" class="interactive-preview">
-                        <div class="section-title">预览设置</div>
-                        <el-form :model="chapter.interactiveSettings" label-width="120px">
-                          <el-form-item label="全屏模式">
-                            <el-switch v-model="chapter.interactiveSettings.fullscreen" />
-                          </el-form-item>
-                          <el-form-item label="响应式">
-                            <el-switch v-model="chapter.interactiveSettings.responsive" />
-                          </el-form-item>
-                          <el-form-item label="允许调整大小">
-                            <el-switch v-model="chapter.interactiveSettings.allowResize" />
-                          </el-form-item>
-                        </el-form>
-                        <div class="preview-actions">
-                          <el-button type="primary" @click="previewInteractive(chapter)">
-                            <el-icon><View /></el-icon>
-                            预览互动内容
-                          </el-button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 评估设计 -->
-                  <div v-else-if="activeEditorTool === 'assessment'" class="assessment-editor">
-                    <div class="assessment-type">
-                      <div class="section-title">评估类型</div>
-                      <el-radio-group v-model="chapter.assessmentType">
-                        <el-radio-button label="quiz">随堂测验</el-radio-button>
-                        <el-radio-button label="assignment">课后作业</el-radio-button>
-                        <el-radio-button label="project">项目实践</el-radio-button>
-                      </el-radio-group>
-                    </div>
-
-                    <div class="questions-section" v-if="chapter.assessmentType === 'quiz'">
-                      <div class="section-title">题目设计</div>
-                      <div class="questions-list">
-                        <div
-                          v-for="(question, idx) in chapter.questions || []"
-                          :key="idx"
-                          class="question-item"
-                        >
-                          <div class="question-header">
-                            <span class="question-number">题目 {{ idx + 1 }}</span>
-                            <el-select v-model="question.type" size="small">
-                              <el-option label="单选题" value="choice" />
-                              <el-option label="多选题" value="multiple" />
-                              <el-option label="填空题" value="text" />
-                              <el-option label="问答题" value="essay" />
-                            </el-select>
-                            <el-button size="small" type="danger" @click="removeQuestion(chapter, idx)">
-                              删除
-                            </el-button>
-                          </div>
-                          <el-input
-                            v-model="question.question"
-                            type="textarea"
-                            placeholder="题目内容"
-                            :rows="2"
-                          />
-                          <div v-if="question.type === 'choice' || question.type === 'multiple'" class="options-section">
-                            <div
-                              v-for="(option, optIdx) in question.options || []"
-                              :key="optIdx"
-                              class="option-item"
-                            >
-                              <el-input
-                                v-model="question.options[optIdx]"
-                                :placeholder="`选项 ${optIdx + 1}`"
-                                size="small"
-                              />
-                              <el-button
-                                v-if="question.type === 'choice'"
-                                size="small"
-                                :type="question.correctAnswer === optIdx ? 'primary' : 'default'"
-                                @click="question.correctAnswer = optIdx"
-                              >
-                                正确答案
-                              </el-button>
-                              <el-button size="small" type="danger" @click="removeOption(question, optIdx)">
-                                删除
-                              </el-button>
-                            </div>
-                            <el-button size="small" @click="addOption(question)">
-                              <el-icon><Plus /></el-icon>
-                              添加选项
-                            </el-button>
-                          </div>
-                        </div>
-                        <el-button size="small" @click="addQuestion(chapter)">
-                          <el-icon><Plus /></el-icon>
-                          添加题目
-                        </el-button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </el-tab-pane>
-          </el-tabs>
-        </div>
-      </div>
-
-      <!-- 步骤4: 预览和发布 -->
-      <div v-if="currentStep === 3" class="wizard-step">
-        <div class="step-header">
-          <h3>课程预览和发布</h3>
-          <p>检查课程设置并发布课程</p>
-        </div>
-
-        <div class="preview-section">
-          <div class="preview-toolbar">
-            <el-button-group>
-              <el-button
-                v-for="view in previewViews"
-                :key="view.type"
-                :type="activePreviewView === view.type ? 'primary' : 'default'"
-                @click="activePreviewView = view.type"
-              >
-                <el-icon>
-                  <component :is="view.icon" />
-                </el-icon>
-                {{ view.name }}
-              </el-button>
-            </el-button-group>
-            <div class="preview-actions">
-              <el-button @click="exportCourse">
-                <el-icon><Download /></el-icon>
-                导出课程
-              </el-button>
-              <el-button @click="saveAsDraft">
-                <el-icon><Document /></el-icon>
-                保存草稿
-              </el-button>
-            </div>
-          </div>
-
-          <div class="preview-content">
-            <!-- 课程信息预览 -->
-            <div v-if="activePreviewView === 'info'" class="course-preview-info">
-              <div class="preview-card">
-                <div class="card-header">
-                  <img v-if="courseForm.info.coverImage" :src="courseForm.info.coverImage" class="cover-image" />
-                  <div class="header-info">
-                    <h2>{{ courseForm.info.title }}</h2>
-                    <p>{{ courseForm.info.description }}</p>
-                    <div class="meta-info">
-                      <el-tag>{{ getSubjectLabel(courseForm.info.subject) }}</el-tag>
-                      <el-tag type="success">{{ courseForm.info.grade }}</el-tag>
-                      <el-tag type="warning">{{ courseForm.info.duration }}课时</el-tag>
-                      <el-tag type="info">{{ getDifficultyLabel(courseForm.info.difficulty) }}</el-tag>
-                    </div>
-                  </div>
-                </div>
-                <div class="card-content">
-                  <h3>课程标签</h3>
-                  <div class="tags-list">
-                    <el-tag
-                      v-for="tag in courseForm.info.tags"
-                      :key="tag"
-                      class="tag-item"
-                    >
-                      {{ tag }}
-                    </el-tag>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 章节结构预览 -->
-            <div v-else-if="activePreviewView === 'structure'" class="course-preview-structure">
-              <div class="timeline">
-                <div
-                  v-for="(chapter, index) in courseForm.chapters"
-                  :key="chapter.id"
-                  class="timeline-item"
-                >
-                  <div class="timeline-marker">
-                    <div class="marker-dot" :class="`marker-${chapter.type}`"></div>
-                    <div class="marker-line" v-if="index < courseForm.chapters.length - 1"></div>
-                  </div>
-                  <div class="timeline-content">
-                    <div class="chapter-preview-card">
-                      <div class="card-header">
-                        <h4>第{{ index + 1 }}章 {{ chapter.title }}</h4>
-                        <div class="chapter-meta">
-                          <el-tag :type="getChapterTypeColor(chapter.type)">
-                            {{ getChapterTypeLabel(chapter.type) }}
-                          </el-tag>
-                          <span class="duration">{{ chapter.duration }}分钟</span>
-                          <el-tag v-if="chapter.aiEnhanced" type="success" size="small">
-                            <el-icon><MagicStick /></el-icon>
-                            AI增强
-                          </el-tag>
-                        </div>
-                      </div>
-                      <p>{{ chapter.description }}</p>
-                      <div v-if="chapter.objectives?.length" class="objectives">
-                        <strong>学习目标：</strong>
-                        <ul>
-                          <li v-for="objective in chapter.objectives" :key="objective">{{ objective }}</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 完整预览 -->
-            <div v-else-if="activePreviewView === 'full'" class="course-preview-full">
-              <div class="preview-container">
-                <div class="preview-header">
-                  <h2>{{ courseForm.info.title }}</h2>
-                  <div class="preview-nav">
-                    <el-button-group>
-                      <el-button
-                        v-for="(chapter, index) in courseForm.chapters"
-                        :key="chapter.id"
-                        size="small"
-                        :type="currentPreviewChapter === index ? 'primary' : 'default'"
-                        @click="currentPreviewChapter = index"
-                      >
-                        {{ index + 1 }}
-                      </el-button>
-                    </el-button-group>
-                  </div>
-                </div>
-                <div class="preview-body">
-                  <div v-if="currentChapter" class="chapter-content-preview">
-                    <h3>{{ currentChapter.title }}</h3>
-                    <p>{{ currentChapter.description }}</p>
-                    <!-- 这里可以根据章节类型显示不同的内容预览 -->
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 发布设置 -->
-        <div class="publish-settings">
-          <h3>发布设置</h3>
-          <el-form :model="courseForm.settings" label-width="120px">
-            <el-row :gutter="24">
-              <el-col :span="12">
-                <el-form-item label="课程状态">
-                  <el-radio-group v-model="publishStatus">
-                    <el-radio-button label="draft">保存草稿</el-radio-button>
-                    <el-radio-button label="published">立即发布</el-radio-button>
-                    <el-radio-button label="scheduled">定时发布</el-radio-button>
-                  </el-radio-group>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="可见性">
-                  <el-radio-group v-model="courseForm.settings.publicAccess">
-                    <el-radio-button label="true">公开</el-radio-button>
-                    <el-radio-button label="false">私有</el-radio-button>
-                  </el-radio-group>
-                </el-form-item>
-              </el-col>
-            </el-row>
-
-            <el-row :gutter="24">
-              <el-col :span="12">
-                <el-form-item label="AI功能">
-                  <el-switch
-                    v-model="courseForm.settings.aiEnabled"
-                    active-text="启用"
-                    inactive-text="禁用"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="下载权限">
-                  <el-switch
-                    v-model="courseForm.settings.allowDownload"
-                    active-text="允许"
-                    inactive-text="禁止"
-                  />
-                </el-form-item>
-              </el-col>
-            </el-row>
-
-            <el-form-item label="目标班级">
-              <el-select
-                v-model="targetClasses"
-                multiple
-                placeholder="选择目标班级"
-                style="width: 100%"
-              >
+            <el-form-item label="学科分类" prop="subject">
+              <el-select v-model="courseStore.editor!.basicInfo.subject" placeholder="请选择学科">
                 <el-option
-                  v-for="cls in availableClasses"
-                  :key="cls.id"
-                  :label="cls.name"
-                  :value="cls.id"
+                  v-for="subject in subjects"
+                  :key="subject"
+                  :label="subject"
+                  :value="subject"
                 />
               </el-select>
             </el-form-item>
+
+            <el-form-item label="适用年级" prop="gradeBand">
+              <el-select v-model="courseStore.editor!.basicInfo.gradeBand" placeholder="请选择年级">
+                <el-option
+                  v-for="grade in gradeBandOptions"
+                  :key="grade.value"
+                  :label="grade.label"
+                  :value="grade.value"
+                />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item label="课程缩略图">
+              <el-upload
+                class="thumbnail-uploader"
+                action="#"
+                :show-file-list="false"
+                :before-upload="beforeThumbnailUpload"
+              >
+                <img v-if="courseStore.editor?.basicInfo.thumbnail" :src="courseStore.editor.basicInfo.thumbnail" class="thumbnail" />
+                <el-icon v-else class="thumbnail-uploader-icon"><Plus /></el-icon>
+              </el-upload>
+            </el-form-item>
           </el-form>
+        </div>
+
+        <!-- Step 2: Five Modules Structure -->
+        <div v-if="currentStep === 1" class="wizard-step">
+          <div class="step-header">
+            <div class="header-text">
+              <h3>五环节课程结构</h3>
+              <p>配置课程的五个核心环节：引入、新知、体验、实验、作业</p>
+            </div>
+          </div>
+
+          <div class="modules-container">
+            <div
+              v-for="(module, key) in courseStore.editor?.fiveModules"
+              :key="key"
+              class="module-card"
+            >
+              <div class="module-header">
+                <div class="module-info">
+                  <el-tag :type="getModuleTagType(module.type)">{{ getModuleTitle(module.type) }}</el-tag>
+                  <span class="module-title">{{ module.title }}</span>
+                </div>
+                <div class="module-duration">
+                  <el-input-number
+                    v-model="module.duration"
+                    :min="1"
+                    :max="120"
+                    size="small"
+                    controls-position="right"
+                  />
+                  <span class="duration-label">分钟</span>
+                </div>
+              </div>
+
+              <div class="module-content">
+                <el-form-item label="学习目标">
+                  <el-input
+                    type="textarea"
+                    v-model="module.objectivesText"
+                    :rows="2"
+                    placeholder="请输入学习目标，每行一个"
+                  />
+                </el-form-item>
+
+                <el-form-item label="AI提示词">
+                  <el-input
+                    type="textarea"
+                    v-model="module.aiHintsText"
+                    :rows="2"
+                    placeholder="请输入AI教学提示，每行一个"
+                  />
+                </el-form-item>
+
+                <el-form-item label="课堂活动">
+                  <el-input
+                    type="textarea"
+                    v-model="module.classroomActionsText"
+                    :rows="2"
+                    placeholder="请输入课堂活动建议，每行一个"
+                  />
+                </el-form-item>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Resources -->
+        <div v-if="currentStep === 2" class="wizard-step">
+          <div class="step-header">
+            <div class="header-text">
+              <h3>教学资源配置</h3>
+              <p>为各环节添加教学资源（视频、图片、文档等）</p>
+            </div>
+          </div>
+
+          <div class="resources-container">
+            <el-tabs v-model="activeResourceTab" type="card">
+              <el-tab-pane
+                v-for="(module, key) in courseStore.editor?.fiveModules"
+                :key="key"
+                :label="getModuleTitle(module.type)"
+                :name="key"
+              >
+                <div class="resource-panel">
+                  <div class="resource-actions">
+                    <el-button type="primary" size="small" @click="openResourceSelector(key)">
+                      <el-icon><Plus /></el-icon>
+                      添加资源
+                    </el-button>
+                  </div>
+
+                  <div class="resource-list">
+                    <div
+                      v-for="resource in module.resources"
+                      :key="resource.id"
+                      class="resource-item"
+                    >
+                      <el-icon class="resource-icon" :color="getResourceTypeColor(resource.type)">
+                        <component :is="getResourceIcon(resource.type)" />
+                      </el-icon>
+                      <div class="resource-info">
+                        <div class="resource-title">{{ resource.title }}</div>
+                        <div class="resource-type">{{ resource.type }}</div>
+                      </div>
+                      <el-button type="danger" size="small" text @click="removeResource(key, resource.id)">
+                        <el-icon><Delete /></el-icon>
+                      </el-button>
+                    </div>
+
+                    <div v-if="module.resources.length === 0" class="empty-resources">
+                      <el-empty description="暂无资源" />
+                    </div>
+                  </div>
+                </div>
+              </el-tab-pane>
+            </el-tabs>
+          </div>
+        </div>
+
+        <!-- Step 4: AI Configuration -->
+        <div v-if="currentStep === 3" class="wizard-step">
+          <div class="step-header">
+            <div class="header-text">
+              <h3>AI辅助教学配置</h3>
+              <p>配置AI教学助手和个性化学习策略</p>
+            </div>
+          </div>
+
+          <el-form :model="aiConfig" label-width="140px">
+            <el-form-item label="AI生成策略">
+              <el-radio-group v-model="aiConfig.generationStrategy">
+                <el-radio label="conservative">保守模式 - 优先准确性</el-radio>
+                <el-radio label="balanced">平衡模式 - 兼顾创新与准确</el-radio>
+                <el-radio label="creative">创新模式 - 鼓励创新内容</el-radio>
+              </el-radio-group>
+            </el-form-item>
+
+            <el-form-item label="评估方式">
+              <el-checkbox-group v-model="aiConfig.assessmentTypes">
+                <el-checkbox label="formative">形成性评估</el-checkbox>
+                <el-checkbox label="summative">总结性评估</el-checkbox>
+                <el-checkbox label="diagnostic">诊断性评估</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+
+            <el-form-item label="干预阈值">
+              <el-slider
+                v-model="aiConfig.interventionThreshold"
+                :min="0"
+                :max="100"
+                :step="10"
+                show-stops
+                show-input
+              />
+            </el-form-item>
+
+            <el-form-item label="学习路径优化">
+              <el-switch v-model="aiConfig.pathOptimization" />
+            </el-form-item>
+
+            <el-form-item label="难度自适应">
+              <el-switch v-model="aiConfig.adaptiveDifficulty" />
+            </el-form-item>
+          </el-form>
+        </div>
+
+        <!-- Step 5: Preview -->
+        <div v-if="currentStep === 4" class="wizard-step">
+          <div class="step-header">
+            <div class="header-text">
+              <h3>课程预览</h3>
+              <p>预览完整的课程结构和配置</p>
+            </div>
+            <div class="preview-actions">
+              <el-button @click="validateCourse">
+                <el-icon><CircleCheck /></el-icon>
+                验证课程
+              </el-button>
+            </div>
+          </div>
+
+          <div class="course-preview">
+            <div class="preview-section">
+              <h4>基本信息</h4>
+              <el-descriptions :column="2" border>
+                <el-descriptions-item label="课程名称">{{ courseStore.editor?.basicInfo.title }}</el-descriptions-item>
+                <el-descriptions-item label="课程代码">{{ courseStore.editor?.basicInfo.code }}</el-descriptions-item>
+                <el-descriptions-item label="学科">{{ courseStore.editor?.basicInfo.subject }}</el-descriptions-item>
+                <el-descriptions-item label="年级">
+                  {{ getGradeLabel(courseStore.editor?.basicInfo.gradeBand) || '未设置' }}
+                </el-descriptions-item>
+                <el-descriptions-item label="总时长" :span="2">{{ totalDuration }}分钟</el-descriptions-item>
+              </el-descriptions>
+            </div>
+
+            <div class="preview-section">
+              <h4>五环节结构</h4>
+              <el-timeline>
+                <el-timeline-item
+                  v-for="(module, key) in courseStore.editor?.fiveModules"
+                  :key="key"
+                  :type="getTimelineType(module.type)"
+                  :size="getTimelineSize(module.type)"
+                >
+                  <div class="timeline-content">
+                    <div class="timeline-header">
+                      <span class="timeline-title">{{ module.title }}</span>
+                      <el-tag size="small">{{ module.duration }}分钟</el-tag>
+                    </div>
+                    <div class="timeline-description">
+                      {{ module.objectives.length }}个学习目标，{{ module.resources.length }}个资源
+                    </div>
+                  </div>
+                </el-timeline-item>
+              </el-timeline>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wizard-sidebar">
+        <div class="quick-actions">
+          <h4>快速操作</h4>
+          <el-button @click="saveAsDraft" :loading="courseStore.loading">
+            <el-icon><Document /></el-icon>
+            保存草稿
+          </el-button>
+          <el-button @click="previewAclContent" type="info">
+            <el-icon><View /></el-icon>
+            预览ACL
+          </el-button>
+        </div>
+
+        <div class="course-summary" v-if="courseStore.editor">
+          <h4>课程摘要</h4>
+          <div class="summary-item">
+            <span class="label">总时长:</span>
+            <span class="value">{{ totalDuration }}分钟</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">环节:</span>
+            <span class="value">5个</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">资源:</span>
+            <span class="value">{{ totalResources }}个</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- 向导操作按钮 -->
-    <div class="wizard-actions">
-      <el-button v-if="currentStep > 0" @click="previousStep">
-        <el-icon><ArrowLeft /></el-icon>
-        上一步
-      </el-button>
-      <el-button
-        v-if="currentStep < steps.length - 1"
-        type="primary"
-        @click="nextStep"
-      >
-        下一步
-        <el-icon><ArrowRight /></el-icon>
-      </el-button>
-      <el-button
-        v-else
-        type="primary"
-        size="large"
-        :loading="publishing"
-        @click="publishCourse"
-      >
-        <el-icon><Check /></el-icon>
-        {{ isEditing ? '更新课程' : '发布课程' }}
-      </el-button>
+    <div class="wizard-footer">
+      <div class="footer-left">
+        <el-button
+          @click="prevStep"
+          :disabled="currentStep === 0"
+          size="large"
+          class="prev-button"
+        >
+          <el-icon><ArrowLeft /></el-icon>
+          上一步
+        </el-button>
+      </div>
+
+      <div class="footer-center">
+        <div class="step-indicator">
+          <span class="current-step">{{ currentStep + 1 }}</span>
+          <span class="total-steps">/ {{ steps.length }}</span>
+        </div>
+      </div>
+
+      <div class="footer-right">
+        <el-button
+          v-if="currentStep < steps.length - 1"
+          type="primary"
+          @click="nextStep"
+          size="large"
+          class="next-button"
+          :loading="loading"
+        >
+          下一步
+          <el-icon><ArrowRight /></el-icon>
+        </el-button>
+
+        <div v-else class="final-actions">
+          <el-button @click="saveAsDraft" :loading="loading" size="large">
+            <el-icon><Document /></el-icon>
+            保存草稿
+          </el-button>
+          <el-button
+            type="primary"
+            @click="createCourse"
+            :loading="loading"
+            size="large"
+            class="create-button"
+          >
+            <el-icon><Check /></el-icon>
+            {{ isEditing ? '更新课程' : '创建课程' }}
+          </el-button>
+        </div>
+      </div>
     </div>
+
+    <!-- Resource Selector Dialog -->
+    <ResourceSelector
+      v-model="resourceSelectorVisible"
+      :module-key="selectedModuleKey"
+      @confirm="handleResourceSelection"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElLoading } from 'element-plus'
 import {
-  Document, Plus, MagicStick, Upload, Delete, Operation, Check, View,
-  Download, ArrowLeft, ArrowRight, Collection
+  Document, MagicStick, Plus, Delete, View, CircleCheck,
+  VideoPlay, Picture, DocumentText, Headphones, Monitor,
+  ArrowLeft, ArrowRight, Check
 } from '@element-plus/icons-vue'
-import draggable from 'vuedraggable'
-import type { Course, CourseSubject, AICourseSuggestion, MultiSubjectTemplate } from '@/types/course'
-import { subjects, grades, suggestedTags, jupyterImages, commonPackages } from '@/config/courseData'
-import EnhancedCourseWizard from '@/components/ai/EnhancedCourseWizard.vue'
+import { aiService } from '@/config/ai-config'
+import { useCourseStore, type ModuleConfig, gradeBandOptions, getGradeLabel } from '@/stores/course'
+import { aclValidator, type AiCourseLayout } from '@reopeninnolab/acl-sdk'
+import ResourceSelector from '@/components/resources/ResourceSelector.vue'
 
 interface Props {
   courseId?: string
@@ -922,439 +421,522 @@ interface Props {
 
 const props = defineProps<Props>()
 const router = useRouter()
+const courseStore = useCourseStore()
 
-// 向导步骤
+// 步骤配置
 const steps = [
   { title: '基本信息', description: '设置课程基本信息' },
-  { title: '章节结构', description: '设计课程章节安排' },
-  { title: '内容设计', description: '编辑章节具体内容' },
-  { title: '预览发布', description: '预览并发布课程' }
+  { title: '五环节结构', description: '配置课程五个核心环节' },
+  { title: '资源配置', description: '添加教学资源' },
+  { title: 'AI配置', description: '配置AI辅助教学' },
+  { title: '预览确认', description: '预览并确认课程' }
 ]
 
-// 响应式数据
+// 状态
 const currentStep = ref(0)
-const isEditing = ref(!!props.courseId)
-const publishing = ref(false)
-const activeChapterTab = ref('')
-const activeEditorTool = ref('knowledge')
-const activePreviewView = ref('info')
-const currentPreviewChapter = ref(0)
-const publishStatus = ref('draft')
-const targetClasses = ref<string[]>([])
-
-// 表单数据
-const courseForm = ref<Course>({
-  info: {
-    id: '',
-    title: '',
-    description: '',
-    subject: 'math' as CourseSubject,
-    grade: '',
-    duration: 1,
-    difficulty: 'beginner',
-    tags: [],
-    coverImage: '',
-    createdBy: '',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    status: 'draft',
-    version: '1.0.0'
-  },
-  chapters: [],
-  settings: {
-    aiEnabled: true,
-    autoSave: true,
-    collaboration: false,
-    publicAccess: false,
-    allowDownload: false,
-    certificateEnabled: false,
-    customization: {
-      theme: 'default',
-      branding: false
-    }
-  }
-})
-
-// AI建议
-const aiSuggestions = ref<AICourseSuggestion[]>([])
-
-// 多学科模板相关
-const showMultiSubjectMode = ref(false)
-const showEnhancedWizard = ref(false)
-const currentMultiSubjectTemplate = ref<MultiSubjectTemplate | null>(null)
-
-// 可用班级
-const availableClasses = ref([
-  { id: 'class1', name: '高一1班' },
-  { id: 'class2', name: '高一2班' },
-  { id: 'class3', name: '高一3班' }
-])
-
-// 编辑器工具
-const editorTools = [
-  { type: 'knowledge', name: '知识内容', icon: 'Document' },
-  { type: 'experiment', name: '实验配置', icon: 'Operation' },
-  { type: 'interactive', name: '互动体验', icon: 'Monitor' },
-  { type: 'assessment', name: '评估设计', icon: 'EditPen' }
-]
-
-// 预览视图
-const previewViews = [
-  { type: 'info', name: '基本信息', icon: 'InfoFilled' },
-  { type: 'structure', name: '章节结构', icon: 'List' },
-  { type: 'full', name: '完整预览', icon: 'View' }
-]
+const aiGenerating = ref(false)
+const loading = ref(false)
+const activeResourceTab = ref('introduction')
+const resourceSelectorVisible = ref(false)
+const selectedModuleKey = ref('')
 
 // 计算属性
-const currentChapter = computed(() => {
-  if (currentPreviewChapter.value >= 0 && currentPreviewChapter.value < courseForm.value.chapters.length) {
-    return courseForm.value.chapters[currentPreviewChapter.value]
-  }
-  return null
+const isEditing = computed(() => !!props.courseId)
+const totalDuration = computed(() => {
+  if (!courseStore.editor?.fiveModules) return 0
+  return Object.values(courseStore.editor.fiveModules)
+    .reduce((total, module) => total + module.duration, 0)
+})
+
+const totalResources = computed(() => {
+  if (!courseStore.editor?.fiveModules) return 0
+  return Object.values(courseStore.editor.fiveModules)
+    .reduce((total, module) => total + module.resources.length, 0)
 })
 
 // 表单验证规则
 const basicInfoRules = {
-  title: [
-    { required: true, message: '请输入课程标题', trigger: 'blur' },
-    { min: 2, max: 100, message: '标题长度在2到100个字符之间', trigger: 'blur' }
-  ],
-  subject: [
-    { required: true, message: '请选择学科', trigger: 'change' }
-  ],
-  grade: [
-    { required: true, message: '请选择年级', trigger: 'change' }
-  ],
-  duration: [
-    { required: true, message: '请输入课时', trigger: 'blur' },
-    { type: 'number', min: 1, max: 200, message: '课时在1到200之间', trigger: 'blur' }
-  ],
-  difficulty: [
-    { required: true, message: '请选择难度等级', trigger: 'change' }
-  ],
-  description: [
-    { required: true, message: '请输入课程描述', trigger: 'blur' },
-    { min: 10, max: 500, message: '描述长度在10到500个字符之间', trigger: 'blur' }
-  ]
+  title: [{ required: true, message: '请输入课程名称', trigger: 'blur' }],
+  code: [{ required: true, message: '请输入课程代码', trigger: 'blur' }],
+  description: [{ required: true, message: '请输入课程描述', trigger: 'blur' }],
+  subject: [{ required: true, message: '请选择学科', trigger: 'change' }],
+  gradeBand: [{ required: true, message: '请选择年级', trigger: 'change' }]
 }
 
-// 方法
-const generateCourseId = () => {
-  return `course_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+// AI配置
+const aiConfig = ref({
+  generationStrategy: 'balanced',
+  assessmentTypes: ['formative'],
+  interventionThreshold: 70,
+  pathOptimization: true,
+  adaptiveDifficulty: true
+})
+
+// 参考数据
+const subjects = ['数学', '物理', '化学', '生物', '语文', '英语', '历史', '地理', '政治']
+
+// 组件引用
+const basicInfoRef = ref()
+
+// 生命周期
+onMounted(async () => {
+  if (props.courseId) {
+    await courseStore.fetchCourseById(props.courseId)
+  } else {
+    courseStore.initializeEditor()
+  }
+})
+
+// 模块辅助方法
+function getModuleTitle(type: string): string {
+  const titles: Record<string, string> = {
+    introduction: '课程引入',
+    knowledge: '新知讲解',
+    experience: '体验理解',
+    experiment: '实验活动',
+    assignment: '作业测试'
+  }
+  return titles[type] || type
 }
 
-const beforeCoverUpload = (file: File) => {
+function getModuleTagType(type: string): string {
+  const types: Record<string, string> = {
+    introduction: 'success',
+    knowledge: 'primary',
+    experience: 'warning',
+    experiment: 'danger',
+    assignment: 'info'
+  }
+  return types[type] || 'info'
+}
+
+function getTimelineType(type: string): string {
+  const types: Record<string, string> = {
+    introduction: 'success',
+    knowledge: 'primary',
+    experience: 'warning',
+    experiment: 'danger',
+    assignment: 'info'
+  }
+  return types[type] || 'primary'
+}
+
+function getTimelineSize(type: string): 'large' | 'normal' {
+  return type === 'experiment' ? 'large' : 'normal'
+}
+
+function getResourceIcon(type: string): any {
+  const icons: Record<string, any> = {
+    video: VideoPlay,
+    image: Picture,
+    document: DocumentText,
+    audio: Headphones,
+    simulation: Monitor
+  }
+  return icons[type] || DocumentText
+}
+
+function getResourceTypeColor(type: string): string {
+  const colors: Record<string, string> = {
+    video: '#409EFF',
+    image: '#67C23A',
+    document: '#E6A23C',
+    audio: '#F56C6C',
+    simulation: '#909399'
+  }
+  return colors[type] || '#909399'
+}
+
+// 步骤控制
+const nextStep = async () => {
+  // 验证当前步骤
+  if (currentStep.value === 0) {
+    // 验证基本信息表单
+    try {
+      await basicInfoRef.value?.validate()
+    } catch (error) {
+      ElMessage.error('请完善必填信息')
+      return
+    }
+
+    // 处理文本数组转换
+    if (courseStore.editor) {
+      Object.values(courseStore.editor.fiveModules).forEach(module => {
+        module.objectives = module.objectivesText ? module.objectivesText.split('\n').filter(Boolean) : []
+        module.aiHints = module.aiHintsText ? module.aiHintsText.split('\n').filter(Boolean) : []
+        module.classroomActions = module.classroomActionsText ? module.classroomActionsText.split('\n').filter(Boolean) : []
+      })
+    }
+  } else if (currentStep.value === 1) {
+    // 验证五环节配置
+    const editor = courseStore.editor
+    if (!editor || !editor.fiveModules) {
+      ElMessage.error('请配置五环节课程结构')
+      return
+    }
+
+    // 检查每个模块是否有标题和时长
+    const modules = Object.values(editor.fiveModules)
+    for (const module of modules) {
+      if (!module.title || module.title.trim() === '') {
+        ElMessage.error('所有环节都需要配置标题')
+        return
+      }
+      if (!module.duration || module.duration <= 0) {
+        ElMessage.error('所有环节都需要配置有效时长')
+        return
+      }
+    }
+  } else if (currentStep.value === 2) {
+    // 验证资源配置
+    const editor = courseStore.editor
+    if (!editor || !editor.fiveModules) return
+
+    // 检查是否有至少一个资源（可选）
+    let totalResources = 0
+    Object.values(editor.fiveModules).forEach(module => {
+      totalResources += module.resources?.length || 0
+    })
+
+    if (totalResources === 0) {
+      ElMessage.warning('建议为各环节添加教学资源')
+    }
+  }
+
+  // 进入下一步
+  if (currentStep.value < steps.length - 1) {
+    currentStep.value++
+  }
+}
+
+const prevStep = () => {
+  currentStep.value--
+}
+
+// 资源管理
+function openResourceSelector(moduleKey: string) {
+  selectedModuleKey.value = moduleKey
+  resourceSelectorVisible.value = true
+}
+
+function handleResourceSelection(resources: any[]) {
+  if (selectedModuleKey.value && courseStore.editor) {
+    const module = courseStore.editor.fiveModules[selectedModuleKey.value as keyof typeof courseStore.editor.fiveModules]
+    module.resources.push(...resources)
+  }
+  resourceSelectorVisible.value = false
+}
+
+function removeResource(moduleKey: string, resourceId: string) {
+  if (courseStore.editor) {
+    const module = courseStore.editor.fiveModules[moduleKey as keyof typeof courseStore.editor.fiveModules]
+    module.resources = module.resources.filter(r => r.id !== resourceId)
+  }
+}
+
+// 缩略图上传
+function beforeThumbnailUpload(file: File) {
   const isImage = file.type.startsWith('image/')
   const isLt2M = file.size / 1024 / 1024 < 2
 
   if (!isImage) {
-    ElMessage.error('上传图片只能是JPG/PNG格式!')
+    ElMessage.error('上传缩略图只能是图片格式!')
     return false
   }
   if (!isLt2M) {
-    ElMessage.error('上传图片大小不能超过2MB!')
+    ElMessage.error('上传缩略图大小不能超过 2MB!')
     return false
   }
+
+  // 创建预览URL
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    if (courseStore.editor) {
+      courseStore.editor.basicInfo.thumbnail = e.target?.result as string
+    }
+  }
+  reader.readAsDataURL(file)
+
   return false // 阻止自动上传
 }
 
-const handleCoverUpload = async (options: any) => {
-  const file = options.file
-  // 这里实现文件上传逻辑
-  const formData = new FormData()
-  formData.append('file', file)
-
-  try {
-    // 模拟上传
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    const imageUrl = URL.createObjectURL(file)
-    courseForm.value.info.coverImage = imageUrl
-    ElMessage.success('封面上传成功')
-  } catch (error) {
-    ElMessage.error('封面上传失败')
-  }
-}
-
-const generateAISuggestions = async () => {
-  try {
-    // 模拟AI建议生成
-    await new Promise(resolve => setTimeout(resolve, 1500))
-
-    aiSuggestions.value = [
-      {
-        title: '高中物理力学基础',
-        description: '从牛顿运动定律开始，通过实验和互动体验深入理解力学原理',
-        targetAudience: '高一学生、物理入门',
-        learningObjectives: ['掌握牛顿三定律', '理解力的概念', '能够解决基本力学问题'],
-        suggestedChapters: [
-          { title: '力的概念', duration: 45, content: '介绍力的定义和分类', type: 'content' },
-          { title: '牛顿第一定律', duration: 30, content: '惯性定律的理解与应用', type: 'content' },
-          { title: '力学实验', duration: 60, content: '通过实验验证定律', type: 'experiment' }
-        ],
-        recommendedResources: [
-          { type: 'video', title: '物理学史', description: '了解牛顿发现定律的历史' },
-          { type: 'simulation', title: '力学模拟器', description: '交互式力学实验' }
-        ]
-      },
-      {
-        title: '数学函数探索',
-        description: '通过可视化和实践，深入理解函数的概念和应用',
-        targetAudience: '高一学生、数学学习',
-        learningObjectives: ['理解函数概念', '掌握常见函数类型', '能够分析函数图像'],
-        suggestedChapters: [
-          { title: '函数的定义', duration: 40, content: '什么是函数', type: 'content' },
-          { title: '函数图像', duration: 50, content: '绘制和分析函数图像', type: 'interactive' },
-          { title: '函数应用', duration: 45, content: '实际问题中的函数', type: 'assessment' }
-        ],
-        recommendedResources: [
-          { type: 'tool', title: '函数绘图工具', description: '在线函数图像绘制' },
-          { type: 'exercise', title: '函数练习题', description: '巩固函数概念' }
-        ]
-      }
-    ]
-
-    ElMessage.success('AI建议生成成功')
-  } catch (error) {
-    ElMessage.error('AI建议生成失败')
-  }
-}
-
-const applySuggestion = (suggestion: AICourseSuggestion) => {
-  courseForm.value.info.title = suggestion.title
-  courseForm.value.info.description = suggestion.description
-  courseForm.value.info.tags = suggestion.targetAudience.split('、')
-
-  // 根据建议生成章节
-  courseForm.value.chapters = suggestion.suggestedChapters.map((chapter, index) => ({
-    id: `chapter_${index}`,
-    order: index,
-    title: chapter.title,
-    description: chapter.content,
-    type: chapter.type,
-    duration: chapter.duration,
-    objectives: suggestion.learningObjectives,
-    aiEnhanced: true
-  }))
-
-  ElMessage.success('已应用AI建议')
-}
-
-// 多学科模板相关方法
-const toggleMultiSubjectMode = () => {
-  showMultiSubjectMode.value = !showMultiSubjectMode.value
-  if (showMultiSubjectMode.value) {
-    showEnhancedWizard.value = true
-  } else {
-    showEnhancedWizard.value = false
-  }
-}
-
-const onMultiSubjectTemplateApplied = (template: MultiSubjectTemplate) => {
-  // 将多学科模板应用到课程表单
-  currentMultiSubjectTemplate.value = template
-
-  // 更新课程基本信息
-  courseForm.value.info.title = template.title
-  courseForm.value.info.description = template.description
-  courseForm.value.info.subject = template.primarySubject
-  courseForm.value.info.duration = template.duration
-  courseForm.value.info.difficulty = template.difficulty
-  courseForm.value.info.tags = template.tags
-
-  // 转换多学科章节数据
-  courseForm.value.chapters = template.chapters.map(chapter => ({
-    id: chapter.id,
-    title: chapter.title,
-    description: chapter.description,
-    type: chapter.type,
-    duration: Math.ceil(chapter.duration / 60), // 转换为小时
-    objectives: chapter.objectives.map(obj => obj.title),
-    aiEnhanced: true,
-    resources: [],
-    assignments: []
-  }))
-
-  // 添加协作计划和评估策略信息
-  if (template.collaborationPlan) {
-    courseForm.value.info.tags.push('协作学习')
+// AI功能
+const generateCourseDesign = async () => {
+  if (!courseStore.editor?.basicInfo.title ||
+      !courseStore.editor?.basicInfo.subject ||
+      !courseStore.editor?.basicInfo.gradeBand) {
+    ElMessage.warning('请先填写课程基本信息')
+    return
   }
 
-  ElMessage.success('多学科模板应用成功')
-  showMultiSubjectMode.value = false
-  showEnhancedWizard.value = false
+  aiGenerating.value = true
 
-  // 自动跳转到下一步
-  if (currentStep.value < steps.length - 1) {
-    currentStep.value++
-  }
-}
-
-const onTemplateSaved = (template: MultiSubjectTemplate) => {
-  ElMessage.success('模板保存成功')
-}
-
-const addChapter = () => {
-  const newChapter = {
-    id: `chapter_${Date.now()}`,
-    order: courseForm.value.chapters.length,
-    title: '',
-    description: '',
-    type: 'content' as const,
-    duration: 45,
-    objectives: [],
-    aiEnhanced: false,
-    content: {},
-    experimentType: 'jupyter',
-    experimentConfig: {
-      image: 'jupyter/scipy-notebook:latest',
-      packages: ['numpy', 'pandas', 'matplotlib'],
-      resources: {
-        cpu: 1,
-        memory: 2,
-        storage: 5
-      }
-    },
-    interactiveFiles: [],
-    interactiveSettings: {
-      fullscreen: true,
-      responsive: true,
-      allowResize: true
-    }
-  }
-
-  courseForm.value.chapters.push(newChapter)
-  activeChapterTab.value = newChapter.id
-}
-
-const removeChapter = (index: number) => {
-  courseForm.value.chapters.splice(index, 1)
-}
-
-const handleChapterReorder = () => {
-  courseForm.value.chapters.forEach((chapter, index) => {
-    chapter.order = index
+  const loading = ElLoading.service({
+    lock: true,
+    text: 'AI正在生成课程设计方案，包含详细推理过程...',
+    background: 'rgba(0, 0, 0, 0.7)'
   })
-}
 
-const nextStep = async () => {
-  if (currentStep.value === 0) {
-    // 验证基本信息
-    try {
-      await (basicInfoRef as any).value.validate()
-    } catch (error) {
-      ElMessage.error('请完善基本信息')
-      return
-    }
-  }
-
-  if (currentStep.value < steps.length - 1) {
-    currentStep.value++
-  }
-}
-
-const previousStep = () => {
-  if (currentStep.value > 0) {
-    currentStep.value--
-  }
-}
-
-const publishCourse = async () => {
   try {
-    publishing.value = true
+    // 构建详细的课程设计提示
+    const gradeLabel = getGradeLabel(courseStore.editor.basicInfo.gradeBand) || courseStore.editor.basicInfo.gradeBand
 
-    // 验证所有必填信息
-    if (!courseForm.value.info.title || !courseForm.value.chapters.length) {
-      ElMessage.error('请完善课程信息并添加至少一个章节')
+    const designPrompt = `请为以下课程设计完整的教学方案：
+
+课程标题：${courseStore.editor.basicInfo.title}
+学科领域：${courseStore.editor.basicInfo.subject}
+年级水平：${gradeLabel}
+课程时长：${totalDuration.value}分钟
+课程描述：${courseStore.editor.basicInfo.description || '无'}
+
+请按照五环节教学结构设计课程：
+
+1. 课程引入 (5分钟)
+   - 设计引人入胜的开场活动
+   - 激发学生学习兴趣
+
+2. 新知讲解 (15分钟)
+   - 核心概念和知识点
+   - 逻辑清晰的结构安排
+
+3. 体验理解 (10分钟)
+   - 互动体验活动设计
+   - 帮助学生深化理解
+
+4. 实验活动 (10分钟)
+   - 实践性操作或模拟实验
+   - 培养动手能力
+
+5. 作业测试 (5分钟)
+   - 检验学习效果
+   - 巩固所学知识
+
+请为每个环节提供：
+- 具体的学习目标 (至少3个)
+- AI教学提示和建议
+- 课堂活动指导
+- 需要的教学资源
+
+请以JSON格式返回设计方案，便于系统集成。`
+
+    // 调用AI服务
+    const response = await aiService.sendMessage(designPrompt, 'course-design', {
+      systemPrompt: `你是一位专业的教学设计师，具有丰富的教育教学经验。
+请详细分析课程设计需求，并提供完整的设计方案。
+返回的JSON格式如下：
+{
+  "title": "课程标题",
+  "description": "课程描述",
+  "modules": {
+    "introduction": {
+      "title": "环节标题",
+      "duration": 5,
+      "objectives": ["目标1", "目标2", "目标3"],
+      "aiHints": ["AI提示1", "AI提示2"],
+      "classroomActions": ["活动1", "活动2"]
+    },
+    // 其他环节...
+  }
+}`,
+      enableReasoning: true,
+      temperature: 0.7,
+      maxTokens: 2000
+    })
+
+    if (response.reasoning_content) {
+      console.log('AI推理过程:', response.reasoning_content)
+      ElMessage({
+        message: 'AI推理过程已生成，查看控制台了解详细分析',
+        type: 'info',
+        duration: 3000
+      })
+    }
+
+    // 解析并应用AI生成的内容
+    if (response.content) {
+      await applyAIGeneratedContent(response.content)
+      ElMessage.success('AI课程设计方案已生成并应用到表单')
+    }
+
+  } catch (error) {
+    console.error('AI课程设计失败:', error)
+    ElMessage.error('AI课程设计失败，请检查网络连接或稍后重试')
+  } finally {
+    loading.close()
+    aiGenerating.value = false
+  }
+}
+
+// 应用AI生成的内容到表单
+async function applyAIGeneratedContent(content: string) {
+  try {
+    // 尝试解析JSON响应
+    let aiDesign: any
+
+    try {
+      aiDesign = JSON.parse(content)
+    } catch (parseError) {
+      console.warn('AI响应不是有效JSON，尝试提取JSON部分:', parseError)
+
+      // 尝试从响应中提取JSON
+      const jsonMatch = content.match(/\{[\s\S]*\}/)
+      if (jsonMatch) {
+        aiDesign = JSON.parse(jsonMatch[0])
+      } else {
+        throw new Error('无法解析AI响应内容')
+      }
+    }
+
+    if (!courseStore.editor) return
+
+    // 更新课程基本信息
+    if (aiDesign.title && !courseStore.editor.basicInfo.title.trim()) {
+      courseStore.editor.basicInfo.title = aiDesign.title
+    }
+
+    if (aiDesign.description && !courseStore.editor.basicInfo.description.trim()) {
+      courseStore.editor.basicInfo.description = aiDesign.description
+    }
+
+    // 应用五环节设计
+    if (aiDesign.modules) {
+      const moduleKeys = ['introduction', 'knowledge', 'experience', 'experiment', 'assignment']
+
+      moduleKeys.forEach(key => {
+        if (aiDesign.modules[key] && courseStore.editor!.fiveModules[key as keyof typeof courseStore.editor.fiveModules]) {
+          const module = courseStore.editor!.fiveModules[key as keyof typeof courseStore.editor.fiveModules]
+          const aiModule = aiDesign.modules[key]
+
+          // 更新标题
+          if (aiModule.title) {
+            module.title = aiModule.title
+          }
+
+          // 更新时长
+          if (aiModule.duration && aiModule.duration > 0) {
+            module.duration = aiModule.duration
+          }
+
+          // 更新学习目标（转换为文本格式）
+          if (aiModule.objectives && Array.isArray(aiModule.objectives)) {
+            module.objectives = aiModule.objectives
+            module.objectivesText = aiModule.objectives.join('\n')
+          }
+
+          // 更新AI提示
+          if (aiModule.aiHints && Array.isArray(aiModule.aiHints)) {
+            module.aiHints = aiModule.aiHints
+            module.aiHintsText = aiModule.aiHints.join('\n')
+          }
+
+          // 更新课堂活动
+          if (aiModule.classroomActions && Array.isArray(aiModule.classroomActions)) {
+            module.classroomActions = aiModule.classroomActions
+            module.classroomActionsText = aiModule.classroomActions.join('\n')
+          }
+        }
+      })
+    }
+
+    console.log('AI设计内容已应用:', aiDesign)
+
+  } catch (error) {
+    console.error('应用AI生成内容失败:', error)
+    ElMessage.warning('AI设计方案生成成功，但应用时出现错误，请手动调整')
+  }
+}
+
+// 保存和创建
+const saveAsDraft = async () => {
+  try {
+    loading.value = true
+
+    if (isEditing.value && props.courseId) {
+      // 编辑模式：先加载课程，然后更新编辑器，最后保存
+      await courseStore.fetchCourseById(props.courseId)
+      await courseStore.saveVersion() // 保存为新版本
+      ElMessage.success('草稿更新成功')
+    } else {
+      // 创建模式：创建新课程
+      const result = await courseStore.createCourse(true) // true表示包含内容
+      ElMessage.success('草稿保存成功')
+      // 跳转到编辑页面
+      router.push(`/courses/${result.course.id}/edit`)
+    }
+  } catch (error) {
+    console.error('保存草稿失败:', error)
+    ElMessage.error('保存失败，请检查网络连接或稍后重试')
+  } finally {
+    loading.value = false
+  }
+}
+
+const createCourse = async () => {
+  try {
+    loading.value = true
+
+    // 最终验证
+    if (!courseStore.editor) {
+      ElMessage.error('课程编辑器未初始化')
       return
     }
 
-    // 模拟发布过程
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    if (isEditing.value && props.courseId) {
+      // 编辑模式：保存版本并发布
+      await courseStore.fetchCourseById(props.courseId)
+      await courseStore.saveVersion()
+      await courseStore.publishCourse()
+      ElMessage.success('课程更新并发布成功')
+    } else {
+      // 创建模式：创建并发布
+      const result = await courseStore.createCourse(true) // true表示包含内容
+      await courseStore.publishCourse()
+      ElMessage.success('课程创建并发布成功')
 
-    courseForm.value.info.id = courseForm.value.info.id || generateCourseId()
-    courseForm.value.info.status = publishStatus.value === 'published' ? 'published' : 'draft'
-    courseForm.value.info.updatedAt = new Date()
-
-    ElMessage.success(`课程${publishStatus.value === 'published' ? '发布' : '保存'}成功！`)
-
-    // 跳转到课程详情页
-    router.push(`/courses/${courseForm.value.info.id}`)
+      // 跳转到课程详情页
+      router.push(`/courses/${result.course.id}`)
+    }
   } catch (error) {
-    ElMessage.error('发布失败，请重试')
+    console.error('创建课程失败:', error)
+    ElMessage.error('创建失败，请检查信息是否完整或稍后重试')
   } finally {
-    publishing.value = false
+    loading.value = false
   }
 }
 
-// 工具方法
-const getSubjectLabel = (subject: CourseSubject) => {
-  const subjectMap = {
-    chinese: '语文',
-    math: '数学',
-    english: '英语',
-    physics: '物理',
-    chemistry: '化学',
-    biology: '生物',
-    history: '历史',
-    geography: '地理',
-    politics: '政治',
-    art: '艺术',
-    music: '音乐',
-    pe: '体育',
-    it: '信息技术',
-    comprehensive: '综合实践'
+
+// 验证和预览
+const validateCourse = () => {
+  const aclContent = courseStore.generateAclFromEditor()
+  if (!aclContent) {
+    ElMessage.error('无法生成ACL内容')
+    return
   }
-  return subjectMap[subject] || subject
+
+  const validation = aclValidator.validate(aclContent)
+  if (validation.isValid) {
+    ElMessage.success('课程验证通过')
+  } else {
+    ElMessage.error(`课程验证失败：${validation.errors.slice(0, 3).map(e => e.message).join(', ')}`)
+  }
 }
 
-const getDifficultyLabel = (difficulty: string) => {
-  const labels = {
-    beginner: '入门',
-    intermediate: '进阶',
-    advanced: '高级'
+const previewAclContent = () => {
+  const aclContent = courseStore.generateAclFromEditor()
+  if (aclContent) {
+    console.log('ACL Content:', JSON.stringify(aclContent, null, 2))
+    ElMessage.success('ACL内容已在控制台输出')
+  } else {
+    ElMessage.error('无法生成ACL内容')
   }
-  return labels[difficulty as keyof typeof labels] || difficulty
 }
-
-const getChapterTypeLabel = (type: string) => {
-  const labels = {
-    content: '知识讲授',
-    experiment: '实验操作',
-    interactive: '互动体验',
-    assessment: '考核评估'
-  }
-  return labels[type as keyof typeof labels] || type
-}
-
-const getChapterTypeColor = (type: string) => {
-  const colors = {
-    content: '',
-    experiment: 'success',
-    interactive: 'warning',
-    assessment: 'info'
-  }
-  return colors[type as keyof typeof colors] || ''
-}
-
-// 生命周期
-onMounted(() => {
-  if (props.courseId) {
-    // 加载现有课程数据
-    console.log('Loading course:', props.courseId)
-  }
-
-  // 如果有章节，设置第一个为激活状态
-  if (courseForm.value.chapters.length > 0) {
-    activeChapterTab.value = courseForm.value.chapters[0].id
-  }
-})
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .course-wizard {
-  max-width: 1200px;
-  margin: 0 auto;
   padding: var(--spacing-lg);
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .wizard-header {
@@ -1365,554 +947,550 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--edu-text-primary);
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-xl);
+  color: var(--color-text-primary);
 }
 
 .wizard-progress {
-  margin-bottom: var(--spacing-lg);
+  margin-top: var(--spacing-lg);
+}
+
+.wizard-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
 }
 
 .wizard-content {
-  background: var(--edu-bg-primary);
-  border-radius: var(--edu-radius-lg);
-  box-shadow: var(--edu-shadow-sm);
-  border: 1px solid var(--edu-border-light);
-  padding: var(--spacing-xl);
-  margin-bottom: var(--spacing-xl);
-}
-
-.wizard-step {
-  .step-header {
-    margin-bottom: var(--spacing-xl);
-    padding-bottom: var(--spacing-base);
-    border-bottom: 1px solid var(--edu-border-light);
-
-    h3 {
-      font-size: var(--font-size-xl);
-      font-weight: var(--font-weight-semibold);
-      color: var(--edu-text-primary);
-      margin-bottom: var(--spacing-xs);
-    }
-
-    p {
-      color: var(--edu-text-secondary);
-      margin: 0;
-    }
-  }
-}
-
-.wizard-form {
-  .subject-option {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-  }
-
-  .unit {
-    margin-left: var(--spacing-xs);
-    color: var(--edu-text-secondary);
-    font-size: var(--font-size-sm);
-  }
-
-  .tag-select {
-    width: 100%;
-  }
-}
-
-.cover-uploader {
-  .cover-preview {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: var(--edu-radius-base);
-  }
-
-  .cover-upload-btn {
-    width: 100%;
-    height: 200px;
-    border: 2px dashed var(--edu-border-base);
-    border-radius: var(--edu-radius-base);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
-
-    &:hover {
-      border-color: var(--edu-primary-500);
-      background-color: var(--edu-primary-50);
-    }
-
-    .el-icon {
-      font-size: var(--font-size-2xl);
-      color: var(--edu-text-secondary);
-      margin-bottom: var(--spacing-sm);
-    }
-  }
-}
-
-.ai-suggestions {
-  margin-top: var(--spacing-lg);
+  background: var(--color-background);
+  border-radius: var(--border-radius-lg);
   padding: var(--spacing-lg);
-  background: var(--edu-primary-50);
-  border-radius: var(--edu-radius-lg);
-  border: 1px solid var(--edu-primary-200);
+  box-shadow: var(--shadow-sm);
+}
 
-  .suggestions-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--spacing-base);
+.wizard-sidebar {
+  background: var(--color-background);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  height: fit-content;
+}
 
-    .suggestion-actions {
-      display: flex;
-      gap: var(--spacing-sm);
-    }
+.step-header {
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+}
+
+.header-text h3 {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
+}
+
+.header-text p {
+  margin: 0;
+  color: var(--color-text-regular);
+  font-size: var(--font-size-sm);
+}
+
+.ai-actions {
+  flex-shrink: 0;
+}
+
+.step-header h3 {
+  margin: 0 0 var(--spacing-xs) 0;
+  color: var(--color-text-primary);
+}
+
+.step-header p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.wizard-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xl) var(--spacing-2xl);
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(249, 250, 251, 0.9) 100%
+  );
+  border-top: 1px solid rgba(229, 231, 235, 0.6);
+  border-radius: 0 0 var(--border-radius-xl) var(--border-radius-xl);
+  backdrop-filter: blur(12px);
+  box-shadow:
+    0 -4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 -2px 4px -1px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+}
+
+.footer-left,
+.footer-right {
+  flex: 1;
+}
+
+.footer-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-weight: 600;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
+}
+
+.current-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 var(--spacing-sm);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #4f46e5 100%);
+  color: white;
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-sm);
+  box-shadow: 0 2px 4px rgba(79, 70, 229, 0.3);
+}
+
+.total-steps {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.prev-button,
+.next-button {
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.next-button {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #4f46e5 100%);
+  border: none;
+  box-shadow:
+    0 4px 6px -1px rgba(79, 70, 229, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.1);
+}
+
+.next-button:hover:not(.is-loading) {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 12px -1px rgba(79, 70, 229, 0.4),
+    0 4px 8px -1px rgba(0, 0, 0, 0.15);
+}
+
+.final-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.create-button {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  box-shadow:
+    0 4px 6px -1px rgba(16, 185, 129, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.create-button:hover:not(.is-loading) {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 12px -1px rgba(16, 185, 129, 0.4),
+    0 4px 8px -1px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.create-button:active:not(.is-loading) {
+  transform: translateY(0);
+}
+
+/* AI设计按钮样式 */
+.ai-design-button {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  box-shadow:
+    0 4px 6px -1px rgba(139, 92, 246, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-design-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.ai-design-button:hover:not(.is-loading) {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 12px -1px rgba(139, 92, 246, 0.4),
+    0 4px 8px -1px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}
+
+.ai-design-button:hover:not(.is-loading)::before {
+  left: 100%;
+}
+
+.ai-design-button:active:not(.is-loading) {
+  transform: translateY(0);
+}
+
+/* AI动画效果 */
+.ai-design-button .el-icon {
+  animation: aiPulse 2s infinite;
+}
+
+@keyframes aiPulse {
+  0%, 100% {
+    opacity: 1;
   }
-
-  .multi-subject-mode {
-    margin-top: var(--spacing-base);
-  }
-
-  .suggestions-header {
-    span {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-xs);
-      font-weight: var(--font-weight-medium);
-      color: var(--edu-primary-600);
-    }
-  }
-
-  .suggestions-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-base);
-  }
-
-  .suggestion-item {
-    background: white;
-    padding: var(--spacing-base);
-    border-radius: var(--edu-radius-base);
-    border: 1px solid var(--edu-primary-200);
-    cursor: pointer;
-    transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
-
-    &:hover {
-      box-shadow: var(--edu-shadow-md);
-      transform: translateY(-2px);
-    }
-
-    h4 {
-      margin: 0 0 var(--spacing-sm) 0;
-      color: var(--edu-text-primary);
-    }
-
-    p {
-      margin: 0 0 var(--spacing-sm) 0;
-      color: var(--edu-text-secondary);
-      font-size: var(--font-size-sm);
-    }
-
-    .suggestion-tags {
-      display: flex;
-      gap: var(--spacing-xs);
-      flex-wrap: wrap;
-    }
+  50% {
+    opacity: 0.6;
   }
 }
 
-.chapter-structure {
-  .structure-toolbar {
-    display: flex;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-lg);
-  }
-
-  .chapters-list {
-    .chapter-item {
-      background: var(--edu-bg-secondary);
-      border: 1px solid var(--edu-border-light);
-      border-radius: var(--edu-radius-lg);
-      padding: var(--spacing-lg);
-      margin-bottom: var(--spacing-base);
-      transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
-
-      &:hover {
-        box-shadow: var(--edu-shadow-md);
-      }
-
-      &.is-ai-enhanced {
-        border-color: var(--edu-primary-300);
-        background: var(--edu-primary-50);
-      }
-
-      .chapter-header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        margin-bottom: var(--spacing-base);
-
-        .chapter-info {
-          flex: 1;
-          display: flex;
-          align-items: center;
-          gap: var(--spacing-sm);
-
-          .chapter-number {
-            font-weight: var(--font-weight-semibold);
-            color: var(--edu-primary-600);
-            min-width: 60px;
-          }
-
-          .title-input {
-            flex: 1;
-            min-width: 200px;
-          }
-        }
-
-        .chapter-actions {
-          display: flex;
-          gap: var(--spacing-xs);
-        }
-      }
-
-      .chapter-content {
-        .chapter-meta {
-          display: flex;
-          gap: var(--spacing-lg);
-          margin-top: var(--spacing-sm);
-
-          .meta-item {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-
-            label {
-              font-size: var(--font-size-sm);
-              color: var(--edu-text-secondary);
-              min-width: 80px;
-            }
-          }
-        }
-      }
-    }
-  }
+.quick-actions h4 {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--color-text-primary);
 }
 
-.content-design {
-  .editor-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--spacing-base);
-    background: var(--edu-bg-secondary);
-    border-radius: var(--edu-radius-lg) var(--edu-radius-lg) 0 0;
-    border: 1px solid var(--edu-border-light);
-    border-bottom: none;
-  }
+/* 新增样式 */
+.modules-container {
+  display: grid;
+  gap: var(--spacing-lg);
+}
 
-  .editor-content {
-    border: 1px solid var(--edu-border-light);
-    border-radius: 0 0 var(--edu-radius-lg) var(--edu-radius-lg);
-    background: white;
-    min-height: 500px;
-  }
+.module-card {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  transition: all 0.3s ease;
+}
 
-  .chapter-editor {
-    .section-title {
-      font-size: var(--font-size-lg);
-      font-weight: var(--font-weight-semibold);
-      color: var(--edu-text-primary);
-      margin: var(--spacing-lg) var(--spacing-lg) var(--spacing-base) var(--spacing-lg);
-      padding-bottom: var(--spacing-sm);
-      border-bottom: 1px solid var(--edu-border-light);
-    }
+.module-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
 
-    .concepts-list,
-    .examples-list {
-      padding: 0 var(--spacing-lg) var(--spacing-lg);
+.module-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border-light);
+}
 
-      .concept-item,
-      .example-item {
-        background: var(--edu-bg-secondary);
-        border: 1px solid var(--edu-border-light);
-        border-radius: var(--edu-radius-base);
-        padding: var(--spacing-base);
-        margin-bottom: var(--spacing-sm);
+.module-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
 
-        .concept-name,
-        .example-title {
-          margin-bottom: var(--spacing-sm);
-        }
-      }
-    }
+.module-title {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
 
-    .experiment-type-selector {
-      padding: var(--spacing-lg);
-    }
+.module-duration {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
 
-    .ai-prompt-section {
-      padding: var(--spacing-lg);
+.duration-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
 
-      .ai-options {
-        margin: var(--spacing-base) 0;
-        display: flex;
-        gap: var(--spacing-lg);
-      }
-    }
+.module-content {
+  display: grid;
+  gap: var(--spacing-md);
+}
 
-    .upload-section {
-      padding: var(--spacing-lg);
-    }
-  }
+.resources-container {
+  min-height: 400px;
+}
+
+.resource-panel {
+  padding: var(--spacing-md);
+}
+
+.resource-actions {
+  margin-bottom: var(--spacing-md);
+}
+
+.resource-list {
+  display: grid;
+  gap: var(--spacing-sm);
+  min-height: 200px;
+}
+
+.resource-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--color-background);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius-sm);
+  transition: all 0.3s ease;
+}
+
+.resource-item:hover {
+  background: var(--color-background-light);
+}
+
+.resource-icon {
+  font-size: 18px;
+}
+
+.resource-info {
+  flex: 1;
+}
+
+.resource-title {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.resource-type {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.empty-resources {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+}
+
+.course-preview {
+  display: grid;
+  gap: var(--spacing-xl);
 }
 
 .preview-section {
-  margin-bottom: var(--spacing-xl);
-
-  .preview-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-lg);
-  }
-
-  .preview-content {
-    background: var(--edu-bg-secondary);
-    border-radius: var(--edu-radius-lg);
-    padding: var(--spacing-lg);
-    min-height: 400px;
-  }
-}
-
-.course-preview-info {
-  .preview-card {
-    background: white;
-    border-radius: var(--edu-radius-lg);
-    border: 1px solid var(--edu-border-light);
-    overflow: hidden;
-
-    .card-header {
-      display: flex;
-      gap: var(--spacing-lg);
-      padding: var(--spacing-lg);
-
-      .cover-image {
-        width: 200px;
-        height: 150px;
-        object-fit: cover;
-        border-radius: var(--edu-radius-base);
-      }
-
-      .header-info {
-        flex: 1;
-
-        h2 {
-          margin: 0 0 var(--spacing-sm) 0;
-        }
-
-        p {
-          color: var(--edu-text-secondary);
-          margin-bottom: var(--spacing-base);
-        }
-
-        .meta-info {
-          display: flex;
-          gap: var(--spacing-sm);
-          flex-wrap: wrap;
-        }
-      }
-    }
-
-    .card-content {
-      padding: 0 var(--spacing-lg) var(--spacing-lg);
-
-      h3 {
-        margin-bottom: var(--spacing-sm);
-      }
-
-      .tags-list {
-        display: flex;
-        gap: var(--spacing-xs);
-        flex-wrap: wrap;
-
-        .tag-item {
-          margin: 0;
-        }
-      }
-    }
-  }
-}
-
-.course-preview-structure {
-  .timeline {
-    position: relative;
-
-    .timeline-item {
-      display: flex;
-      margin-bottom: var(--spacing-lg);
-
-      .timeline-marker {
-        position: relative;
-        width: 24px;
-        margin-right: var(--spacing-lg);
-
-        .marker-dot {
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          border: 3px solid var(--edu-border-light);
-
-          &.marker-content {
-            background: var(--edu-primary-500);
-            border-color: var(--edu-primary-500);
-          }
-
-          &.marker-experiment {
-            background: var(--edu-success);
-            border-color: var(--edu-success);
-          }
-
-          &.marker-interactive {
-            background: var(--edu-warning);
-            border-color: var(--edu-warning);
-          }
-
-          &.marker-assessment {
-            background: var(--edu-info);
-            border-color: var(--edu-info);
-          }
-        }
-
-        .marker-line {
-          position: absolute;
-          top: 24px;
-          left: 10px;
-          width: 2px;
-          height: calc(100% + var(--spacing-lg));
-          background: var(--edu-border-light);
-        }
-      }
-
-      .timeline-content {
-        flex: 1;
-
-        .chapter-preview-card {
-          background: white;
-          border: 1px solid var(--edu-border-light);
-          border-radius: var(--edu-radius-lg);
-          padding: var(--spacing-lg);
-
-          .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: var(--spacing-sm);
-
-            h4 {
-              margin: 0;
-              color: var(--edu-text-primary);
-            }
-
-            .chapter-meta {
-              display: flex;
-              align-items: center;
-              gap: var(--spacing-sm);
-
-              .duration {
-                font-size: var(--font-size-sm);
-                color: var(--edu-text-secondary);
-              }
-            }
-          }
-
-          p {
-            color: var(--edu-text-secondary);
-            margin-bottom: var(--spacing-sm);
-          }
-
-          .objectives {
-            strong {
-              color: var(--edu-text-primary);
-            }
-
-            ul {
-              margin: var(--spacing-xs) 0 0 var(--spacing-lg);
-              padding-left: var(--spacing-lg);
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-.publish-settings {
-  background: var(--edu-bg-secondary);
-  border-radius: var(--edu-radius-lg);
+  background: var(--color-background);
+  border-radius: var(--border-radius-md);
   padding: var(--spacing-lg);
-  border: 1px solid var(--edu-border-light);
-
-  h3 {
-    margin: 0 0 var(--spacing-lg) 0;
-    color: var(--edu-text-primary);
-  }
+  border: 1px solid var(--color-border);
 }
 
-.wizard-actions {
+.preview-section h4 {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-lg);
+}
+
+.timeline-content {
+  display: grid;
+  gap: var(--spacing-xs);
+}
+
+.timeline-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* 深色模式适配 */
-[data-theme="dark"] {
-  .wizard-content,
-  .preview-section .preview-content,
-  .publish-settings {
-    background: var(--edu-bg-primary);
-    border-color: var(--edu-border-dark);
-  }
+.timeline-title {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
 
-  .suggestion-item,
-  .chapter-item,
-  .chapter-preview-card {
-    background: var(--edu-bg-secondary);
-    border-color: var(--edu-border-dark);
-  }
+.timeline-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.course-summary {
+  margin-top: var(--spacing-xl);
+  padding: var(--spacing-md);
+  background: var(--color-background-light);
+  border-radius: var(--border-radius-md);
+}
+
+.course-summary h4 {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--color-text-primary);
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xs) 0;
+}
+
+.summary-item .label {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.summary-item .value {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.thumbnail-uploader {
+  display: inline-block;
+}
+
+.thumbnail-uploader :deep(.el-upload) {
+  border: 1px dashed var(--color-border);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.thumbnail-uploader :deep(.el-upload:hover) {
+  border-color: var(--color-primary);
+}
+
+.thumbnail-uploader-icon {
+  font-size: 28px;
+  color: var(--color-text-secondary);
+  width: 120px;
+  height: 120px;
+  text-align: center;
+  line-height: 120px;
+}
+
+.thumbnail {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  display: block;
 }
 
 /* 响应式设计 */
+@media (max-width: 1024px) {
+  .wizard-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .wizard-sidebar {
+    order: -1;
+  }
+}
+
 @media (max-width: 768px) {
   .course-wizard {
-    padding: var(--spacing-base);
+    padding: var(--spacing-md);
   }
 
-  .wizard-content {
-    padding: var(--spacing-base);
+  .wizard-layout {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
   }
 
-  .structure-toolbar,
-  .preview-toolbar {
-    flex-direction: column;
-    gap: var(--spacing-sm);
-    align-items: stretch;
+  .wizard-content,
+  .wizard-sidebar {
+    padding: var(--spacing-md);
   }
 
-  .chapter-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-sm);
-  }
-
-  .card-header {
+  .module-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .resource-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+
+  .timeline-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+
+  .wizard-footer {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+}
+
+/* 动画效果 */
+.module-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.resource-item {
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 </style>

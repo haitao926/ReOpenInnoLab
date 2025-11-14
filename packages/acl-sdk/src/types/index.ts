@@ -94,11 +94,9 @@ export interface BaseCourseNode {
 export type CourseNode = BaseCourseNode & (
   | { type: 'introduction'; content: IntroductionContent }
   | { type: 'knowledge'; content: KnowledgeContent }
-  | { type: 'activity'; content: ActivityContent }
+  | { type: 'experience'; content: ExperienceContent }
   | { type: 'experiment'; content: ExperimentContent }
-  | { type: 'interaction'; content: InteractionContent }
   | { type: 'assignment'; content: AssignmentContent }
-  | { type: 'assessment'; content: AssessmentContent }
   | { type: 'chapter'; children: CourseStructure } & BaseCourseNode
 )
 
@@ -107,14 +105,12 @@ export type CourseStructure = CourseNode[]
 
 // 节点类型
 export type NodeType =
-  | 'introduction'  // 导入
+  | 'introduction'  // 课程引入
   | 'chapter'       // 章节
-  | 'knowledge'     // 知识讲授
-  | 'activity'      // 活动
-  | 'experiment'    // 实验
-  | 'interaction'   // 交互体验
-  | 'assignment'    // 作业
-  | 'assessment'    // 评估
+  | 'knowledge'     // 新知讲解
+  | 'experience'    // 体验理解
+  | 'experiment'    // 实验活动
+  | 'assignment'    // 作业测试
 
 // AI策略
 export interface AIStrategy {
@@ -152,12 +148,14 @@ export interface KnowledgeContent {
   checkpoints?: Checkpoint[]
 }
 
-export interface ActivityContent {
-  activityType: 'individual' | 'group' | 'class'
+export interface ExperienceContent {
+  experienceType: 'interactive' | 'simulation' | 'game' | 'vr'
   instructions: string
   materials?: string[]
   duration: number
-  collaborationLevel: 'low' | 'medium' | 'high'
+  interactionLevel: 'low' | 'medium' | 'high'
+  previewConfig?: PreviewConfig
+  tracking?: TrackingConfig
 }
 
 export interface ExperimentContent {
@@ -168,25 +166,15 @@ export interface ExperimentContent {
   safetyLevel: 'safe' | 'moderate' | 'high'
 }
 
-export interface InteractionContent {
-  interactionType: 'html' | 'simulation' | 'game' | 'vr'
-  content: string
-  previewConfig?: PreviewConfig
-  tracking?: TrackingConfig
-}
+// 交互内容已整合到ExperienceContent中
 
 export interface AssignmentContent {
   assignmentType: 'quiz' | 'essay' | 'project' | 'presentation'
   questions?: Question[]
   rubric?: Rubric
   submissionFormat: string[]
-}
-
-export interface AssessmentContent {
-  assessmentType: 'quiz' | 'test' | 'portfolio' | 'performance'
-  questions: Question[]
-  timeLimit?: number
-  passingScore?: number
+  instantFeedback?: boolean
+  aiGrading?: boolean
 }
 
 // 媒体内容
@@ -435,6 +423,7 @@ export interface ParseOptions {
   allowUnknownFields?: boolean
   validateReferences?: boolean
   maxFileSize?: number
+  allowComments?: boolean
 }
 
 // 导出选项

@@ -7,7 +7,6 @@ import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
 import { aclSchema } from './schemas/index'
 import {
-  AiCourseLayout,
   ValidationResult,
   ValidationError,
   ValidationWarning,
@@ -18,8 +17,8 @@ import {
  * ACL验证器类
  */
 export class ACLValidator {
-  private ajv: Ajv
-  private schemaValidator: Ajv.ValidateFunction
+  private ajv: any
+  private schemaValidator: any
   private rules: ValidationRule[]
 
   constructor() {
@@ -221,7 +220,12 @@ class StructureValidationRule implements ValidationRule {
         code: 'INVALID_ROOT_TYPE',
         severity: 'error'
       })
-      return { isValid: false, errors, warnings }
+      return { isValid: false, errors, warnings, summary: {
+        totalErrors: errors.length,
+        totalWarnings: warnings.length,
+        schemaVersion: '1.0.0',
+        validatedAt: new Date().toISOString()
+      } }
     }
 
     // 验证必需字段
@@ -260,11 +264,17 @@ class StructureValidationRule implements ValidationRule {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
+      summary: {
+        totalErrors: errors.length,
+        totalWarnings: warnings.length,
+        schemaVersion: '1.0.0',
+        validatedAt: new Date().toISOString()
+      }
     }
   }
 
-  private validateMeta(meta: any, errors: ValidationError[], warnings: ValidationWarning[]): void {
+  private validateMeta(meta: any, errors: ValidationError[], _warnings: ValidationWarning[]): void {
     // 验证ID
     if (!meta.id || typeof meta.id !== 'string') {
       errors.push({
@@ -488,7 +498,7 @@ class StructureValidationRule implements ValidationRule {
     }
   }
 
-  private validateResourceRefs(resourceRefs: any, errors: ValidationError[], warnings: ValidationWarning[]): void {
+  private validateResourceRefs(resourceRefs: any, errors: ValidationError[], _warnings: ValidationWarning[]): void {
     if (!Array.isArray(resourceRefs)) {
       errors.push({
         path: 'resourceRefs',
@@ -570,14 +580,20 @@ class BusinessRuleValidationRule implements ValidationRule {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
+      summary: {
+        totalErrors: errors.length,
+        totalWarnings: warnings.length,
+        schemaVersion: '1.0.0',
+        validatedAt: new Date().toISOString()
+      }
     }
   }
 
   private validateGradeSubjectMatch(
     subject: string,
     grade: string,
-    errors: ValidationError[],
+    _errors: ValidationError[],
     warnings: ValidationWarning[]
   ): void {
     // 这里可以添加年级与学科的匹配规则
@@ -601,7 +617,7 @@ class BusinessRuleValidationRule implements ValidationRule {
 
   private validateTotalDuration(
     structure: any[],
-    errors: ValidationError[],
+    _errors: ValidationError[],
     warnings: ValidationWarning[]
   ): void {
     if (!Array.isArray(structure)) return
@@ -645,7 +661,7 @@ class BusinessRuleValidationRule implements ValidationRule {
   private validateLearningObjectiveCoverage(
     structure: any[],
     learningObjectives: any[],
-    errors: ValidationError[],
+    _errors: ValidationError[],
     warnings: ValidationWarning[]
   ): void {
     if (!Array.isArray(learningObjectives) || learningObjectives.length === 0) return
@@ -712,7 +728,13 @@ class ContentQualityValidationRule implements ValidationRule {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
+      summary: {
+        totalErrors: errors.length,
+        totalWarnings: warnings.length,
+        schemaVersion: '1.0.0',
+        validatedAt: new Date().toISOString()
+      }
     }
   }
 
@@ -754,7 +776,7 @@ class ContentQualityValidationRule implements ValidationRule {
 
   private validateDescriptionQuality(
     description: string,
-    errors: ValidationError[],
+    _errors: ValidationError[],
     warnings: ValidationWarning[]
   ): void {
     if (!description || typeof description !== 'string') {
@@ -788,7 +810,7 @@ class ContentQualityValidationRule implements ValidationRule {
 
   private validateStructureBalance(
     structure: any[],
-    errors: ValidationError[],
+    _errors: ValidationError[],
     warnings: ValidationWarning[]
   ): void {
     if (!Array.isArray(structure) || structure.length === 0) return
@@ -821,7 +843,7 @@ class ContentQualityValidationRule implements ValidationRule {
 
     // 检查活动类型的多样性
     const activityTypes = ['knowledge', 'activity', 'experiment', 'interaction', 'assignment']
-    const presentActivities = activityTypes.filter(type => nodeTypes[type] > 0)
+    const presentActivities = activityTypes.filter(type => (nodeTypes[type] || 0) > 0)
 
     if (presentActivities.length < 2) {
       warnings.push({
@@ -891,7 +913,13 @@ class ReferenceIntegrityValidationRule implements ValidationRule {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
+      summary: {
+        totalErrors: errors.length,
+        totalWarnings: warnings.length,
+        schemaVersion: '1.0.0',
+        validatedAt: new Date().toISOString()
+      }
     }
   }
 
@@ -974,7 +1002,13 @@ class PerformanceValidationRule implements ValidationRule {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
+      summary: {
+        totalErrors: errors.length,
+        totalWarnings: warnings.length,
+        schemaVersion: '1.0.0',
+        validatedAt: new Date().toISOString()
+      }
     }
   }
 

@@ -2,13 +2,15 @@
   <TeacherWorkspaceLayout
     title="学习分析"
     subtitle="查看课程成效、学生表现与 AI 辅助使用情况"
+    v-model:leftCollapsed="leftSidebarCollapsed"
+    v-model:rightCollapsed="rightSidebarCollapsed"
   >
     <!-- 头部控件 -->
     <template #header-controls>
       <el-select v-model="selectedRange" placeholder="选择时间范围" size="large">
-        <el-option label="本周" value="7d" />
-        <el-option label="本月" value="30d" />
-        <el-option label="本学期" value="120d" />
+        <el-option label="本周" value="7d"></el-option>
+        <el-option label="本月" value="30d"></el-option>
+        <el-option label="本学期" value="120d"></el-option>
       </el-select>
     </template>
 
@@ -17,14 +19,14 @@
       <div class="summary-cards">
         <div v-for="card in summaryCards" :key="card.id" class="summary-card">
           <div class="summary-icon" :style="{ background: card.gradient }">
-            <el-icon><component :is="card.icon" /></el-icon>
+            <el-icon><component :is="card.icon"></component></el-icon>
           </div>
           <div class="summary-content">
             <div class="summary-label">{{ card.label }}</div>
             <div class="summary-value">{{ card.value }}</div>
             <div class="summary-trend" :class="{ 'is-up': card.trend >= 0, 'is-down': card.trend < 0 }">
-              <el-icon><component :is="card.trend >= 0 ? 'CaretTop' : 'CaretBottom'" /></el-icon>
-              {{ Math.abs(card.trend) }}% vs. 上周期
+              <el-icon><component :is="card.trend >= 0 ? 'CaretTop' : 'CaretBottom'"></component></el-icon>
+              {{ Math.abs(card.trend) }}&#37; vs. 上周期
             </div>
           </div>
         </div>
@@ -33,25 +35,32 @@
 
     <!-- 左侧筛选栏 -->
     <template #left>
-      <div class="analytics-filters">
+      <ManagementSidebarLeft
+        :sections="leftSidebarSections"
+        @quick-action="handleQuickAction"
+        @filter-change="handleFilterChange"
+      >
+        <!-- 自定义筛选器插槽 -->
+        <template #filters="{ data }">
+          <div class="analytics-filters">
         <div class="filter-section">
           <h4 class="filter-title">分析视角</h4>
           <div class="perspective-tabs">
             <el-radio-group v-model="selectedPerspective" direction="vertical" size="small">
               <el-radio-button value="course">
-                <el-icon><Reading /></el-icon>
+                <el-icon><Reading></Reading></el-icon>
                 课程分析
               </el-radio-button>
               <el-radio-button value="class">
-                <el-icon><UserFilled /></el-icon>
+                <el-icon><UserFilled></UserFilled></el-icon>
                 班级分析
               </el-radio-button>
               <el-radio-button value="student">
-                <el-icon><Avatar /></el-icon>
+                <el-icon><Avatar></Avatar></el-icon>
                 学生分析
               </el-radio-button>
               <el-radio-button value="ai">
-                <el-icon><MagicStick /></el-icon>
+                <el-icon><MagicStick></MagicStick></el-icon>
                 AI 使用分析
               </el-radio-button>
             </el-radio-group>
@@ -78,19 +87,19 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             style="width: 100%; margin-top: 8px"
-          />
+          ></el-date-picker>
         </div>
 
         <div class="filter-section">
           <h4 class="filter-title">学科筛选</h4>
           <el-select v-model="selectedSubject" placeholder="选择学科" style="width: 100%">
-            <el-option label="全部学科" value="all" />
+            <el-option label="全部学科" value="all"></el-option>
             <el-option
               v-for="subject in subjects"
               :key="subject.value"
               :label="subject.label"
               :value="subject.value"
-            />
+            ></el-option>
           </el-select>
         </div>
 
@@ -104,13 +113,81 @@
               placeholder="选择对比指标"
               style="width: 100%; margin-top: 8px"
             >
-              <el-option label="完成率" value="completion" />
-              <el-option label="平均分" value="average" />
-              <el-option label="活跃度" value="activity" />
+              <el-option label="完成率" value="completion"></el-option>
+              <el-option label="平均分" value="average"></el-option>
+              <el-option label="活跃度" value="activity"></el-option>
             </el-select>
           </div>
         </div>
       </div>
+        </template>
+      </ManagementSidebarLeft>
+    </template>
+
+    <!-- 右侧栏 -->
+    <template #right>
+      <ManagementSidebarRight
+        :sections="rightSidebarSections"
+        @resource-action="handleResourceAction"
+        @collaboration-action="handleCollaborationAction"
+      >
+        <!-- 自定义数据洞察插槽 -->
+        <template #insights="{ data }">
+          <div class="analytics-insights">
+            <div class="quick-stats">
+              <div class="stat-item">
+                <div class="stat-label">数据分析量</div>
+                <div class="stat-value">{{ dataAnalysisCount }} 项</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">报告生成</div>
+                <div class="stat-value">{{ reportCount }} 份</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">洞察发现</div>
+                <div class="stat-value">{{ insightCount }} 条</div>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- 自定义资源参考插槽 -->
+        <template #resources="{ data }">
+          <div class="analytics-resources">
+            <h5>分析资源</h5>
+            <div class="resource-list">
+              <div v-for="resource in recommendedResources" :key="resource.id" class="resource-item">
+                <div class="resource-icon" :style="{ backgroundColor: resource.color }">
+                  <el-icon><component :is="resource.icon"></component></el-icon>
+                </div>
+                <div class="resource-content">
+                  <div class="resource-title">{{ resource.title }}</div>
+                  <div class="resource-desc">{{ resource.description }}</div>
+                </div>
+                <el-button text size="small" @click="openResource(resource)">查看</el-button>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- 自定义协作动态插槽 -->
+        <template #collaboration="{ data }">
+          <div class="analytics-collaboration">
+            <h5>分析协作</h5>
+            <div class="collaboration-list">
+              <div v-for="item in collaborationItems" :key="item.id" class="collaboration-item">
+                <div class="collaboration-icon">
+                  <el-icon><component :is="item.icon"></component></el-icon>
+                </div>
+                <div class="collaboration-content">
+                  <div class="collaboration-text">{{ item.text }}</div>
+                  <div class="collaboration-time">{{ item.time }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </ManagementSidebarRight>
     </template>
 
     <!-- 主内容区 -->
@@ -128,7 +205,7 @@
                   </div>
                   <div class="kpi-body">
                     <div class="kpi-chart">
-                      <div class="mini-chart" :id="`kpi-chart-${kpi.id}`"></div>
+                      <div class="mini-chart" :id="'kpi-chart-' + kpi.id"></div>
                     </div>
                     <div class="kpi-details">
                       <div class="detail-item">
@@ -138,7 +215,7 @@
                       <div class="detail-item">
                         <span class="detail-label">达成率：</span>
                         <span class="detail-value" :class="getCompletionClass(kpi.completion)">
-                          {{ kpi.completion }}%
+                          {{ kpi.completion }}&#37;
                         </span>
                       </div>
                     </div>
@@ -155,9 +232,9 @@
                 <h3>关键指标趋势</h3>
                 <div class="trends-controls">
                   <el-select v-model="trendMetric" placeholder="选择指标">
-                    <el-option label="课程完成率" value="completion" />
-                    <el-option label="学生活跃度" value="activity" />
-                    <el-option label="平均成绩" value="performance" />
+                    <el-option label="课程完成率" value="completion"></el-option>
+                    <el-option label="学生活跃度" value="activity"></el-option>
+                    <el-option label="平均成绩" value="performance"></el-option>
                   </el-select>
                 </div>
               </div>
@@ -174,9 +251,9 @@
                 <h3>数据对比</h3>
                 <div class="comparison-controls">
                   <el-select v-model="comparisonType" placeholder="对比维度">
-                    <el-option label="学科对比" value="subject" />
-                    <el-option label="班级对比" value="class" />
-                    <el-option label="时间对比" value="period" />
+                    <el-option label="学科对比" value="subject"></el-option>
+                    <el-option label="班级对比" value="class"></el-option>
+                    <el-option label="时间对比" value="period"></el-option>
                   </el-select>
                 </div>
               </div>
@@ -185,13 +262,13 @@
               </div>
               <div class="comparison-table">
                 <el-table :data="comparisonData" style="width: 100%">
-                  <el-table-column prop="name" label="项目" />
-                  <el-table-column prop="value1" label="当前值" />
-                  <el-table-column prop="value2" label="对比值" />
+                  <el-table-column prop="name" label="项目"></el-table-column>
+                  <el-table-column prop="value1" label="当前值"></el-table-column>
+                  <el-table-column prop="value2" label="对比值"></el-table-column>
                   <el-table-column prop="change" label="变化" width="100">
                     <template #default="{ row }">
                       <span :class="getChangeClass(row.change)">
-                        {{ row.change > 0 ? '+' : '' }}{{ row.change }}%
+                        {{ row.change > 0 ? '+' : '' }}{{ row.change }}&#37;
                       </span>
                     </template>
                   </el-table-column>
@@ -222,10 +299,10 @@
                   v-for="alert in alertList"
                   :key="alert.id"
                   class="alert-item"
-                  :class="`alert-${alert.level}`"
+                  :class="'alert-' + alert.level"
                 >
                   <div class="alert-icon">
-                    <el-icon><component :is="getAlertIcon(alert.level)" /></el-icon>
+                    <el-icon><component :is="getAlertIcon(alert.level)"></component></el-icon>
                   </div>
                   <div class="alert-content">
                     <h4 class="alert-title">{{ alert.title }}</h4>
@@ -243,94 +320,7 @@
         </el-tabs>
       </div>
     </div>
-
-    <!-- 右侧工具栏 -->
-    <template #right>
-      <div class="analytics-sidebar">
-        <SidebarTabsContainer>
-          <!-- 导出配置 -->
-          <template #tab-export>
-            <div class="sidebar-section">
-              <h4 class="sidebar-title">数据导出</h4>
-              <div class="export-options">
-                <el-button type="primary" size="small" @click="exportReport">
-                  <el-icon><Download /></el-icon>
-                  导出报告
-                </el-button>
-                <el-button size="small" @click="exportData">
-                  <el-icon><Document /></el-icon>
-                  导出数据
-                </el-button>
-                <el-button size="small" @click="exportChart">
-                  <el-icon><Picture /></el-icon>
-                  导出图表
-                </el-button>
-              </div>
-              <div class="export-formats">
-                <h5 class="format-title">导出格式</h5>
-                <el-checkbox-group v-model="exportFormats">
-                  <el-checkbox label="pdf">PDF 报告</el-checkbox>
-                  <el-checkbox label="excel">Excel 表格</el-checkbox>
-                  <el-checkbox label="image">图片</el-checkbox>
-                  <el-checkbox label="json">JSON 数据</el-checkbox>
-                </el-checkbox-group>
-              </div>
-            </div>
-          </template>
-
-          <!-- 订阅配置 -->
-          <template #tab-subscription>
-            <div class="sidebar-section">
-              <h4 class="sidebar-title">数据订阅</h4>
-              <div class="subscription-list">
-                <div v-for="sub in subscriptions" :key="sub.id" class="subscription-item">
-                  <div class="subscription-info">
-                    <h5 class="subscription-title">{{ sub.title }}</h5>
-                    <p class="subscription-description">{{ sub.description }}</p>
-                    <div class="subscription-frequency">
-                      频率：{{ sub.frequency }}
-                    </div>
-                  </div>
-                  <div class="subscription-toggle">
-                    <el-switch
-                      v-model="sub.enabled"
-                      @change="handleSubscriptionChange(sub)"
-                    />
-                  </div>
-                </div>
-              </div>
-              <el-button type="primary" size="small" @click="addSubscription">
-                <el-icon><Plus /></el-icon>
-                添加订阅
-              </el-button>
-            </div>
-          </template>
-
-          <!-- AI 建议 -->
-          <template #tab-suggestions>
-            <div class="sidebar-section">
-              <h4 class="sidebar-title">AI 分析建议</h4>
-              <div class="suggestions-list">
-                <div v-for="suggestion in aiSuggestions" :key="suggestion.id" class="suggestion-item">
-                  <div class="suggestion-icon">
-                    <el-icon><component :is="getSuggestionIcon(suggestion.type)" /></el-icon>
-                  </div>
-                  <div class="suggestion-content">
-                    <h5 class="suggestion-title">{{ suggestion.title }}</h5>
-                    <p class="suggestion-description">{{ suggestion.description }}</p>
-                    <div class="suggestion-actions">
-                      <el-button type="text" size="small">采纳</el-button>
-                      <el-button type="text" size="small">查看详情</el-button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </template>
-        </SidebarTabsContainer>
-      </div>
-    </template>
-  </TeacherWorkspaceLayout>
+    </TeacherWorkspaceLayout>
 </template>
 
 <script setup lang="ts">
@@ -340,10 +330,13 @@ import {
   Reading, UserFilled, Avatar, MagicStick,
   Download, Document, Picture, Plus,
   Warning, InfoFilled, SuccessFilled,
-  TrendCharts, DataAnalysis, Bell
+  TrendCharts, DataAnalysis, Bell, FileText, Message
 } from '@element-plus/icons-vue'
+
 import TeacherWorkspaceLayout from '@/components/layout/TeacherWorkspaceLayout.vue'
-import SidebarTabsContainer from '@/components/layout/SidebarTabsContainer.vue'
+import ManagementSidebarLeft from '@/components/layout/ManagementSidebarLeft.vue'
+import ManagementSidebarRight from '@/components/layout/ManagementSidebarRight.vue'
+import { PAGE_SIDEBAR_CONFIGS } from '@/constants/managementSidebar'
 
 // 响应式数据
 const selectedRange = ref('30d')
@@ -357,6 +350,56 @@ const activeTab = ref('kpi')
 const trendMetric = ref('completion')
 const comparisonType = ref('subject')
 const exportFormats = ref(['pdf', 'excel'])
+const leftSidebarCollapsed = ref(false)
+const rightSidebarCollapsed = ref(false)
+
+// 侧边栏配置
+const leftSidebarSections = computed(() => PAGE_SIDEBAR_CONFIGS.analytics.left)
+const rightSidebarSections = computed(() => PAGE_SIDEBAR_CONFIGS.analytics.right)
+
+// 右侧栏数据
+const dataAnalysisCount = ref(156)
+const reportCount = ref(42)
+const insightCount = ref(28)
+
+const recommendedResources = ref([
+  {
+    id: 1,
+    title: '数据分析指南',
+    description: '学习数据分析和可视化的最佳实践',
+    color: '#1890ff',
+    icon: 'Document'
+  },
+  {
+    id: 2,
+    title: '报告模板',
+    description: '专业的学习分析报告模板集合',
+    color: '#52c41a',
+    icon: 'FileText'
+  },
+  {
+    id: 3,
+    title: '研究方法',
+    description: '教育研究方法论和统计分析技术',
+    color: '#722ed1',
+    icon: 'Book'
+  }
+])
+
+const collaborationItems = ref([
+  {
+    id: 'collab-1',
+    text: '教研组分享了新的分析模型',
+    time: '3 小时前',
+    icon: 'DataAnalysis'
+  },
+  {
+    id: 'collab-2',
+    text: '数据团队更新了分析工具',
+    time: '1 天前',
+    icon: 'TrendCharts'
+  }
+])
 
 // 配置选项
 const dateOptions = [
@@ -552,6 +595,42 @@ const addSubscription = () => {
 
 const handleSubscriptionChange = (subscription: any) => {
   ElMessage.info(`订阅${subscription.enabled ? '已启用' : '已禁用'}: ${subscription.title}`)
+}
+
+// 侧边栏方法
+const handleQuickAction = (action: string) => {
+  switch (action) {
+    case 'export':
+      exportData()
+      break
+    case 'report':
+      exportReport()
+      break
+    case 'chart':
+      exportChart()
+      break
+  }
+}
+
+const handleFilterChange = (filters: any) => {
+  console.log('Analytics filters changed:', filters)
+}
+
+const handleResourceAction = (action: string, id: string | number) => {
+  console.log('Resource action:', action, id)
+  if (action === 'open') {
+    openResource(recommendedResources.value.find(r => r.id === id))
+  }
+}
+
+const handleCollaborationAction = (action: string, data: any) => {
+  console.log('Collaboration action:', action, data)
+}
+
+const openResource = (resource: any) => {
+  if (resource) {
+    ElMessage.info(`查看资源: ${resource.title}`)
+  }
 }
 
 const initCharts = () => {
@@ -982,5 +1061,180 @@ onMounted(() => {
 
 .change.negative {
   color: var(--edu-danger-600);
+}
+
+/* 使用标准侧栏样式 */
+.analytics-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-lg);
+}
+
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-base);
+}
+
+.filter-title {
+  font-size: var(--sidebar-font-size-base);
+  font-weight: var(--sidebar-font-weight-semibold);
+  color: var(--sidebar-text-primary);
+  margin: 0 0 var(--sidebar-spacing-base) 0;
+  padding: 0 var(--sidebar-spacing-sm);
+  line-height: var(--sidebar-line-height-tight);
+}
+
+.perspective-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-sm);
+}
+
+.date-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-sm);
+}
+
+.comparison-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-base);
+}
+
+/* 右侧栏样式 */
+.analytics-insights {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-base);
+}
+
+.quick-stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-base);
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sidebar-spacing-sm) 0;
+}
+
+.stat-label {
+  font-size: var(--sidebar-font-size-sm);
+  color: var(--sidebar-text-secondary);
+  font-weight: var(--sidebar-font-weight-normal);
+}
+
+.stat-value {
+  font-weight: var(--sidebar-font-weight-semibold);
+  color: var(--sidebar-text-primary);
+  font-size: var(--sidebar-font-size-base);
+}
+
+.analytics-resources {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-base);
+}
+
+.resource-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-base);
+}
+
+.resource-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sidebar-spacing-sm);
+  padding: var(--sidebar-spacing-sm);
+  border-radius: var(--sidebar-radius-base);
+  background: rgba(15, 23, 42, 0.04);
+  transition: all var(--sidebar-transition-normal);
+
+  &:hover {
+    background: rgba(99, 102, 241, 0.08);
+  }
+}
+
+.resource-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--sidebar-radius-base);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.resource-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.resource-title {
+  font-weight: var(--sidebar-font-weight-semibold);
+  color: var(--sidebar-text-primary);
+  margin-bottom: 2px;
+  font-size: var(--sidebar-font-size-sm);
+}
+
+.resource-desc {
+  font-size: var(--sidebar-font-size-xs);
+  color: var(--sidebar-text-tertiary);
+}
+
+.analytics-collaboration {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-base);
+}
+
+.collaboration-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-spacing-base);
+}
+
+.collaboration-item {
+  display: flex;
+  gap: var(--sidebar-spacing-sm);
+  align-items: flex-start;
+}
+
+.collaboration-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--sidebar-radius-base);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(99, 102, 241, 0.12);
+  color: #4f46e5;
+  flex-shrink: 0;
+}
+
+.collaboration-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.collaboration-text {
+  font-weight: var(--sidebar-font-weight-semibold);
+  color: var(--sidebar-text-primary);
+  margin-bottom: 2px;
+  font-size: var(--sidebar-font-size-sm);
+  line-height: var(--sidebar-line-height-tight);
+}
+
+.collaboration-time {
+  font-size: var(--sidebar-font-size-xs);
+  color: var(--sidebar-text-tertiary);
+  line-height: var(--sidebar-line-height-normal);
 }
 </style>

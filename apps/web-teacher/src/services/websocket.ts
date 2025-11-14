@@ -1,9 +1,20 @@
 // 开源浦育 ReOpenInnoLab - WebSocket服务
+
 export interface WebSocketConfig {
   url: string
   reconnectAttempts?: number
   reconnectInterval?: number
   heartbeatInterval?: number
+  protocols?: string[]
+}
+
+export interface ChannelConfig {
+  channelId: string
+  type: 'lesson' | 'classroom' | 'chat' | 'system'
+  lessonId?: string
+  classId?: string
+  userId?: string
+  role?: 'teacher' | 'student' | 'observer'
 }
 
 export interface WebSocketMessage {
@@ -14,6 +25,39 @@ export interface WebSocketMessage {
 }
 
 export type WebSocketEventHandler = (data: any) => void
+
+// 教室消息类型
+export type ClassroomMessageType =
+  | 'lesson_started'
+  | 'lesson_paused'
+  | 'lesson_resumed'
+  | 'lesson_ended'
+  | 'student_joined'
+  | 'student_left'
+  | 'student_status_updated'
+  | 'section_changed'
+  | 'question_asked'
+  | 'answer_submitted'
+  | 'poll_created'
+  | 'poll_responded'
+  | 'annotation_created'
+  | 'experiment_started'
+  | 'experiment_completed'
+  | 'resource_shared'
+  | 'chat_message'
+  | 'hand_raised'
+  | 'screen_shared'
+  | 'ai_suggestion'
+  | 'progress_update'
+
+// 教室消息数据接口
+export interface ClassroomMessageData {
+  lessonId?: string
+  studentId?: string
+  sectionId?: string
+  timestamp: number
+  data: any
+}
 
 export class WebSocketService {
   private config: WebSocketConfig
@@ -101,6 +145,50 @@ export class WebSocketService {
       // 连接未就绪时，将消息加入队列
       this.messageQueue.push(message)
     }
+  }
+
+  // 连接到特定频道
+  async connectToChannel(channelConfig: ChannelConfig): Promise<void> {
+    const params = new URLSearchParams({
+      channel: channelConfig.channelId,
+      type: channelConfig.type
+    })
+
+    if (channelConfig.lessonId) params.append('lessonId', channelConfig.lessonId)
+    if (channelConfig.classId) params.append('classId', channelConfig.classId)
+    if (channelConfig.userId) params.append('userId', channelConfig.userId)
+    if (channelConfig.role) params.append('role', channelConfig.role)
+
+    const url = `${this.config.url.split('?')[0]}?${params.toString()}`
+
+    // 更新配置
+    this.config.url = url
+
+    // 如果已有连接，先断开
+    if (this.ws) {
+      this.disconnect()
+    }
+
+    return this.connect()
+  }
+
+  // 发送频道消息
+  sendToChannel(channelId: string, type: string, data: any): void {
+    this.send(type, {
+      channelId,
+      ...data
+    })
+  }
+
+  // 发送教室消息
+  sendClassroomMessage(lessonId: string, type: ClassroomMessageType, data: any): void {
+    this.sendToChannel(`lesson_${lessonId}`, type, data)
+  }
+
+  // 离开频道
+  leaveChannel(): void {
+    this.send('leave_channel', { timestamp: Date.now() })
+    this.disconnect()
   }
 
   // 注册事件处理器
@@ -241,3 +329,71 @@ export class WebSocketService {
     return this.ws?.readyState === WebSocket.OPEN
   }
 }
+
+// 创建全局WebSocket服务实例
+export const websocketService = new WebSocketService({
+  url: `${import.meta.env.VITE_WS_URL || 'ws://localhost:8080'}/ws`,
+  reconnectAttempts: 5,
+  reconnectInterval: 2000,
+  heartbeatInterval: 30000
+})
+
+// WebSocket管理器 - 处理多个频道连接
+export class WebSocketManager {
+  private connections: Map<string, WebSocketService> = new Map()
+
+  async connectToChannel(channelConfig: ChannelConfig): Promise<WebSocketService> {
+    const key = `${channelConfig.channelId}_${channelConfig.type}`
+
+    // 如果已存在连接，返回现有连接
+    if (this.connections.has(key)) {
+      const service = this.connections.get(key)!
+      if (service.isConnected) {
+        return service
+      } else {
+        // 连接已断开，重新创建
+        this.connections.delete(key)
+      }
+    }
+
+    // 创建新连接
+    const service = new WebSocketService({
+      url: `${import.meta.env.VITE_WS_URL || 'ws://localhost:8080'}/ws`,
+      reconnectAttempts: 3,
+      reconnectInterval: 1000
+    })
+
+    try {
+      await service.connectToChannel(channelConfig)
+      this.connections.set(key, service)
+      return service
+    } catch (error) {
+      console.error(`Failed to connect to channel ${key}:`, error)
+      throw error
+    }
+  }
+
+  disconnectFromChannel(channelId: string, type: string): void {
+    const key = `${channelId}_${type}`
+    const service = this.connections.get(key)
+    if (service) {
+      service.leaveChannel()
+      this.connections.delete(key)
+    }
+  }
+
+  disconnectAll(): void {
+    this.connections.forEach(service => {
+      service.leaveChannel()
+    })
+    this.connections.clear()
+  }
+
+  getConnection(channelId: string, type: string): WebSocketService | null {
+    const key = `${channelId}_${type}`
+    return this.connections.get(key) || null
+  }
+}
+
+// 创建全局WebSocket管理器实例
+export const wsManager = new WebSocketManager()

@@ -49,13 +49,21 @@ export default defineConfig({
     }
   },
   server: {
-    port: 3000,
+    port: 3003,
     host: true,
     proxy: {
       '/api': {
+        target: 'http://localhost:3003',
+        changeOrigin: true
+      },
+      '/ai': {
+        target: 'http://localhost:8080',
+        changeOrigin: true
+      },
+      '/health': {
         target: 'http://localhost:8080',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/api/v1')
+        rewrite: (path) => path // 不重写路径，直接转发 /health
       },
       '/ws': {
         target: 'ws://localhost:8080',

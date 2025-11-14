@@ -3,7 +3,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
   Index,
@@ -11,54 +10,42 @@ import {
 import { User } from './user.entity'
 
 @Entity('user_sessions')
-@Index(['sessionToken'])
-@Index(['userId'])
-@Index(['expiresAt'])
+@Index(['user_id'])
+@Index(['token_hash'])
+@Index(['expires_at'])
 export class UserSession {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', name: 'user_id' })
   userId: string
 
-  @Column({ type: 'varchar', length: 255 })
-  sessionToken: string
+  @Column({ type: 'varchar', length: 255, name: 'token_hash' })
+  tokenHash: string
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'varchar', length: 255, name: 'refresh_token_hash', nullable: true })
+  refreshTokenHash?: string
+
+  @Column({ type: 'timestamp', name: 'expires_at' })
   expiresAt: Date
 
-  @Column({ type: 'timestamp', nullable: true })
-  lastActivityAt?: Date
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'inet', nullable: true, name: 'ip_address' })
   ipAddress?: string
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
+  @Column({ type: 'text', nullable: true, name: 'user_agent' })
   userAgent?: string
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  deviceName?: string
-
-  @Column({ type: 'varchar', length: 50, nullable: true })
-  platform?: string
-
-  @Column({ type: 'jsonb', nullable: true })
-  metadata?: Record<string, any>
-
-  @Column({ type: 'boolean', default: true })
+  @Column({ type: 'boolean', name: 'is_active', default: true })
   isActive: boolean
 
   // Relationships
   @ManyToOne(() => User, (user) => user.userSessions, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'user_id' })
   user: User
 
   // Timestamps
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date
-
-  @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: Date
 
   // Helper methods
   get isExpired(): boolean {

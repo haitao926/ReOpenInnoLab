@@ -113,6 +113,16 @@
   --edu-duration-base: 200ms;
   --edu-duration-slow: 300ms;
   --edu-easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Z-index层级
+  --edu-z-dropdown: 1000;
+  --edu-z-sticky: 1020;
+  --edu-z-fixed: 1030;
+  --edu-z-modal-backdrop: 1040;
+  --edu-z-modal: 1050;
+  --edu-z-popover: 1060;
+  --edu-z-tooltip: 1070;
+  --edu-z-toast: 1080;
 }
 
 // 深色模式

@@ -112,6 +112,16 @@ const routes: RouteRecordRaw[] = [
         }
       },
       {
+        path: '/classrooms/:classId/lessons/:lessonId/present',
+        name: 'PresenterMode',
+        component: () => import('@/views/presenter/PresenterMode.vue'),
+        meta: {
+          title: '课堂播放',
+          requiresAuth: true,
+          hidden: true
+        }
+      },
+      {
         path: '/classrooms',
         name: 'Classrooms',
         component: () => import('@/views/Class/ClassManagement.vue'),
@@ -201,6 +211,47 @@ const routes: RouteRecordRaw[] = [
           requiresAuth: true
         }
       },
+      // 静态页面路由（不需要认证）
+      {
+        path: '/privacy',
+        name: 'Privacy',
+        component: () => import('@/views/legal/PrivacyView.vue'),
+        meta: {
+          title: '隐私政策',
+          requiresAuth: false,
+          layout: 'simple'
+        }
+      },
+      {
+        path: '/terms',
+        name: 'Terms',
+        component: () => import('@/views/legal/TermsView.vue'),
+        meta: {
+          title: '服务条款',
+          requiresAuth: false,
+          layout: 'simple'
+        }
+      },
+      {
+        path: '/help',
+        name: 'Help',
+        component: () => import('@/views/help/HelpView.vue'),
+        meta: {
+          title: '帮助中心',
+          requiresAuth: false,
+          layout: 'simple'
+        }
+      },
+      {
+        path: '/contact',
+        name: 'Contact',
+        component: () => import('@/views/contact/ContactView.vue'),
+        meta: {
+          title: '联系我们',
+          requiresAuth: false,
+          layout: 'simple'
+        }
+      },
       // TODO: Create 404 page
       // {
       //   path: '/:pathMatch(.*)*',
@@ -237,32 +288,76 @@ router.beforeEach(async (to, from, next) => {
 
   // 检查是否需要认证
   if (to.meta?.requiresAuth !== false) {
+    console.log(`[路由守卫] 访问 ${to.path}, 当前认证状态:`, userStore.isAuthenticated)
+
     // 检查用户是否已登录
     if (!userStore.isAuthenticated) {
-      // 尝试从token获取用户信息
-      const token = localStorage.getItem('auth_token')
-      if (token) {
+      console.log('[路由守卫] 用户未认证，尝试恢复...')
+
+      // 尝试从本地存储恢复用户信息（支持两种token键以保持向后兼容）
+      const token = localStorage.getItem('auth_token') || localStorage.getItem('access_token')
+      const userInfo = localStorage.getItem('user_info')
+
+      console.log('[路由守卫] 本地存储状态:', { hasToken: !!token, hasUserInfo: !!userInfo })
+
+      if (token && userInfo) {
+        try {
+          // 如果只有access_token，先统一为auth_token
+          if (!localStorage.getItem('auth_token')) {
+            localStorage.setItem('auth_token', token)
+          }
+
+          // 解析用户信息
+          const userData = JSON.parse(userInfo)
+          const permissions = JSON.parse(localStorage.getItem('user_permissions') || '[]')
+
+          // 直接设置用户状态，避免不必要的API调用
+          userStore.$patch({
+            token: token,
+            user: userData,
+            permissions: permissions
+          })
+
+          console.log('[路由守卫] 从本地存储恢复用户信息:', userData.name)
+        } catch (error) {
+          console.error('[路由守卫] 恢复用户信息失败:', error)
+          localStorage.removeItem('auth_token')
+          localStorage.removeItem('access_token')
+          localStorage.removeItem('user_info')
+          localStorage.removeItem('user_permissions')
+        }
+      }
+
+      // 如果恢复后仍未登录，尝试API调用
+      if (!userStore.isAuthenticated && token) {
+        console.log('[路由守卫] 本地恢复失败，尝试API调用...')
         try {
           await userStore.getUserInfo()
+          console.log('[路由守卫] API调用成功，认证状态:', userStore.isAuthenticated)
         } catch (error) {
-          console.error('获取用户信息失败:', error)
+          console.error('[路由守卫] 获取用户信息失败:', error)
           localStorage.removeItem('auth_token')
+          localStorage.removeItem('access_token')
         }
       }
 
       // 如果仍未登录，跳转到登录页
       if (!userStore.isAuthenticated) {
+        console.log(`[路由守卫] 最终认证失败，跳转到登录页。目标页面: ${to.fullPath}`)
         next({
           name: 'Login',
           query: { redirect: to.fullPath }
         })
         return
+      } else {
+        console.log(`[路由守卫] 认证成功，允许访问 ${to.path}`)
       }
     }
   }
 
   // 如果已登录用户访问登录页，重定向到控制台
   if (to.name === 'Login' && userStore.isAuthenticated) {
+    console.log('[路由守卫] 已登录用户访问登录页，重定向到控制台')
     next({ name: 'Dashboard' })
     return
   }

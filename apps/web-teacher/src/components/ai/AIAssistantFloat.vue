@@ -1,5 +1,9 @@
 <template>
-  <div v-if="isVisible" class="ai-assistant-float">
+  <div
+    v-if="isVisible"
+    class="ai-assistant-float"
+    :class="{ 'is-docked': isDocked }"
+  >
     <!-- 浮动按钮 -->
     <el-button
       type="primary"
@@ -16,7 +20,11 @@
 
     <!-- AI助手面板 -->
     <transition name="slide-up">
-      <div v-if="isExpanded" class="ai-assistant-panel">
+      <div
+        v-if="isExpanded"
+        class="ai-assistant-panel"
+        :class="{ 'is-docked': isDocked }"
+      >
         <div class="panel-header">
           <div class="panel-title">
             <el-icon><MagicStick /></el-icon>
@@ -25,6 +33,13 @@
             <el-tag v-else size="small" type="danger">离线</el-tag>
           </div>
           <div class="panel-actions">
+            <el-tooltip :content="isDocked ? '取消固定' : '固定在右侧'">
+              <el-button
+                type="text"
+                :icon="isDocked ? Fold : Expand"
+                @click="toggleDocked"
+              />
+            </el-tooltip>
             <el-tooltip content="清空对话">
               <el-button type="text" :icon="Delete" @click="clearChat" />
             </el-tooltip>
@@ -223,7 +238,7 @@ import { ElScrollbar, ElMessage } from 'element-plus'
 import {
   MagicStick, Close, Delete, Setting, Paperclip, Microphone,
   ChatDotRound, Document, Edit, TrendCharts, QuestionFilled,
-  Timer, Collection, DataLine
+  Timer, Collection, DataLine, Expand, Fold
 } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { useAppStore } from '@/stores/app'
@@ -260,6 +275,7 @@ const appStore = useAppStore()
 // 响应式数据
 const isVisible = ref(true)
 const isExpanded = ref(false)
+const isDocked = ref(false)
 const isOnline = ref(false)
 const hasNotifications = ref(false)
 const inputMessage = ref('')
@@ -355,11 +371,18 @@ onMounted(() => {
   initializeAI()
   loadSettings()
   startHealthCheck()
+  if (typeof window !== 'undefined') {
+    window.addEventListener('resize', handleResize)
+    handleResize()
+  }
 })
 
 onUnmounted(() => {
   if (healthCheckTimer) {
     clearInterval(healthCheckTimer)
+  }
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('resize', handleResize)
   }
 })
 
@@ -376,7 +399,7 @@ const initializeAI = () => {
       local: {
         name: 'Local AI',
         apiKey: 'local-key',
-        baseUrl: import.meta.env.VITE_LOCAL_AI_URL || 'http://localhost:8080/v1',
+        baseUrl: import.meta.env.DEV ? '/ai/v1' : (import.meta.env.VITE_LOCAL_AI_URL || 'http://localhost:8080/v1'),
         model: 'llama-2-7b-chat'
       }
     }
@@ -433,6 +456,24 @@ const toggleExpanded = () => {
     nextTick(() => {
       scrollToBottom()
     })
+  }
+}
+
+const toggleDocked = () => {
+  isDocked.value = !isDocked.value
+  if (isDocked.value) {
+    isExpanded.value = true
+    hasNotifications.value = false
+    nextTick(() => {
+      scrollToBottom()
+    })
+  }
+}
+
+const handleResize = () => {
+  if (typeof window === 'undefined') return
+  if (window.innerWidth < 1024 && isDocked.value) {
+    isDocked.value = false
   }
 }
 
@@ -739,6 +780,10 @@ watch(messages, () => {
   z-index: var(--edu-z-toast);
 }
 
+.ai-assistant-float.is-docked {
+  right: 0;
+}
+
 .ai-float-btn {
   width: 56px;
   height: 56px;
@@ -799,6 +844,24 @@ watch(messages, () => {
   flex-direction: column;
   overflow: hidden;
   backdrop-filter: var(--edu-glass-blur);
+}
+
+.ai-assistant-panel.is-docked {
+  position: fixed;
+  top: calc(var(--edu-header-height) + 16px);
+  bottom: 24px;
+  right: 0;
+  height: auto;
+  width: clamp(360px, 28vw, 460px);
+  border-radius: var(--edu-radius-lg) 0 0 var(--edu-radius-lg);
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25);
+  z-index: calc(var(--edu-z-toast) + 2);
+  transform-origin: center right;
+}
+
+.ai-assistant-panel.is-docked.slide-up-enter-active,
+.ai-assistant-panel.is-docked.slide-up-leave-active {
+  transform-origin: center right;
 }
 
 .panel-header {
