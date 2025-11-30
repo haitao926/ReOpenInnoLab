@@ -17,17 +17,8 @@
       "@acl-sdk/*": ["../../packages/acl-sdk/src/*"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "src/**/*.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.js"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.d.ts", "components.d.ts"],
+  "exclude": ["node_modules", "dist", "**/*.js"],
   "references": [
     { "path": "../../packages/shared-utils" },
     { "path": "../../packages/ui-kit" },

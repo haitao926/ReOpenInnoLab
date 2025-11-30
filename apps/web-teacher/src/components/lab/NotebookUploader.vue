@@ -1,182 +1,253 @@
 <template>
   <div class="notebook-uploader">
-    <!-- 上传区域 -->
     <div
       class="upload-area"
-      :class="{
-        'upload-area--dragover': isDragOver,
-        'upload-area--error': uploadError,
-        'upload-area--success': uploadSuccess
-      }"
+      :class="{ 'upload-area--dragging': isDragging, 'upload-area--error': uploadError }"
       @drop="handleDrop"
       @dragover="handleDragOver"
       @dragenter="handleDragEnter"
       @dragleave="handleDragLeave"
     >
-      <div class="upload-content">
-        <!-- 默认状态 -->
-        <div v-if="!selectedFile && !isUploading" class="upload-placeholder">
-          <div class="upload-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-              <line x1="16" y1="13" x2="8" y2="13"/>
-              <line x1="16" y1="17" x2="8" y2="17"/>
-              <polyline points="10 9 9 9 8 9"/>
-            </svg>
-          </div>
-          <div class="upload-text">
-            <h3>上传 Jupyter Notebook</h3>
-            <p>拖拽 .ipynb 文件到此处，或者 <button type="button" class="link-button" @click="triggerFileSelect">点击选择文件</button></p>
-            <p class="upload-hint">支持 .ipynb 格式，最大 50MB</p>
-          </div>
-        </div>
-
-        <!-- 文件已选择 -->
-        <div v-else-if="selectedFile && !isUploading" class="file-selected">
-          <div class="file-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-              <line x1="16" y1="13" x2="8" y2="13"/>
-              <line x1="16" y1="17" x2="8" y2="17"/>
-              <polyline points="10 9 9 9 8 9"/>
-            </svg>
-          </div>
-          <div class="file-info">
-            <h4>{{ selectedFile.name }}</h4>
-            <p>{{ formatFileSize(selectedFile.size) }}</p>
-            <div v-if="notebookMetadata" class="metadata">
-              <span>{{ notebookMetadata.cellCount }} 个单元格</span>
-              <span>{{ notebookMetadata.codeCells }} 个代码单元格</span>
-              <span>{{ notebookMetadata.markdownCells }} 个 Markdown 单元格</span>
-            </div>
-          </div>
-          <div class="file-actions">
-            <EduButton variant="text" size="small" @click="removeFile">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-              移除
-            </EduButton>
-            <EduButton variant="text" size="small" @click="triggerFileSelect">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                <circle cx="12" cy="13" r="4"/>
-              </svg>
-              重新选择
-            </EduButton>
-          </div>
-        </div>
-
-        <!-- 上传中 -->
-        <div v-else-if="isUploading" class="upload-progress">
-          <div class="progress-icon">
-            <div class="spinner"></div>
-          </div>
-          <div class="progress-info">
-            <h4>正在上传...</h4>
-            <p>{{ uploadProgress ? `${uploadProgress}%` : '处理中...' }}</p>
-            <div v-if="uploadProgress" class="progress-bar">
-              <div class="progress-fill" :style="{ width: `${uploadProgress}%` }"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 上传成功 -->
-        <div v-else-if="uploadSuccess" class="upload-success">
-          <div class="success-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-              <polyline points="22 4 12 14.01 9 11.01"/>
-            </svg>
-          </div>
-          <div class="success-text">
-            <h4>上传成功！</h4>
-            <p>笔记本已成功上传并处理</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- 隐藏的文件输入 -->
       <input
         ref="fileInput"
         type="file"
-        class="file-input"
         accept=".ipynb"
         @change="handleFileSelect"
+        style="display: none"
       />
-    </div>
 
-    <!-- 错误提示 -->
-    <div v-if="uploadError" class="upload-error">
-      <div class="error-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="15" y1="9" x2="9" y2="15"/>
-          <line x1="9" y1="9" x2="15" y2="15"/>
-        </svg>
+      <!-- 上传区域 -->
+      <div v-if="!notebookFile && !uploadProgress" class="upload-placeholder">
+        <div class="upload-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="12" y1="18" x2="12" y2="12" />
+            <line x1="9" y1="15" x2="12" y2="12" />
+            <line x1="15" y1="15" x2="12" y2="12" />
+          </svg>
+        </div>
+        <div class="upload-text">
+          <h3>拖拽或上传 Jupyter Notebook</h3>
+          <p>支持 .ipynb 格式，最大 50MB</p>
+          <EduButton variant="outline" @click="selectFile">选择文件</EduButton>
+        </div>
       </div>
-      <div class="error-message">
-        <h4>上传失败</h4>
-        <p>{{ uploadError }}</p>
-      </div>
-      <EduButton variant="text" @click="clearError">重试</EduButton>
-    </div>
 
-    <!-- 附件上传区域 -->
-    <div v-if="showAttachments && selectedFile" class="attachments-section">
-      <h4>附件文件（可选）</h4>
-      <div class="attachments-upload-area">
-        <div
-          class="attachment-drop-zone"
-          :class="{ 'attachment-drop-zone--dragover': isAttachmentDragOver }"
-          @drop="handleAttachmentDrop"
-          @dragover="handleAttachmentDragOver"
-          @dragenter="handleAttachmentDragEnter"
-          @dragleave="handleAttachmentDragLeave"
-        >
-          <div class="attachment-upload-content">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-            </svg>
-            <p>拖拽附件文件到此处，或者 <button type="button" class="link-button" @click="triggerAttachmentSelect">选择文件</button></p>
-            <p class="attachment-hint">支持数据集、图片、文档等，最多 10 个文件</p>
+      <!-- 上传进度 -->
+      <div v-if="uploadProgress" class="upload-progress">
+        <div class="progress-info">
+          <h4>正在上传 {{ notebookFile?.name }}</h4>
+          <span>{{ uploadProgress }}%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" :style="{ width: `${uploadProgress}%` }"></div>
+        </div>
+      </div>
+
+      <!-- 文件信息 -->
+      <div v-if="notebookFile && !uploadProgress" class="file-info">
+        <div class="file-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+        </div>
+        <div class="file-details">
+          <h4>{{ notebookFile.name }}</h4>
+          <p>{{ formatFileSize(notebookFile.size) }}</p>
+          <div v-if="notebookMetadata" class="metadata">
+            <span>{{ notebookMetadata.cellCount }} 个单元格</span>
+            <span>{{ notebookMetadata.codeCells }} 个代码单元格</span>
           </div>
-          <input
-            ref="attachmentInput"
-            type="file"
-            class="file-input"
-            multiple
-            @change="handleAttachmentSelect"
+        </div>
+        <div class="file-actions">
+          <EduButton variant="text" size="sm" @click="selectFile">替换</EduButton>
+          <EduButton variant="text" size="sm" @click="removeFile">删除</EduButton>
+        </div>
+      </div>
+
+      <!-- 错误信息 -->
+      <div v-if="uploadError" class="error-message">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="15" y1="9" x2="9" y2="15" />
+          <line x1="9" y1="9" x2="15" y2="15" />
+        </svg>
+        <span>{{ uploadError }}</span>
+      </div>
+    </div>
+
+    <!-- 依赖配置 -->
+    <div v-if="notebookFile && notebookMetadata" class="dependencies-section">
+      <h3 class="section-title">依赖配置</h3>
+      <div class="dependency-tabs">
+        <button
+          v-for="tab in dependencyTabs"
+          :key="tab.key"
+          class="tab-button"
+          :class="{ 'tab-button--active': activeTab === tab.key }"
+          @click="activeTab = tab.key"
+        >
+          {{ tab.label }}
+        </button>
+      </div>
+
+      <!-- Pip 依赖 -->
+      <div v-if="activeTab === 'pip'" class="tab-content">
+        <div class="form-group">
+          <label>Python 包依赖</label>
+          <div class="dependency-inputs">
+            <div v-for="(pkg, index) in dependencies.pip" :key="index" class="dependency-input">
+              <EduInput v-model="dependencies.pip[index]" placeholder="例如: numpy>=1.20.0" />
+              <EduButton variant="text" size="sm" @click="removeDependency('pip', index)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </EduButton>
+            </div>
+            <EduButton variant="outline" size="sm" @click="addDependency('pip')">
+              + 添加包
+            </EduButton>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>可选依赖</label>
+          <div class="dependency-inputs">
+            <div
+              v-for="(pkg, index) in dependencies.pip_optional"
+              :key="index"
+              class="dependency-input"
+            >
+              <EduInput
+                v-model="dependencies.pip_optional[index]"
+                placeholder="例如: matplotlib>=3.3.0"
+              />
+              <EduButton variant="text" size="sm" @click="removeDependency('pip_optional', index)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </EduButton>
+            </div>
+            <EduButton variant="outline" size="sm" @click="addDependency('pip_optional')">
+              + 添加可选包
+            </EduButton>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conda 依赖 -->
+      <div v-if="activeTab === 'conda'" class="tab-content">
+        <div class="form-group">
+          <label>Conda 包依赖</label>
+          <div class="dependency-inputs">
+            <div v-for="(pkg, index) in dependencies.conda" :key="index" class="dependency-input">
+              <EduInput v-model="dependencies.conda[index]" placeholder="例如: python=3.9" />
+              <EduButton variant="text" size="sm" @click="removeDependency('conda', index)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </EduButton>
+            </div>
+            <EduButton variant="outline" size="sm" @click="addDependency('conda')">
+              + 添加包
+            </EduButton>
+          </div>
+        </div>
+      </div>
+
+      <!-- 运行策略 -->
+      <div v-if="activeTab === 'runtime'" class="tab-content">
+        <div class="form-group">
+          <label>超时时间（分钟）</label>
+          <EduInput
+            v-model.number="runtimePolicy.timeoutMinutes"
+            type="number"
+            :min="1"
+            :max="120"
           />
         </div>
 
-        <!-- 已选择的附件列表 -->
-        <div v-if="attachments.length > 0" class="attachments-list">
-          <div
-            v-for="(attachment, index) in attachments"
-            :key="index"
-            class="attachment-item"
-          >
-            <div class="attachment-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
-                <polyline points="13 2 13 9 20 9"/>
-              </svg>
+        <div class="form-group">
+          <label>最大重试次数</label>
+          <EduInput v-model.number="runtimePolicy.maxRetries" type="number" :min="0" :max="5" />
+        </div>
+
+        <div class="form-group">
+          <label>资源限制</label>
+          <div class="resource-limits">
+            <div class="limit-input">
+              <label>CPU 核心</label>
+              <EduInput
+                v-model.number="runtimePolicy.cpuLimit"
+                type="number"
+                :min="0.5"
+                :max="4"
+                :step="0.5"
+              />
             </div>
-            <div class="attachment-info">
-              <span class="attachment-name">{{ attachment.name }}</span>
-              <span class="attachment-size">{{ formatFileSize(attachment.size) }}</span>
+            <div class="limit-input">
+              <label>内存 (MB)</label>
+              <EduInput
+                v-model.number="runtimePolicy.memoryLimit"
+                type="number"
+                :min="128"
+                :max="2048"
+                :step="128"
+              />
             </div>
-            <button type="button" class="attachment-remove" @click="removeAttachment(index)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
+            <div class="limit-input">
+              <label>磁盘 (MB)</label>
+              <EduInput
+                v-model.number="runtimePolicy.diskLimit"
+                type="number"
+                :min="512"
+                :max="10240"
+                :step="512"
+              />
+            </div>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input v-model="runtimePolicy.allowFileUpload" type="checkbox" />
+            允许上传文件
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input v-model="runtimePolicy.networkAccess" type="checkbox" />
+            允许网络访问
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI 辅助 -->
+    <div v-if="notebookFile && notebookMetadata" class="ai-assistant-section">
+      <h3 class="section-title">
+        AI 实验说明
+        <EduButton
+          v-if="!aiDescription"
+          variant="text"
+          size="sm"
+          :loading="generatingDescription"
+          @click="generateAIDescription"
+        >
+          生成说明
+        </EduButton>
+      </h3>
+      <div v-if="aiDescription" class="ai-description">
+        <div class="description-text">{{ aiDescription }}</div>
+        <div class="description-actions">
+          <EduButton variant="text" size="sm" @click="generateAIDescription">重新生成</EduButton>
+          <EduButton variant="text" size="sm" @click="aiDescription = ''">清除</EduButton>
         </div>
       </div>
     </div>
@@ -184,68 +255,102 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import EduButton from '@/components/ui/EduButton.vue'
-import LabApiService, { type CreateLabTemplateDto } from '@/api/lab'
+import { ref, reactive, watch } from 'vue'
+import { EduButton, EduInput } from '@reopeninnolab/ui-kit'
+import { LabApiService } from '@/api/lab'
+import type { LabPackageSpec, LabRuntimePolicy } from '@/types/experiment'
+import type { LabMetadata } from '@/types/experiment'
 
-// Props
-interface Props {
-  showAttachments?: boolean
-}
+const emit = defineEmits<{
+    fileSelected: [file: File, metadata: LabMetadata]
+    dependenciesChanged: [dependencies: LabPackageSpec]
+    runtimePolicyChanged: [policy: LabRuntimePolicy]
+    aiDescriptionChanged: [description: string]
+  }>()
 
-// Emits
-interface Emits {
-  (e: 'upload-success', template: any): void
-  (e: 'upload-error', error: string): void
-  (e: 'file-selected', file: File): void
-}
+// 文件相关
+const fileInput = ref<HTMLInputElement>()
+const notebookFile = ref<File>()
+const isDragging = ref(false)
+const uploadProgress = ref(0)
+const uploadError = ref('')
+const notebookMetadata = ref<LabMetadata>()
 
-const props = withDefaults(defineProps<Props>(), {
-  showAttachments: false
+// 依赖配置
+const activeTab = ref('pip')
+const dependencies = reactive<LabPackageSpec>({
+  pip: [],
+  pip_optional: [],
+  conda: [],
+  npm: [],
+  system: []
 })
 
-const emit = defineEmits<Emits>()
+// 运行策略
+const runtimePolicy = reactive<LabRuntimePolicy>({
+  name: 'Default',
+  timeoutMinutes: 30,
+  maxRetries: 3,
+  cpuLimit: 1,
+  memoryLimit: 512,
+  diskLimit: 1024,
+  allowedPackages: [],
+  blockedCommands: [],
+  networkAccess: false,
+  allowFileUpload: false,
+  allowFileDownload: false,
+  createdBy: '',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
+})
 
-// Refs
-const fileInput = ref<HTMLInputElement>()
-const attachmentInput = ref<HTMLInputElement>()
-const selectedFile = ref<File>()
-const attachments = ref<File[]>([])
-const isDragOver = ref(false)
-const isAttachmentDragOver = ref(false)
-const isUploading = ref(false)
-const uploadProgress = ref(0)
-const uploadError = ref<string>()
-const uploadSuccess = ref(false)
-const notebookMetadata = ref<any>()
+// AI 辅助
+const aiDescription = ref('')
+const generatingDescription = ref(false)
 
-// Computed
-const hasFiles = computed(() => selectedFile.value || attachments.value.length > 0)
+const dependencyTabs = [
+  { key: 'pip', label: 'Python 包' },
+  { key: 'conda', label: 'Conda 环境' },
+  { key: 'runtime', label: '运行策略' }
+]
 
-// Methods
-const triggerFileSelect = () => {
+// 方法
+const selectFile = () => {
   fileInput.value?.click()
-}
-
-const triggerAttachmentSelect = () => {
-  attachmentInput.value?.click()
 }
 
 const handleFileSelect = (event: Event) => {
   const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
-  if (file) {
-    selectFile(file)
+  if (target.files && target.files[0]) {
+    processFile(target.files[0])
   }
 }
 
-const handleAttachmentSelect = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const files = Array.from(target.files || [])
-  addAttachments(files)
+const handleDrop = (event: DragEvent) => {
+  event.preventDefault()
+  isDragging.value = false
+
+  if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
+    processFile(event.dataTransfer.files[0])
+  }
 }
 
-const selectFile = async (file: File) => {
+const handleDragOver = (event: DragEvent) => {
+  event.preventDefault()
+  isDragging.value = true
+}
+
+const handleDragEnter = (event: DragEvent) => {
+  event.preventDefault()
+  isDragging.value = true
+}
+
+const handleDragLeave = (event: DragEvent) => {
+  event.preventDefault()
+  isDragging.value = false
+}
+
+const processFile = async (file: File) => {
   // 验证文件
   const validation = LabApiService.validateNotebookFile(file)
   if (!validation.isValid) {
@@ -253,495 +358,383 @@ const selectFile = async (file: File) => {
     return
   }
 
-  selectedFile.value = file
+  notebookFile.value = file
+  uploadError.value = ''
 
+  // 读取文件内容
   try {
-    // 读取并解析 notebook
     const notebook = await LabApiService.readNotebookFile(file)
     notebookMetadata.value = LabApiService.extractNotebookMetadata(notebook)
-    emit('file-selected', file)
+
+    // 自动检测依赖
+    autoDetectDependencies(notebook)
+
+    emit('fileSelected', file, notebookMetadata.value!)
   } catch (error) {
-    uploadError.value = error instanceof Error ? error.message : '文件解析失败'
+    uploadError.value = '文件解析失败：' + (error as Error).message
   }
+}
+
+const autoDetectDependencies = (notebook: any) => {
+  const imports = new Set<string>()
+
+  // 扫描代码单元格的 import 语句
+  notebook.cells?.forEach((cell: any) => {
+    if (cell.cell_type === 'code' && cell.source) {
+      const code = Array.isArray(cell.source) ? cell.source.join('') : cell.source
+      const importRegex = /(?:import\s+(\w+)|from\s+(\w+)\s+import)/g
+      let match
+      while ((match = importRegex.exec(code)) !== null) {
+        imports.add(match[1] || match[2])
+      }
+    }
+  })
+
+  // 常见包映射
+  const commonPackages: Record<string, string> = {
+    numpy: 'numpy',
+    pandas: 'pandas',
+    matplotlib: 'matplotlib',
+    plt: 'matplotlib',
+    seaborn: 'seaborn',
+    sklearn: 'scikit-learn',
+    tensorflow: 'tensorflow',
+    torch: 'torch',
+    cv2: 'opencv-python',
+    PIL: 'Pillow',
+    requests: 'requests',
+    bs4: 'beautifulsoup4',
+    scipy: 'scipy',
+    sympy: 'sympy',
+    plotly: 'plotly',
+    dash: 'dash',
+    fastapi: 'fastapi',
+    sqlalchemy: 'SQLAlchemy'
+  }
+
+  // 添加检测到的依赖
+  const detectedPackages: string[] = []
+  imports.forEach(pkg => {
+    const packageName = commonPackages[pkg]
+    if (packageName && !detectedPackages.includes(packageName)) {
+      detectedPackages.push(packageName)
+    }
+  })
+
+  dependencies.pip = [...new Set([...dependencies.pip, ...detectedPackages])]
+  emit('dependenciesChanged', dependencies)
 }
 
 const removeFile = () => {
-  selectedFile.value = undefined
+  notebookFile.value = null
   notebookMetadata.value = undefined
-  clearError()
-}
-
-const clearError = () => {
-  uploadError.value = undefined
-  uploadSuccess.value = false
-}
-
-// 拖拽处理
-const handleDrop = (event: DragEvent) => {
-  event.preventDefault()
-  isDragOver.value = false
-
-  const files = Array.from(event.dataTransfer?.files || [])
-  const notebookFile = files.find(file => file.name.endsWith('.ipynb'))
-
-  if (notebookFile) {
-    selectFile(notebookFile)
+  uploadError.value = ''
+  if (fileInput.value) {
+    fileInput.value.value = ''
   }
 }
 
-const handleDragOver = (event: DragEvent) => {
-  event.preventDefault()
+const addDependency = (type: keyof LabPackageSpec) => {
+  dependencies[type].push('')
 }
 
-const handleDragEnter = (event: DragEvent) => {
-  event.preventDefault()
-  isDragOver.value = true
+const removeDependency = (type: keyof LabPackageSpec, index: number) => {
+  dependencies[type].splice(index, 1)
 }
 
-const handleDragLeave = (event: DragEvent) => {
-  event.preventDefault()
-  isDragOver.value = false
-}
+const generateAIDescription = async () => {
+  if (!notebookMetadata.value) return
 
-// 附件拖拽处理
-const handleAttachmentDrop = (event: DragEvent) => {
-  event.preventDefault()
-  isAttachmentDragOver.value = false
+  generatingDescription.value = true
+  try {
+    // TODO: 调用 AI 服务生成说明
+    // const response = await aiService.generateLabDescription({
+    //   cellCount: notebookMetadata.value.cellCount,
+    //   codeCells: notebookMetadata.value.codeCells,
+    //   dependencies: dependencies.pip
+    // })
+    // aiDescription.value = response.description
 
-  const files = Array.from(event.dataTransfer?.files || [])
-  addAttachments(files)
-}
+    // 模拟生成
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    aiDescription.value = `这是一个包含 ${notebookMetadata.value.cellCount} 个单元格的 Jupyter Notebook 实验，其中 ${notebookMetadata.value.codeCells} 个是代码单元格。学生将通过实践操作加深对相关概念的理解。`
 
-const handleAttachmentDragOver = (event: DragEvent) => {
-  event.preventDefault()
-}
-
-const handleAttachmentDragEnter = (event: DragEvent) => {
-  event.preventDefault()
-  isAttachmentDragOver.value = true
-}
-
-const handleAttachmentDragLeave = (event: DragEvent) => {
-  event.preventDefault()
-  isAttachmentDragOver.value = false
-}
-
-const addAttachments = (files: File[]) => {
-  const remainingSlots = 10 - attachments.value.length
-  const filesToAdd = files.slice(0, remainingSlots)
-
-  if (filesToAdd.length < files.length) {
-    console.warn('只能添加最多 10 个附件文件')
+    emit('aiDescriptionChanged', aiDescription.value)
+  } catch (error) {
+    console.error('生成 AI 说明失败:', error)
+  } finally {
+    generatingDescription.value = false
   }
-
-  attachments.value.push(...filesToAdd)
 }
 
-const removeAttachment = (index: number) => {
-  attachments.value.splice(index, 1)
-}
-
-// 工具方法
 const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 B'
+  if (bytes === 0) return '0 Bytes'
   const k = 1024
-  const sizes = ['B', 'KB', 'MB', 'GB']
+  const sizes = ['Bytes', 'KB', 'MB', 'GB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 
-// 公开方法
-const upload = async (labData: CreateLabTemplateDto): Promise<any> => {
-  if (!selectedFile.value) {
-    throw new Error('请选择要上传的 Notebook 文件')
-  }
+// 监听变化
+watch(
+  dependencies,
+  () => {
+    emit('dependenciesChanged', dependencies)
+  },
+  { deep: true }
+)
 
-  isUploading.value = true
-  uploadError.value = undefined
-  uploadSuccess.value = false
-  uploadProgress.value = 0
+watch(
+  runtimePolicy,
+  () => {
+    emit('runtimePolicyChanged', runtimePolicy)
+  },
+  { deep: true }
+)
 
-  try {
-    const template = await LabApiService.createLabTemplate(
-      labData,
-      selectedFile.value,
-      attachments.value
-    )
-
-    uploadSuccess.value = true
-    emit('upload-success', template)
-
-    // 重置状态
-    setTimeout(() => {
-      reset()
-    }, 2000)
-
-    return template
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : '上传失败'
-    uploadError.value = errorMessage
-    emit('upload-error', errorMessage)
-    throw error
-  } finally {
-    isUploading.value = false
-  }
-}
-
-const reset = () => {
-  selectedFile.value = undefined
-  attachments.value = []
-  notebookMetadata.value = undefined
-  uploadError.value = undefined
-  uploadSuccess.value = false
-  uploadProgress.value = 0
-  isUploading.value = false
-}
-
-// 暴露方法给父组件
-defineExpose({
-  upload,
-  reset,
-  hasFile: hasFiles,
-  selectedFile: selectedFile,
-  attachments: attachments
+watch(aiDescription, () => {
+  emit('aiDescriptionChanged', aiDescription.value)
 })
 </script>
 
-<style scoped>
-.notebook-uploader {
-  width: 100%;
-}
+<style lang="scss" scoped>
+  .notebook-uploader {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
 
-.upload-area {
-  border: 2px dashed #d1d5db;
-  border-radius: 12px;
-  padding: 2rem;
-  text-align: center;
-  transition: all 0.2s ease;
-  background-color: #f9fafb;
-}
+  .upload-area {
+    border: 2px dashed var(--edu-color-gray-300);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    background-color: var(--edu-color-gray-50);
+    transition: all 0.3s ease;
+    position: relative;
 
-.upload-area:hover {
-  border-color: #6366f1;
-  background-color: #f3f4f6;
-}
+    &--dragging {
+      border-color: var(--edu-primary-500);
+      background-color: var(--edu-primary-50);
+    }
 
-.upload-area--dragover {
-  border-color: #6366f1;
-  background-color: #ede9fe;
-}
+    &--error {
+      border-color: var(--edu-color-error-default);
+      background-color: var(--edu-color-error-light);
+    }
+  }
 
-.upload-area--error {
-  border-color: #ef4444;
-  background-color: #fef2f2;
-}
+  .upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-base);
+    text-align: center;
+  }
 
-.upload-area--success {
-  border-color: #10b981;
-  background-color: #ecfdf5;
-}
+  .upload-icon {
+    width: 64px;
+    height: 64px;
+    color: var(--edu-color-gray-400);
 
-.upload-placeholder .upload-icon {
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 1rem;
-  color: #6b7280;
-}
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
 
-.upload-text h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #111827;
-}
+  .upload-text h3 {
+    margin: 0;
+    color: var(--text-primary);
+  }
 
-.upload-text p {
-  margin: 0.25rem 0;
-  color: #6b7280;
-}
+  .upload-text p {
+    margin: var(--spacing-xs) 0;
+    color: var(--text-secondary);
+  }
 
-.upload-hint {
-  font-size: 0.875rem;
-  color: #9ca3af;
-}
+  .upload-progress {
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-sm);
+    }
 
-.link-button {
-  background: none;
-  border: none;
-  color: #6366f1;
-  text-decoration: underline;
-  cursor: pointer;
-  font: inherit;
-}
+    .progress-bar {
+      height: 8px;
+      background-color: var(--edu-color-gray-200);
+      border-radius: var(--radius-full);
+      overflow: hidden;
 
-.link-button:hover {
-  color: #4f46e5;
-}
+      .progress-fill {
+        height: 100%;
+        background-color: var(--edu-primary-500);
+        transition: width 0.3s ease;
+      }
+    }
+  }
 
-.file-selected {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  text-align: left;
-}
+  .file-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-base);
+  }
 
-.file-icon {
-  width: 48px;
-  height: 48px;
-  color: #6366f1;
-  flex-shrink: 0;
-}
+  .file-icon {
+    width: 48px;
+    height: 48px;
+    color: var(--edu-primary-500);
 
-.file-info {
-  flex: 1;
-}
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
 
-.file-info h4 {
-  margin: 0 0 0.25rem 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #111827;
-}
+  .file-details {
+    flex: 1;
 
-.file-info p {
-  margin: 0 0 0.5rem 0;
-  color: #6b7280;
-  font-size: 0.875rem;
-}
+    h4 {
+      margin: 0;
+      color: var(--text-primary);
+    }
 
-.metadata {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.75rem;
-  color: #6b7280;
-}
+    p {
+      margin: var(--spacing-xs) 0;
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
 
-.file-actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-shrink: 0;
-}
+    .metadata {
+      display: flex;
+      gap: var(--spacing-base);
+      margin-top: var(--spacing-xs);
 
-.upload-progress {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  text-align: left;
-}
+      span {
+        font-size: var(--font-size-xs);
+        color: var(--text-tertiary);
+      }
+    }
+  }
 
-.progress-icon {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  .file-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+  }
 
-.spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid #e5e7eb;
-  border-top: 3px solid #6366f1;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
+  .error-message {
+    position: absolute;
+    bottom: var(--spacing-base);
+    left: var(--spacing-base);
+    right: var(--spacing-base);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--edu-color-error-default);
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
 
-.progress-info h4 {
-  margin: 0 0 0.25rem 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #111827;
-}
+  .dependencies-section {
+    border: 1px solid var(--edu-color-gray-200);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    background-color: var(--bg-elevated);
+  }
 
-.progress-info p {
-  margin: 0 0 0.5rem 0;
-  color: #6b7280;
-  font-size: 0.875rem;
-}
+  .section-title {
+    margin: 0 0 var(--spacing-base) 0;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-.progress-bar {
-  width: 200px;
-  height: 8px;
-  background-color: #e5e7eb;
-  border-radius: 4px;
-  overflow: hidden;
-}
+  .dependency-tabs {
+    display: flex;
+    gap: var(--spacing-sm);
+    border-bottom: 1px solid var(--edu-color-gray-200);
+    margin-bottom: var(--spacing-lg);
+  }
 
-.progress-fill {
-  height: 100%;
-  background-color: #6366f1;
-  transition: width 0.3s ease;
-}
+  .tab-button {
+    padding: var(--spacing-sm) var(--spacing-base);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
 
-.upload-success {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  text-align: left;
-}
+    &:hover {
+      color: var(--text-primary);
+    }
 
-.success-icon {
-  width: 48px;
-  height: 48px;
-  color: #10b981;
-  flex-shrink: 0;
-}
+    &--active {
+      color: var(--edu-primary-500);
+      border-bottom-color: var(--edu-primary-500);
+    }
+  }
 
-.success-text h4 {
-  margin: 0 0 0.25rem 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #111827;
-}
+  .tab-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-base);
+  }
 
-.success-text p {
-  margin: 0;
-  color: #6b7280;
-  font-size: 0.875rem;
-}
+  .dependency-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
 
-.file-input {
-  display: none;
-}
+  .dependency-input {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+  }
 
-.upload-error {
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
+  .resource-limits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-base);
+  }
 
-.error-icon {
-  width: 20px;
-  height: 20px;
-  color: #ef4444;
-  flex-shrink: 0;
-}
+  .limit-input {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
 
-.error-message {
-  flex: 1;
-}
+    label {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+    }
+  }
 
-.error-message h4 {
-  margin: 0 0 0.25rem 0;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #111827;
-}
+  .ai-assistant-section {
+    border: 1px solid var(--edu-color-gray-200);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    background-color: var(--bg-elevated);
+  }
 
-.error-message p {
-  margin: 0;
-  font-size: 0.875rem;
-  color: #6b7280;
-}
+  .ai-description {
+    background-color: var(--edu-color-blue-50);
+    border-radius: var(--radius-base);
+    padding: var(--spacing-base);
 
-.attachments-section {
-  margin-top: 2rem;
-}
+    .description-text {
+      color: var(--text-primary);
+      line-height: var(--line-height-relaxed);
+    }
 
-.attachments-section h4 {
-  margin: 0 0 1rem 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #111827;
-}
-
-.attachment-drop-zone {
-  border: 2px dashed #d1d5db;
-  border-radius: 8px;
-  padding: 1.5rem;
-  text-align: center;
-  transition: all 0.2s ease;
-  background-color: #f9fafb;
-}
-
-.attachment-drop-zone:hover,
-.attachment-drop-zone--dragover {
-  border-color: #6366f1;
-  background-color: #f3f4f6;
-}
-
-.attachment-upload-content svg {
-  width: 32px;
-  height: 32px;
-  margin: 0 auto 0.75rem;
-  color: #6b7280;
-}
-
-.attachment-upload-content p {
-  margin: 0.25rem 0;
-  color: #6b7280;
-}
-
-.attachment-hint {
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
-
-.attachments-list {
-  margin-top: 1rem;
-}
-
-.attachment-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  margin-bottom: 0.5rem;
-}
-
-.attachment-icon {
-  width: 24px;
-  height: 24px;
-  color: #6b7280;
-  flex-shrink: 0;
-}
-
-.attachment-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.attachment-name {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #111827;
-}
-
-.attachment-size {
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-
-.attachment-remove {
-  width: 20px;
-  height: 20px;
-  background: none;
-  border: none;
-  color: #6b7280;
-  cursor: pointer;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.attachment-remove:hover {
-  background-color: #e5e7eb;
-  color: #ef4444;
-}
+    .description-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-base);
+    }
+  }
 </style>

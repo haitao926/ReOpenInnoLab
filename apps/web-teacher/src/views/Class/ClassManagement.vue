@@ -1,5 +1,5 @@
 <template>
-  <TeacherWorkspaceLayout
+  <CanvasWorkspaceLayout
     title="班级控制台"
     subtitle="掌握班级画像、课堂节奏与学生进度"
     v-model:leftCollapsed="leftSidebarCollapsed"
@@ -91,15 +91,25 @@
         <!-- 自定义快捷操作插槽 -->
         <template #quick-actions="{ data }">
           <div class="class-quick-actions">
-            <el-button type="primary" size="small" style="width: 100%; margin-bottom: 8px;" @click="showCreateClassModal = true">
+            <el-button
+              type="primary"
+              size="small"
+              style="width: 100%; margin-bottom: 8px"
+              @click="showCreateClassModal = true"
+            >
               <el-icon><Plus /></el-icon>
               创建班级
             </el-button>
-            <el-button type="default" size="small" style="width: 100%; margin-bottom: 8px;" @click="importStudents">
+            <el-button
+              type="default"
+              size="small"
+              style="width: 100%; margin-bottom: 8px"
+              @click="importStudents"
+            >
               <el-icon><Upload /></el-icon>
               导入学生
             </el-button>
-            <el-button type="default" size="small" style="width: 100%;" @click="exportClassData">
+            <el-button type="default" size="small" style="width: 100%" @click="exportClassData">
               <el-icon><Download /></el-icon>
               导出数据
             </el-button>
@@ -157,7 +167,11 @@
           <div class="class-collaboration">
             <h5>协作记录</h5>
             <div class="collaboration-list">
-              <div v-for="record in collaborationRecords" :key="record.id" class="collaboration-item">
+              <div
+                v-for="record in collaborationRecords"
+                :key="record.id"
+                class="collaboration-item"
+              >
                 <el-avatar :size="32" :src="record.avatar">
                   {{ record.name.charAt(0) }}
                 </el-avatar>
@@ -234,10 +248,16 @@
             </el-col>
             <el-col :xs="24" :sm="12" :md="6" class="toolbar-actions">
               <el-button-group>
-                <el-button :type="classViewMode === 'card' ? 'primary' : 'default'" @click="classViewMode = 'card'">
+                <el-button
+                  :type="classViewMode === 'card' ? 'primary' : 'default'"
+                  @click="classViewMode = 'card'"
+                >
                   <el-icon><Grid /></el-icon>
                 </el-button>
-                <el-button :type="classViewMode === 'table' ? 'primary' : 'default'" @click="classViewMode = 'table'">
+                <el-button
+                  :type="classViewMode === 'table' ? 'primary' : 'default'"
+                  @click="classViewMode = 'table'"
+                >
                   <el-icon><List /></el-icon>
                 </el-button>
               </el-button-group>
@@ -296,7 +316,9 @@
               </el-avatar>
               <div class="teacher-info">
                 <span class="teacher-name">{{ classItem.teacher?.name || '未分配' }}</span>
-                <span class="teacher-role">班主任 · {{ classItem.teacher?.subject || '待定' }}</span>
+                <span class="teacher-role">
+                  班主任 · {{ classItem.teacher?.subject || '待定' }}
+                </span>
               </div>
             </section>
 
@@ -363,7 +385,8 @@
               </el-button>
               <el-dropdown @command="command => handleClassAction(command, row)">
                 <el-button text size="small">
-                  更多<el-icon><ArrowDown /></el-icon>
+                  更多
+                  <el-icon><ArrowDown /></el-icon>
                 </el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
@@ -434,13 +457,18 @@
       width="620px"
       :close-on-click-modal="false"
     >
-        <el-form :model="createClassForm" :rules="createClassRules" label-width="100px">
+      <el-form :model="createClassForm" :rules="createClassRules" label-width="100px">
         <el-form-item label="班级名称" prop="name">
           <el-input v-model="createClassForm.name" placeholder="请输入班级名称" />
         </el-form-item>
         <el-form-item label="年级" prop="grade">
           <el-select v-model="createClassForm.grade" placeholder="选择年级">
-            <el-option v-for="grade in grades" :key="grade.value" :label="grade.label" :value="grade.value" />
+            <el-option
+              v-for="grade in grades"
+              :key="grade.value"
+              :label="grade.label"
+              :value="grade.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="班主任" prop="teacherId">
@@ -495,1052 +523,1119 @@
         <el-button type="primary" :loading="creatingClass" @click="createClass">创建</el-button>
       </template>
     </el-dialog>
-  </TeacherWorkspaceLayout>
+  </CanvasWorkspaceLayout>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
-import {
-  Plus,
-  Upload,
-  Download,
-  User,
-  School,
-  Reading,
-  TrendCharts,
-  Search,
-  Grid,
-  List,
-  MoreFilled,
-  View,
-  MagicStick,
-  ArrowDown,
-  Bell,
-  DataAnalysis,
-  VideoPlay
-} from '@element-plus/icons-vue'
+  import { ref, reactive, computed, onMounted } from 'vue'
+  import { ElMessage, ElMessageBox } from 'element-plus'
+  import { useRouter } from 'vue-router'
+  import { useUserStore } from '@/stores/user'
+  import {
+    Plus,
+    Upload,
+    Download,
+    User,
+    School,
+    Reading,
+    TrendCharts,
+    Search,
+    Grid,
+    List,
+    MoreFilled,
+    View,
+    MagicStick,
+    ArrowDown,
+    Bell,
+    DataAnalysis,
+    VideoPlay
+  } from '@element-plus/icons-vue'
 
-import TeacherWorkspaceLayout from '@/components/layout/TeacherWorkspaceLayout.vue'
-import ManagementSidebarLeft from '@/components/layout/ManagementSidebarLeft.vue'
-import ManagementSidebarRight from '@/components/layout/ManagementSidebarRight.vue'
-import { EduCard } from '@reopeninnolab/ui-kit'
-import { grades } from '@/config/courseData'
-import StudentManagement from './StudentManagement.vue'
-import CourseAssignment from './CourseAssignment.vue'
-import LearningAnalytics from './LearningAnalytics.vue'
-import { PAGE_SIDEBAR_CONFIGS } from '@/constants/managementSidebar'
+  import CanvasWorkspaceLayout from '@/components/layout/CanvasWorkspaceLayout.vue'
+  import ManagementSidebarLeft from '@/components/layout/ManagementSidebarLeft.vue'
+  import ManagementSidebarRight from '@/components/layout/ManagementSidebarRight.vue'
+  import { EduCard } from '@reopeninnolab/ui-kit'
+  import { grades } from '@/config/courseData'
+  import StudentManagement from './StudentManagement.vue'
+  import CourseAssignment from './CourseAssignment.vue'
+  import LearningAnalytics from './LearningAnalytics.vue'
+  import { PAGE_SIDEBAR_CONFIGS } from '@/constants/managementSidebar'
 
-interface ClassInfo {
-  id: string
-  name: string
-  grade: string
-  description?: string
-  studentCount: number
-  courseCount: number
-  averageProgress: number
-  status: 'active' | 'completed' | 'archived'
-  teacher?: {
+  interface ClassInfo {
+    id: string
+    name: string
+    grade: string
+    description?: string
+    studentCount: number
+    courseCount: number
+    averageProgress: number
+    status: 'active' | 'completed' | 'archived'
+    teacher?: {
+      id: string
+      name: string
+      avatar?: string
+      subject: string
+    }
+    recentCourses: Array<{
+      id: string
+      title: string
+    }>
+    createdAt: Date
+    semesterStart: Date
+    semesterEnd: Date
+  }
+
+  interface Teacher {
     id: string
     name: string
     avatar?: string
     subject: string
+    email: string
   }
-  recentCourses: Array<{
+
+  interface LessonInfo {
     id: string
+    courseId: string
+    classId: string
     title: string
-  }>
-  createdAt: Date
-  semesterStart: Date
-  semesterEnd: Date
-}
-
-interface Teacher {
-  id: string
-  name: string
-  avatar?: string
-  subject: string
-  email: string
-}
-
-interface LessonInfo {
-  id: string
-  courseId: string
-  classId: string
-  title: string
-  status: 'preparing' | 'active' | 'paused' | 'completed'
-  startTime: Date
-  endTime?: Date
-  teacherId: string
-  scheduledTime: Date
-  duration: number // 分钟
-  chapters: any[]
-  currentSection: number
-  students: any[]
-  settings: {
-    allowQuestions: boolean
-    enableChat: boolean
-    recordSession: boolean
-    aiAssistance: boolean
+    status: 'preparing' | 'active' | 'paused' | 'completed'
+    startTime: Date
+    endTime?: Date
+    teacherId: string
+    scheduledTime: Date
+    duration: number // 分钟
+    chapters: any[]
+    currentSection: number
+    students: any[]
+    settings: {
+      allowQuestions: boolean
+      enableChat: boolean
+      recordSession: boolean
+      aiAssistance: boolean
+    }
+    createdAt: Date
+    updatedAt: Date
   }
-  createdAt: Date
-  updatedAt: Date
-}
 
-const router = useRouter()
-const userStore = useUserStore()
-const activeTab = ref('students')
-const classViewMode = ref<'card' | 'table'>('card')
-const classSearchKeyword = ref('')
-const classGradeFilter = ref('')
-const classStatusFilter = ref('')
-const showCreateClassModal = ref(false)
-const creatingClass = ref(false)
-const leftSidebarCollapsed = ref(false)
-const rightSidebarCollapsed = ref(false)
-const aiAssistantVisible = ref(false)
-const activeFilters = ref<string[]>([])
+  const router = useRouter()
+  const userStore = useUserStore()
+  const activeTab = ref('students')
+  const classViewMode = ref<'card' | 'table'>('card')
+  const classSearchKeyword = ref('')
+  const classGradeFilter = ref('')
+  const classStatusFilter = ref('')
+  const showCreateClassModal = ref(false)
+  const creatingClass = ref(false)
+  const leftSidebarCollapsed = ref(false)
+  const rightSidebarCollapsed = ref(false)
+  const aiAssistantVisible = ref(false)
+  const activeFilters = ref<string[]>([])
 
-const viewModeOptions = [
-  { label: '卡片视图', value: 'card' },
-  { label: '列表视图', value: 'table' }
-]
-
-const classList = ref<ClassInfo[]>([])
-const availableTeachers = ref<Teacher[]>([])
-
-const createClassForm = reactive({
-  name: '',
-  grade: '',
-  teacherId: '',
-  description: '',
-  semesterStart: null as Date | null,
-  semesterEnd: null as Date | null
-})
-
-const createClassRules = {
-  name: [
-    { required: true, message: '请输入班级名称', trigger: 'blur' },
-    { min: 2, max: 50, message: '班级名称长度在2到50个字符之间', trigger: 'blur' }
-  ],
-  grade: [
-    { required: true, message: '请选择年级', trigger: 'change' }
-  ],
-  teacherId: [
-    { required: true, message: '请选择班主任', trigger: 'change' }
+  const viewModeOptions = [
+    { label: '卡片视图', value: 'card' },
+    { label: '列表视图', value: 'table' }
   ]
-}
 
-const filteredClasses = computed(() => {
-  let filtered = classList.value
+  const classList = ref<ClassInfo[]>([])
+  const availableTeachers = ref<Teacher[]>([])
 
-  if (classSearchKeyword.value) {
-    const keyword = classSearchKeyword.value.toLowerCase()
-    filtered = filtered.filter(cls =>
-      cls.name.toLowerCase().includes(keyword) ||
-      (cls.description && cls.description.toLowerCase().includes(keyword))
-    )
+  const createClassForm = reactive({
+    name: '',
+    grade: '',
+    teacherId: '',
+    description: '',
+    semesterStart: null as Date | null,
+    semesterEnd: null as Date | null
+  })
+
+  const createClassRules = {
+    name: [
+      { required: true, message: '请输入班级名称', trigger: 'blur' },
+      { min: 2, max: 50, message: '班级名称长度在2到50个字符之间', trigger: 'blur' }
+    ],
+    grade: [{ required: true, message: '请选择年级', trigger: 'change' }],
+    teacherId: [{ required: true, message: '请选择班主任', trigger: 'change' }]
   }
 
-  if (classGradeFilter.value) {
-    filtered = filtered.filter(cls => cls.grade === classGradeFilter.value)
-  }
+  const filteredClasses = computed(() => {
+    let filtered = classList.value
 
-  if (classStatusFilter.value) {
-    filtered = filtered.filter(cls => cls.status === classStatusFilter.value)
-  }
+    if (classSearchKeyword.value) {
+      const keyword = classSearchKeyword.value.toLowerCase()
+      filtered = filtered.filter(
+        cls =>
+          cls.name.toLowerCase().includes(keyword) ||
+          (cls.description && cls.description.toLowerCase().includes(keyword))
+      )
+    }
 
-  return filtered
-})
+    if (classGradeFilter.value) {
+      filtered = filtered.filter(cls => cls.grade === classGradeFilter.value)
+    }
 
-// 侧边栏配置
-const leftSidebarSections = computed(() => PAGE_SIDEBAR_CONFIGS.classrooms.left)
-const rightSidebarSections = computed(() => PAGE_SIDEBAR_CONFIGS.classrooms.right)
+    if (classStatusFilter.value) {
+      filtered = filtered.filter(cls => cls.status === classStatusFilter.value)
+    }
 
-// 数据洞察计算属性
-const activeClassCount = computed(() =>
-  classList.value.filter(cls => cls.status === 'active').length
-)
+    return filtered
+  })
 
-const totalStudents = computed(() =>
-  classList.value.reduce((sum, cls) => sum + cls.studentCount, 0)
-)
+  // 侧边栏配置
+  const leftSidebarSections = computed(() => PAGE_SIDEBAR_CONFIGS.classrooms.left)
+  const rightSidebarSections = computed(() => PAGE_SIDEBAR_CONFIGS.classrooms.right)
 
-const averageAttendance = computed(() => {
-  // 模拟平均出勤率
-  return 85
-})
+  // 数据洞察计算属性
+  const activeClassCount = computed(
+    () => classList.value.filter(cls => cls.status === 'active').length
+  )
 
-const summaryStats = computed(() => ({
-  totalStudents: classList.value.reduce((sum, cls) => sum + cls.studentCount, 0),
-  totalClasses: classList.value.length,
-  averageProgress:
-    classList.value.length > 0
-      ? Math.round(
-          classList.value.reduce((sum, cls) => sum + cls.averageProgress, 0) /
-            classList.value.length
-        )
-      : 0
-}))
+  const totalStudents = computed(() =>
+    classList.value.reduce((sum, cls) => sum + cls.studentCount, 0)
+  )
 
-const summaryCards = computed(() => [
-  {
-    id: 'students',
-    label: '学生总数',
-    value: `${summaryStats.value.totalStudents}`,
-    icon: User,
-    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-  },
-  {
-    id: 'classes',
-    label: '班级总数',
-    value: `${summaryStats.value.totalClasses}`,
-    icon: School,
-    gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
-  },
-  {
-    id: 'progress',
-    label: '平均进度',
-    value: `${summaryStats.value.averageProgress}%`,
-    icon: TrendCharts,
-    gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
-  }
-])
+  const averageAttendance = computed(() => {
+    // 模拟平均出勤率
+    return 85
+  })
 
-const classStats = computed(() => [
-  {
-    name: '活跃班级',
-    count: classList.value.filter(c => c.status === 'active').length,
-    icon: 'School',
-    color: '#4ECDC4',
-    type: 'active'
-  },
-  {
-    name: '高一',
-    count: classList.value.filter(c => c.grade === 'grade10').length,
-    icon: 'Reading',
-    color: '#45B7D1',
-    type: 'grade10'
-  },
-  {
-    name: '高二',
-    count: classList.value.filter(c => c.grade === 'grade11').length,
-    icon: 'Reading',
-    color: '#96CEB4',
-    type: 'grade11'
-  },
-  {
-    name: '高三',
-    count: classList.value.filter(c => c.grade === 'grade12').length,
-    icon: 'Reading',
-    color: '#FFB347',
-    type: 'grade12'
-  }
-])
+  const summaryStats = computed(() => ({
+    totalStudents: classList.value.reduce((sum, cls) => sum + cls.studentCount, 0),
+    totalClasses: classList.value.length,
+    averageProgress:
+      classList.value.length > 0
+        ? Math.round(
+            classList.value.reduce((sum, cls) => sum + cls.averageProgress, 0) /
+              classList.value.length
+          )
+        : 0
+  }))
 
-const quickFilters = computed(() => [
-  { key: 'active', label: '活跃班级' },
-  { key: 'recent', label: '最近创建' },
-  { key: 'completed', label: '已完成' },
-  { key: 'archived', label: '已归档' }
-])
-
-const recentActivities = ref([
-  {
-    id: 'activity-1',
-    text: '创建了 “高一(1)班”',
-    type: 'create',
-    icon: 'Plus',
-    timestamp: Date.now() - 86400000
-  },
-  {
-    id: 'activity-2',
-    text: '调整 “高二(3)班” 班级信息',
-    type: 'edit',
-    icon: 'MagicStick',
-    timestamp: Date.now() - 172800000
-  },
-  {
-    id: 'activity-3',
-    text: '分配 “数学提高班” 课程',
-    type: 'system',
-    icon: 'Bell',
-    timestamp: Date.now() - 259200000
-  }
-])
-
-const aiSuggestions = ref([
-  { id: 'suggest-1', text: '为高一(1)班增加课堂互动，提高参与度', type: '课堂优化', icon: 'MagicStick' },
-  { id: 'suggest-2', text: '高二(3)班物理进度偏慢，建议增加辅导', type: '进度提醒', icon: 'TrendCharts' },
-  { id: 'suggest-3', text: '高三班级作业提交率 95%，可以适当加大难度', type: '难度调整', icon: 'DataAnalysis' }
-])
-
-const collaborationRecords = ref([
-  { id: 'collab-1', name: '张老师', text: '分享 "高一(1)班" 晨读管理经验', avatar: '', timestamp: Date.now() - 3600000 },
-  { id: 'collab-2', name: '李老师', text: '建议更新高二实验安排', avatar: '', timestamp: Date.now() - 7200000 }
-])
-
-const classResources = ref([
-  { id: 'resource-1', title: '班级管理手册', description: '班级日常管理指南', color: '#1890ff', icon: 'Document' },
-  { id: 'resource-2', title: '学生信息模板', description: '学生档案标准格式', color: '#52c41a', icon: 'Grid' },
-  { id: 'resource-3', title: '家长会资料', description: '家长会准备材料', color: '#722ed1', icon: 'User' }
-])
-
-const footerActivities = ref([
-  { id: 'footer-1', text: '王老师完成班级教材分发', type: 'success', timestamp: Date.now() - 1800000 },
-  { id: 'footer-2', text: '系统自动备份班级数据', type: 'system', timestamp: Date.now() - 3600000 },
-  { id: 'footer-3', text: '新生加入高一(2)班', type: 'info', timestamp: Date.now() - 5400000 }
-])
-
-const systemNotices = ref([
-  { id: 'notice-1', text: '周五 15:00 班主任例会，请提前准备班情简报。' },
-  { id: 'notice-2', text: '班级行为分析即将更新，敬请关注。' }
-])
-
-const toggleFilter = (filterKey: string) => {
-  const index = activeFilters.value.indexOf(filterKey)
-  if (index > -1) {
-    activeFilters.value.splice(index, 1)
-  } else {
-    activeFilters.value.push(filterKey)
-  }
-}
-
-const filterByCategory = (category: string) => {
-  ElMessage.info(`按类别筛选：${category}`)
-}
-
-const applySuggestion = (suggestion: any) => {
-  ElMessage.success(`已采纳建议：${suggestion.text}`)
-}
-
-const formatTime = (timestamp: number) => {
-  const diff = Date.now() - timestamp
-  const minutes = Math.floor(diff / 60000)
-  if (minutes < 1) return '刚刚'
-  if (minutes < 60) return `${minutes} 分钟前`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours} 小时前`
-  const days = Math.floor(hours / 24)
-  return `${days} 天前`
-}
-
-const handleSearch = () => {
-  /* 占位：当前使用 computed 过滤即可 */
-}
-
-const exportData = () => {
-  ElMessage.success('班级报表正在导出')
-}
-
-const createClassPlan = () => {
-  ElMessage.info('班级计划功能即将开放')
-}
-
-// 侧边栏事件处理
-const handleQuickAction = (action: string) => {
-  switch (action) {
-    case 'create':
-      showCreateClassModal.value = true
-      break
-    case 'import':
-      importStudents()
-      break
-    case 'export':
-      exportClassData()
-      break
-  }
-}
-
-const handleFilterChange = (filters: any) => {
-  console.log('Class filters changed:', filters)
-  // 应用筛选逻辑
-}
-
-const handleResourceAction = (action: string, id: string | number) => {
-  console.log('Resource action:', action, id)
-}
-
-const handleCollaborationAction = (action: string, data: any) => {
-  console.log('Collaboration action:', action, data)
-}
-
-const importStudents = () => {
-  ElMessage.info('导入学生功能开发中...')
-}
-
-const exportClassData = () => {
-  ElMessage.info('导出班级数据功能开发中...')
-}
-
-const openResource = (resource: any) => {
-  if (resource) {
-    ElMessage.info(`查看资源: ${resource.title}`)
-  }
-}
-
-const getGradeLabel = (grade: string) => {
-  const item = grades.find(g => g.value === grade)
-  return item ? item.label : grade
-}
-
-const getGradeColor = (grade: string): 'primary' | 'success' | 'warning' | 'info' => {
-  const map: Record<string, 'primary' | 'success' | 'warning' | 'info'> = {
-    grade10: 'primary',
-    grade11: 'success',
-    grade12: 'warning'
-  }
-  return map[grade] || 'info'
-}
-
-const getStatusLabel = (status: string) => {
-  const map: Record<string, string> = {
-    active: '活跃',
-    completed: '已完成',
-    archived: '已归档'
-  }
-  return map[status] || status
-}
-
-const getStatusColor = (status: string): 'primary' | 'success' | 'warning' | 'info' | 'danger' => {
-  const map: Record<string, 'primary' | 'success' | 'warning' | 'info' | 'danger'> = {
-    active: 'success',
-    completed: 'primary',
-    archived: 'warning'
-  }
-  return map[status] || 'info'
-}
-
-const loadClassList = async () => {
-  await new Promise(resolve => setTimeout(resolve, 500))
-  classList.value = [
+  const summaryCards = computed(() => [
     {
-      id: 'class-1',
-      name: '高一(1)班',
-      grade: 'grade10',
-      description: '理科实验班，强调探究式学习',
-      studentCount: 45,
-      courseCount: 8,
-      averageProgress: 78,
-      status: 'active',
-      teacher: { id: 't1', name: '张老师', subject: '数学' },
-      recentCourses: [
-        { id: 'course-1', title: '数学·函数与图像' },
-        { id: 'course-2', title: '物理·力学基础' }
-      ],
-      createdAt: new Date('2023-08-20'),
-      semesterStart: new Date('2023-09-01'),
-      semesterEnd: new Date('2024-01-15')
+      id: 'students',
+      label: '学生总数',
+      value: `${summaryStats.value.totalStudents}`,
+      icon: User,
+      gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
     },
     {
-      id: 'class-2',
-      name: '高二(3)班',
-      grade: 'grade11',
-      description: '综合班，注重跨学科学习',
-      studentCount: 43,
-      courseCount: 7,
-      averageProgress: 72,
-      status: 'active',
-      teacher: { id: 't2', name: '李老师', subject: '化学' },
-      recentCourses: [
-        { id: 'course-3', title: '化学·有机反应' },
-        { id: 'course-4', title: '生物·遗传基础' }
-      ],
-      createdAt: new Date('2022-08-20'),
-      semesterStart: new Date('2023-09-01'),
-      semesterEnd: new Date('2024-01-15')
+      id: 'classes',
+      label: '班级总数',
+      value: `${summaryStats.value.totalClasses}`,
+      icon: School,
+      gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+    },
+    {
+      id: 'progress',
+      label: '平均进度',
+      value: `${summaryStats.value.averageProgress}%`,
+      icon: TrendCharts,
+      gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
     }
-  ]
-}
+  ])
 
-const loadTeachers = async () => {
-  await new Promise(resolve => setTimeout(resolve, 300))
-  availableTeachers.value = [
-    { id: 't1', name: '张老师', subject: '数学', email: 'zhang@school.edu' },
-    { id: 't2', name: '李老师', subject: '化学', email: 'li@school.edu' }
-  ]
-}
+  const classStats = computed(() => [
+    {
+      name: '活跃班级',
+      count: classList.value.filter(c => c.status === 'active').length,
+      icon: 'School',
+      color: '#4ECDC4',
+      type: 'active'
+    },
+    {
+      name: '高一',
+      count: classList.value.filter(c => c.grade === 'grade10').length,
+      icon: 'Reading',
+      color: '#45B7D1',
+      type: 'grade10'
+    },
+    {
+      name: '高二',
+      count: classList.value.filter(c => c.grade === 'grade11').length,
+      icon: 'Reading',
+      color: '#96CEB4',
+      type: 'grade11'
+    },
+    {
+      name: '高三',
+      count: classList.value.filter(c => c.grade === 'grade12').length,
+      icon: 'Reading',
+      color: '#FFB347',
+      type: 'grade12'
+    }
+  ])
 
-const createClass = async () => {
-  if (!createClassForm.name || !createClassForm.grade || !createClassForm.teacherId) {
-    ElMessage.warning('请完善班级信息')
-    return
+  const quickFilters = computed(() => [
+    { key: 'active', label: '活跃班级' },
+    { key: 'recent', label: '最近创建' },
+    { key: 'completed', label: '已完成' },
+    { key: 'archived', label: '已归档' }
+  ])
+
+  const recentActivities = ref([
+    {
+      id: 'activity-1',
+      text: '创建了 “高一(1)班”',
+      type: 'create',
+      icon: 'Plus',
+      timestamp: Date.now() - 86400000
+    },
+    {
+      id: 'activity-2',
+      text: '调整 “高二(3)班” 班级信息',
+      type: 'edit',
+      icon: 'MagicStick',
+      timestamp: Date.now() - 172800000
+    },
+    {
+      id: 'activity-3',
+      text: '分配 “数学提高班” 课程',
+      type: 'system',
+      icon: 'Bell',
+      timestamp: Date.now() - 259200000
+    }
+  ])
+
+  const aiSuggestions = ref([
+    {
+      id: 'suggest-1',
+      text: '为高一(1)班增加课堂互动，提高参与度',
+      type: '课堂优化',
+      icon: 'MagicStick'
+    },
+    {
+      id: 'suggest-2',
+      text: '高二(3)班物理进度偏慢，建议增加辅导',
+      type: '进度提醒',
+      icon: 'TrendCharts'
+    },
+    {
+      id: 'suggest-3',
+      text: '高三班级作业提交率 95%，可以适当加大难度',
+      type: '难度调整',
+      icon: 'DataAnalysis'
+    }
+  ])
+
+  const collaborationRecords = ref([
+    {
+      id: 'collab-1',
+      name: '张老师',
+      text: '分享 "高一(1)班" 晨读管理经验',
+      avatar: '',
+      timestamp: Date.now() - 3600000
+    },
+    {
+      id: 'collab-2',
+      name: '李老师',
+      text: '建议更新高二实验安排',
+      avatar: '',
+      timestamp: Date.now() - 7200000
+    }
+  ])
+
+  const classResources = ref([
+    {
+      id: 'resource-1',
+      title: '班级管理手册',
+      description: '班级日常管理指南',
+      color: '#1890ff',
+      icon: 'Document'
+    },
+    {
+      id: 'resource-2',
+      title: '学生信息模板',
+      description: '学生档案标准格式',
+      color: '#52c41a',
+      icon: 'Grid'
+    },
+    {
+      id: 'resource-3',
+      title: '家长会资料',
+      description: '家长会准备材料',
+      color: '#722ed1',
+      icon: 'User'
+    }
+  ])
+
+  const footerActivities = ref([
+    {
+      id: 'footer-1',
+      text: '王老师完成班级教材分发',
+      type: 'success',
+      timestamp: Date.now() - 1800000
+    },
+    {
+      id: 'footer-2',
+      text: '系统自动备份班级数据',
+      type: 'system',
+      timestamp: Date.now() - 3600000
+    },
+    { id: 'footer-3', text: '新生加入高一(2)班', type: 'info', timestamp: Date.now() - 5400000 }
+  ])
+
+  const systemNotices = ref([
+    { id: 'notice-1', text: '周五 15:00 班主任例会，请提前准备班情简报。' },
+    { id: 'notice-2', text: '班级行为分析即将更新，敬请关注。' }
+  ])
+
+  const toggleFilter = (filterKey: string) => {
+    const index = activeFilters.value.indexOf(filterKey)
+    if (index > -1) {
+      activeFilters.value.splice(index, 1)
+    } else {
+      activeFilters.value.push(filterKey)
+    }
   }
-  creatingClass.value = true
-  await new Promise(resolve => setTimeout(resolve, 600))
-  ElMessage.success('班级创建成功')
-  showCreateClassModal.value = false
-  creatingClass.value = false
-  await loadClassList()
-}
 
-const manageClassStudents = (classItem: ClassInfo) => {
-  ElMessage.info(`打开 ${classItem.name} 的学生管理`)
-}
+  const filterByCategory = (category: string) => {
+    ElMessage.info(`按类别筛选：${category}`)
+  }
 
-const viewClassDetail = (classItem: ClassInfo) => {
-  ElMessage.info(`查看 ${classItem.name} 班级详情`)
-}
+  const applySuggestion = (suggestion: any) => {
+    ElMessage.success(`已采纳建议：${suggestion.text}`)
+  }
 
-const handleClassAction = (command: string, classItem: ClassInfo) => {
-  ElMessage.info(`操作 ${command}：${classItem.name}`)
-}
+  const formatTime = (timestamp: number) => {
+    const diff = Date.now() - timestamp
+    const minutes = Math.floor(diff / 60000)
+    if (minutes < 1) return '刚刚'
+    if (minutes < 60) return `${minutes} 分钟前`
+    const hours = Math.floor(minutes / 60)
+    if (hours < 24) return `${hours} 小时前`
+    const days = Math.floor(hours / 24)
+    return `${days} 天前`
+  }
 
-const hasActiveCourses = (classItem: ClassInfo): boolean => {
-  return classItem.courseCount > 0
-}
+  const handleSearch = () => {
+    /* 占位：当前使用 computed 过滤即可 */
+  }
 
-const startLesson = async (classItem: ClassInfo) => {
-  try {
-    // 获取班级的活跃课程
-    const activeCourses = classItem.recentCourses || []
+  const exportData = () => {
+    ElMessage.success('班级报表正在导出')
+  }
 
-    if (activeCourses.length === 0) {
-      ElMessage.warning('该班级暂无可用课程')
+  const createClassPlan = () => {
+    ElMessage.info('班级计划功能即将开放')
+  }
+
+  // 侧边栏事件处理
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case 'create':
+        showCreateClassModal.value = true
+        break
+      case 'import':
+        importStudents()
+        break
+      case 'export':
+        exportClassData()
+        break
+    }
+  }
+
+  const handleFilterChange = (filters: any) => {
+    console.log('Class filters changed:', filters)
+    // 应用筛选逻辑
+  }
+
+  const handleResourceAction = (action: string, id: string | number) => {
+    console.log('Resource action:', action, id)
+  }
+
+  const handleCollaborationAction = (action: string, data: any) => {
+    console.log('Collaboration action:', action, data)
+  }
+
+  const importStudents = () => {
+    ElMessage.info('导入学生功能开发中...')
+  }
+
+  const exportClassData = () => {
+    ElMessage.info('导出班级数据功能开发中...')
+  }
+
+  const openResource = (resource: any) => {
+    if (resource) {
+      ElMessage.info(`查看资源: ${resource.title}`)
+    }
+  }
+
+  const getGradeLabel = (grade: string) => {
+    const item = grades.find(g => g.value === grade)
+    return item ? item.label : grade
+  }
+
+  const getGradeColor = (grade: string): 'primary' | 'success' | 'warning' | 'info' => {
+    const map: Record<string, 'primary' | 'success' | 'warning' | 'info'> = {
+      grade10: 'primary',
+      grade11: 'success',
+      grade12: 'warning'
+    }
+    return map[grade] || 'info'
+  }
+
+  const getStatusLabel = (status: string) => {
+    const map: Record<string, string> = {
+      active: '活跃',
+      completed: '已完成',
+      archived: '已归档'
+    }
+    return map[status] || status
+  }
+
+  const getStatusColor = (
+    status: string
+  ): 'primary' | 'success' | 'warning' | 'info' | 'danger' => {
+    const map: Record<string, 'primary' | 'success' | 'warning' | 'info' | 'danger'> = {
+      active: 'success',
+      completed: 'primary',
+      archived: 'warning'
+    }
+    return map[status] || 'info'
+  }
+
+  const loadClassList = async () => {
+    await new Promise(resolve => setTimeout(resolve, 500))
+    classList.value = [
+      {
+        id: 'class-1',
+        name: '高一(1)班',
+        grade: 'grade10',
+        description: '理科实验班，强调探究式学习',
+        studentCount: 45,
+        courseCount: 8,
+        averageProgress: 78,
+        status: 'active',
+        teacher: { id: 't1', name: '张老师', subject: '数学' },
+        recentCourses: [
+          { id: 'course-1', title: '数学·函数与图像' },
+          { id: 'course-2', title: '物理·力学基础' }
+        ],
+        createdAt: new Date('2023-08-20'),
+        semesterStart: new Date('2023-09-01'),
+        semesterEnd: new Date('2024-01-15')
+      },
+      {
+        id: 'class-2',
+        name: '高二(3)班',
+        grade: 'grade11',
+        description: '综合班，注重跨学科学习',
+        studentCount: 43,
+        courseCount: 7,
+        averageProgress: 72,
+        status: 'active',
+        teacher: { id: 't2', name: '李老师', subject: '化学' },
+        recentCourses: [
+          { id: 'course-3', title: '化学·有机反应' },
+          { id: 'course-4', title: '生物·遗传基础' }
+        ],
+        createdAt: new Date('2022-08-20'),
+        semesterStart: new Date('2023-09-01'),
+        semesterEnd: new Date('2024-01-15')
+      }
+    ]
+  }
+
+  const loadTeachers = async () => {
+    await new Promise(resolve => setTimeout(resolve, 300))
+    availableTeachers.value = [
+      { id: 't1', name: '张老师', subject: '数学', email: 'zhang@school.edu' },
+      { id: 't2', name: '李老师', subject: '化学', email: 'li@school.edu' }
+    ]
+  }
+
+  const createClass = async () => {
+    if (!createClassForm.name || !createClassForm.grade || !createClassForm.teacherId) {
+      ElMessage.warning('请完善班级信息')
       return
     }
-
-    // 如果只有一个课程，直接开始
-    if (activeCourses.length === 1) {
-      await createAndStartLesson(classItem, activeCourses[0])
-    } else {
-      // 显示课程选择对话框
-      await showCourseSelectionDialog(classItem, activeCourses)
-    }
-  } catch (error) {
-    // 用户取消操作
-    console.log('取消开始上课:', error)
+    creatingClass.value = true
+    await new Promise(resolve => setTimeout(resolve, 600))
+    ElMessage.success('班级创建成功')
+    showCreateClassModal.value = false
+    creatingClass.value = false
+    await loadClassList()
   }
-}
 
-// 创建并开始课程
-const createAndStartLesson = async (classItem: ClassInfo, course: any) => {
-  try {
-    await ElMessageBox.confirm(
-      `确定要为 "${classItem.name}" 开始课程 "${course.title}" 吗？`,
-      '开始上课',
-      {
-        confirmButtonText: '开始上课',
-        cancelButtonText: '取消',
-        type: 'info'
+  const manageClassStudents = (classItem: ClassInfo) => {
+    ElMessage.info(`打开 ${classItem.name} 的学生管理`)
+  }
+
+  const viewClassDetail = (classItem: ClassInfo) => {
+    ElMessage.info(`查看 ${classItem.name} 班级详情`)
+  }
+
+  const handleClassAction = (command: string, classItem: ClassInfo) => {
+    ElMessage.info(`操作 ${command}：${classItem.name}`)
+  }
+
+  const hasActiveCourses = (classItem: ClassInfo): boolean => {
+    return classItem.courseCount > 0
+  }
+
+  const startLesson = async (classItem: ClassInfo) => {
+    try {
+      // 获取班级的活跃课程
+      const activeCourses = classItem.recentCourses || []
+
+      if (activeCourses.length === 0) {
+        ElMessage.warning('该班级暂无可用课程')
+        return
       }
-    )
 
-    // 创建Lesson实体
-    const lessonId = `lesson_${course.id}_${classItem.id}_${Date.now()}`
-    const lesson: LessonInfo = {
-      id: lessonId,
-      courseId: course.id,
-      classId: classItem.id,
-      title: course.title,
-      status: 'preparing',
-      startTime: new Date(),
-      teacherId: userStore.id,
-      scheduledTime: new Date(),
-      duration: course.duration || 45,
-      chapters: course.chapters || [],
-      currentSection: 0,
-      students: classItem.students || [],
-      settings: {
-        allowQuestions: true,
-        enableChat: true,
-        recordSession: false,
-        aiAssistance: course.aiEnhanced || false
-      },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }
-
-    // 保存Lesson到状态管理
-    await saveLessonToStore(lesson)
-
-    // 跳转到Presenter模式
-    router.push(`/presenter/${lessonId}`)
-    ElMessage.success('正在进入课堂播放模式')
-  } catch (error) {
-    if (error !== 'cancel') {
-      console.error('创建课程失败:', error)
-      ElMessage.error('创建课程失败')
+      // 如果只有一个课程，直接开始
+      if (activeCourses.length === 1) {
+        await createAndStartLesson(classItem, activeCourses[0])
+      } else {
+        // 显示课程选择对话框
+        await showCourseSelectionDialog(classItem, activeCourses)
+      }
+    } catch (error) {
+      // 用户取消操作
+      console.log('取消开始上课:', error)
     }
   }
-}
 
-// 显示课程选择对话框
-const showCourseSelectionDialog = async (classItem: ClassInfo, courses: any[]) => {
-  try {
-    const { value: selectedCourse } = await ElMessageBox.prompt(
-      '请选择要开始的课程',
-      `为 ${classItem.name} 选择课程`,
-      {
-        confirmButtonText: '开始上课',
-        cancelButtonText: '取消',
-        inputType: 'select',
-        inputOptions: courses.reduce((options, course) => {
-          options[course.id] = `${course.title} (${course.duration || 45}分钟)`
-          return options
-        }, {} as Record<string, string>),
-        inputValidator: (value) => {
-          if (!value) {
-            return '请选择一个课程'
+  // 创建并开始课程
+  const createAndStartLesson = async (classItem: ClassInfo, course: any) => {
+    try {
+      await ElMessageBox.confirm(
+        `确定要为 "${classItem.name}" 开始课程 "${course.title}" 吗？`,
+        '开始上课',
+        {
+          confirmButtonText: '开始上课',
+          cancelButtonText: '取消',
+          type: 'info'
+        }
+      )
+
+      // 创建Lesson实体
+      const lessonId = `lesson_${course.id}_${classItem.id}_${Date.now()}`
+      const lesson: LessonInfo = {
+        id: lessonId,
+        courseId: course.id,
+        classId: classItem.id,
+        title: course.title,
+        status: 'preparing',
+        startTime: new Date(),
+        teacherId: userStore.id,
+        scheduledTime: new Date(),
+        duration: course.duration || 45,
+        chapters: course.chapters || [],
+        currentSection: 0,
+        students: classItem.students || [],
+        settings: {
+          allowQuestions: true,
+          enableChat: true,
+          recordSession: false,
+          aiAssistance: course.aiEnhanced || false
+        },
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+
+      // 保存Lesson到状态管理
+      await saveLessonToStore(lesson)
+
+      // 跳转到Presenter模式
+      router.push(`/presenter/${lessonId}`)
+      ElMessage.success('正在进入课堂播放模式')
+    } catch (error) {
+      if (error !== 'cancel') {
+        console.error('创建课程失败:', error)
+        ElMessage.error('创建课程失败')
+      }
+    }
+  }
+
+  // 显示课程选择对话框
+  const showCourseSelectionDialog = async (classItem: ClassInfo, courses: any[]) => {
+    try {
+      const { value: selectedCourse } = await ElMessageBox.prompt(
+        '请选择要开始的课程',
+        `为 ${classItem.name} 选择课程`,
+        {
+          confirmButtonText: '开始上课',
+          cancelButtonText: '取消',
+          inputType: 'select',
+          inputOptions: courses.reduce(
+            (options, course) => {
+              options[course.id] = `${course.title} (${course.duration || 45}分钟)`
+              return options
+            },
+            {} as Record<string, string>
+          ),
+          inputValidator: value => {
+            if (!value) {
+              return '请选择一个课程'
+            }
+            return true
           }
-          return true
+        }
+      )
+
+      if (selectedCourse) {
+        const course = courses.find(c => c.id === selectedCourse)
+        if (course) {
+          await createAndStartLesson(classItem, course)
         }
       }
-    )
-
-    if (selectedCourse) {
-      const course = courses.find(c => c.id === selectedCourse)
-      if (course) {
-        await createAndStartLesson(classItem, course)
-      }
+    } catch (error) {
+      console.log('取消课程选择')
     }
-  } catch (error) {
-    console.log('取消课程选择')
   }
-}
 
-// 保存Lesson到状态管理
-const saveLessonToStore = async (lesson: LessonInfo) => {
-  try {
-    // 这里应该调用API保存到后端
-    // 暂时保存到localStorage作为模拟
-    const existingLessons = JSON.parse(localStorage.getItem('lessons') || '[]')
-    existingLessons.push(lesson)
-    localStorage.setItem('lessons', JSON.stringify(existingLessons))
+  // 保存Lesson到状态管理
+  const saveLessonToStore = async (lesson: LessonInfo) => {
+    try {
+      // 这里应该调用API保存到后端
+      // 暂时保存到localStorage作为模拟
+      const existingLessons = JSON.parse(localStorage.getItem('lessons') || '[]')
+      existingLessons.push(lesson)
+      localStorage.setItem('lessons', JSON.stringify(existingLessons))
 
-    // 也可以保存到useClassroomStore（需要创建）
-    console.log('Lesson已保存:', lesson)
-  } catch (error) {
-    console.error('保存Lesson失败:', error)
-    throw error
+      // 也可以保存到useClassroomStore（需要创建）
+      console.log('Lesson已保存:', lesson)
+    } catch (error) {
+      console.error('保存Lesson失败:', error)
+      throw error
+    }
   }
-}
 
-
-onMounted(async () => {
-  await Promise.all([loadClassList(), loadTeachers()])
-})
+  onMounted(async () => {
+    await Promise.all([loadClassList(), loadTeachers()])
+  })
 </script>
 
 <style scoped lang="scss">
-.workspace-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.workspace-actions__buttons {
-  display: flex;
-  gap: 12px;
-}
-
-.summary-card {
-  width: 100%;
-  :deep(.edu-card__body-content) {
-    padding: 16px;
+  .workspace-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
   }
-}
 
-.summary-card__content {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
+  .workspace-actions__buttons {
+    display: flex;
+    gap: 12px;
+  }
 
-.summary-card__icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-}
+  .summary-card {
+    width: 100%;
+    :deep(.edu-card__body-content) {
+      padding: 16px;
+    }
+  }
 
-.summary-card__text {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+  .summary-card__content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
 
-.summary-card__value {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--edu-text-primary);
-}
+  .summary-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
 
-.summary-card__label {
-  font-size: 13px;
-  color: var(--edu-text-secondary);
-}
+  .summary-card__text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
+  .summary-card__value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--edu-text-primary);
+  }
 
-.category-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+  .summary-card__label {
+    font-size: 13px;
+    color: var(--edu-text-secondary);
+  }
 
-.category-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: rgba(15, 23, 42, 0.04);
-  border: none;
-  cursor: pointer;
-  color: inherit;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
+  .category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
-.category-item:hover {
-  transform: translateX(4px);
-  background: rgba(99, 102, 241, 0.12);
-}
+  .category-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.04);
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    transition:
+      transform 0.2s ease,
+      background 0.2s ease;
+  }
 
-.category-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-}
+  .category-item:hover {
+    transform: translateX(4px);
+    background: rgba(99, 102, 241, 0.12);
+  }
 
-.category-name {
-  flex: 1;
-  margin-left: 12px;
-  font-weight: 600;
-  color: var(--edu-text-primary);
-}
+  .category-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
 
-.category-count {
-  font-size: 12px;
-  color: var(--edu-text-secondary);
-}
+  .category-name {
+    flex: 1;
+    margin-left: 12px;
+    font-weight: 600;
+    color: var(--edu-text-primary);
+  }
 
-.filter-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
+  .category-count {
+    font-size: 12px;
+    color: var(--edu-text-secondary);
+  }
 
-.filter-tag {
-  cursor: pointer;
-}
+  .filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 
-.activity-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+  .filter-tag {
+    cursor: pointer;
+  }
 
-.activity-item {
-  display: flex;
-  gap: 12px;
-}
+  .activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
-.activity-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 10px;
-  background: rgba(79, 70, 229, 0.12);
-  color: #4f46e5;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
+  .activity-item {
+    display: flex;
+    gap: 12px;
+  }
 
-.activity-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+  .activity-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    background: rgba(79, 70, 229, 0.12);
+    color: #4f46e5;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-.activity-text {
-  font-size: 13px;
-  color: var(--edu-text-primary);
-}
+  .activity-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
-.activity-time {
-  font-size: 12px;
-  color: var(--edu-text-secondary);
-}
+  .activity-text {
+    font-size: 13px;
+    color: var(--edu-text-primary);
+  }
 
-.suggestion-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+  .activity-time {
+    font-size: 12px;
+    color: var(--edu-text-secondary);
+  }
 
-.suggestion-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 14px;
-  border: none;
-  background: rgba(15, 23, 42, 0.04);
-  cursor: pointer;
-  text-align: left;
-}
+  .suggestion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
-.suggestion-item:hover {
-  background: rgba(99, 102, 241, 0.12);
-}
+  .suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 14px;
+    border: none;
+    background: rgba(15, 23, 42, 0.04);
+    cursor: pointer;
+    text-align: left;
+  }
 
-.suggestion-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 12px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(99, 102, 241, 0.12);
-  color: #4f46e5;
-}
+  .suggestion-item:hover {
+    background: rgba(99, 102, 241, 0.12);
+  }
 
-.suggestion-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+  .suggestion-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(99, 102, 241, 0.12);
+    color: #4f46e5;
+  }
 
-.collaboration-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+  .suggestion-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
-.collaboration-item {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
+  .collaboration-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
-.collaboration-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  color: var(--edu-text-primary);
-}
+  .collaboration-item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
 
-.collaboration-meta {
-  font-size: 12px;
-  color: var(--edu-text-secondary);
-  display: flex;
-  gap: 8px;
-}
+  .collaboration-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: var(--edu-text-primary);
+  }
 
-.classroom-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
+  .collaboration-meta {
+    font-size: 12px;
+    color: var(--edu-text-secondary);
+    display: flex;
+    gap: 8px;
+  }
 
-.classroom-card {
-  width: 100%;
-  :deep(.edu-card__body-content) {
+  .classroom-content {
     display: flex;
     flex-direction: column;
     gap: 24px;
   }
-}
 
-.classroom-toolbar {
-  background: rgba(15, 23, 42, 0.04);
-  border-radius: 16px;
-  padding: 16px;
-}
+  .classroom-card {
+    width: 100%;
+    :deep(.edu-card__body-content) {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+  }
 
-.toolbar-actions {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
+  .classroom-toolbar {
+    background: rgba(15, 23, 42, 0.04);
+    border-radius: 16px;
+    padding: 16px;
+  }
 
-.class-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
-}
-
-.class-card {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-  border-radius: 18px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 245, 250, 0.92) 100%);
-  box-shadow: 0 20px 45px -26px rgba(15, 23, 42, 0.45);
-}
-
-.class-card__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.class-card__title {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.class-card__tags {
-  display: flex;
-  gap: 8px;
-}
-
-.class-card__more {
-  color: var(--edu-text-secondary);
-  cursor: pointer;
-}
-
-.class-card__stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.stat-block {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 10px;
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.04);
-}
-
-.stat-label {
-  font-size: 12px;
-  color: var(--edu-text-secondary);
-}
-
-.stat-value {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--edu-text-primary);
-}
-
-.class-card__teacher {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.teacher-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.teacher-name {
-  font-weight: 600;
-}
-
-.teacher-role {
-  font-size: 12px;
-  color: var(--edu-text-secondary);
-}
-
-.class-card__courses {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.courses-label {
-  font-size: 12px;
-  color: var(--edu-text-secondary);
-}
-
-.courses-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.class-card__footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.footer-column {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.footer-title {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.footer-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.footer-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--edu-text-secondary);
-}
-
-.footer-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-}
-
-.footer-indicator--success { background: #22c55e; }
-.footer-indicator--system { background: #3b82f6; }
-.footer-indicator--info { background: #f59e0b; }
-
-.support-links {
-  display: flex;
-  gap: 12px;
-}
-
-.teacher-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.teacher-subject {
-  font-size: 12px;
-  color: var(--edu-text-secondary);
-}
-
-@media (max-width: 960px) {
-  .workspace-actions {
-    flex-direction: column;
-    align-items: flex-start;
+  .toolbar-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
   }
 
   .class-grid {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .summary-card,
-  .category-item,
-  .class-card,
-  .suggestion-item {
-    transition: none !important;
+  .class-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.96) 0%,
+      rgba(243, 245, 250, 0.92) 100%
+    );
+    box-shadow: 0 20px 45px -26px rgba(15, 23, 42, 0.45);
   }
-}
+
+  .class-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .class-card__title {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .class-card__tags {
+    display: flex;
+    gap: 8px;
+  }
+
+  .class-card__more {
+    color: var(--edu-text-secondary);
+    cursor: pointer;
+  }
+
+  .class-card__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .stat-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.04);
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--edu-text-secondary);
+  }
+
+  .stat-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--edu-text-primary);
+  }
+
+  .class-card__teacher {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .teacher-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .teacher-name {
+    font-weight: 600;
+  }
+
+  .teacher-role {
+    font-size: 12px;
+    color: var(--edu-text-secondary);
+  }
+
+  .class-card__courses {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .courses-label {
+    font-size: 12px;
+    color: var(--edu-text-secondary);
+  }
+
+  .courses-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .class-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .footer-title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .footer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .footer-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--edu-text-secondary);
+  }
+
+  .footer-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+  }
+
+  .footer-indicator--success {
+    background: #22c55e;
+  }
+  .footer-indicator--system {
+    background: #3b82f6;
+  }
+  .footer-indicator--info {
+    background: #f59e0b;
+  }
+
+  .support-links {
+    display: flex;
+    gap: 12px;
+  }
+
+  .teacher-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .teacher-subject {
+    font-size: 12px;
+    color: var(--edu-text-secondary);
+  }
+
+  @media (max-width: 960px) {
+    .workspace-actions {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .class-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .summary-card,
+    .category-item,
+    .class-card,
+    .suggestion-item {
+      transition: none !important;
+    }
+  }
 </style>

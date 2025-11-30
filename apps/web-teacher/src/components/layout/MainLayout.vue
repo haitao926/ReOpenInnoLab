@@ -47,120 +47,131 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.main-layout {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: var(--edu-sidebar-width) 1fr;
-  background: radial-gradient(circle at 0% 0%, rgba(91, 143, 249, 0.08), transparent 55%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 245, 250, 0.9) 100%);
-  transition: grid-template-columns var(--edu-duration-normal) var(--edu-easing-smooth);
-}
-
-.main-layout.is-collapsed {
-  grid-template-columns: var(--edu-sidebar-collapsed-width) 1fr;
-}
-
-.layout-sidebar {
-  position: relative;
-  background: #1e293b !important; /* 强制设置深色背景 */
-  border-right: 1px solid #334155;
-  backdrop-filter: blur(14px);
-}
-
-.layout-main {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: transparent;
-}
-
-.layout-header {
-  position: sticky;
-  top: 0;
-  z-index: var(--edu-z-index-dropdown);
-  backdrop-filter: blur(14px);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.82) 100%);
-  border-bottom: 1px solid rgba(209, 213, 219, 0.6);
-}
-
-.layout-content {
-  flex: 1;
-  position: relative;
-  /* 移除overflow限制，让内容自然流动 */
-}
-
-.content-scroller {
-  /* 移除高度限制，让内容充分展开 */
-  min-height: calc(100vh - var(--edu-header-height));
-  padding: 32px clamp(24px, 4vw, 48px);
-}
-
-.content-surface {
-  background: transparent;
-  border-radius: 0;
-  box-shadow: none;
-  padding: 0;
-  border: none;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity var(--edu-duration-normal) var(--edu-easing-smooth),
-    transform var(--edu-duration-normal) var(--edu-easing-smooth);
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-  transform: translateY(12px);
-}
-
-@media (max-width: 1280px) {
   .main-layout {
-    grid-template-columns: var(--edu-sidebar-collapsed-width) 1fr;
+    height: 100vh; /* Fixed height for app-like feel */
+    display: grid;
+    grid-template-columns: var(--edu-sidebar-width) 1fr;
+    background:
+      radial-gradient(circle at 0% 0%, rgba(91, 143, 249, 0.08), transparent 55%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 245, 250, 0.9) 100%);
+    transition: grid-template-columns var(--edu-duration-normal) var(--edu-easing-smooth);
+    overflow: hidden; /* Prevent body scroll */
   }
-}
 
-@media (max-width: 960px) {
-  .main-layout {
-    grid-template-columns: 1fr;
+  .main-layout.is-collapsed {
+    grid-template-columns: var(--edu-sidebar-collapsed-width) 1fr;
   }
 
   .layout-sidebar {
-    position: fixed;
-    inset: 0 auto 0 0;
-    width: 260px;
-    z-index: calc(var(--edu-z-index-modal) - 50);
-    transform: translateX(-100%);
-    transition: transform var(--edu-duration-normal) var(--edu-easing-smooth);
-    box-shadow: 12px 0 40px rgba(15, 23, 42, 0.25);
-  }
-
-  .main-layout.is-collapsed .layout-sidebar {
-    transform: translateX(-100%);
-  }
-
-  .main-layout:not(.is-collapsed) .layout-sidebar {
-    transform: translateX(0);
+    position: relative;
+    background: #1e293b !important; /* 强制设置深色背景 */
+    border-right: 1px solid #334155;
+    backdrop-filter: blur(14px);
+    overflow: hidden;
   }
 
   .layout-main {
-    min-height: 100vh;
-    background: var(--edu-color-white);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  .layout-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--edu-z-index-dropdown);
+    backdrop-filter: blur(14px);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(255, 255, 255, 0.82) 100%
+    );
+    border-bottom: 1px solid rgba(209, 213, 219, 0.6);
+    flex-shrink: 0;
+  }
+
+  .layout-content {
+    flex: 1;
+    position: relative;
+    overflow: hidden; /* Internal scrolling handled by scroller */
   }
 
   .content-scroller {
-    padding: 16px;
-    min-height: auto; /* 移动端不限制最小高度 */
+    height: 100%;
+    overflow-y: auto;
+    padding: 32px clamp(24px, 4vw, 48px);
+    scroll-behavior: smooth;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .main-layout,
-  .layout-sidebar,
+  .content-surface {
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    border: none;
+  }
+
   .fade-enter-active,
   .fade-leave-active {
-    transition-duration: 0.01ms !important;
+    transition:
+      opacity var(--edu-duration-normal) var(--edu-easing-smooth),
+      transform var(--edu-duration-normal) var(--edu-easing-smooth);
   }
-}
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  @media (max-width: 1280px) {
+    .main-layout {
+      grid-template-columns: var(--edu-sidebar-collapsed-width) 1fr;
+    }
+  }
+
+  @media (max-width: 960px) {
+    .main-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .layout-sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: 260px;
+      z-index: calc(var(--edu-z-index-modal) - 50);
+      transform: translateX(-100%);
+      transition: transform var(--edu-duration-normal) var(--edu-easing-smooth);
+      box-shadow: 12px 0 40px rgba(15, 23, 42, 0.25);
+    }
+
+    .main-layout.is-collapsed .layout-sidebar {
+      transform: translateX(-100%);
+    }
+
+    .main-layout:not(.is-collapsed) .layout-sidebar {
+      transform: translateX(0);
+    }
+
+    .layout-main {
+      min-height: 100vh;
+      background: var(--edu-color-white);
+    }
+
+    .content-scroller {
+      padding: 16px;
+      min-height: auto; /* 移动端不限制最小高度 */
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .main-layout,
+    .layout-sidebar,
+    .fade-enter-active,
+    .fade-leave-active {
+      transition-duration: 0.01ms !important;
+    }
+  }
 </style>

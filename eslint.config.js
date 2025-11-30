@@ -1,4 +1,5 @@
 const { ESLint } = require('eslint')
+const globals = require('globals')
 
 module.exports = [
   // 基础配置
@@ -23,22 +24,14 @@ module.exports = [
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
-        // Node.js globals
-        process: 'readonly',
-        Buffer: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        global: 'readonly',
-
-        // 测试 globals
+        ...globals.browser,
+        ...globals.node,
         describe: 'readonly',
         it: 'readonly',
         test: 'readonly',
         expect: 'readonly',
         jest: 'readonly',
         vitest: 'readonly',
-
-        // Vue globals
         defineProps: 'readonly',
         defineEmits: 'readonly',
         defineExpose: 'readonly',
@@ -51,19 +44,22 @@ module.exports = [
       'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
       'no-unused-vars': 'off',
       'no-undef': 'error',
-      'semi': ['error', 'never'],
-      'quotes': ['error', 'single', { allowTemplateLiterals: true }],
+      semi: ['error', 'never'],
+      quotes: ['error', 'single', { allowTemplateLiterals: true }],
       'comma-dangle': ['error', 'never'],
       'object-curly-spacing': ['error', 'always'],
       'array-bracket-spacing': ['error', 'never'],
-      'space-before-function-paren': ['error', {
-        anonymous: 'always',
-        named: 'never',
-        asyncArrow: 'always'
-      }],
-      'indent': ['error', 2, { SwitchCase: 1 }],
+      'space-before-function-paren': [
+        'error',
+        {
+          anonymous: 'always',
+          named: 'never',
+          asyncArrow: 'always'
+        }
+      ],
+      indent: ['error', 2, { SwitchCase: 1 }],
       'max-len': ['warn', { code: 100, ignoreUrls: true, ignoreStrings: true }],
-      'eqeqeq': ['error', 'always'],
+      eqeqeq: ['error', 'always'],
       'no-var': 'error',
       'prefer-const': 'error',
       'prefer-arrow-callback': 'error',
@@ -111,7 +107,7 @@ module.exports = [
     plugins: {
       vue: require('eslint-plugin-vue')
     },
-    processor: 'vue/.vue-tags',
+    processor: 'vue/vue',
     rules: {
       // Vue 3 规则
       'vue/multi-word-component-names': 'off',
@@ -122,9 +118,12 @@ module.exports = [
       'vue/component-name-in-template-casing': ['error', 'PascalCase'],
       'vue/component-definition-name-casing': ['error', 'PascalCase'],
       'vue/custom-event-name-casing': ['error', 'camelCase'],
-      'vue/define-macros-order': ['error', {
-        order: ['defineProps', 'defineEmits']
-      }],
+      'vue/define-macros-order': [
+        'error',
+        {
+          order: ['defineProps', 'defineEmits']
+        }
+      ],
       'vue/no-unused-refs': 'error',
       'vue/padding-line-between-blocks': ['error', 'always'],
       'vue/prefer-separate-static-class': 'error'

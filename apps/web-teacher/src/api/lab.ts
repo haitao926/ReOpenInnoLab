@@ -1,30 +1,5 @@
 import request from '@/utils/request'
-
-export interface CreateLabTemplateDto {
-  title: string
-  description: string
-  labType: 'jupyter' | 'python' | 'r' | 'markdown'
-  difficultyLevel: 'beginner' | 'intermediate' | 'advanced' | 'expert'
-  tags?: string[]
-  packageManifest?: {
-    pip: string[]
-    pip_optional: string[]
-    npm: string[]
-    conda: string[]
-    system: string[]
-  }
-  metadata?: {
-    gradeLevel?: string
-    subject?: string
-    topics?: string[]
-    estimatedDuration?: string
-    learningObjectives?: string[]
-    prerequisites?: string[]
-  }
-  courseActivityId?: string
-  gradeBand?: string
-  autoRenderPreview?: boolean
-}
+import type { CreateLabTemplateDto } from '@/types/experiment'
 
 export interface LabTemplate {
   id: string
@@ -103,8 +78,8 @@ export class LabApiService {
     formData.append('notebook', notebookFile)
 
     // Append attachment files
-    attachments.forEach((file, index) => {
-      formData.append(`attachments`, file)
+    attachments.forEach(file => {
+      formData.append('attachments', file)
     })
 
     return request({
@@ -144,16 +119,18 @@ export class LabApiService {
   /**
    * Get lab templates with filtering and pagination
    */
-  static async getLabTemplates(params: {
-    page?: number
-    limit?: number
-    search?: string
-    labType?: string
-    difficultyLevel?: string
-    gradeBand?: string
-    tags?: string[]
-    courseActivityId?: string
-  } = {}): Promise<LabTemplateListResponse> {
+  static async getLabTemplates(
+    params: {
+      page?: number
+      limit?: number
+      search?: string
+      labType?: string
+      difficultyLevel?: string
+      gradeBand?: string
+      tags?: string[]
+      courseActivityId?: string
+    } = {}
+  ): Promise<LabTemplateListResponse> {
     const queryParams = new URLSearchParams()
 
     Object.keys(params).forEach(key => {
@@ -223,11 +200,7 @@ export class LabApiService {
     }
 
     // Check MIME type
-    const allowedTypes = [
-      'application/x-ipynb+json',
-      'application/json',
-      'text/plain'
-    ]
+    const allowedTypes = ['application/x-ipynb+json', 'application/json', 'text/plain']
     if (!allowedTypes.includes(file.type)) {
       errors.push('不支持的文件类型')
     }
@@ -245,7 +218,7 @@ export class LabApiService {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
 
-      reader.onload = (e) => {
+      reader.onload = e => {
         try {
           const content = e.target?.result as string
           const notebook = JSON.parse(content)
