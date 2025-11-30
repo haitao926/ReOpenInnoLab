@@ -1,12 +1,14 @@
 <template>
   <div class="realtime-lesson-view" :class="{ 'fullscreen': isFullscreen }">
     <!-- 连接状态指示器 -->
-    <div class="connection-status" :class="connectionStatusClass">
-      <el-icon v-if="connectionStatus === 'connected'"><CircleCheck /></el-icon>
-      <el-icon v-else-if="connectionStatus === 'connecting'"><Loading /></el-icon>
-      <el-icon v-else><CircleClose /></el-icon>
-      <span>{{ connectionStatusText }}</span>
-    </div>
+    <ConnectionStatus
+      class="connection-status-badge"
+      :status="displayConnectionStatus"
+      :reconnect-attempts="reconnectAttempts"
+      :last-error="lastError"
+      show-retry
+      @retry="reconnect"
+    />
 
     <!-- 顶部信息栏 -->
     <header class="lesson-header" v-show="!isFullscreen">
@@ -62,43 +64,20 @@
       <!-- 侧边栏 -->
       <aside class="lesson-sidebar" v-show="!isFullscreen">
         <!-- 课程进度 -->
-        <div class="progress-card">
-          <h3>课程进度</h3>
-          <el-progress
-            :percentage="lessonProgress"
-            :stroke-width="8"
-            :show-text="true"
-            text-inside
-          />
-          <div class="sections-nav">
-            <div
-              v-for="(section, index) in lessonData?.sections || []"
-              :key="index"
-              :class="['section-item', {
-                'active': index === currentSectionIndex,
-                'completed': index < currentSectionIndex
-              }]"
-              @click="jumpToSection(index)"
-            >
-              <div class="section-icon">
-                <el-icon>
-                  <component :is="getSectionIcon(section.type)" />
-                </el-icon>
-              </div>
-              <div class="section-info">
-                <div class="section-title">{{ section.title }}</div>
-                <div class="section-type">{{ getSectionTypeName(section.type) }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ProgressPanel
+          v-if="lessonData?.sections?.length"
+          :sections="lessonData.sections"
+          :current-index="currentSectionIndex"
+          :progress="lessonProgress"
+          @select="handleSectionSelect"
+        />
 
         <!-- 个人进度 -->
         <div class="personal-progress-card">
           <h3>我的进度</h3>
           <div class="stats-grid">
             <div class="stat-item">
-              <div class="stat-value">{{ sectionProgress.completionRate }}%</div>
+              <div class="stat-value">{{ currentSectionCompletion }}%</div>
               <div class="stat-label">当前环节完成度</div>
             </div>
             <div class="stat-item">
@@ -170,7 +149,7 @@
           <el-icon><EditPen /></el-icon>
         </el-button>
         <el-button @click="exitFullscreen" circle>
-          <el-icon><FullScreenExit /></el-icon>
+          <el-icon><Close /></el-icon>
         </el-button>
       </el-button-group>
     </div>
@@ -202,25 +181,33 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { ElMessage, ElNotification } from 'element-plus'
 import {
-  CircleCheck, CircleClose, Loading, FullScreen,
+  Loading, FullScreen,
   Pointer, EditPen, QuestionFilled, Close
 } from '@element-plus/icons-vue'
 import { useLessonStore } from '@/stores/lesson'
+import { useUserStore } from '@/stores/user'
 import { useSocket } from '@/composables/useSocket'
 import { useNotification } from '@/composables/useNotification'
 import LessonSectionRenderer from '@/components/lesson/LessonSectionRenderer.vue'
+import ConnectionStatus from '@/components/lesson/ConnectionStatus.vue'
+import ProgressPanel from '@/components/lesson/ProgressPanel.vue'
 import type { StudentInteraction, SectionProgress } from '@/types/lesson'
 
 const route = useRoute()
 const router = useRouter()
 const lessonStore = useLessonStore()
+const userStore = useUserStore()
+const { user } = storeToRefs(userStore)
 const {
   connect,
   disconnect,
   submitStudentInteraction,
   connectionStatus,
+  reconnectAttempts,
+  lastError,
   onMessage,
   joinLesson
 } = useSocket()
@@ -245,6 +232,7 @@ const sectionProgress = ref<SectionProgress>({
 const interactions = ref<StudentInteraction[]>([])
 const startTime = ref<Date | null>(null)
 const currentSectionStartTime = ref<Date | null>(null)
+const messageDisposer = ref<(() => void) | null>(null)
 
 // 计算属性
 const lessonData = computed(() => lessonStore.currentLesson)
@@ -253,20 +241,11 @@ const currentSection = computed(() => {
   return lessonData.value.sections[currentSectionIndex.value]
 })
 
-const connectionStatusClass = computed(() => ({
-  'connected': connectionStatus.value === 'connected',
-  'connecting': connectionStatus.value === 'connecting',
-  'disconnected': connectionStatus.value === 'disconnected'
-}))
+const activeStudentId = computed(() => user.value?.studentId || user.value?.id || `student_${lessonId}`)
+const studentRole = computed(() => (user.value?.role === 'teacher' ? 'teacher' : 'student'))
+const resolvedClassroomId = computed(() => lessonData.value?.classroomId || (route.query.classroomId as string) || '')
+const displayConnectionStatus = computed(() => connectionStatus.value || 'idle')
 
-const connectionStatusText = computed(() => {
-  switch (connectionStatus.value) {
-    case 'connected': return '已连接'
-    case 'connecting': return '连接中...'
-    case 'disconnected': return '连接断开'
-    default: return '未知状态'
-  }
-})
 
 const lessonProgress = computed(() => {
   if (!lessonData.value?.sections) return 0
@@ -286,41 +265,64 @@ const totalTime = computed(() => {
 })
 
 const studentData = computed(() => ({
+  studentId: activeStudentId.value,
   interactions: interactions.value,
   notes: notes.value,
   progress: sectionProgress.value,
   handRaised: hasRaisedHand.value
 }))
 
+const currentSectionCompletion = computed(() => Math.round(sectionProgress.value.progress))
+
 // 方法
 const connectToLesson = async () => {
   try {
     isLoading.value = true
+    lessonStore.setConnectionState('connecting')
 
-    // 连接Socket.IO
+    const lesson = await lessonStore.initLesson(lessonId)
+    const classroomId = resolvedClassroomId.value || lesson.classroomId
+
+    if (!classroomId) {
+      throw new Error('未找到课堂所属班级信息')
+    }
+
     await connect('/lesson')
 
-    // 加入课程房间 - 这里需要真实的用户数据，暂时使用模拟数据
-    const userId = 'student_' + Date.now() // 应该从用户store获取
-    const classroomId = 'classroom_' + lessonId // 应该从课程数据获取
-
-    if (joinLesson(lessonId, userId, 'student', classroomId)) {
-      // 加载课程数据
-      await lessonStore.loadLesson(lessonId)
-
-      // 恢复笔记
-      const savedNotes = localStorage.getItem(`lesson_notes_${lessonId}`)
-      if (savedNotes) {
-        notes.value = savedNotes
+    const joined = joinLesson(
+      lessonId,
+      activeStudentId.value,
+      studentRole.value,
+      classroomId,
+      {
+        studentName: user.value?.name,
+        school: user.value?.school,
+        grade: user.value?.grade
       }
+    )
 
-      ElMessage.success('成功连接到课堂')
-    } else {
-      throw new Error('Failed to join lesson')
+    if (!joined) {
+      throw new Error('加入课堂失败')
     }
+
+    const savedNotes = localStorage.getItem(`lesson_notes_${lessonId}`)
+    if (savedNotes) {
+      notes.value = savedNotes
+    }
+
+    if (!messageDisposer.value) {
+      messageDisposer.value = onMessage(handleSocketMessage)
+    }
+
+    lessonStore.setConnectionState('connected')
+    ElMessage.success('成功连接到课堂')
   } catch (error) {
     console.error('连接课堂失败:', error)
+    lessonStore.setConnectionState('error', {
+      reason: error instanceof Error ? error.message : '连接失败'
+    })
     ElMessage.error('连接课堂失败，请稍后重试')
+    throw error
   } finally {
     isLoading.value = false
   }
@@ -328,12 +330,19 @@ const connectToLesson = async () => {
 
 const disconnectFromLesson = () => {
   saveNotes()
+  messageDisposer.value?.()
+  messageDisposer.value = null
   disconnect()
   lessonStore.clearCurrentLesson()
+  lessonStore.setConnectionState('disconnected')
 }
 
-const reconnect = () => {
-  connectToLesson()
+const reconnect = async () => {
+  try {
+    await connectToLesson()
+  } catch (error) {
+    console.error('课堂重连失败:', error)
+  }
 }
 
 const toggleFullscreen = () => {
@@ -353,7 +362,7 @@ const exitFullscreen = () => {
   isFullscreen.value = false
 }
 
-const jumpToSection = (index: number) => {
+const handleSectionSelect = (index: number) => {
   // 学生端只能查看当前环节，不能自由跳转
   if (index !== currentSectionIndex.value) {
     ElMessage.info('请跟随老师的节奏进行学习')
@@ -370,10 +379,9 @@ const handleInteraction = (interaction: Omit<StudentInteraction, 'timestamp'>) =
   interactions.value.push(fullInteraction)
 
   // 发送互动数据到服务器
-  const userId = 'student_' + Date.now() // 应该从用户store获取
   submitStudentInteraction(
     lessonId,
-    userId,
+    activeStudentId.value,
     interaction.type,
     {
       ...interaction,
@@ -386,10 +394,9 @@ const handleProgressUpdate = (progress: SectionProgress) => {
   sectionProgress.value = progress
 
   // 发送进度更新到服务器
-  const userId = 'student_' + Date.now() // 应该从用户store获取
   submitStudentInteraction(
     lessonId,
-    userId,
+    activeStudentId.value,
     'progress_update',
     {
       sectionIndex: currentSectionIndex.value,
@@ -401,10 +408,9 @@ const handleProgressUpdate = (progress: SectionProgress) => {
 const raiseHand = () => {
   hasRaisedHand.value = !hasRaisedHand.value
 
-  const userId = 'student_' + Date.now() // 应该从用户store获取
   submitStudentInteraction(
     lessonId,
-    userId,
+    activeStudentId.value,
     'hand_raise',
     {
       raised: hasRaisedHand.value
@@ -421,10 +427,9 @@ const askQuestion = () => {
 const submitQuestion = () => {
   if (!questionText.value.trim()) return
 
-  const userId = 'student_' + Date.now() // 应该从用户store获取
   submitStudentInteraction(
     lessonId,
-    userId,
+    activeStudentId.value,
     'question',
     {
       question: questionText.value.trim()
@@ -537,32 +542,32 @@ const handleFullscreenChange = () => {
   isFullscreen.value = !!document.fullscreenElement
 }
 
+const beforeUnloadHandler = () => {
+  disconnectFromLesson()
+}
+
 // 生命周期
 onMounted(async () => {
-  await connectToLesson()
+  try {
+    await connectToLesson()
+  } catch (error) {
+    console.error('初始化课堂失败:', error)
+  }
 
-  // 注册Socket.IO消息监听器
-  const unsubscribe = onMessage(handleSocketMessage)
-
-  // 监听全屏变化
   document.addEventListener('fullscreenchange', handleFullscreenChange)
-
-  // 页面关闭前保存数据
-  window.addEventListener('beforeunload', () => {
-    saveNotes()
-    unsubscribe() // 清理消息监听器
-    disconnectFromLesson()
-  })
+  window.addEventListener('beforeunload', beforeUnloadHandler)
 })
 
 onUnmounted(() => {
-  saveNotes()
-  disconnectFromLesson()
+  beforeUnloadHandler()
   document.removeEventListener('fullscreenchange', handleFullscreenChange)
+  window.removeEventListener('beforeunload', beforeUnloadHandler)
 })
 
 // 监听连接状态变化
 watch(connectionStatus, (newStatus) => {
+  lessonStore.setConnectionState(newStatus, lastError.value ? { reason: lastError.value } : undefined)
+
   if (newStatus === 'disconnected') {
     ElNotification({
       title: '连接断开',
@@ -593,41 +598,11 @@ watch(connectionStatus, (newStatus) => {
   }
 }
 
-.connection-status {
+.connection-status-badge {
   position: fixed;
   top: 20px;
   right: 20px;
   z-index: 1000;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-
-  &.connected {
-    background: #f0f9ff;
-    color: #1e40af;
-    border: 1px solid #3b82f6;
-  }
-
-  &.connecting {
-    background: #fef3c7;
-    color: #d97706;
-    border: 1px solid #f59e0b;
-  }
-
-  &.disconnected {
-    background: #fee2e2;
-    color: #dc2626;
-    border: 1px solid #ef4444;
-  }
-
-  .el-icon {
-    font-size: 16px;
-  }
 }
 
 .lesson-header {
@@ -714,69 +689,16 @@ watch(connectionStatus, (newStatus) => {
       }
     }
 
-    .sections-nav {
-      margin-top: 16px;
+    .progress-panel,
+    .personal-progress-card,
+    .quick-actions-card {
+      margin-bottom: 24px;
 
-      .section-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        margin-bottom: 8px;
-
-        &:hover {
-          background: #f9fafb;
-        }
-
-        &.active {
-          background: #eff6ff;
-          border: 1px solid #3b82f6;
-        }
-
-        &.completed {
-          background: #f0fdf4;
-          border: 1px solid #22c55e;
-        }
-
-        .section-icon {
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          background: #f3f4f6;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #6b7280;
-
-          .section-item.active & {
-            background: #3b82f6;
-            color: white;
-          }
-
-          .section-item.completed & {
-            background: #22c55e;
-            color: white;
-          }
-        }
-
-        .section-info {
-          flex: 1;
-
-          .section-title {
-            font-size: 14px;
-            font-weight: 500;
-            color: #1f2937;
-            margin-bottom: 2px;
-          }
-
-          .section-type {
-            font-size: 12px;
-            color: #6b7280;
-          }
-        }
+      h3 {
+        margin: 0 0 16px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #1f2937;
       }
     }
 

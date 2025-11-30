@@ -416,40 +416,7 @@
       </EduCard>
     </div>
 
-    <template #footer>
-      <div class="footer-column">
-        <h4 class="footer-title">最近活动</h4>
-        <div class="footer-list">
-          <div v-for="activity in footerActivities" :key="activity.id" class="footer-item">
-            <span class="footer-indicator" :class="`footer-indicator--${activity.type}`"></span>
-            <span class="footer-text">{{ activity.text }}</span>
-            <span class="footer-time">{{ formatTime(activity.timestamp) }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="footer-column">
-        <h4 class="footer-title">系统公告</h4>
-        <ul class="footer-list">
-          <li v-for="notice in systemNotices" :key="notice.id" class="footer-item">
-            <el-icon><Bell /></el-icon>
-            <span class="footer-text">{{ notice.text }}</span>
-          </li>
-        </ul>
-      </div>
-      <div class="footer-column">
-        <h4 class="footer-title">常用操作</h4>
-        <div class="support-links">
-          <el-button text size="small" @click="exportData">
-            <el-icon><Download /></el-icon>
-            导出班级报表
-          </el-button>
-          <el-button text size="small" @click="createClassPlan">
-            <el-icon><DataAnalysis /></el-icon>
-            设计班级计划
-          </el-button>
-        </div>
-      </div>
-    </template>
+
 
     <el-dialog
       v-model="showCreateClassModal"

@@ -267,6 +267,156 @@ export class LabApiService {
       languageInfo: notebook.metadata?.language_info
     }
   }
+
+  /**
+   * Read notebook file content
+   */
+  static async readNotebookFile(file: File): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+
+      reader.onload = e => {
+        try {
+          const content = e.target?.result as string
+          const notebook = JSON.parse(content)
+
+          // Validate notebook structure
+          if (!notebook.cells || !Array.isArray(notebook.cells)) {
+            reject(new Error('无效的 Notebook 格式：缺少 cells 数组'))
+            return
+          }
+
+          resolve(notebook)
+        } catch (error) {
+          reject(new Error('无法解析 Notebook 文件：无效的 JSON 格式'))
+        }
+      }
+
+      reader.onerror = () => {
+        reject(new Error('读取文件失败'))
+      }
+
+      reader.readAsText(file)
+    })
+  }
+
+  /**
+   * Lab Run Management
+   */
+
+  /**
+   * Create lab run
+   */
+  static async createLabRun(data: {
+    labTemplateId: string
+    lessonId: string
+    classId: string
+    scheduledTime: string
+    endTime?: string
+    runtimePolicyId?: string
+    participantIds?: string[]
+    config?: {
+      allowLateJoin: boolean
+      showProgress: boolean
+      enableHints: boolean
+    }
+  }): Promise<LabTemplate> {
+    return request({
+      url: `${this.BASE_URL}/runs`,
+      method: 'POST',
+      data
+    })
+  }
+
+  /**
+   * Get lab run by ID
+   */
+  static async getLabRun(id: string): Promise<any> {
+    return request({
+      url: `${this.BASE_URL}/runs/${id}`,
+      method: 'GET'
+    })
+  }
+
+  /**
+   * Get lab run participants
+   */
+  static async getLabRunParticipants(runId: string): Promise<any[]> {
+    return request({
+      url: `${this.BASE_URL}/runs/${runId}/participants`,
+      method: 'GET'
+    })
+  }
+
+  /**
+   * Start lab run
+   */
+  static async startLabRun(runId: string): Promise<void> {
+    return request({
+      url: `${this.BASE_URL}/runs/${runId}/start`,
+      method: 'POST'
+    })
+  }
+
+  /**
+   * Pause lab run
+   */
+  static async pauseLabRun(runId: string): Promise<void> {
+    return request({
+      url: `${this.BASE_URL}/runs/${runId}/pause`,
+      method: 'POST'
+    })
+  }
+
+  /**
+   * Resume lab run
+   */
+  static async resumeLabRun(runId: string): Promise<void> {
+    return request({
+      url: `${this.BASE_URL}/runs/${runId}/resume`,
+      method: 'POST'
+    })
+  }
+
+  /**
+   * Extend lab run time
+   */
+  static async extendLabRun(runId: string, data: {
+    minutes: number
+    reason?: string
+  }): Promise<void> {
+    return request({
+      url: `${this.BASE_URL}/runs/${runId}/extend`,
+      method: 'POST',
+      data
+    })
+  }
+
+  /**
+   * Collect lab run results
+   */
+  static async collectLabRunResults(runId: string, options: {
+    includeIncomplete?: boolean
+    includeErrors?: boolean
+    generateReport?: boolean
+  }): Promise<string> {
+    const response = await request({
+      url: `${this.BASE_URL}/runs/${runId}/collect`,
+      method: 'POST',
+      data: options
+    })
+    return response.taskId
+  }
+
+  /**
+   * Reset lab run participant
+   */
+  static async resetLabRunParticipant(runId: string, participantId: string): Promise<void> {
+    return request({
+      url: `${this.BASE_URL}/runs/${runId}/participants/${participantId}/reset`,
+      method: 'POST'
+    })
+  }
 }
 
 export default LabApiService

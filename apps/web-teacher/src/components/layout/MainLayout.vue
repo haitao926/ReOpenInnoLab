@@ -1,7 +1,113 @@
+```vue
+<script setup lang="ts">
+import { computed, onMounted } from 'vue'
+import { AppSidebar } from '@reopeninnolab/ui-kit'
+import AppHeader from './AppHeader.vue'
+import AIAssistantFloat from '@/components/ai/AIAssistantFloat.vue'
+import { useAppStore } from '@/stores/app'
+import brandLogo from '@/assets/brand-logo.png'
+import {
+  Odometer,
+  Reading,
+  Pouring,
+  ChatDotRound,
+  Files,
+  DataAnalysis,
+  Setting,
+  User
+} from '@element-plus/icons-vue'
+
+const appStore = useAppStore()
+
+const layoutClasses = computed(() => ({
+  'is-collapsed': appStore.isCollapsed
+}))
+
+const menuItems = [
+  {
+    key: 'dashboard',
+    label: '控制台',
+    to: '/dashboard',
+    icon: Odometer
+  },
+  {
+    key: 'class',
+    label: '班级管理',
+    to: '/class',
+    icon: User
+  },
+  {
+    key: 'courses',
+    label: '课程管理',
+    to: '/courses',
+    icon: Reading
+  },
+  {
+    key: 'labs',
+    label: '实验管理',
+    to: '/labs',
+    icon: Pouring
+  },
+  {
+    key: 'experience',
+    label: '体验管理',
+    to: '/experience',
+    icon: ChatDotRound
+  }
+]
+
+const bottomMenuItems = [
+  {
+    key: 'resources',
+    label: '资源中心',
+    to: '/resources',
+    icon: Files
+  },
+  {
+    key: 'analytics',
+    label: '学情分析',
+    to: '/analytics',
+    icon: DataAnalysis
+  },
+  {
+    key: 'settings',
+    label: '系统设置',
+    to: '/settings',
+    icon: Setting
+  }
+]
+
+onMounted(() => {
+  if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+    appStore.setSidebarCollapsed(true)
+  }
+})
+</script>
+
 <template>
   <div class="main-layout" :class="layoutClasses">
     <aside class="layout-sidebar">
-      <AppSidebar />
+      <!-- 折叠按钮 -->
+      <button type="button" class="sidebar-toggle-btn" @click="appStore.toggleSidebar">
+        <svg
+          class="sidebar-toggle-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline :points="appStore.isCollapsed ? '13 19 7 12 13 5' : '11 19 17 12 11 5'" />
+        </svg>
+      </button>
+
+      <AppSidebar
+        :collapsed="appStore.isCollapsed"
+        :logo="brandLogo"
+        title="ReOpenInnoLab"
+        :menuItems="menuItems"
+        :bottomMenuItems="bottomMenuItems"
+        @toggleCollapse="appStore.toggleSidebar"
+      />
     </aside>
 
     <div class="layout-main">
@@ -9,12 +115,12 @@
         <AppHeader />
       </header>
 
-      <main class="layout-content" role="main">
+      <main class="layout-content">
         <div class="content-scroller">
           <div class="content-surface">
-            <router-view v-slot="{ Component, route }">
-              <transition name="fade" mode="out-in">
-                <component :is="Component" :key="route.fullPath" />
+            <router-view v-slot="{ Component }">
+              <transition name="fade-slide" mode="out-in">
+                <component :is="Component" />
               </transition>
             </router-view>
           </div>
@@ -26,37 +132,19 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import AppSidebar from './AppSidebar.vue'
-import AppHeader from './AppHeader.vue'
-import AIAssistantFloat from '@/components/ai/AIAssistantFloat.vue'
-import { useAppStore } from '@/stores/app'
-
-const appStore = useAppStore()
-
-const layoutClasses = computed(() => ({
-  'is-collapsed': appStore.isCollapsed
-}))
-
-onMounted(() => {
-  if (typeof window !== 'undefined' && window.innerWidth < 1024) {
-    appStore.setSidebarCollapsed(true)
-  }
-})
-</script>
-
 <style scoped>
   .main-layout {
     height: 100vh; /* Fixed height for app-like feel */
     display: grid;
     grid-template-columns: var(--edu-sidebar-width) 1fr;
-    background:
-      radial-gradient(circle at 0% 0%, rgba(91, 143, 249, 0.08), transparent 55%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 245, 250, 0.9) 100%);
-    transition: grid-template-columns var(--edu-duration-normal) var(--edu-easing-smooth);
-    overflow: hidden; /* Prevent body scroll */
-  }
+    background: 
+    radial-gradient(circle at 0% 0%, rgba(91, 143, 249, 0.15), transparent 40%), /* Blue top-left */
+    radial-gradient(circle at 100% 0%, rgba(139, 92, 246, 0.15), transparent 40%), /* Purple top-right */
+    radial-gradient(circle at 100% 100%, rgba(249, 115, 22, 0.1), transparent 40%), /* Orange bottom-right */
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.95) 100%); /* Base white */
+  transition: grid-template-columns var(--edu-duration-normal) var(--edu-easing-smooth);
+  overflow: hidden; /* Prevent body scroll */
+}
 
   .main-layout.is-collapsed {
     grid-template-columns: var(--edu-sidebar-collapsed-width) 1fr;
@@ -68,6 +156,35 @@ onMounted(() => {
     border-right: 1px solid #334155;
     backdrop-filter: blur(14px);
     overflow: hidden;
+    display: flex;
+  }
+
+  .sidebar-toggle-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: #e2e8f0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .sidebar-toggle-icon {
+      width: 16px;
+      height: 16px;
+    }
   }
 
   .layout-main {

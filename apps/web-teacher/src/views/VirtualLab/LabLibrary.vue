@@ -1,5 +1,5 @@
 <template>
-  <TeacherWorkspaceLayout
+  <CanvasWorkspaceLayout
     title="实验管理"
     subtitle="构建 AI 赋能实验流程，管理资源与监控执行"
     v-model:leftCollapsed="leftSidebarCollapsed"
@@ -139,156 +139,169 @@
             </div>
           </div>
         </template>
-      </ManagementSidebarRight>
-    </template>
-
-    <div class="lab-content">
-      <EduCard variant="elevated" class="lab-card-panel">
-        <template #header>
-          <div class="lab-panel__header">
-            <div class="lab-panel__info">
-              <h3 class="lab-panel__title">实验列表</h3>
-              <p class="lab-panel__subtitle">从模板库挑选或自定义实验，并快速发布给班级</p>
-            </div>
-            <div class="lab-panel__filters">
-              <el-input
-                v-model="searchQuery"
-                placeholder="搜索实验或模板"
-                clearable
-                style="width: 300px;"
-              >
-                <template #prefix>
-                  <el-icon><Search /></el-icon>
-                </template>
-              </el-input>
-              <el-select v-model="selectedType" placeholder="实验类型" clearable style="width: 150px;">
-                <el-option value="" label="全部类型" />
-                <el-option value="playground" label="编程练习" />
-                <el-option value="data-lab" label="数据实验" />
-                <el-option value="robotics" label="机器人" />
-                <el-option value="model-training" label="模型训练" />
-              </el-select>
-              <div class="view-switcher">
-                <el-segmented
-                  v-model="viewMode"
-                  :options="viewModeSegments"
-                  size="small"
-                />
+        <!-- 自定义实验监控插槽 -->
+        <template #monitoring="{ data }">
+          <div class="lab-monitoring">
+            <div class="monitoring-overview">
+              <div class="monitor-item">
+                <div class="monitor-label">运行中</div>
+                <div class="monitor-value success">{{ activeLabsCount }}</div>
+              </div>
+              <div class="monitor-item">
+                <div class="monitor-label">异常</div>
+                <div class="monitor-value danger">{{ errorLabsCount }}</div>
+              </div>
+              <div class="monitor-item">
+                <div class="monitor-label">资源占用</div>
+                <div class="monitor-value warning">{{ resourceUsage }}%</div>
               </div>
             </div>
           </div>
         </template>
 
-        <!-- 时间线视图 -->
-        <div v-if="viewMode === 'timeline'" class="timeline-view">
-          <div class="timeline-sections">
-            <TimelineSectionCard
-              v-for="timelineLab in timelineLabs"
-              :key="timelineLab.id"
-              :title="timelineLab.title"
-              :subtitle="timelineLab.subtitle"
-              :status="timelineLab.status"
-              :tag="timelineLab.tag"
-              :tag-variant="timelineLab.tagVariant"
-              :sections="timelineLab.sections"
-              :collapsible="true"
-              :show-line="true"
-              @section-toggle="handleSectionToggle"
-              @section-configure="handleSectionConfigure"
-              @jupyter-launch="handleJupyterLaunch"
-              @training-start="handleTrainingStart"
-              @section-edit="handleSectionEdit"
-              class="timeline-card"
-            />
-          </div>
-        </div>
-
-        <!-- 网格视图 -->
-        <div v-else-if="viewMode === 'grid'" class="lab-grid">
-          <div
-            v-for="lab in filteredLabs"
-            :key="lab.id"
-            class="lab-card"
-            :class="{ 'lab-card--draft': !lab.published }"
-          >
-            <!-- 实验封面区域 -->
-            <div class="lab-card__cover">
-              <div class="lab-type-icon" :class="`lab-type-icon--${lab.type}`">
-                <el-icon><component :is="getLabTypeIcon(lab.type)" /></el-icon>
+        <!-- 自定义设备状态插槽 -->
+        <template #devices="{ data }">
+          <div class="device-status-list">
+            <div v-for="device in connectedDevices" :key="device.id" class="device-item">
+              <div class="device-icon" :class="{ active: device.status === 'online' }">
+                <el-icon><component :is="device.icon" /></el-icon>
               </div>
-              <div class="lab-cover__overlay">
-                <div class="lab-cover__badge">
-                  <el-tag :type="getLabTypeVariant(lab.type)" size="small" effect="dark">
-                    {{ getTypeName(lab.type) }}
-                  </el-tag>
-                </div>
-                <div class="lab-cover__status">
-                  <el-tag :type="lab.published ? 'success' : 'info'" size="small" effect="dark">
-                    {{ lab.published ? '已发布' : '草稿' }}
-                  </el-tag>
+              <div class="device-info">
+                <div class="device-name">{{ device.name }}</div>
+                <div class="device-status">
+                  <span class="status-dot" :class="device.status"></span>
+                  {{ device.status === 'online' ? '在线' : '离线' }}
                 </div>
               </div>
             </div>
+          </div>
+        </template>
+      </ManagementSidebarRight>
+    </template>
 
-            <!-- 实验内容区域 -->
-            <div class="lab-card__content">
-              <div class="lab-card__header">
-                <h4 class="lab-card__title">{{ lab.title }}</h4>
-                <div class="lab-card__actions">
-                  <el-dropdown @command="command => handleLabAction(command, lab)">
-                    <el-button size="small" text>
+    <template #summary>
+      <EduCard
+        v-for="card in summaryCards"
+        :key="card.id"
+        class="summary-card"
+        variant="glass"
+        size="sm"
+        :hoverable="true"
+        body-class="summary-card__body"
+      >
+        <div class="summary-card__content">
+          <span class="summary-card__icon" :style="{ background: card.gradient }">
+            <el-icon><component :is="card.icon" /></el-icon>
+          </span>
+          <div class="summary-card__text">
+            <span class="summary-card__value">{{ card.value }}</span>
+            <span class="summary-card__label">{{ card.label }}</span>
+          </div>
+        </div>
+      </EduCard>
+    </template>
+
+    <div class="lab-library-content">
+      <!-- 视图切换和工具栏 -->
+      <div class="content-toolbar">
+        <div class="toolbar-left">
+          <el-radio-group v-model="viewMode" size="large">
+            <el-radio-button label="grid">
+              <el-icon><Grid /></el-icon>
+              网格视图
+            </el-radio-button>
+            <el-radio-button label="list">
+              <el-icon><List /></el-icon>
+              列表视图
+            </el-radio-button>
+          </el-radio-group>
+          <el-divider direction="vertical" />
+          <span class="lab-count">共 {{ filteredLabs.length }} 个实验</span>
+        </div>
+        <div class="toolbar-right">
+          <el-input
+            v-model="searchKeyword"
+            placeholder="搜索实验名称..."
+            clearable
+            style="width: 240px"
+            @change="handleSearch"
+          >
+            <template #prefix>
+              <el-icon><Search /></el-icon>
+            </template>
+          </el-input>
+          <el-select v-model="sortBy" placeholder="排序方式" style="width: 140px; margin-left: 12px;">
+            <el-option label="最近更新" value="updated" />
+            <el-option label="创建时间" value="created" />
+            <el-option label="名称 A-Z" value="name" />
+          </el-select>
+        </div>
+      </div>
+
+      <!-- 实验列表内容 -->
+      <div v-if="loading" class="loading-state">
+        <el-skeleton :rows="3" animated />
+      </div>
+      
+      <div v-else-if="filteredLabs.length === 0" class="empty-state">
+        <el-empty description="暂无实验，开始创建您的第一个实验吧" />
+        <el-button type="primary" @click="createNewLab">创建实验</el-button>
+      </div>
+
+      <div v-else :class="['lab-grid', { 'is-list': viewMode === 'list' }]">
+        <div
+          v-for="lab in filteredLabs"
+          :key="lab.id"
+          class="lab-card-wrapper"
+        >
+          <EduCard
+            class="lab-card"
+            :variant="viewMode === 'list' ? 'bordered' : 'elevated'"
+            :hoverable="true"
+            :body-style="{ padding: '0' }"
+          >
+            <div class="lab-card__inner">
+              <!-- 封面图 -->
+              <div class="lab-cover" :style="{ backgroundImage: `url(${lab.cover || defaultCover})` }">
+                <div class="lab-badges">
+                  <el-tag :type="getTypeTag(lab.type)" effect="dark" size="small">
+                    {{ getTypeLabel(lab.type) }}
+                  </el-tag>
+                  <el-tag v-if="lab.aiEnabled" type="success" effect="light" size="small" class="ai-badge">
+                    <el-icon><MagicStick /></el-icon> AI 辅助
+                  </el-tag>
+                </div>
+                <div class="lab-actions-overlay">
+                  <el-button type="primary" circle @click="editLab(lab)">
+                    <el-icon><Edit /></el-icon>
+                  </el-button>
+                  <el-button type="success" circle @click="runLab(lab)">
+                    <el-icon><VideoPlay /></el-icon>
+                  </el-button>
+                  <el-button circle @click="viewLabAnalytics(lab)">
+                    <el-icon><TrendCharts /></el-icon>
+                  </el-button>
+                </div>
+              </div>
+
+              <!-- 实验信息 -->
+              <div class="lab-info">
+                <div class="lab-header">
+                  <h3 class="lab-title" @click="viewLabDetail(lab)">{{ lab.title }}</h3>
+                  <el-dropdown trigger="click" @command="(cmd) => handleLabCommand(cmd, lab)">
+                    <span class="lab-more">
                       <el-icon><MoreFilled /></el-icon>
-                    </el-button>
+                    </span>
                     <template #dropdown>
                       <el-dropdown-menu>
-                        <el-dropdown-item command="edit">
-                          <el-icon><Edit /></el-icon>
-                          编辑实验
-                        </el-dropdown-item>
-                        <el-dropdown-item command="duplicate">
-                          <el-icon><CopyDocument /></el-icon>
-                          复制实验
-                        </el-dropdown-item>
-                        <el-dropdown-item command="publish">
-                          <el-icon><Upload /></el-icon>
-                          {{ lab.published ? '取消发布' : '发布实验' }}
-                        </el-dropdown-item>
-                        <el-dropdown-item command="analytics" divided>
-                          <el-icon><DataAnalysis /></el-icon>
-                          查看数据
-                        </el-dropdown-item>
+                        <el-dropdown-item command="edit">编辑实验</el-dropdown-item>
+                        <el-dropdown-item command="duplicate">复制实验</el-dropdown-item>
+                        <el-dropdown-item command="assign">分配给班级</el-dropdown-item>
+                        <el-dropdown-item command="delete" divided style="color: var(--el-color-danger)">删除</el-dropdown-item>
                       </el-dropdown-menu>
                     </template>
                   </el-dropdown>
                 </div>
-              </div>
-
-              <p class="lab-card__description">{{ lab.description }}</p>
-
-              <!-- 实验元信息 -->
-              <div class="lab-card__meta">
-                <div class="meta-item">
-                  <el-icon><User /></el-icon>
-                  <span>{{ getGradeName(lab.grade) }}</span>
-                </div>
-                <div class="meta-item">
-                  <el-icon><Collection /></el-icon>
-                  <span>{{ getSubjectName(lab.subject) }}</span>
-                </div>
-              </div>
-
-              <!-- 实验统计信息 -->
-              <div class="lab-card__stats">
-                <div class="stat-group">
-                  <div class="stat-item">
-                    <div class="stat-label">难度</div>
-                    <div class="stat-value" :class="`stat-value--${lab.difficulty}`">
-                      {{ getDifficultyName(lab.difficulty) }}
-                    </div>
-                  </div>
-                  <div class="stat-item">
-                    <div class="stat-label">使用次数</div>
-                    <div class="stat-value">{{ lab.usage }}</div>
                   </div>
                   <div class="stat-item">
                     <div class="stat-label">预计时长</div>

@@ -1,5 +1,5 @@
 <template>
-  <TeacherWorkspaceLayout
+  <CanvasWorkspaceLayout
     title="资源中心"
     subtitle="管理和发现优质教学资源，AI智能推荐匹配教学内容"
     v-model:leftCollapsed="leftSidebarCollapsed"
@@ -99,12 +99,11 @@
             <span
               v-for="tag in popularTags"
               :key="tag.name"
-              class="tag-cloud-item"
+              class="tag-item"
               :class="{ active: selectedTags.includes(tag.name) }"
-              :style="{ fontSize: `${14 + tag.weight}px` }"
               @click="toggleTag(tag.name)"
             >
-              {{ tag.name }}
+              #{{ tag.name }}
             </span>
           </div>
         </div>
@@ -132,31 +131,36 @@
       <div class="sidebar-section">
         <h4 class="section-title">AI 智能推荐</h4>
         <div class="ai-recommendations">
-          <div class="ai-header">
-            <el-icon class="ai-icon"><MagicStick /></el-icon>
-            <span>基于您的教学内容智能匹配</span>
-          </div>
-          <div class="recommendation-list">
-            <div
-              v-for="recommendation in aiRecommendations"
-              :key="recommendation.id"
-              class="recommendation-item"
-            >
-              <div class="recommendation-content">
-                <h5 class="recommendation-title">{{ recommendation.title }}</h5>
-                <p class="recommendation-desc">{{ recommendation.description }}</p>
-                <div class="recommendation-meta">
-                  <EduTag :variant="recommendation.matchType" size="xs">
-                    {{ getMatchTypeText(recommendation.matchType) }}
-                  </EduTag>
-                  <span class="recommendation-score">
-                    匹配度 {{ recommendation.score }}%
-                  </span>
-                </div>
+          <div v-for="rec in aiRecommendations" :key="rec.id" class="recommendation-card">
+            <div class="rec-header">
+              <span class="rec-reason">
+                <el-icon><MagicStick /></el-icon> {{ rec.reason }}
+              </span>
+            </div>
+            <div class="rec-content">
+              <div class="rec-icon">
+                <el-icon><component :is="getResourceIcon(rec.type)" /></el-icon>
               </div>
-              <el-button size="small" type="primary" @click="applyRecommendation(recommendation)">
-                应用
-              </el-button>
+              <div class="rec-info">
+                <div class="rec-title">{{ rec.title }}</div>
+                <div class="rec-meta">{{ rec.type }} · {{ rec.size }}</div>
+              </div>
+            </div>
+            <el-button size="small" text bg type="primary" class="rec-action">查看详情</el-button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h4 class="section-title">我的收藏</h4>
+        <div class="favorites-list">
+          <div v-for="fav in favorites" :key="fav.id" class="favorite-item">
+            <div class="fav-icon">
+              <el-icon><StarFilled /></el-icon>
+            </div>
+            <div class="fav-info">
+              <div class="fav-title">{{ fav.title }}</div>
+              <div class="fav-date">{{ fav.date }}</div>
             </div>
           </div>
         </div>
@@ -204,69 +208,6 @@
         </div>
       </div>
     </template>
-
-    <div class="resources-content">
-      <EduCard
-        class="resources-section"
-        variant="elevated"
-        :hoverable="false"
-        body-class="resources-section__body"
-      >
-        <template #header>
-          <div class="section-header">
-            <div class="section-info">
-              <h3 class="section-title">资源库</h3>
-              <p class="section-description">发现和管理您的教学资源</p>
-            </div>
-            <div class="section-actions">
-              <el-input
-                v-model="searchKeyword"
-                placeholder="搜索资源..."
-                style="width: 300px;"
-                clearable
-              >
-                <template #prefix>
-                  <el-icon><Search /></el-icon>
-                </template>
-              </el-input>
-              <el-select v-model="sortBy" placeholder="排序方式" style="width: 150px;">
-                <el-option label="最新上传" value="newest" />
-                <el-option label="最多引用" value="popular" />
-                <el-option label="评分最高" value="rating" />
-                <el-option label="AI推荐" value="aiRecommended" />
-              </el-select>
-              <el-button-group>
-                <el-button :type="viewMode === 'grid' ? 'primary' : ''" @click="viewMode = 'grid'">
-                  <el-icon><Grid /></el-icon>
-                </el-button>
-                <el-button :type="viewMode === 'list' ? 'primary' : ''" @click="viewMode = 'list'">
-                  <el-icon><List /></el-icon>
-                </el-button>
-              </el-button-group>
-            </div>
-          </div>
-        </template>
-
-        <!-- 批量操作工具栏 -->
-        <div v-if="selectedResources.length > 0" class="bulk-actions">
-          <div class="bulk-info">
-            <span>已选择 {{ selectedResources.length }} 个资源</span>
-          </div>
-          <div class="bulk-controls">
-            <el-button size="small" @click="addToCollection">
-              <el-icon><FolderOpened /></el-icon>
-              添加到收藏
-            </el-button>
-            <el-button size="small" @click="batchShare">
-              <el-icon><Share /></el-icon>
-              批量分享
-            </el-button>
-            <el-button size="small" @click="batchExport">
-              <el-icon><Download /></el-icon>
-              批量导出
-            </el-button>
-          </div>
-        </div>
 
         <div class="resources-container">
           <!-- 网格视图 -->
@@ -643,7 +584,8 @@
         </div>
       </div>
     </el-dialog>
-  </TeacherWorkspaceLayout>
+    </el-dialog>
+  </CanvasWorkspaceLayout>
 </template>
 
 <script setup lang="ts">
@@ -656,7 +598,7 @@ import {
   Share, View, MoreFilled, Plus, Refresh, Document, Warning
 } from '@element-plus/icons-vue'
 
-import TeacherWorkspaceLayout from '@/components/layout/TeacherWorkspaceLayout.vue'
+import CanvasWorkspaceLayout from '@/components/layout/CanvasWorkspaceLayout.vue'
 import { EduCard, EduTag } from '@reopeninnolab/ui-kit'
 import { formatDate } from '@/utils/date'
 
@@ -1157,17 +1099,17 @@ const batchShare = () => {
 }
 
 const batchExport = () => {
-  ElMessage.info(`批量导出功能开发中`)
+  ElMessage({ type: 'info', message: '批量导出功能开发中' })
 }
 
 const applyRecommendation = (recommendation: AIRecommendation) => {
-  ElMessage.success(`已应用AI推荐：${recommendation.title}`)
+  ElMessage({ type: 'success', message: `已应用AI推荐：${recommendation.title}` })
 }
 
 const beforeUpload = (file: File) => {
   const isLt100M = file.size / 1024 / 1024 < 100
   if (!isLt100M) {
-    ElMessage.error('文件大小不能超过 100MB')
+    ElMessage({ type: 'error', message: '文件大小不能超过 100MB' })
     return false
   }
   return false
@@ -1176,14 +1118,14 @@ const beforeUpload = (file: File) => {
 const handleFileUpload = async (options: any) => {
   const file = options.file
   await new Promise(resolve => setTimeout(resolve, 1000))
-  ElMessage.success(`文件 ${file.name} 上传成功`)
+  ElMessage({ type: 'success', message: `文件 ${file.name} 上传成功` })
 }
 
-const handleFileChange = (file: any, fileList: any[]) => {
+const handleFileChange = (_file: any, fileList: any[]) => {
   uploadFiles.value = fileList
 }
 
-const handleFileRemove = (file: any, fileList: any[]) => {
+const handleFileRemove = (_file: any, fileList: any[]) => {
   uploadFiles.value = fileList
 }
 
@@ -1225,12 +1167,12 @@ const completeUpload = async () => {
     }
 
     resources.value.unshift(newResource)
-    ElMessage.success('资源上传成功')
+    ElMessage({ type: 'success', message: '资源上传成功' })
     showUploadModal.value = false
     resetUploadForm()
   } catch (error) {
     console.error('上传失败:', error)
-    ElMessage.error('上传失败')
+    ElMessage({ type: 'error', message: '上传失败' })
   } finally {
     uploading.value = false
   }
@@ -1239,13 +1181,13 @@ const completeUpload = async () => {
 const handleMoreAction = (command: string) => {
   switch (command) {
     case 'export':
-      ElMessage.info('导出功能开发中...')
+      ElMessage({ type: 'info', message: '导出功能开发中...' })
       break
     case 'sync':
-      ElMessage.info('同步云端功能开发中...')
+      ElMessage({ type: 'info', message: '同步云端功能开发中...' })
       break
     case 'settings':
-      ElMessage.info('资源设置功能开发中...')
+      ElMessage({ type: 'info', message: '资源设置功能开发中...' })
       break
   }
 }
@@ -1256,7 +1198,7 @@ const handleClosePreview = () => {
 }
 
 const reloadPreview = () => {
-  ElMessage.success('预览已刷新')
+  ElMessage({ type: 'success', message: '预览已刷新' })
 }
 
 const handleImageError = (e: Event) => {

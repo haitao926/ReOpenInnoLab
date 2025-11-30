@@ -122,14 +122,18 @@ const routes: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/classrooms',
-        name: 'Classrooms',
+        path: '/class',
+        name: 'Class',
         component: () => import('@/views/Class/ClassManagement.vue'),
         meta: {
-          title: '班级控制台',
+          title: '班级管理',
           icon: 'School',
           requiresAuth: true
         }
+      },
+      {
+        path: '/classrooms',
+        redirect: '/class'
       },
       {
         path: '/resources',

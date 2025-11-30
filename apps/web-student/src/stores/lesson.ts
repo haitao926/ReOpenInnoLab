@@ -1,7 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Lesson, LessonSection, StudentProgress } from '@/types/lesson'
+import type { ConnectionStatus } from '@/types/websocket'
 import { lessonApi } from '@/api/lesson'
+
+type LessonConnectionState = ConnectionStatus | 'idle'
 
 export const useLessonStore = defineStore('lesson', () => {
   // 状态
@@ -30,6 +33,9 @@ export const useLessonStore = defineStore('lesson', () => {
     timestamp: Date
     retryCount?: number
   }>>([])
+  const lessonContext = ref<{ lessonId: string; classroomId: string } | null>(null)
+  const connectionState = ref<LessonConnectionState>('idle')
+  const connectionMeta = ref<{ changedAt: Date; reason?: string | null } | null>(null)
 
   // 计算属性
   const currentSection = computed(() => {
@@ -65,6 +71,10 @@ export const useLessonStore = defineStore('lesson', () => {
 
       const lesson = await lessonApi.getLesson(lessonId)
       currentLesson.value = lesson
+      lessonContext.value = {
+        lessonId: lesson.id,
+        classroomId: lesson.classroomId
+      }
 
       // 缓存到离线存储
       offlineCache.value.set(`lesson_${lessonId}`, lesson)
@@ -85,6 +95,12 @@ export const useLessonStore = defineStore('lesson', () => {
       console.error('加载课程失败:', error)
       throw error
     }
+  }
+
+  const initLesson = async (lessonId: string) => {
+    const lesson = await loadLesson(lessonId)
+    await loadProgressFromServer(lessonId)
+    return lesson
   }
 
   const startLesson = () => {
@@ -306,6 +322,35 @@ export const useLessonStore = defineStore('lesson', () => {
     }
   }
 
+  const advanceWithTeacher = (options: {
+    sectionIndex: number
+    action: 'start' | 'end'
+    section?: Partial<LessonSection>
+  }) => {
+    if (!currentLesson.value) return
+    const baseSection = currentLesson.value.sections[options.sectionIndex]
+    if (!baseSection) return
+
+    const nextSection = {
+      ...baseSection,
+      ...options.section
+    }
+
+    if (options.action === 'start') {
+      nextSection.isActive = true
+      resumeLesson()
+    } else if (options.action === 'end') {
+      nextSection.isActive = false
+      nextSection.isCompleted = true
+    }
+
+    updateSection(options.sectionIndex, nextSection)
+  }
+
+  const submitActivityPayload = (type: string, data: any, sectionIndex?: number) => {
+    recordInteraction(type, data, sectionIndex ?? currentSectionIndex.value)
+  }
+
   const addToSyncQueue = (type: string, data: any) => {
     syncQueue.value.push({
       type,
@@ -317,6 +362,14 @@ export const useLessonStore = defineStore('lesson', () => {
     // 如果在线，尝试立即同步
     if (!isOffline.value) {
       processSyncQueue()
+    }
+  }
+
+  const setConnectionState = (state: LessonConnectionState, meta?: { reason?: string | null }) => {
+    connectionState.value = state
+    connectionMeta.value = {
+      changedAt: new Date(),
+      reason: meta?.reason ?? null
     }
   }
 
@@ -443,6 +496,9 @@ export const useLessonStore = defineStore('lesson', () => {
     offlineCache,
     syncQueue,
     isOffline,
+    lessonContext,
+    connectionState,
+    connectionMeta,
 
     // 计算属性
     currentSection,
@@ -450,6 +506,7 @@ export const useLessonStore = defineStore('lesson', () => {
     lessonProgress,
 
     // 方法
+    initLesson,
     loadLesson,
     startLesson,
     updateSectionProgress,
@@ -461,12 +518,15 @@ export const useLessonStore = defineStore('lesson', () => {
     endLesson,
     updateSection,
     handleTeacherEvent,
+    advanceWithTeacher,
     processSyncQueue,
     saveProgressToServer,
     loadProgressFromServer,
     clearCurrentLesson,
     setOfflineMode,
     generateProgressReport,
-    addToSyncQueue
+    addToSyncQueue,
+    setConnectionState,
+    submitActivityPayload
   }
 })

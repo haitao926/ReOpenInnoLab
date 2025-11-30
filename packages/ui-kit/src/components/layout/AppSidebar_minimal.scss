@@ -1,0 +1,203 @@
+<style lang="scss" scoped>
+  .app-sidebar {
+    background-color: #1e293b;
+    border-right: none;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: relative;
+    width: 100%;
+    z-index: var(--edu-z-docked);
+
+    /* Brand Gradient Border/Glow */
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(
+        180deg,
+        var(--brand-primary) 0%,
+        var(--brand-secondary) 50%,
+        var(--brand-accent) 100%
+      );
+      opacity: 0.5;
+      box-shadow: -1px 0 8px rgba(91, 143, 249, 0.2);
+    }
+
+    &--collapsed {
+      .app-sidebar__logo-text,
+      .app-sidebar__nav-text,
+      .app-sidebar__nav-badge,
+      .app-sidebar__nav-arrow,
+      .app-sidebar__footer-text {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+  }
+
+  .app-sidebar__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px;
+    padding: 0 var(--spacing-base);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+  }
+
+  .app-sidebar__logo-link,
+  .app-sidebar__logo-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-lg);
+  }
+
+  .app-sidebar__logo-image {
+    height: 32px;
+    width: auto;
+  }
+
+  .app-sidebar__logo-image-collapsed {
+    height: 32px;
+    width: auto;
+  }
+
+  .app-sidebar__logo-text {
+    color: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .app-sidebar__nav {
+    flex: 1;
+    padding: var(--spacing-sm) 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .app-sidebar__nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .app-sidebar__nav-item {
+    margin-bottom: 2px;
+  }
+
+  .app-sidebar__nav-link,
+  .app-sidebar__nav-group-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+
+    &--active {
+      background-color: rgba(33, 150, 243, 0.1);
+      color: var(--edu-primary-500);
+    }
+  }
+
+  .app-sidebar__nav-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .app-sidebar__nav-text {
+    flex: 1;
+    font-weight: 500;
+  }
+
+  .app-sidebar__nav-badge {
+    background-color: var(--edu-error-500);
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .app-sidebar__nav-arrow {
+    width: 12px;
+    height: 12px;
+    transition: transform 0.2s ease;
+  }
+
+  .app-sidebar__nav-group--expanded .app-sidebar__nav-arrow {
+    transform: rotate(180deg);
+  }
+
+  .app-sidebar__nav-sublist {
+    list-style: none;
+    padding: 0;
+    margin: var(--spacing-xs) 0 0 0;
+    overflow: hidden;
+  }
+
+  .app-sidebar__nav-subitem {
+    .app-sidebar__nav-link {
+      padding-left: calc(var(--spacing-md) + var(--spacing-lg) + 20px);
+      font-size: var(--font-size-xs);
+      color: var(--text-tertiary);
+    }
+  }
+
+  .app-sidebar__footer {
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0;
+  }
+
+  .app-sidebar__footer-content {
+    text-align: center;
+  }
+
+  .app-sidebar__version {
+    font-size: var(--font-size-xs);
+    color: var(--text-tertiary);
+  }
+
+  // 过渡动画
+  .sidebar-slide-enter-active,
+  .sidebar-slide-leave-active {
+    transition: all var(--edu-duration-normal) var(--edu-easing-in-out);
+    overflow: hidden;
+  }
+
+  .sidebar-slide-enter-from,
+  .sidebar-slide-leave-to {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  .sidebar-slide-enter-to,
+  .sidebar-slide-leave-from {
+    max-height: 500px;
+    opacity: 1;
+  }
+</style>

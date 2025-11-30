@@ -1,5 +1,5 @@
 <template>
-  <TeacherWorkspaceLayout
+  <CanvasWorkspaceLayout
     title="交互体验管理"
     subtitle="上传和管理HTML互动内容，提供沉浸式学习体验"
     v-model:leftCollapsed="leftSidebarCollapsed"
@@ -100,9 +100,9 @@
               <el-icon class="refresh-icon"><Refresh /></el-icon>
               刷新列表
             </el-button>
-            <el-button type="default" size="small" style="width: 100%;" @click="batchExport">
-              <el-icon class="download-icon"><Download /></el-icon>
-              批量导出
+            <el-button type="default" size="small" style="width: 100%;" @click="batchImport">
+              <el-icon class="import-icon"><Upload /></el-icon>
+              批量导入
             </el-button>
           </div>
         </template>

@@ -478,40 +478,7 @@
       </EduTabs>
     </div>
 
-    <template #footer>
-      <div class="footer-column">
-        <h4 class="footer-title">快速操作</h4>
-        <div class="footer-actions">
-          <el-button
-            v-for="action in quickActions"
-            :key="action.id"
-            type="primary"
-            link
-            @click="action.handler()"
-          >
-            <el-icon><component :is="action.icon" /></el-icon>
-            {{ action.label }}
-          </el-button>
-        </div>
-      </div>
-      <div class="footer-column">
-        <h4 class="footer-title">导出中心</h4>
-        <p class="footer-text">生成周期报告、学情简报，可一键分享给教研团队。</p>
-        <el-button type="text" size="small" @click="generateReport">
-          <el-icon><Document /></el-icon>
-          生成综合报告
-        </el-button>
-      </div>
-      <div class="footer-column">
-        <h4 class="footer-title">系统公告</h4>
-        <ul class="footer-list">
-          <li v-for="notice in dashboardNotices" :key="notice.id" class="footer-list__item">
-            <el-icon><Bell /></el-icon>
-            <span>{{ notice.text }}</span>
-          </li>
-        </ul>
-      </div>
-    </template>
+
   </CanvasWorkspaceLayout>
 </template>
 

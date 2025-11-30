@@ -436,6 +436,55 @@ export class ExperienceApiService {
       method: 'GET'
     })
   }
+
+  /**
+   * Get experience run participants
+   */
+  static async getExperienceRunParticipants(runId: string): Promise<any[]> {
+    return request({
+      url: `${this.BASE_URL}/runs/${runId}/participants`,
+      method: 'GET'
+    })
+  }
+
+  /**
+   * Get experience run statistics
+   */
+  static async getExperienceRunStatistics(runId: string): Promise<any> {
+    return request({
+      url: `${this.BASE_URL}/runs/${runId}/statistics`,
+      method: 'GET'
+    })
+  }
+
+  /**
+   * Get experience run results
+   */
+  static async getExperienceRunResults(runId: string): Promise<any> {
+    return request({
+      url: `${this.BASE_URL}/runs/${runId}/results`,
+      method: 'GET'
+    })
+  }
+
+  /**
+   * Export experience run data
+   */
+  static async exportExperienceRunData(runId: string, options: {
+    format: 'xlsx' | 'csv' | 'json'
+    content: {
+      includeSummary: boolean
+      includeDetails: boolean
+      includeTimestamps: boolean
+    }
+  }): Promise<string> {
+    const response = await request({
+      url: `${this.BASE_URL}/runs/${runId}/export`,
+      method: 'POST',
+      data: options
+    })
+    return response.downloadUrl
+  }
 }
 
 export default ExperienceApiService

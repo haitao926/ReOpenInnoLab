@@ -198,6 +198,68 @@ interface LabStore {
 - [ ] pingAgent() 检查代理连接
 - [ ] startLocalAgent() 启动本地代理
 - [ ] createLabSession() 创建实验会话
+
+---
+
+## 📡 实时课堂实现方案 (新增：2025-11-12)
+
+### 背景与目标
+- 教师端 Presenter 已具备完整能力，但学生端缺少课堂加入、实时同步与互动链路 (`0.需求说明.md`, `1. 设计与规划.md`).
+- 需要建立“加入 → 同步 → 参与 → 提交”的闭环，保证课堂状态 <500ms 延迟、算力落在学生端代理 (`0.需求说明.md`, `1. 设计与规划.md`).
+- 方案在不引入 Mock 的前提下复用真实 classroom/course/assignment 服务，UI 复用 `packages/ui-kit` 主题组件 (`2.项目原则.md`).
+
+### 设计约束
+1. **真实数据源**：所有课堂、环节、互动数据来自后端 API + WebSocket，禁止写临时 Mock。
+2. **文件聚合**：优先在既有 `router`, `stores`, `components/lesson` 等目录内实现逻辑，不再额外扩散文件夹。
+3. **算力隔离**：实验/Notebook 运行只在学生端代理执行，教师端仅消费状态。
+4. **可追踪性**：课堂事件需要写入 Pinia 状态并可落地 IndexedDB 以支持断线续播。
+
+### 模块拆解
+- `src/router/index.ts`
+  - 新增 `/lesson/:lessonId`、`/lesson/:lessonId/experiment` 路由，进入前调用 classroom-service 校验班级 + 课次授权。
+- `src/stores/lesson.ts`
+  - 管理 LessonState: 课次 meta、当前环节、计时、互动/作业流水、WebSocket 连接状态。
+  - 提供 `initLesson`, `advanceWithTeacher`, `submitActivityPayload`, `setConnectionState` 等 action。
+- `src/services/websocket/lessonSocket.ts`
+  - 封装 Socket.IO 客户端，管理鉴权、心跳、重连、事件 → store action 的分发。
+  - 统一订阅 `lesson.state`, `lesson.section`, `lesson.activity`, `lesson.assignment` 事件。
+- `src/components/lesson/*`
+  - `RealtimeLessonView.vue`: 三栏布局（内容区 + 进度/连接状态 + 互动 feed），消费 store。
+  - `LessonSectionRenderer.vue`: 根据 `section.type` 映射 introduction/knowledge/experience/experiment/assignment 子组件。
+  - `ConnectionStatus.vue` & `ProgressPanel.vue`: 提示网络、课堂心跳、计时状态。
+- `src/views/lesson/RealtimeLessonView.vue`
+  - 页面级容器，负责调用 `initLesson`, 监听路由变化，驱动所有 lesson 组件。
+
+### 流程设计
+1. **课堂进入**
+   - Router guard 校验 lessonId → 拉取课堂/课程结构 → 初始化 lesson store。
+   - store 写入 ACL 解析的数据，渲染空状态。
+2. **实时同步**
+   - `lessonSocket.connect(lessonId, token)` 建立连接，接收教师端状态广播。
+   - 所有事件落入 Pinia，并追加到本地时间线（必要时 IndexedDB 缓存）。
+3. **环节渲染**
+   - `LessonSectionRenderer` 映射 section 类型：体验走 iframe sandbox，实验唤起 Virtual Lab Agent，作业拉 assignment-service。
+   - 每个环节向 `lessonStore` 上报本地进度、剩余时长。
+4. **互动/作业提交**
+   - 通过 `submitLessonEvent(eventType, payload)` 将课堂互动写回 classroom 或 assignment 服务。
+   - 回传后的确认事件由 WebSocket 广播给所有学生，保证 UI 状态一致。
+5. **状态保障**
+   - `ConnectionStatus` 统一监听 HTTP、WebSocket、Lab Agent 心跳，给出“同步正常/延迟/重连”提示。
+   - `ProgressPanel` 结合教师端节奏提示 + 本地计时器输出环节剩余时间。
+
+### 推进节奏
+1. **阶段A – 骨架**：补齐路由、Pinia store、lesson types、`RealtimeLessonView` 布局与 UI-kit 主题接入。
+2. **阶段B – 实时状态**：实现 `lessonSocket`、连接管理、事件分发、断线重连与状态提示。
+3. **阶段C – 环节交互**：完成体验/实验/作业组件，串联 Virtual Lab Agent 调用链和 assignment 提交。
+4. **阶段D – 互动与埋点**：写 `submitLessonEvent`、行为埋点、课堂数据缓存，确保数据可追溯。
+5. **阶段E – 测试**：在 `test-system.js` 等集成脚本中补充课堂场景 + WebSocket 断连重连测试。
+
+### 交付标准
+- 课堂状态、环节切换能在 <500ms 内同步并正确渲染。
+- 学生端可在断网后恢复课堂并追上最新环节。
+- 实验/作业提交走真实 API，教师端可看到状态更新。
+- UI 使用 `packages/ui-kit` token，保持与教师端一致的玻璃风格。
+
 - [ ] 错误处理和超时机制
 
 #### 任务4.4: 完善实验启动流程

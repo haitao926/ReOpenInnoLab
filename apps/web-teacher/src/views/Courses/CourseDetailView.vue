@@ -528,7 +528,7 @@ const getDifficultyText = (level: string) => {
 }
 
 const getChapterTypeTag = (type: string) => {
-  const map: Record<string, string> => {
+  const map: Record<string, string> = {
     content: 'info',
     experiment: 'danger',
     interactive: 'warning',
