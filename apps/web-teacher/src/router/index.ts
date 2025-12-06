@@ -34,7 +34,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/courses',
         name: 'Courses',
-        component: () => import('@/views/Courses/List.vue'),
+        component: () => import('@/views/Courses/CourseManagement.vue'),
         meta: {
           title: '课程管理',
           icon: 'Reading',
@@ -124,7 +124,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/class',
         name: 'Class',
-        component: () => import('@/views/Class/ClassManagement.vue'),
+        component: () => import('@/views/Class/index.vue'),
         meta: {
           title: '班级管理',
           icon: 'School',
