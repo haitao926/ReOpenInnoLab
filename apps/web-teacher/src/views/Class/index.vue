@@ -1,26 +1,30 @@
 <template>
-  <CanvasWorkspaceLayout
-    title="班级控制台"
-    subtitle="掌握班级画像、课堂节奏与学生进度"
-    v-model:leftCollapsed="leftSidebarCollapsed"
-    v-model:rightCollapsed="rightSidebarCollapsed"
+  <TeacherWorkspaceLayout
+    title="班级管理"
+    subtitle="管理班级、学生与教学活动"
+    v-model:leftCollapsed="leftCollapsed"
+    v-model:rightCollapsed="rightCollapsed"
+    :leftCollapsible="true"
+    :rightCollapsible="true"
   >
+    <!-- Header Controls -->
     <template #header-controls>
-      <div class="workspace-actions">
-        <el-segmented v-model="classViewMode" :options="viewModeOptions" size="large" />
-        <div class="workspace-actions__buttons">
-          <el-button type="primary" @click="showCreateClassModal = true">
-            <el-icon><Plus /></el-icon>
-            创建班级
-          </el-button>
-          <el-button @click="importStudents">
-            <el-icon><Upload /></el-icon>
-            导入学生
-          </el-button>
-        </div>
-      </div>
+       <div class="header-actions">
+           <el-radio-group v-model="viewMode" size="default">
+            <el-radio-button label="card">
+              <el-icon><Grid /></el-icon>
+            </el-radio-button>
+            <el-radio-button label="table">
+              <el-icon><Fold /></el-icon>
+            </el-radio-button>
+          </el-radio-group>
+          <EduButton variant="primary" icon="Plus" @click="showCreateClassModal = true">
+            新建班级
+          </EduButton>
+       </div>
     </template>
 
+    <!-- Summary Row (Using EduCard with glass variant which now matches GlassSurface) -->
     <template #summary>
       <EduCard
         v-for="card in summaryCards"
@@ -31,7 +35,7 @@
         :hoverable="true"
       >
         <div class="summary-card__content">
-          <span class="summary-card__icon" :style="{ background: card.gradient }">
+          <span class="summary-card__icon" :class="card.type">
             <el-icon><component :is="card.icon" /></el-icon>
           </span>
           <div class="summary-card__text">
@@ -42,165 +46,121 @@
       </EduCard>
     </template>
 
+    <!-- Main Content -->
+     <div class="class-dashboard page-surface">
+        <!-- Main List Area -->
+        <div class="main-area">
+             <div class="toolbar mb-4 flex justify-between items-center">
+                 <div class="search-box">
+                    <el-input
+                        v-model="searchQuery"
+                        placeholder="搜索班级名称..."
+                        prefix-icon="Search"
+                        clearable
+                        style="width: 240px"
+                    />
+                 </div>
+                 <div class="filters flex gap-2">
+                     <el-select v-model="filterGrade" placeholder="年级" style="width: 120px" clearable>
+                         <el-option label="一年级" value="1" />
+                         <el-option label="二年级" value="2" />
+                     </el-select>
+                      <el-select v-model="filterStatus" placeholder="状态" style="width: 120px" clearable>
+                         <el-option label="进行中" value="active" />
+                         <el-option label="已结课" value="archived" />
+                     </el-select>
+                 </div>
+             </div>
+
+             <!-- Class List Grid -->
+             <div v-if="viewMode === 'card'" class="class-grid">
+                 <EduCard
+                    v-for="cls in filteredClasses"
+                    :key="cls.id"
+                    variant="glass"
+                    class="class-item-card"
+                    :hoverable="true"
+                    @click="handleClassClick(cls)"
+                 >
+                    <template #header>
+                        <div class="flex justify-between items-center w-full">
+                            <h4 class="m-0 text-lg font-semibold">{{ cls.name }}</h4>
+                            <el-tag size="small" :type="cls.status === 'active' ? 'success' : 'info'">{{ cls.status === 'active' ? '进行中' : '已结课' }}</el-tag>
+                        </div>
+                    </template>
+                    <div class="text-secondary text-sm mb-4 line-clamp-2">
+                        {{ cls.description || '暂无描述' }}
+                    </div>
+                    <div class="flex justify-between text-xs text-tertiary">
+                         <span><el-icon><User /></el-icon> {{ cls.studentCount }} 人</span>
+                         <span><el-icon><Clock /></el-icon> {{ cls.nextClass || '无排课' }}</span>
+                    </div>
+                 </EduCard>
+             </div>
+
+             <!-- Table View Placeholder -->
+             <div v-else class="class-table">
+                  <EduCard variant="glass">
+                      <el-table :data="filteredClasses" style="width: 100%">
+                        <el-table-column prop="name" label="班级名称" />
+                        <el-table-column prop="studentCount" label="学生人数" />
+                        <el-table-column prop="status" label="状态" />
+                        <el-table-column label="操作">
+                            <template #default>
+                                <el-button link type="primary">管理</el-button>
+                            </template>
+                        </el-table-column>
+                      </el-table>
+                  </EduCard>
+             </div>
+        </div>
+     </div>
+
+    <!-- Sidebars -->
     <template #left>
-      <ManagementSidebarLeft
-        :sections="leftSidebarSections"
-        @quick-action="handleQuickAction"
-        @filter-change="handleFilterChange"
-      >
-        <!-- 自定义筛选器插槽 -->
-        <template #filters="{ data }">
-          <div class="class-filters">
-            <div class="filter-section">
-              <h5>班级概览</h5>
-              <div class="category-list">
-                <button
-                  v-for="item in classStats"
-                  :key="item.type"
-                  type="button"
-                  class="category-item"
-                  @click="filterByCategory(item.type)"
-                >
-                  <span class="category-icon" :style="{ backgroundColor: item.color }">
-                    <el-icon><component :is="item.icon" /></el-icon>
-                  </span>
-                  <span class="category-name">{{ item.name }}</span>
-                  <span class="category-count">{{ item.count }}</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="filter-section">
-              <h5>快速筛选</h5>
-              <div class="filter-tags">
-                <el-tag
-                  v-for="filter in quickFilters"
-                  :key="filter.key"
-                  :effect="activeFilters.includes(filter.key) ? 'dark' : 'plain'"
-                  :type="activeFilters.includes(filter.key) ? 'primary' : 'info'"
-                  class="filter-tag"
-                  @click="toggleFilter(filter.key)"
-                >
-                  {{ filter.label }}
-                </el-tag>
-              </div>
-            </div>
-          </div>
-        </template>
-
-        <!-- 自定义快捷操作插槽 -->
-        <template #quick-actions="{ data }">
-          <div class="class-quick-actions">
-            <el-button
-              type="primary"
-              size="small"
-              style="width: 100%; margin-bottom: 8px"
-              @click="showCreateClassModal = true"
-            >
-              <el-icon><Plus /></el-icon>
-              创建班级
-            </el-button>
-            <el-button
-              type="default"
-              size="small"
-              style="width: 100%; margin-bottom: 8px"
-              @click="importStudents"
-            >
-              <el-icon><Upload /></el-icon>
-              导入学生
-            </el-button>
-            <el-button type="default" size="small" style="width: 100%" @click="exportClassData">
-              <el-icon><Download /></el-icon>
-              导出数据
-            </el-button>
-          </div>
-        </template>
-
-        <!-- 自定义教学动态插槽 -->
-        <template #activity="{ data }">
-          <div class="class-activity">
-            <h5>近期动态</h5>
-            <div class="activity-list">
-              <div v-for="activity in recentActivities" :key="activity.id" class="activity-item">
-                <span class="activity-icon">
-                  <el-icon><component :is="activity.icon" /></el-icon>
-                </span>
-                <div class="activity-content">
-                  <span class="activity-text">{{ activity.text }}</span>
-                  <span class="activity-time">{{ formatTime(activity.timestamp) }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </template>
+      <ManagementSidebarLeft>
+         <!-- Custom filters or quick nav could go here -->
+         <div class="p-4">
+             <h4 class="text-sm uppercase text-secondary font-bold mb-4">快速导航</h4>
+             <ul class="space-y-2">
+                 <li class="p-2 hover:bg-white/10 rounded cursor-pointer text-sm">我的班级</li>
+                 <li class="p-2 hover:bg-white/10 rounded cursor-pointer text-sm">待办事项</li>
+                 <li class="p-2 hover:bg-white/10 rounded cursor-pointer text-sm">回收站</li>
+             </ul>
+         </div>
       </ManagementSidebarLeft>
-    </template>
+  </template>
 
-    <template #right>
+  <template #right>
       <ManagementSidebarRight
         :sections="rightSidebarSections"
         @resource-action="handleResourceAction"
         @collaboration-action="handleCollaborationAction"
       >
-        <!-- 自定义数据洞察插槽 -->
-        <template #insights="{ data }">
-          <div class="class-insights">
-            <div class="insights-overview">
-              <div class="insight-item">
-                <div class="insight-label">活跃班级</div>
-                <div class="insight-value">{{ activeClassCount }}</div>
+        <template #resources>
+          <div class="resource-list">
+            <div v-for="resource in classResources" :key="resource.id" class="resource-item">
+              <div class="resource-icon" :style="{ backgroundColor: resource.color }">
+                <el-icon><component :is="resource.icon" /></el-icon>
               </div>
-              <div class="insight-item">
-                <div class="insight-label">总学生数</div>
-                <div class="insight-value">{{ totalStudents }}</div>
+              <div class="resource-content">
+                <div class="resource-title">{{ resource.title }}</div>
+                <div class="resource-desc">{{ resource.description }}</div>
               </div>
-              <div class="insight-item">
-                <div class="insight-label">平均出勤</div>
-                <div class="insight-value">{{ averageAttendance }}%</div>
-              </div>
+              <el-button text size="small" @click="openResource(resource)">查看</el-button>
             </div>
           </div>
         </template>
 
-        <!-- 自定义协作动态插槽 -->
-        <template #collaboration="{ data }">
-          <div class="class-collaboration">
-            <h5>协作记录</h5>
-            <div class="collaboration-list">
-              <div
-                v-for="record in collaborationRecords"
-                :key="record.id"
-                class="collaboration-item"
-              >
-                <el-avatar :size="32" :src="record.avatar">
-                  {{ record.name.charAt(0) }}
-                </el-avatar>
-                <div class="collaboration-content">
-                  <div class="collaboration-text">{{ record.text }}</div>
-                  <div class="collaboration-meta">
-                    <span>{{ record.name }}</span>
-                    <span>{{ formatTime(record.timestamp) }}</span>
-                  </div>
-                </div>
+        <template #collaboration>
+          <div class="collaboration-list">
+            <div v-for="item in collaborationRecords" :key="item.id" class="collaboration-item">
+              <div class="collaboration-icon">
+                <el-avatar :size="32" :src="item.avatar">{{ item.name?.charAt(0) }}</el-avatar>
               </div>
-            </div>
-          </div>
-        </template>
-
-        <!-- 自定义资源参考插槽 -->
-        <template #resources="{ data }">
-          <div class="class-resources">
-            <h5>教学资源</h5>
-            <div class="resource-list">
-              <div v-for="resource in classResources" :key="resource.id" class="resource-item">
-                <div class="resource-icon" :style="{ backgroundColor: resource.color }">
-                  <el-icon><component :is="resource.icon" /></el-icon>
-                </div>
-                <div class="resource-content">
-                  <div class="resource-title">{{ resource.title }}</div>
-                  <div class="resource-desc">{{ resource.description }}</div>
-                </div>
-                <el-button text size="small" @click="openResource(resource)">查看</el-button>
+              <div class="collaboration-content">
+                <div class="collaboration-text">{{ item.text }}</div>
+                <div class="collaboration-time">{{ formatTime(item.timestamp) }}</div>
               </div>
             </div>
           </div>
@@ -211,7 +171,7 @@
     <div class="classroom-content">
       <EduCard
         class="classroom-card"
-        variant="elevated"
+        variant="glass"
         title="班级列表"
         subtitle="检索班级、分配课程与掌握课堂节奏"
       >
@@ -401,7 +361,7 @@
         </el-table>
       </EduCard>
 
-      <EduCard class="classroom-card" variant="bordered">
+      <EduCard class="classroom-card" variant="glass">
         <el-tabs v-model="activeTab" stretch>
           <el-tab-pane label="学生管理" name="students">
             <StudentManagement />
@@ -490,7 +450,7 @@
         <el-button type="primary" :loading="creatingClass" @click="createClass">创建</el-button>
       </template>
     </el-dialog>
-  </CanvasWorkspaceLayout>
+  </TeacherWorkspaceLayout>
 </template>
 
 <script setup lang="ts">
@@ -1216,6 +1176,12 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+  }
+
+  .class-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--edu-space-section);
   }
 
   .summary-card__value {

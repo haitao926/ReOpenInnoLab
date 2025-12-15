@@ -51,7 +51,7 @@ const menuItems = [
   {
     key: 'experience',
     label: '体验管理',
-    to: '/experience',
+    to: '/experiences',
     icon: ChatDotRound
   }
 ]
@@ -134,17 +134,12 @@ onMounted(() => {
 
 <style scoped>
   .main-layout {
-    height: 100vh; /* Fixed height for app-like feel */
+    min-height: 100vh; /* Let content drive height while keeping app feel */
     display: grid;
     grid-template-columns: var(--edu-sidebar-width) 1fr;
-    background: 
-    radial-gradient(circle at 0% 0%, rgba(91, 143, 249, 0.15), transparent 40%), /* Blue top-left */
-    radial-gradient(circle at 100% 0%, rgba(139, 92, 246, 0.15), transparent 40%), /* Purple top-right */
-    radial-gradient(circle at 100% 100%, rgba(249, 115, 22, 0.1), transparent 40%), /* Orange bottom-right */
-    linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.95) 100%); /* Base white */
-  transition: grid-template-columns var(--edu-duration-normal) var(--edu-easing-smooth);
-  overflow: hidden; /* Prevent body scroll */
-}
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(249, 250, 252, 0.96) 100%);
+    transition: grid-template-columns var(--edu-duration-normal) var(--edu-easing-smooth);
+  }
 
   .main-layout.is-collapsed {
     grid-template-columns: var(--edu-sidebar-collapsed-width) 1fr;
@@ -152,9 +147,9 @@ onMounted(() => {
 
   .layout-sidebar {
     position: relative;
-    background: #1e293b !important; /* 强制设置深色背景 */
-    border-right: 1px solid #334155;
-    backdrop-filter: blur(14px);
+    background: var(--edu-sidebar-bg);
+    border-right: 1px solid var(--edu-border-light);
+    backdrop-filter: blur(10px);
     overflow: hidden;
     display: flex;
   }

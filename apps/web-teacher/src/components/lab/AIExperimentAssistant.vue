@@ -170,7 +170,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import EduButton from '@/components/ui/EduButton.vue'
+import { EduButton } from '@reopeninnolab/ui-kit'
 
 // Types
 interface Suggestion {

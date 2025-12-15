@@ -35,8 +35,7 @@ body {
 
 // 应用根容器
 #app {
-  height: 100vh;
-  overflow: hidden; // 防止整体页面滚动，只让内容区域滚动
+  min-height: 100vh;
 }
 
 // 确保所有工作区主内容区域都支持滚动
@@ -159,6 +158,11 @@ body {
   --edu-shadow-sm: var(--edu-shadow-sm);
   --edu-shadow-md: var(--edu-shadow-md);
   --edu-shadow-lg: var(--edu-shadow-lg);
+
+  // 统一间距尺寸
+  --edu-space-page-x: clamp(20px, 4vw, 32px);
+  --edu-space-section: 24px;
+  --edu-space-block: 16px;
 }
 
 [data-theme="dark"] {
@@ -181,6 +185,61 @@ body {
   --edu-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 30%);
   --edu-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 40%), 0 2px 4px -1px rgb(0 0 0 / 30%);
   --edu-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 40%), 0 4px 6px -2px rgb(0 0 0 / 30%);
+}
+
+// 通用布局与排版
+.page-surface {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--edu-space-page-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--edu-space-section);
+}
+
+.card-surface {
+  background: var(--edu-bg-primary);
+  border: 1px solid var(--edu-border-light);
+  border-radius: var(--edu-radius-lg);
+  box-shadow: var(--edu-shadow-sm);
+  padding: var(--edu-space-block);
+
+  &.sticky-toolbar {
+    position: sticky;
+    top: 72px;
+    z-index: 5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--edu-text-primary);
+}
+
+.section-subtitle {
+  font-size: 14px;
+  color: var(--edu-text-secondary);
+}
+
+.sidebar-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--edu-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.gap-section {
+  gap: var(--edu-space-section);
+}
+
+.gap-block {
+  gap: var(--edu-space-block);
 }
 
 // 通用工具类

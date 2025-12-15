@@ -1,7 +1,6 @@
 import { computed, onUnmounted } from 'vue'
-import type { ConnectionStatus, WebSocketMessage } from '@/types/websocket'
-import { lessonSocket } from '@/services/websocket/lessonSocket'
-import type { LessonRole } from '@/services/websocket/lessonSocket'
+import type { ConnectionStatus, WebSocketMessage } from '@shared-utils/websocket/types'
+import { lessonSocket, type LessonRole } from '@shared-utils/websocket/lessonSocket'
 
 /**
  * 全局 Socket.IO 组合式函数

@@ -153,20 +153,25 @@ const toggleRight = () => {
     min-height: 0; /* 关键：允许 flex 子项收缩 */
   }
 
+  /* Unifying with AppSidebar's Glass Aesthetic */
   .workspace-sidebar {
     width: 280px;
     display: flex;
     flex-direction: column;
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(10px);
+    
+    /* Modern Glass Effect */
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(16px);
     border-radius: var(--radius-lg);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: width 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05); /* Soft shadow */
+    
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     flex-shrink: 0;
 
     &.collapsed {
-      width: 48px;
+      width: 56px;
 
       .sidebar-content {
         opacity: 0;
@@ -179,6 +184,15 @@ const toggleRight = () => {
       overflow-y: auto;
       padding: var(--spacing-md);
       transition: opacity 0.2s ease;
+      
+      /* Hide scrollbar subtly */
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(0,0,0,0.1);
+        border-radius: 4px;
+      }
     }
 
     .sidebar-toggle {
@@ -187,8 +201,16 @@ const toggleRight = () => {
       right: 12px;
       cursor: pointer;
       color: var(--text-secondary);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: all 0.2s;
 
       &:hover {
+        background-color: rgba(0,0,0,0.05);
         color: var(--brand-primary);
       }
     }
@@ -198,6 +220,18 @@ const toggleRight = () => {
     flex: 1;
     overflow-y: auto; /* 关键：内部滚动 */
     padding-right: 4px; /* 避免滚动条遮挡 */
+    
+    /* Ensure scrollbar style matches */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(0,0,0,0.1);
+      border-radius: 4px;
+    }
 
     .main-content-wrapper {
       min-height: 100%;
@@ -209,12 +243,14 @@ const toggleRight = () => {
 
   .workspace-footer {
     flex-shrink: 0;
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--spacing-xl);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   }
 </style>

@@ -140,11 +140,23 @@ const bodyClasses = computed(() => [
   props.bodyClass
 ])
 
+import { usePerformanceMode } from '../../composables/usePerformanceMode'
+
+const { isLowPerf } = usePerformanceMode()
+
 const cardStyles = computed(() => {
   const styles: Record<string, string> = {}
 
   if (props.accentColor) {
     styles['--edu-accent-color'] = props.accentColor
+  }
+
+  // Handle Low Performance Mode for Glass Effect
+  if ((props.variant === 'glass' || props.glassEffect) && isLowPerf.value) {
+    styles['backdrop-filter'] = 'none'
+    styles['--edu-glass-blur'] = 'none'
+    styles['background-color'] = 'var(--edu-bg-primary)' // Fallback to solid background
+    styles['opacity'] = '0.95'
   }
 
   return styles
@@ -247,13 +259,17 @@ document.addEventListener('click', (e) => {
   }
 
   &--glass {
-    background: var(--edu-glass-bg);
-    backdrop-filter: var(--edu-glass-blur);
-    border: var(--edu-glass-border);
-    box-shadow: var(--edu-glass-shadow);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05); /* Match GlassSurface card variant */
     position: relative;
-    overflow: hidden;
+    overflow: visible; /* Changed to visible to allow hover effects */
+    
+    transition: all 0.3s ease;
 
+    /* Highlight top border for glass effect */
     &::before {
       content: '';
       position: absolute;
@@ -262,11 +278,20 @@ document.addEventListener('click', (e) => {
       right: 0;
       height: 1px;
       background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.4) 50%,
-        transparent 100%
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.6) 50%,
+        rgba(255, 255, 255, 0) 100%
       );
       z-index: 1;
+      pointer-events: none;
+    }
+    
+    /* Hover Effect from GlassSurface */
+    &:hover:not(.edu-card--disabled) {
+        background: rgba(255, 255, 255, 0.75);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        border-color: rgba(255, 255, 255, 0.6);
     }
   }
 

@@ -18,6 +18,23 @@ import EduSummaryCard from './components/base/EduSummaryCard.vue'
 import AppSidebar from './components/layout/AppSidebar.vue'
 import EnhancedAuthLayout from './components/EnhancedAuthLayout.vue'
 import EnhancedLoginForm from './components/EnhancedLoginForm.vue'
+import EduDataCard from './components/business/EduDataCard.vue'
+import EduThemeSwitcher from './components/base/EduThemeSwitcher.vue'
+import EduSkipLinks from './components/base/EduSkipLinks.vue'
+import EduErrorBoundary from './components/base/EduErrorBoundary.vue'
+import EduNotification from './components/base/EduNotification.vue'
+import EduSkeleton from './components/base/EduSkeleton.vue'
+import EnhancedCards from './components/base/EnhancedCards.vue'
+import VirtualScroller from './components/base/VirtualScroller.vue'
+// Density 系列组件
+import EduDensityCardList from './components/business/EduDensityCardList.vue'
+import EduDensityContainer from './components/business/EduDensityContainer.vue'
+import EduDensityTable from './components/business/EduDensityTable.vue'
+import EduDensityToggle from './components/business/EduDensityToggle.vue'
+// CRUD 组件
+import EduCRUDList from './components/business/crud/EduCRUDList.vue'
+// Glass 组件
+import GlassSurface from './components/Glass/GlassSurface.vue'
 
 // 导出样式文件
 import './index.scss'
@@ -36,7 +53,13 @@ export { registerKeyboardNavigationDirectives }
 export { vKeyboardNavigation, vAutoFocus, vFocusTrap, vAriaLabel, vAriaDescribedBy, vSkipLink } from './directives/keyboardNavigation'
 
 // 导出组件
-export { EduButton, EduCard, EduModal, EduTag, EduInput, EduAccordion, EduTabs, EduCourseCard, EduSummaryCard, AppSidebar, EnhancedAuthLayout, EnhancedLoginForm }
+export {
+  EduButton, EduCard, EduModal, EduTag, EduInput, EduAccordion, EduTabs, EduCourseCard, EduSummaryCard,
+  AppSidebar, EnhancedAuthLayout, EnhancedLoginForm, EduDataCard, EduThemeSwitcher, EduSkipLinks,
+  EduErrorBoundary, EduNotification, EduSkeleton, EnhancedCards, VirtualScroller,
+  EduDensityCardList, EduDensityContainer, EduDensityTable, EduDensityToggle,
+  EduCRUDList, GlassSurface
+}
 
 // 导出主题工具函数
 export const useTheme = () => {
@@ -84,6 +107,8 @@ export const install = (app: App) => {
   app.component('EduCourseCard', EduCourseCard)
   app.component('EduSummaryCard', EduSummaryCard)
   app.component('AppSidebar', AppSidebar)
+  app.component('EduDataCard', EduDataCard)
+  app.component('GlassSurface', GlassSurface)
 
   // 注册无障碍指令
   registerKeyboardNavigationDirectives(app)

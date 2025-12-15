@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Lesson, LessonSection, StudentProgress } from '@/types/lesson'
-import type { ConnectionStatus } from '@/types/websocket'
+import type { ConnectionStatus } from '@shared-utils/websocket/types'
 import { lessonApi } from '@/api/lesson'
 
 type LessonConnectionState = ConnectionStatus | 'idle'

@@ -193,7 +193,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import EduButton from '@/components/ui/EduButton.vue'
+import { EduButton } from '@reopeninnolab/ui-kit'
 import type { LabTemplate } from '@/api/lab'
 
 // Props

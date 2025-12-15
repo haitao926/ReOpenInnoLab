@@ -5,6 +5,10 @@
 // 日期工具
 export * from './date'
 
+// WebSocket 实用工具
+export * from './websocket/types'
+export { lessonSocket, LessonSocketService, type LessonRole } from './websocket/lessonSocket'
+
 // 类型定义
 export interface BaseResponse<T = any> {
   success: boolean

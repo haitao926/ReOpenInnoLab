@@ -8,7 +8,7 @@ const enableMock = import.meta.env.VITE_ENABLE_MOCK_API === 'true'
 // 创建axios实例
 const createApiInstance = (): AxiosInstance => {
   const instance = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002/api/v1',
+    baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
     timeout: 10000,
     headers: {
       'Content-Type': 'application/json',
@@ -104,48 +104,26 @@ let tenantInfo: any = null
 // 安全的token存储函数
 export const setAccessToken = (token: string): void => {
   accessToken = token
-  // 为了跨标签页同步，仅在必要时使用localStorage存储加密的token
-  if (import.meta.env.PROD) {
-    // 生产环境中可以使用更安全的存储方式，如httpOnly cookies
-    localStorage.setItem('at', btoa(token)) // 简单编码，不是真正的加密
-  } else {
-    localStorage.setItem('access_token', token) // 开发环境方便调试
-  }
+  localStorage.setItem('access_token', token)
 }
 
 export const getAccessToken = (): string | null => {
   if (accessToken) {
     return accessToken
   }
-
-  if (import.meta.env.PROD) {
-    const stored = localStorage.getItem('at')
-    return stored ? atob(stored) : null
-  } else {
-    return localStorage.getItem('access_token')
-  }
+  return localStorage.getItem('access_token')
 }
 
 export const setRefreshToken = (token: string): void => {
   refreshToken = token
-  if (import.meta.env.PROD) {
-    localStorage.setItem('rt', btoa(token))
-  } else {
-    localStorage.setItem('refresh_token', token)
-  }
+  localStorage.setItem('refresh_token', token)
 }
 
 export const getRefreshToken = (): string | null => {
   if (refreshToken) {
     return refreshToken
   }
-
-  if (import.meta.env.PROD) {
-    const stored = localStorage.getItem('rt')
-    return stored ? atob(stored) : null
-  } else {
-    return localStorage.getItem('refresh_token')
-  }
+  return localStorage.getItem('refresh_token')
 }
 
 export const setUserInfo = (user: any): void => {

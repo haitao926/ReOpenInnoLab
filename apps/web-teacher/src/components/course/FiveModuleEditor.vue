@@ -264,7 +264,7 @@ import {
   VideoPlay,
   DocumentText
 } from '@element-plus/icons-vue'
-import ExperienceTemplateSelector from '@/components/experiences/ExperienceTemplateSelector.vue'
+import ExperienceTemplateSelector from '@/components/learning-content/ExperienceTemplateSelector.vue'
 import LabTemplateSelector from '@/components/lab/LabTemplateSelector.vue'
 import { ExperienceApiService } from '@/api/experience'
 import { LabApiService } from '@/api/lab'
