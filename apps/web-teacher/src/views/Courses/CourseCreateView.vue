@@ -1,11 +1,11 @@
 <template>
   <div class="course-create-view immersive">
-    <PageBasedCourseWizard />
+    <PageBasedWizard />
   </div>
 </template>
 
 <script setup lang="ts">
-import PageBasedCourseWizard from '@/views/Course/PageBasedCourseWizard.vue'
+import PageBasedWizard from './wizards/PageBasedWizard.vue'
 </script>
 
 <style scoped lang="scss">

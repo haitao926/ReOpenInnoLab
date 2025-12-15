@@ -1,909 +1,559 @@
 <template>
-  <div class="auth-layout">
-    <!-- 动态背景层 -->
-    <div class="auth-background">
-      <div class="gradient-layer layer-1"></div>
-      <div class="gradient-layer layer-2"></div>
-      <div class="gradient-layer layer-3"></div>
-      <div class="pattern-overlay"></div>
-    </div>
-
-    <!-- 主要内容区域 -->
-    <div class="auth-content">
-      <!-- 左侧品牌展示区 -->
-      <div class="auth-hero-section">
-        <!-- 左上角Logo区域 -->
-        <div class="logo-section">
-          <div class="logo-container">
-            <img src="/brand-logo.png" alt="ReOpenInnoLab Logo" class="brand-logo-img" />
+  <div class="login-view">
+    <!-- 左侧装饰面板 -->
+    <div class="login-panel-left">
+      <div class="panel-content">
+        <div class="brand-section">
+          <div class="brand-logo">
+            <div class="logo-icon">
+              <svg viewBox="0 0 64 64" fill="none">
+                <rect width="64" height="64" rx="16" fill="url(#gradient1)"/>
+                <path d="M20 32h24M32 20v24M24 24l16 16M40 24L24 40" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                <defs>
+                  <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <h1 class="brand-title">开源浦育</h1>
+            <p class="brand-subtitle">ReOpen Inno Lab</p>
           </div>
         </div>
 
-        <div class="brand-typography">
-          <h1 class="brand-title">
-            <span class="brand-name">开源浦育</span>
-            <span class="brand-subtitle">ReOpenInnoLab</span>
-          </h1>
-          <p class="brand-description">创新教育平台，开启智慧教学新体验</p>
-        </div>
+        <div class="features-section">
+          <h2 class="features-title">新一代智能教育平台</h2>
+          <div class="features-list">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                  <path d="M2 17l10 5 10-5"/>
+                  <path d="M2 12l10 5 10-5"/>
+                </svg>
+              </div>
+              <div class="feature-content">
+                <h3>AI 驱动教学</h3>
+                <p>智能推荐个性化学习路径</p>
+              </div>
+            </div>
 
-        <!-- 核心价值展示 -->
-        <div class="value-propositions">
-          <div class="value-item">
-            <div class="value-icon">
-              <el-icon><DataAnalysis /></el-icon>
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              </div>
+              <div class="feature-content">
+                <h3>协作学习社区</h3>
+                <p>师生互动，共同成长</p>
+              </div>
             </div>
-            <span class="value-text">智能分析</span>
-          </div>
-          <div class="value-item">
-            <div class="value-icon">
-              <el-icon><Monitor /></el-icon>
+
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+              </div>
+              <div class="feature-content">
+                <h3>虚拟实验室</h3>
+                <p>安全便捷的在线实验环境</p>
+              </div>
             </div>
-            <span class="value-text">互动体验</span>
-          </div>
-          <div class="value-item">
-            <div class="value-icon">
-              <el-icon><Star /></el-icon>
-            </div>
-            <span class="value-text">创新教学</span>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- 右侧登录表单区 -->
-      <div class="auth-form-section">
-        <div class="auth-container">
-          <div class="form-branding">
-            <div class="form-logo">
-              <div class="form-logo-icon">
-                <img src="/brand-logo.png" alt="ReOpenInnoLab Icon" />
-              </div>
-              <div class="form-logo-text">
-                <span class="form-logo-title">ReOpenInnoLab</span>
-                <span class="form-logo-subtitle">智能教育教师端</span>
-              </div>
+    <!-- 右侧登录表单 -->
+    <div class="login-panel-right">
+      <div class="form-container">
+        <transition name="fade" mode="out-in">
+          <div key="login" class="login-form">
+            <div class="form-header">
+              <h2>欢迎回来</h2>
+              <p>请登录您的账户以继续使用</p>
             </div>
-          </div>
-          <!-- 欢迎区域 -->
-          <div class="welcome-area">
-            <div class="welcome-content">
-              <h2 class="welcome-title">教师登录</h2>
-            </div>
-          </div>
 
-          <!-- 登录表单 -->
-          <div class="form-area">
-            <EnhancedLoginForm
+            <el-form
               ref="loginFormRef"
-              user-type="teacher"
-              :loading="loading"
-              :loading-text="'正在登录...'"
-              :show-multiple-methods="false"
-              :show-third-party="false"
-              :show-register="false"
-              :remember-text="'记住我'"
-              :forgot-password-text="'忘记密码？'"
-              :submit-button-text="'教师登录'"
-              :security-tip-text="'您的教学数据将被安全加密保护'"
-              @submit="handleLogin"
-              @forgot-password="showForgotPassword"
-              @clear-error="clearError"
-            />
-          </div>
+              :model="loginForm"
+              :rules="loginRules"
+              size="large"
+              @submit.prevent="handleLogin"
+            >
+              <el-form-item prop="username">
+                <el-input
+                  v-model="loginForm.username"
+                  placeholder="用户名或邮箱"
+                  prefix-icon="User"
+                  :disabled="loading"
+                  clearable
+                  autocomplete="username"
+                />
+              </el-form-item>
 
-          <!-- 统一页脚 -->
-          <div class="auth-footer">
-            <div class="footer-links">
-              <a href="#" class="footer-link" @click.prevent="handleLink('privacy')">
-                <el-icon><Lock /></el-icon>
-                隐私政策
-              </a>
-              <a href="#" class="footer-link" @click.prevent="handleLink('terms')">
-                <el-icon><Document /></el-icon>
-                服务条款
-              </a>
-              <a href="#" class="footer-link" @click.prevent="handleLink('help')">
-                <el-icon><QuestionFilled /></el-icon>
-                帮助中心
-              </a>
-              <a href="#" class="footer-link" @click.prevent="handleLink('contact')">
-                <el-icon><Message /></el-icon>
-                联系我们
-              </a>
-            </div>
-            <div class="footer-copyright">
-              <p>© 2024 开源浦育. All rights reserved.</p>
+              <el-form-item prop="password">
+                <el-input
+                  v-model="loginForm.password"
+                  type="password"
+                  placeholder="密码"
+                  prefix-icon="Lock"
+                  :disabled="loading"
+                  show-password
+                  autocomplete="current-password"
+                  @keyup.enter="handleLogin"
+                />
+              </el-form-item>
+
+              <el-form-item>
+                <div class="form-options">
+                  <el-checkbox v-model="loginForm.remember" :disabled="loading">
+                    记住登录状态
+                  </el-checkbox>
+                  <el-link type="primary" @click="goToForgotPassword">
+                    忘记密码？
+                  </el-link>
+                </div>
+              </el-form-item>
+
+              <el-form-item>
+                <el-button
+                  type="primary"
+                  size="large"
+                  :loading="loading"
+                  @click="handleLogin"
+                  class="login-button"
+                >
+                  {{ loading ? '登录中...' : '登录' }}
+                </el-button>
+              </el-form-item>
+            </el-form>
+
+            <!-- 注册链接 -->
+            <div class="register-link">
+              <span>还没有账号？</span>
+              <el-link type="primary" @click="goToRegister" class="register-link-button">
+                立即注册
+              </el-link>
             </div>
           </div>
-        </div>
+        </transition>
       </div>
     </div>
   </div>
 </template>
 
+
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { EnhancedLoginForm } from '@reopeninnolab/ui-kit'
+import { ElMessage } from 'element-plus'
+import { User, Lock } from '@element-plus/icons-vue'
+import type { FormInstance, FormRules } from 'element-plus'
 import { useUserStore } from '@/stores/user'
-import { DataAnalysis, Monitor, Star, Lock, Document, QuestionFilled, Message } from '@element-plus/icons-vue'
+import { useAppStore } from '@/stores/app'
+
+interface LoginForm {
+  username: string
+  password: string
+  remember: boolean
+}
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+const appStore = useAppStore()
 
-const loginFormRef = ref()
+// 响应式数据
+const loginFormRef = ref<FormInstance>()
 const loading = ref(false)
-const errorMessage = ref('')
 
-const brandConfig = computed(() => ({
-  mainTitle: '开源浦育',
-  subTitle: 'ReOpenInnoLab',
-  description: '创新教育平台，开启智慧教学新体验'
-}))
+const loginForm = reactive<LoginForm>({
+  username: '',
+  password: '',
+  remember: false
+})
 
-const welcomeConfig = computed(() => ({
-  title: '教师登录',
-  subtitle: '请登录以访问教学管理功能'
-}))
+// 表单验证规则 - 移除了角色验证
+const loginRules: FormRules = {
+  username: [
+    { required: true, message: '请输入用户名或邮箱', trigger: 'blur' },
+    { min: 3, message: '用户名至少 3 个字符', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (!value) {
+          callback(new Error('请输入用户名或邮箱'))
+        } else if (value.includes('@')) {
+          // 简单的邮箱格式验证
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+          if (!emailRegex.test(value)) {
+            callback(new Error('请输入有效的邮箱地址'))
+          } else {
+            callback()
+          }
+        } else if (value.length < 3) {
+          callback(new Error('用户名至少 3 个字符'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur'
+    }
+  ],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, message: '密码至少 6 个字符', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (!value) {
+          callback(new Error('请输入密码'))
+        } else if (value.length < 6) {
+          callback(new Error('密码至少 6 个字符'))
+        } else if (value.length > 50) {
+          callback(new Error('密码不能超过 50 个字符'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur'
+    }
+  ]
+}
 
-const handleLogin = async (credentials: any) => {
-  errorMessage.value = ''
-  loading.value = true
+// 事件处理
+const handleLogin = async () => {
+  if (!loginFormRef.value) return
 
   try {
-    console.log('Login credentials received:', credentials)
-    console.log('  - credentials.username:', credentials.username)
-    console.log('  - credentials.email:', credentials.email)
-    console.log('  - credentials.password:', credentials.password ? '[HIDDEN]' : 'EMPTY')
-    console.log('  - credentials.rememberMe:', credentials.rememberMe)
+    await loginFormRef.value.validate()
+    loading.value = true
 
-    const loginData = {
-      username: credentials.username,
-      password: credentials.password,
-      role: 'teacher',
-      remember: credentials.rememberMe
-    }
-    console.log('Login data to send:', loginData)
+    // 调用安全的登录接口，不再传递角色
+    await userStore.login({
+      username: loginForm.username,
+      password: loginForm.password,
+      remember: loginForm.remember
+    })
 
-    await userStore.login(loginData)
-    console.log('登录成功')
+    ElMessage({
+      message: '登录成功',
+      type: 'success'
+    })
 
+    // 重定向到目标页面
     const redirect = route.query.redirect as string
-    router.push(redirect || '/dashboard')
+    router.push(redirect || { name: 'Dashboard' })
 
   } catch (error: any) {
     console.error('登录失败:', error)
-    throw error
+
+    // 显示更友好的错误消息
+    let errorMessage = '登录失败，请检查您的凭据'
+
+    if (error.response?.status === 429) {
+      errorMessage = '登录尝试过于频繁，请稍后再试'
+    } else if (error.response?.status === 401) {
+      errorMessage = '用户名或密码错误'
+    } else if (error.message) {
+      errorMessage = error.message
+    }
+
+    ElMessage({
+      message: errorMessage,
+      type: 'error'
+    })
   } finally {
     loading.value = false
   }
 }
 
-const showForgotPassword = () => {
-  console.log('密码重置功能')
+const goToRegister = () => {
+  router.push({ name: 'Register' })
 }
 
-const clearError = () => {
-  errorMessage.value = ''
+const goToForgotPassword = () => {
+  router.push({ name: 'ForgotPassword' })
 }
 
-const handleFooterLink = (type: 'privacy' | 'terms' | 'help' | 'contact') => {
-  const linkMap = {
-    privacy: '/privacy',
-    terms: '/terms',
-    help: '/help',
-    contact: '/contact'
+// 组件挂载时的处理
+onMounted(async () => {
+  try {
+    // 初始化认证状态
+    await userStore.initializeAuth()
+
+    // 如果已经登录，重定向到仪表板
+    /* 
+    if (userStore.isAuthenticated) {
+      const redirect = route.query.redirect as string
+      router.push(redirect || { name: 'Dashboard' })
+    }
+    */
+  } catch (error) {
+    console.error('初始化认证状态失败:', error)
   }
-
-  console.log(`即将跳转到${type === 'privacy' ? '隐私政策' : type === 'terms' ? '服务条款' : type === 'help' ? '帮助中心' : '联系我们'}页面`)
-
-  setTimeout(() => {
-    router.push(linkMap[type])
-  }, 500)
-}
+})
 </script>
 
-<style scoped lang="scss">
-@import "@/assets/styles/variables.scss";
-
-.auth-layout {
-  position: relative;
+<style scoped>
+.login-view {
   min-height: 100vh;
+  display: flex;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
   overflow: hidden;
-  font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
-  --brand-blue: #2563eb;
-  --brand-blue-rgb: 37, 99, 235;
-  --brand-indigo-rgb: 79, 70, 229;
-  --brand-purple: #7c3aed;
-  --brand-purple-rgb: 124, 58, 237;
-  --brand-orange: #fb923c;
-  --brand-orange-rgb: 251, 146, 60;
-  --brand-orange-deep-rgb: 249, 115, 22;
-  --brand-slate: #0f172a;
-  --brand-card-bg: #f8fafc;
-  --brand-card-border: rgba(15, 23, 42, 0.08);
 }
 
-// 动态背景层
-.auth-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-}
-
-.gradient-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0.8;
-}
-
-.layer-1 {
-  background: linear-gradient(135deg,
-    rgba(var(--brand-blue-rgb), 0.98) 0%,
-    rgba(var(--brand-indigo-rgb), 0.96) 30%,
-    rgba(var(--brand-purple-rgb), 0.92) 60%,
-    rgba(var(--brand-orange-rgb), 0.88) 85%,
-    rgba(var(--brand-orange-deep-rgb), 0.85) 100%
-  );
-  animation: gradientShift 15s ease-in-out infinite alternate;
-}
-
-.layer-2 {
-  background: radial-gradient(circle at 30% 20%,
-    rgba(var(--brand-blue-rgb), 0.55) 0%,
-    rgba(var(--brand-indigo-rgb), 0.35) 30%,
-    transparent 60%
-  );
-  animation: floatAnimation 20s ease-in-out infinite;
-}
-
-.layer-3 {
-  background: radial-gradient(circle at 70% 80%,
-    rgba(var(--brand-purple-rgb), 0.35) 0%,
-    rgba(var(--brand-blue-rgb), 0.22) 35%,
-    rgba(var(--brand-orange-rgb), 0.16) 55%,
-    transparent 70%
-  );
-  animation: floatAnimation 25s ease-in-out infinite reverse;
-}
-
-.pattern-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
-    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 2px, transparent 2px);
-  background-size: 60px 60px;
-  animation: patternMove 30s linear infinite;
-}
-
-// 主要内容区域
-.auth-content {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  min-height: 100vh;
-}
-
-// 左侧品牌展示区
-.auth-hero-section {
-  flex: 1.8;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 3rem 2rem;
-  position: relative;
-  color: #ffffff;
-}
-
-// Logo区域
-.logo-section {
-  position: absolute;
-  top: 2rem;
-  left: 2rem;
-}
-
-.logo-container {
-  position: relative;
-  padding: 1rem 1.5rem;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 20px;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    0 2px 8px rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.4);
-    transform: translateY(-2px) scale(1.02);
-    box-shadow:
-      0 16px 48px rgba(0, 0, 0, 0.15),
-      0 4px 16px rgba(0, 0, 0, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(135deg,
-      rgba(var(--brand-blue-rgb), 0.35) 0%,
-      rgba(var(--brand-purple-rgb), 0.3) 55%,
-      rgba(var(--brand-orange-rgb), 0.3) 100%
-    );
-    border-radius: 22px;
-    z-index: -1;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover::before {
-    opacity: 1;
-  }
-}
-
-.brand-logo-img {
-  width: 160px;
-  height: 80px;
-  object-fit: contain;
-  filter: brightness(1.1) contrast(1.05) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: scale(1.05);
-    filter: brightness(1.2) contrast(1.1) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-  }
-}
-
-.brand-typography {
-  text-align: center;
-  max-width: 600px;
-  margin-bottom: 3rem;
-}
-
-.brand-title {
-  font-size: 3.5rem;
-  font-weight: 800;
-  margin: 0 0 1.5rem 0;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-
-.brand-name {
-  display: block;
-  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 50%, #e0e7ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.brand-subtitle {
-  display: block;
-  font-size: 1.5rem;
-  font-weight: 300;
-  opacity: 0.95;
-  letter-spacing: 0.2em;
-  margin-top: 0.5rem;
-  background: linear-gradient(135deg, var(--brand-orange) 0%, var(--brand-purple) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.brand-description {
-  font-size: 1.2rem;
-  line-height: 1.7;
-  color: #f8fafc;
-  margin: 0;
-  font-weight: 400;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-// 价值展示
-.value-propositions {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.value-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  min-width: 140px;
-
-  &:hover {
-    transform: translateY(-4px) scale(1.02);
-    background: rgba(255, 255, 255, 0.25);
-    box-shadow: 0 20px 40px rgba(var(--brand-orange-rgb), 0.4);
-    border-color: rgba(255, 255, 255, 0.5);
-  }
-}
-
-.value-icon {
-  font-size: 2rem;
-  color: #ffffff;
-  opacity: 0.95;
-  transition: all 0.3s ease;
-}
-
-.value-item:hover .value-icon {
-  opacity: 1;
-  transform: scale(1.1);
-  color: var(--brand-orange);
-}
-
-.value-text {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #ffffff;
-  text-align: center;
-  letter-spacing: 0.01em;
-}
-
-// 右侧登录表单区
-.auth-form-section {
+/* 左侧面板 */
+.login-panel-left {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(140deg,
-    rgba(255, 255, 255, 0.98) 0%,
-    rgba(248, 250, 252, 0.95) 60%,
-    rgba(237, 242, 255, 0.92) 100%
-  );
-  backdrop-filter: blur(20px);
+  padding: 3rem;
   position: relative;
-  overflow: hidden;
 }
 
-.auth-form-section::before,
-.auth-form-section::after {
-  content: '';
-  position: absolute;
-  border-radius: 999px;
-  filter: blur(45px);
-  opacity: 0.55;
-  pointer-events: none;
-}
-
-.auth-form-section::before {
-  width: 55%;
-  height: 55%;
-  top: -10%;
-  right: -15%;
-  background: radial-gradient(circle,
-    rgba(var(--brand-blue-rgb), 0.5) 0%,
-    transparent 70%
-  );
-}
-
-.auth-form-section::after {
-  width: 45%;
-  height: 45%;
-  bottom: -15%;
-  left: -10%;
-  background: radial-gradient(circle,
-    rgba(var(--brand-orange-rgb), 0.35) 0%,
-    transparent 75%
-  );
-}
-
-.auth-container {
+.panel-content {
+  max-width: 500px;
   width: 100%;
-  max-width: 420px;
-  padding: 2.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.98);
-  border: 1px solid var(--brand-card-border);
-  box-shadow:
-    0 25px 60px rgba(15, 23, 42, 0.15),
-    0 10px 25px rgba(var(--brand-blue-rgb), 0.08);
-  position: relative;
-  isolation: isolate;
+  color: white;
+  text-align: center;
 }
 
-.auth-container::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 30px;
-  background: linear-gradient(135deg,
-    rgba(var(--brand-blue-rgb), 0.25) 0%,
-    rgba(var(--brand-purple-rgb), 0.25) 50%,
-    rgba(var(--brand-orange-rgb), 0.3) 100%
-  );
-  z-index: -1;
-  opacity: 0.8;
+.brand-section {
+  margin-bottom: 4rem;
 }
 
-.auth-container::after {
-  content: '';
-  position: absolute;
-  width: 140px;
-  height: 140px;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  background: radial-gradient(circle,
-    rgba(var(--brand-purple-rgb), 0.25) 0%,
-    transparent 70%
-  );
-  z-index: -1;
+.brand-logo {
+  margin-bottom: 2rem;
 }
 
-.form-branding {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 1.25rem 1.5rem;
+.logo-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 20px;
-  background: linear-gradient(120deg,
-    rgba(var(--brand-blue-rgb), 0.08),
-    rgba(var(--brand-purple-rgb), 0.08)
-  );
-  border: 1px solid rgba(var(--brand-blue-rgb), 0.15);
-  box-shadow: 0 15px 25px rgba(var(--brand-blue-rgb), 0.08);
-}
-
-.form-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-}
-
-.form-logo-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 16px;
-  background: radial-gradient(circle at 30% 30%,
-    rgba(var(--brand-orange-rgb), 0.85),
-    rgba(var(--brand-purple-rgb), 0.75)
-  );
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
-  box-shadow:
-    0 12px 25px rgba(var(--brand-orange-rgb), 0.25),
-    0 4px 10px rgba(var(--brand-blue-rgb), 0.12);
+  backdrop-filter: blur(10px);
 }
 
-.form-logo-icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 8px rgba(15, 23, 42, 0.25));
+.logo-icon svg {
+  width: 40px;
+  height: 40px;
 }
 
-.form-logo-text {
+.brand-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.brand-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+.features-section {
+  text-align: left;
+}
+
+.features-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.features-list {
   display: flex;
   flex-direction: column;
-  line-height: 1.2;
+  gap: 1.5rem;
 }
 
-.form-logo-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.form-logo-subtitle {
-  font-size: 0.85rem;
-  color: #64748b;
-}
-
-
-// 欢迎区域
-.welcome-area {
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.welcome-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 0.5rem 0;
-}
-
-.welcome-subtitle {
-  font-size: 1rem;
-  color: #64748b;
-  margin: 0;
-}
-
-// 表单区域
-.form-area {
-  width: 100%;
-}
-
-// 页脚
-.auth-footer {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
-.footer-link {
+.feature-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: #64748b;
-  text-decoration: none;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-
-  &:hover {
-    color: #3b82f6;
-  }
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.footer-copyright {
+.feature-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.feature-content h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.feature-content p {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+/* 右侧面板 */
+.login-panel-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-form {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.form-header {
   text-align: center;
-  color: #94a3b8;
-  font-size: 0.75rem;
-  margin: 0;
+  margin-bottom: 2rem;
 }
 
-// 动画
-@keyframes gradientShift {
-  0%, 100% {
-    transform: translateX(0) translateY(0) scale(1);
-    filter: hue-rotate(0deg) brightness(1);
-  }
-  20% {
-    transform: translateX(-15px) translateY(-8px) scale(1.05);
-    filter: hue-rotate(8deg) brightness(1.1);
-  }
-  40% {
-    transform: translateX(8px) translateY(-12px) scale(1.03);
-    filter: hue-rotate(-5deg) brightness(1.05);
-  }
-  60% {
-    transform: translateX(-8px) translateY(6px) scale(1.02);
-    filter: hue-rotate(3deg) brightness(0.95);
-  }
-  80% {
-    transform: translateX(5px) translateY(-4px) scale(1.01);
-    filter: hue-rotate(-2deg) brightness(1.02);
-  }
+.form-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
 }
 
-@keyframes floatAnimation {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.6;
-  }
-  25% {
-    transform: translate(20px, -15px) scale(1.1);
-    opacity: 0.7;
-  }
-  50% {
-    transform: translate(30px, -25px) scale(1.2);
-    opacity: 0.8;
-  }
-  75% {
-    transform: translate(15px, -10px) scale(1.1);
-    opacity: 0.7;
-  }
+.form-header p {
+  color: #6b7280;
+  font-size: 0.95rem;
 }
 
-
-@keyframes patternMove {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 60px 60px;
-  }
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
 }
 
-// 响应式设计
+.login-button {
+  width: 100%;
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.register-link-button {
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+/* 表单样式调整 */
+:deep(.el-form-item) {
+  margin-bottom: 1.5rem;
+}
+
+:deep(.el-form-item__content) {
+  line-height: normal;
+}
+
+:deep(.el-input__inner) {
+  height: 48px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+:deep(.el-input__inner:focus) {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+:deep(.el-checkbox) {
+  font-weight: 500;
+}
+
+/* 动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 响应式设计 */
 @media (max-width: 1024px) {
-  .auth-content {
-    flex-direction: column;
+  .login-panel-left {
+    display: none;
   }
 
-  .auth-hero-section {
-    flex: none;
-    min-height: 40vh;
-    padding: 2rem 1rem;
-  }
-
-  .auth-form-section {
+  .login-panel-right {
     flex: 1;
-    padding: 2rem 1rem;
-  }
-
-  .brand-title {
-    font-size: 2.5rem;
-  }
-
-  .brand-subtitle {
-    font-size: 1.2rem;
-  }
-
-  .value-propositions {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .logo-container {
-    padding: 0.75rem 1rem;
-  }
-
-  .brand-logo-img {
-    width: 140px;
-    height: 70px;
   }
 }
 
-@media (max-width: 768px) {
-  .auth-hero-section {
-    min-height: 30vh;
+@media (max-width: 640px) {
+  .login-view {
+    padding: 1rem;
+  }
+
+  .login-form {
     padding: 1.5rem;
   }
 
-  .auth-form-section {
-    padding: 1.5rem;
-  }
-
-  .brand-title {
-    font-size: 2rem;
-  }
-
-  .brand-subtitle {
-    font-size: 1rem;
-  }
-
-  .brand-description {
-    font-size: 1rem;
-  }
-
-  .value-item {
-    min-width: 120px;
-    padding: 1rem;
-  }
-
-  .auth-container {
-    padding: 1.5rem;
-  }
-
-  .footer-links {
-    gap: 1rem;
-  }
-
-  .logo-container {
-    padding: 0.5rem 0.75rem;
-  }
-
-  .brand-logo-img {
-    width: 120px;
-    height: 60px;
-  }
-
-  .form-logo-icon {
-    width: 44px;
-    height: 44px;
-  }
-
-  .form-branding {
-    padding: 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .auth-hero-section {
-    min-height: 25vh;
-    padding: 1rem;
-  }
-
-  .auth-form-section {
-    padding: 1rem;
-  }
-
-  .brand-title {
-    font-size: 1.8rem;
-  }
-
-  .brand-subtitle {
-    font-size: 0.9rem;
-  }
-
-  .value-propositions {
-    gap: 0.75rem;
-  }
-
-  .value-item {
-    padding: 0.75rem;
-    min-width: 100px;
-  }
-
-  .value-icon {
+  .form-header h2 {
     font-size: 1.5rem;
-  }
-
-  .value-text {
-    font-size: 0.875rem;
-  }
-
-  .auth-container {
-    padding: 1rem;
-  }
-
-  .footer-links {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .logo-container {
-    padding: 0.4rem 0.6rem;
-  }
-
-  .brand-logo-img {
-    width: 100px;
-    height: 50px;
-  }
-
-  .form-logo-icon {
-    width: 40px;
-    height: 40px;
-  }
-
-  .form-branding {
-    padding: 0.75rem;
-  }
-
-  .form-logo {
-    gap: 0.6rem;
-  }
-
-  .welcome-title {
-    font-size: 1.6rem;
-  }
-
-  // 在小屏幕上确保品牌卡片始终可见
-  .form-branding {
-    order: -1;
-    margin-bottom: 0.5rem;
   }
 }
 </style>

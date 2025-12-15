@@ -98,7 +98,7 @@
       </el-dropdown>
 
       <!-- 主题切换器 -->
-      <ThemeSwitcher @theme-changed="handleThemeChanged" />
+      <EduThemeSwitcher @theme-changed="handleThemeChanged" />
     </div>
   </header>
 </template>
@@ -121,7 +121,7 @@ import {
 } from '@element-plus/icons-vue'
 import { useAppStore } from '@/stores/app'
 import { useUserStore } from '@/stores/user'
-import ThemeSwitcher from '@/components/common/ThemeSwitcher.vue'
+import { EduThemeSwitcher } from '@reopeninnolab/ui-kit'
 
 const router = useRouter()
 const route = useRoute()

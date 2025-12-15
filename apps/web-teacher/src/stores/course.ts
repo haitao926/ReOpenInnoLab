@@ -547,6 +547,23 @@ export const useCourseStore = defineStore('course', () => {
     listLoading.value = false
   }
 
+  // Resource Management Actions
+  function addResourceToModule(moduleType: keyof CourseEditor['fiveModules'], resource: ResourceRef) {
+    if (!editor.value) return
+    editor.value.fiveModules[moduleType].resources.push(resource)
+  }
+
+  function removeResourceFromModule(moduleType: keyof CourseEditor['fiveModules'], resourceId: string) {
+    if (!editor.value) return
+    editor.value.fiveModules[moduleType].resources =
+      editor.value.fiveModules[moduleType].resources.filter(r => r.id !== resourceId)
+  }
+
+  function reorderResourcesInModule(moduleType: keyof CourseEditor['fiveModules'], newOrder: ResourceRef[]) {
+    if (!editor.value) return
+    editor.value.fiveModules[moduleType].resources = newOrder
+  }
+
   return {
     // 状态
     courses,
@@ -573,6 +590,9 @@ export const useCourseStore = defineStore('course', () => {
     archiveCourse,
     deleteCourse,
     reset,
-    generateAclFromEditor
+    generateAclFromEditor,
+    addResourceToModule,
+    removeResourceFromModule,
+    reorderResourcesInModule
   }
 })

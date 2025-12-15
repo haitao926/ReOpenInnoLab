@@ -449,14 +449,6 @@ onMounted(() => {
   loadCourseData()
 })
 
-// 生成模拟统计数据（实际应该从统计API获取）
-const generateMockStats = () => {
-  enrolledStudents.value = Math.floor(Math.random() * 50) + 10
-  scheduledClasses.value = Math.floor(Math.random() * 10) + 1
-  completionRate.value = Math.floor(Math.random() * 40) + 60
-  aiAssistUsage.value = Math.floor(Math.random() * 80) + 20
-}
-
 const editCourse = () => {
   router.push({ name: 'CourseEdit', params: { id: courseId.value } })
 }
@@ -525,16 +517,6 @@ const getDifficultyText = (level: string) => {
     advanced: '高级'
   }
   return map[level] || '未知'
-}
-
-const getChapterTypeTag = (type: string) => {
-  const map: Record<string, string> = {
-    content: 'info',
-    experiment: 'danger',
-    interactive: 'warning',
-    assessment: 'success'
-  }
-  return map[type] || 'info'
 }
 
 const getChapterTypeText = (type: ChapterInfo['type']) => {

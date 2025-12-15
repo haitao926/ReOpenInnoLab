@@ -938,7 +938,7 @@ const handleRetry = () => {
 // apps/web-student/src/services/websocket/lessonSocket.ts
 import { io, Socket } from 'socket.io-client'
 import { ElMessage } from 'element-plus'
-import type { StudentInfo, TeacherEvent, StudentEvent } from '@/types/websocket'
+import type { StudentInfo, TeacherEvent, StudentEvent } from '@shared-utils/websocket/types'
 
 class LessonSocketService {
   private socket: Socket | null = null

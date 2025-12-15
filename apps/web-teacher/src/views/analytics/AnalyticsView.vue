@@ -191,7 +191,7 @@
     </template>
 
     <!-- 主内容区 -->
-    <div class="analytics-content">
+    <div class="analytics-content page-surface">
       <div class="content-tabs">
         <el-tabs v-model="activeTab" type="border-card">
           <!-- KPI 指标 -->
@@ -738,7 +738,7 @@ onMounted(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--edu-space-section);
 }
 
 .content-tabs {

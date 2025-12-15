@@ -1,6 +1,6 @@
 <template>
   <section class="teacher-workspace" role="main" :aria-labelledby="title ? 'page-title' : undefined">
-    <SkipLinks />
+    <EduSkipLinks />
 
     <header class="workspace-header" role="banner">
       <div class="header-main">
@@ -87,7 +87,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { Expand, Fold } from '@element-plus/icons-vue'
-import SkipLinks from '@/components/common/SkipLinks.vue'
+import { EduSkipLinks } from '@reopeninnolab/ui-kit'
 
 const props = withDefaults(
   defineProps<{
@@ -142,8 +142,8 @@ const handleToggleRight = () => {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  height: 100vh; // 确保工作区占满视口高度
-  overflow: hidden; // 防止工作区本身滚动
+  min-height: 100%;
+  overflow: visible;
   padding: 24px; // 添加一些内边距
   box-sizing: border-box; // 确保padding包含在高度内
 }
@@ -204,7 +204,7 @@ const handleToggleRight = () => {
   gap: 20px;
   flex: 1; // 让工作区主体占用剩余空间
   min-height: 0; // 防止flex溢出
-  overflow: hidden; // 防止整个flex容器溢出
+  overflow: visible; // 让内部自行管理滚动
 
   // 当有右栏时的布局
   &.has-right-sidebar {

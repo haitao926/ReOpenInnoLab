@@ -16,6 +16,7 @@
       "@ui-kit/*": ["src/*"]
     },
     "noEmit": false,
+    "allowImportingTsExtensions": false,
     "composite": true
   },
   "include": [

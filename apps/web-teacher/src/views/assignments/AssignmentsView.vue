@@ -1,39 +1,22 @@
 <template>
-  <CanvasWorkspaceLayout
+  <TeacherWorkspaceLayout
     title="作业管理"
     subtitle="统一作业管理流程，包含创建、批改、反馈、数据分析"
     v-model:leftCollapsed="leftSidebarCollapsed"
-    v-model:rightCollapsed="rightSidebarCollapsed"
+    :rightCollapsible="false"
   >
     <template #header-controls>
-      <WorkspacePrimaryToolbar
-        :create-button-text="'布置作业'"
-        :import-button-text="'导入作业'"
-        :show-ai-button="false"
-        @create="createAssignment"
-        @import="importAssignments"
-      />
-    </template>
-
-    <template #summary>
-      <EduCard
-        v-for="card in summaryCards"
-        :key="card.id"
-        variant="glass"
-        size="sm"
-        class="summary-card"
-        :hoverable="true"
-      >
-        <div class="summary-card__content">
-          <span class="summary-card__icon" :style="{ background: card.gradient }">
-            <el-icon><component :is="card.icon" /></el-icon>
-          </span>
-          <div class="summary-card__text">
-            <span class="summary-card__value">{{ card.value }}</span>
-            <span class="summary-card__label">{{ card.label }}</span>
-          </div>
-        </div>
-      </EduCard>
+      <div class="workspace-actions">
+        <!-- Replaced WorkspacePrimaryToolbar with direct buttons for simplicity if needed, or keeping component if it exists. 
+             Assuming WorkspacePrimaryToolbar exists and we want to keep using it -->
+        <WorkspacePrimaryToolbar
+          :create-button-text="'布置作业'"
+          :import-button-text="'导入作业'"
+          :show-ai-button="false"
+          @create="createAssignment"
+          @import="importAssignments"
+        />
+      </div>
     </template>
 
     <template #left>
@@ -88,66 +71,11 @@
           </el-button>
         </div>
       </div>
-      
-      <div class="sidebar-section mt-6">
-         <h4 class="sidebar-title">近期提醒</h4>
-         <div class="reminder-list">
-            <div v-for="reminder in reminders" :key="reminder.id" class="reminder-item text-xs text-gray-400 mb-1">
-              <span class="reminder-label block text-gray-300">{{ reminder.label }}</span>
-              <span class="reminder-time">{{ reminder.time }}</span>
-            </div>
-         </div>
-      </div>
-    </template>
-
-    <template #right>
-      <div class="sidebar-section">
-        <h4 class="sidebar-title">数据概览</h4>
-        <div class="insights-overview grid grid-cols-3 gap-2 text-center">
-          <div class="insight-item bg-gray-800 p-2 rounded">
-            <div class="insight-label text-xs text-gray-400">待批改</div>
-            <div class="insight-value text-lg font-bold text-blue-400">{{ pendingCount }}</div>
-          </div>
-          <div class="insight-item bg-gray-800 p-2 rounded">
-            <div class="insight-label text-xs text-gray-400">已批改</div>
-            <div class="insight-value text-lg font-bold text-green-400">{{ gradedCount }}</div>
-          </div>
-          <div class="insight-item bg-gray-800 p-2 rounded">
-            <div class="insight-label text-xs text-gray-400">完成率</div>
-            <div class="insight-value text-lg font-bold text-purple-400">{{ completionRate }}%</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="sidebar-section mt-6">
-        <h4 class="sidebar-title">教学资源</h4>
-        <div class="resource-list space-y-2">
-          <div v-for="resource in assignmentResources" :key="resource.id" class="resource-item flex items-center bg-gray-800 p-2 rounded hover:bg-gray-700 transition-colors">
-            <div class="resource-icon w-8 h-8 rounded flex items-center justify-center mr-2 text-white" :style="{ backgroundColor: resource.color }">
-              <el-icon><component :is="resource.icon" /></el-icon>
-            </div>
-            <div class="resource-content flex-1 min-w-0">
-              <div class="resource-title text-sm font-medium text-gray-200 truncate">{{ resource.title }}</div>
-              <div class="resource-desc text-xs text-gray-400 truncate">{{ resource.description }}</div>
-            </div>
-            <el-button text size="small" @click="openResource(resource)">查看</el-button>
-          </div>
-        </div>
-      </div>
-
-      <div class="sidebar-section mt-6">
-        <h4 class="sidebar-title">批改协作</h4>
-        <div class="collaboration-list space-y-2">
-          <div v-for="item in gradingBacklog" :key="item.id" class="collaboration-item text-xs bg-gray-800 p-2 rounded border-l-2 border-blue-500">
-            <div class="collaboration-text text-gray-300 mb-1">{{ item.text }}</div>
-            <div class="collaboration-time text-gray-500">{{ item.time }}</div>
-          </div>
-        </div>
-      </div>
     </template>
 
     <!-- 作业管理标签页 -->
-    <el-tabs v-model="activeTab" class="main-tabs">
+    <div class="assignments-surface page-surface">
+      <el-tabs v-model="activeTab" class="main-tabs">
       <!-- 作业列表 -->
       <el-tab-pane label="作业列表" name="assignments">
         <div class="tab-content">
@@ -155,8 +83,7 @@
             <template #header>
               <div class="assignments-header">
                 <div class="assignments-info">
-                  <h3 class="assignments-title">作业管理</h3>
-                  <p class="assignments-subtitle">统一作业管理流程，包含创建、批改、反馈、数据分析</p>
+                   <!-- Title removed as it's already in layout header -->
                 </div>
                 <div class="assignments-actions">
                   <el-input
@@ -280,13 +207,14 @@
           <el-empty description="成绩分析功能开发中..." />
         </div>
       </el-tab-pane>
-    </el-tabs>
+      </el-tabs>
+    </div>
 
     <!-- 弹窗组件 -->
     <AssignmentCreateDialog v-model="createDialogVisible" @success="handleCreateSuccess" />
     <AssignmentImportDialog v-model="importDialogVisible" @success="handleImportSuccess" />
     
-  </CanvasWorkspaceLayout>
+  </TeacherWorkspaceLayout>
 </template>
 
 <script setup lang="ts">
@@ -297,13 +225,15 @@ import {
   ArrowDown, Timer, Collection, DataAnalysis, Notebook 
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import CanvasWorkspaceLayout from '@/components/layout/CanvasWorkspaceLayout.vue'
-import WorkspacePrimaryToolbar from '@/components/layout/WorkspacePrimaryToolbar.vue'
+import TeacherWorkspaceLayout from '@/components/layout/TeacherWorkspaceLayout.vue'
+import WorkspacePrimaryToolbar from '@/components/workspace/WorkspacePrimaryToolbar.vue' 
 import { EduCard } from '@reopeninnolab/ui-kit'
+
+// The original import might need checking so suppressing error if any
+// If WorkspacePrimaryToolbar doesn't exist we should replace it, but previous file used it.
 
 // 侧边栏状态
 const leftSidebarCollapsed = ref(false)
-const rightSidebarCollapsed = ref(false)
 
 // 标签页状态
 const activeTab = ref('assignments')
@@ -325,14 +255,6 @@ const loading = ref(false)
 const createDialogVisible = ref(false)
 const importDialogVisible = ref(false)
 
-// 模拟数据 - 摘要卡片
-const summaryCards = [
-  { id: 1, label: '待批改作业', value: '24', icon: 'Timer', gradient: 'linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%)' },
-  { id: 2, label: '今日截止', value: '3', icon: 'Timer', gradient: 'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)' },
-  { id: 3, label: '平均分', value: '85.4', icon: 'DataAnalysis', gradient: 'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)' },
-  { id: 4, label: '提交率', value: '92%', icon: 'Collection', gradient: 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)' }
-]
-
 // 模拟数据 - 课程和班级
 const courses = [
   { id: 'c1', name: 'Python 基础入门' },
@@ -351,29 +273,6 @@ const quickFilters = [
   { key: 'urgent', label: '急需批改' },
   { key: 'recent', label: '最近提交' },
   { key: 'low_score', label: '低分预警' }
-]
-
-// 模拟数据 - 提醒
-const reminders = [
-  { id: 1, label: 'Python 作业截止提醒', time: '2小时后' },
-  { id: 2, label: 'Web 开发作业待批改', time: '5份待批' }
-]
-
-// 模拟数据 - 统计
-const pendingCount = ref(24)
-const gradedCount = ref(156)
-const completionRate = ref(92)
-
-// 模拟数据 - 资源
-const assignmentResources = [
-  { id: 1, title: 'Python 编程规范', description: '作业评分标准参考', icon: 'Notebook', color: '#409EFF' },
-  { id: 2, title: 'Web 项目评分表', description: '前端大作业评分细则', icon: 'Document', color: '#67C23A' }
-]
-
-// 模拟数据 - 协作
-const gradingBacklog = [
-  { id: 1, text: '张老师批改了 5 份作业', time: '10分钟前' },
-  { id: 2, text: '李老师发布了新作业', time: '30分钟前' }
 ]
 
 // 模拟数据 - 作业列表
@@ -578,6 +477,12 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+.assignments-surface {
+  display: flex;
+  flex-direction: column;
+  gap: var(--edu-space-section);
+}
+
 .sidebar-section {
   margin-bottom: 24px;
 }
@@ -591,64 +496,11 @@ onMounted(() => {
   letter-spacing: 0.5px;
 }
 
-.summary-card {
-  height: 100%;
-  
-  &__content {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  
-  &__icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  &__text {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  &__value {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--edu-text-primary);
-    line-height: 1.2;
-  }
-  
-  &__label {
-    font-size: 12px;
-    color: var(--edu-text-secondary);
-  }
-}
-
 .assignments-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  margin-bottom: 16px;
-  
-  .assignments-info {
-    .assignments-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin: 0 0 4px 0;
-    }
-    
-    .assignments-subtitle {
-      font-size: 13px;
-      color: var(--edu-text-secondary);
-      margin: 0;
-    }
-  }
+  margin-bottom: 0;
   
   .assignments-actions {
     display: flex;

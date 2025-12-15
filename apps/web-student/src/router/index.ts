@@ -42,48 +42,6 @@ const routes: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/courses/:courseId',
-        name: 'CourseWorkspace',
-        component: () => import('@/views/Course/CourseWorkspace.vue'),
-        meta: {
-          title: '课程学习',
-          requiresAuth: true,
-          hidden: true
-        },
-        children: [
-          {
-            path: 'activity/:activityId',
-            name: 'CourseActivity',
-            component: () => import('@/views/Course/CourseWorkspace.vue'),
-            meta: {
-              title: '课程活动',
-              requiresAuth: true,
-              hidden: true
-            }
-          }
-        ]
-      },
-      {
-        path: '/lesson/:lessonId',
-        name: 'RealtimeLesson',
-        component: () => import('@/views/lesson/RealtimeLessonView.vue'),
-        meta: {
-          title: '实时课堂',
-          requiresAuth: true,
-          hidden: true
-        }
-      },
-      {
-        path: '/assignments',
-        name: 'AssignmentList',
-        component: () => import('@/views/assignments/List.vue'),
-        meta: {
-          title: '作业列表',
-          icon: 'EditPen',
-          requiresAuth: true
-        }
-      },
-      {
         path: '/assignments/:id/submit',
         name: 'AssignmentSubmission',
         component: () => import('@/views/assignments/Submission.vue'),
@@ -141,6 +99,33 @@ const routes: RouteRecordRaw[] = [
           title: '页面不存在',
           requiresAuth: true,
           hidden: true
+        }
+      }
+    ]
+  },
+  {
+    path: '/courses/:courseId',
+    component: () => import('@/layouts/FocusedLayout.vue'),
+    meta: {
+      requiresAuth: true
+    },
+    children: [
+      {
+        path: '',
+        name: 'CourseWorkspace',
+        component: () => import('@/views/Course/CourseWorkspace.vue'),
+        meta: {
+          title: '课程学习',
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'activity/:activityId',
+        name: 'CourseActivity',
+        component: () => import('@/views/Course/CourseWorkspace.vue'),
+        meta: {
+          title: '课程活动',
+          requiresAuth: true
         }
       }
     ]

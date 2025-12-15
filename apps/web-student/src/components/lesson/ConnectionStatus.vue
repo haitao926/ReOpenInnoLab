@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { CircleCheck, Loading, CircleClose, RefreshRight, WarningFilled } from '@element-plus/icons-vue'
-import type { ConnectionStatus } from '@/types/websocket'
+import type { ConnectionStatus } from '@shared-utils/websocket/types'
 
 type LocalStatus = ConnectionStatus | 'idle'
 

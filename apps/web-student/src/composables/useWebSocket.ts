@@ -1,5 +1,5 @@
 import { ref, onMounted, onUnmounted } from 'vue'
-import type { WebSocketMessage, LessonEvent } from '@/types/websocket'
+import type { WebSocketMessage, LessonEvent } from '@shared-utils/websocket/types'
 
 export interface UseWebSocketOptions {
   autoReconnect?: boolean

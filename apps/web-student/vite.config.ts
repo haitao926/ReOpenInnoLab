@@ -13,7 +13,8 @@ export default defineConfig({
       '@stores': resolve(__dirname, 'src/stores'),
       '@utils': resolve(__dirname, 'src/utils'),
       '@api': resolve(__dirname, 'src/api'),
-      '@assets': resolve(__dirname, 'src/assets')
+      '@assets': resolve(__dirname, 'src/assets'),
+      '@shared-utils': resolve(__dirname, '../../packages/shared-utils/src')
     }
   },
   css: {

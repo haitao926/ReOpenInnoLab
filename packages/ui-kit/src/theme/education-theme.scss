@@ -37,6 +37,17 @@
   --edu-subject-pe: #FFA07A;         // 体育 - 健康橘
   --edu-subject-it: #708090;         // 信息技术 - 科技灰
 
+  // 场景色彩系统 (New)
+  // 场景色彩 RGB 值（用于透明度计算）
+  --scene-rgb-reading: 91, 143, 249;
+  --scene-rgb-coding: 255, 140, 0;
+  --scene-rgb-feedback: 114, 46, 209;
+
+  // 场景渐变背景
+  --scene-gradient-reading: linear-gradient(135deg, #5B8FF9 0%, #85BEFF 100%);
+  --scene-gradient-coding: linear-gradient(135deg, #FF8C00 0%, #FFA500 100%);
+  --scene-gradient-feedback: linear-gradient(135deg, #722ED1 0%, #9254DE 100%);
+
   // 中性色彩
   --edu-text-primary: #262626;
   --edu-text-regular: #595959;
@@ -220,6 +231,22 @@ body {
   box-shadow: var(--edu-glass-shadow);
   background: var(--edu-glass-bg-dark);
   backdrop-filter: var(--edu-glass-blur);
+}
+
+// 场景切换类
+.scene-reading {
+  --edu-primary: #5B8FF9;
+  --edu-scene-gradient: var(--scene-gradient-reading);
+}
+
+.scene-coding {
+  --edu-primary: #FF8C00;
+  --edu-scene-gradient: var(--scene-gradient-coding);
+}
+
+.scene-feedback {
+  --edu-primary: #722ED1;
+  --edu-scene-gradient: var(--scene-gradient-feedback);
 }
 
 // 渐变背景

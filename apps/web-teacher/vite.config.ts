@@ -35,7 +35,8 @@ export default defineConfig({
       '@/utils': resolve(__dirname, 'src/utils'),
       '@/types': resolve(__dirname, 'src/types'),
       '@/api': resolve(__dirname, 'src/services'),
-      '@/assets': resolve(__dirname, 'src/assets')
+      '@/assets': resolve(__dirname, 'src/assets'),
+      '@shared-utils': resolve(__dirname, '../../packages/shared-utils/src')
     }
   },
   css: {
@@ -53,7 +54,7 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:3003',
+        target: 'http://localhost:8080',
         changeOrigin: true
       },
       '/ai': {
