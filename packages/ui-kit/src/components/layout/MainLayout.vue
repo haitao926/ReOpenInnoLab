@@ -1,5 +1,8 @@
 <template>
   <div class="main-layout" :class="layoutClasses">
+    <!-- 背景氛围层 (Atmosphere Layer) -->
+    <div class="main-layout__atmosphere"></div>
+
     <!-- 侧边栏 -->
     <AppSidebar
       :title="sidebarTitle"
@@ -63,7 +66,7 @@
                     {{ item.label }}
                   </router-link>
                   <span v-else-if="index < breadcrumbItems.length - 1" class="breadcrumb__separator">
-                    {{ item.label }}
+                    /
                   </span>
                   <span v-else class="breadcrumb__current">{{ item.label }}</span>
                 </li>
@@ -100,7 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
@@ -183,31 +186,24 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  // 侧边栏默认配置
   sidebarTitle: '智慧教学平台',
   sidebarCollapsed: false,
-  sidebarWidth: 240,
-  sidebarCollapsedWidth: 64,
+  sidebarWidth: 260,
+  sidebarCollapsedWidth: 76,
   sidebarVersion: '1.0.0',
   sidebarHoverable: true,
-
-  // 头部默认配置
   headerShowSearch: true,
-  headerSearchPlaceholder: '搜索...',
+  headerSearchPlaceholder: '全局搜索...',
   headerShowNotifications: true,
   headerShowThemeToggle: true,
   headerFixed: true,
   headerTransparent: false,
-
-  // 布局默认配置
   showBreadcrumb: true,
   fluid: false,
-  maxWidth: 1200,
+  maxWidth: 1440,
   padding: 'base',
   globalLoading: false,
   loadingText: '加载中...',
-
-  // 响应式配置
   mobileBreakpoint: 768
 })
 
@@ -254,62 +250,38 @@ const mainClasses = computed(() => [
 
 const mainStyles = computed(() => {
   const styles: Record<string, string> = {}
-
   if (!props.fluid && props.maxWidth) {
     styles.maxWidth = `${props.maxWidth}px`
   }
-
   if (props.headerFixed) {
     styles.paddingTop = '64px'
   }
-
   return styles
 })
 
-// 方法
+// Methods
 const handleSidebarToggle = (collapsed: boolean) => {
   sidebarCollapsed.value = collapsed
-
   if (isMobile.value) {
     showMobileOverlay.value = !collapsed
   }
-
   emit('sidebar-toggle', collapsed)
 }
 
 const handleSidebarMenuClick = (item: MenuItem) => {
   emit('sidebar-menu-click', item)
-
-  // 移动端点击菜单后关闭侧边栏
   if (isMobile.value) {
     sidebarCollapsed.value = true
     showMobileOverlay.value = false
   }
 }
 
-const handleHeaderSearch = (query: string) => {
-  emit('header-search', query)
-}
-
-const handleHeaderNavClick = (item: MenuItem) => {
-  emit('header-nav-click', item)
-}
-
-const handleHeaderNotificationClick = (notification: Notification) => {
-  emit('header-notification-click', notification)
-}
-
-const handleHeaderClearNotifications = () => {
-  emit('header-clear-notifications')
-}
-
-const handleHeaderUserMenuClick = (item: UserMenuItem) => {
-  emit('header-user-menu-click', item)
-}
-
-const handleHeaderThemeToggle = (isDark: boolean) => {
-  emit('header-theme-toggle', isDark)
-}
+const handleHeaderSearch = (query: string) => emit('header-search', query)
+const handleHeaderNavClick = (item: MenuItem) => emit('header-nav-click', item)
+const handleHeaderNotificationClick = (n: Notification) => emit('header-notification-click', n)
+const handleHeaderClearNotifications = () => emit('header-clear-notifications')
+const handleHeaderUserMenuClick = (item: UserMenuItem) => emit('header-user-menu-click', item)
+const handleHeaderThemeToggle = (isDark: boolean) => emit('header-theme-toggle', isDark)
 
 const handleMobileOverlayClick = () => {
   if (isMobile.value) {
@@ -320,19 +292,14 @@ const handleMobileOverlayClick = () => {
 
 const checkMobile = () => {
   isMobile.value = window.innerWidth < props.mobileBreakpoint
-
-  // 移动端自动收起侧边栏
   if (isMobile.value) {
     sidebarCollapsed.value = true
     showMobileOverlay.value = false
   }
 }
 
-const handleResize = () => {
-  checkMobile()
-}
+const handleResize = () => checkMobile()
 
-// 生命周期
 onMounted(() => {
   checkMobile()
   window.addEventListener('resize', handleResize)
@@ -342,8 +309,6 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 
-// 监听路由变化，移动端自动关闭侧边栏
-import { watch } from 'vue'
 watch(() => route.path, () => {
   if (isMobile.value) {
     sidebarCollapsed.value = true
@@ -351,7 +316,6 @@ watch(() => route.path, () => {
   }
 })
 
-// 暴露方法
 defineExpose({
   toggleSidebar: () => {
     sidebarCollapsed.value = !sidebarCollapsed.value
@@ -372,19 +336,18 @@ defineExpose({
 .main-layout {
   display: flex;
   min-height: 100vh;
-  background-color: var(--bg-primary);
+  /* Use variable for background, typically Slate-50 */
+  background-color: var(--edu-color-gray-50);
   position: relative;
+  /* Ensure atmosphere is behind */
+  z-index: 0;
 
-  &--mobile {
-    .main-layout__content {
-      margin-left: 0;
-    }
+  &--mobile .main-layout__content {
+    margin-left: 0;
   }
 
-  &--sidebar-collapsed {
-    .main-layout__content {
-      margin-left: #{props.sidebarCollapsedWidth}px;
-    }
+  &--sidebar-collapsed .main-layout__content {
+    margin-left: v-bind('props.sidebarCollapsedWidth + "px"');
   }
 
   &--global-loading {
@@ -393,18 +356,31 @@ defineExpose({
   }
 }
 
+/* 氛围背景层 */
+.main-layout__atmosphere {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(249, 115, 22, 0.03) 0%, transparent 40%);
+  background-size: cover;
+}
+
 .main-layout__content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-left: #{props.sidebarWidth}px;
-  transition: margin-left var(--edu-duration-normal) var(--edu-easing-in-out);
+  margin-left: v-bind('props.sidebarWidth + "px"');
+  transition: margin-left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   min-width: 0;
-
+  
   &--fixed-header {
-    .main-layout__main {
-      padding-top: 64px;
-    }
+    /* Main padding added via inline style */
   }
 }
 
@@ -412,40 +388,17 @@ defineExpose({
   flex: 1;
   padding: var(--spacing-base);
   margin: 0 auto;
-  transition: padding var(--edu-duration-normal) var(--edu-easing-in-out);
-
-  &--padding-xs {
-    padding: var(--spacing-xs);
-  }
-
-  &--padding-sm {
-    padding: var(--spacing-sm);
-  }
-
-  &--padding-base {
-    padding: var(--spacing-base);
-  }
-
-  &--padding-lg {
-    padding: var(--spacing-lg);
-  }
-
-  &--padding-xl {
-    padding: var(--spacing-xl);
-  }
-
-  &--padding-2xl {
-    padding: var(--spacing-2xl);
-  }
+  width: 100%;
+  
+  &--padding-xs { padding: 8px; }
+  &--padding-sm { padding: 16px; }
+  &--padding-base { padding: 24px; }
+  &--padding-lg { padding: 32px; }
+  &--padding-xl { padding: 48px; }
 }
 
 .main-layout__breadcrumb {
-  margin-bottom: var(--spacing-base);
-}
-
-.breadcrumb {
-  display: flex;
-  align-items: center;
+  margin-bottom: 24px;
 }
 
 .breadcrumb__list {
@@ -454,41 +407,31 @@ defineExpose({
   list-style: none;
   margin: 0;
   padding: 0;
-  font-size: var(--font-size-sm);
-}
-
-.breadcrumb__item {
-  display: flex;
-  align-items: center;
-}
-
-.breadcrumb__item:not(:last-child)::after {
-  content: '/';
-  margin: 0 var(--spacing-sm);
-  color: var(--text-tertiary);
+  font-size: 14px;
 }
 
 .breadcrumb__link {
-  color: var(--text-secondary);
+  color: #64748b; /* Slate-500 */
   text-decoration: none;
-  transition: color var(--edu-duration-fast) var(--edu-easing-in-out);
-
+  transition: color 0.2s;
+  
   &:hover {
-    color: var(--edu-primary-500);
+    color: #6366f1; /* Indigo-500 */
   }
 }
 
 .breadcrumb__separator {
-  color: var(--text-tertiary);
+  margin: 0 8px;
+  color: #cbd5e1; /* Slate-300 */
 }
 
 .breadcrumb__current {
-  color: var(--text-primary);
-  font-weight: var(--font-weight-medium);
+  color: #0f172a; /* Slate-900 */
+  font-weight: 500;
 }
 
 .main-layout__page-content {
-  animation: fadeIn var(--edu-duration-normal) var(--edu-easing-in-out);
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .main-layout__mobile-overlay {
@@ -497,11 +440,12 @@ defineExpose({
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: var(--edu-z-overlay);
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(2px);
+  z-index: 900; /* Below Header (1100), Above Content */
   opacity: 0;
   visibility: hidden;
-  transition: all var(--edu-duration-normal) var(--edu-easing-in-out);
+  transition: all 0.3s;
 
   .main-layout--mobile & {
     opacity: 1;
@@ -519,81 +463,51 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: var(--edu-z-modal);
-  backdrop-filter: blur(4px);
+  z-index: 2000;
+  backdrop-filter: blur(8px);
 }
 
 .loading-spinner {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-base);
+  gap: 16px;
 }
 
 .loading-spinner__icon {
-  width: 40px;
-  height: 40px;
-  color: var(--edu-primary-500);
+  width: 48px;
+  height: 48px;
+  color: #6366f1;
   animation: spin 1s linear infinite;
 }
 
-.loading-spinner__text {
-  font-size: var(--font-size-base);
-  color: var(--text-secondary);
-  font-weight: var(--font-weight-medium);
-}
-
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
-// 响应式设计
-@media (max-width: 768px) {
-  .main-layout__content {
-    margin-left: 0;
-  }
-
-  .main-layout__main {
-    padding: var(--spacing-sm);
-  }
-
-  .main-layout__breadcrumb {
-    margin-bottom: var(--spacing-sm);
-  }
-
-  .breadcrumb__list {
-    font-size: var(--font-size-xs);
-  }
-
-  .breadcrumb__item:not(:last-child)::after {
-    margin: 0 var(--spacing-xs);
-  }
-}
-
-// 深色模式适配
+/* Dark Mode */
 [data-theme="dark"] {
-  .main-layout__loading {
-    background-color: rgba(0, 0, 0, 0.8);
+  .main-layout {
+    background-color: #0f172a; /* Slate-900 */
   }
-
-  .breadcrumb__link:hover {
-    color: var(--edu-primary-300);
+  
+  .main-layout__atmosphere {
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(249, 115, 22, 0.05) 0%, transparent 40%);
+  }
+  
+  .breadcrumb__link { color: #94a3b8; &:hover { color: #818cf8; } }
+  .breadcrumb__separator { color: #475569; }
+  .breadcrumb__current { color: #f1f5f9; }
+  
+  .main-layout__loading {
+    background-color: rgba(15, 23, 42, 0.8);
   }
 }
 </style>

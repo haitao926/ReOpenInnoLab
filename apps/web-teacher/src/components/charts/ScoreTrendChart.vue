@@ -44,15 +44,15 @@
     <!-- 图表说明 -->
     <div class="chart-legend">
       <div class="legend-item">
-        <div class="legend-color" style="background: #5B8FF9;"></div>
+        <div class="legend-color" style="background: #6366F1;"></div>
         <span>平均分</span>
       </div>
       <div class="legend-item">
-        <div class="legend-color" style="background: #52C41A;"></div>
+        <div class="legend-color" style="background: #10B981;"></div>
         <span>最高分</span>
       </div>
       <div class="legend-item">
-        <div class="legend-color" style="background: #FFA940;"></div>
+        <div class="legend-color" style="background: #F97316;"></div>
         <span>最低分</span>
       </div>
     </div>
@@ -264,7 +264,7 @@ const chartOption = computed(() => ({
       smooth: true,
       data: mockData.value.map(item => item.averageScore),
       itemStyle: {
-        color: '#5B8FF9'
+        color: '#6366F1'
       },
       areaStyle: {
         color: {
@@ -276,11 +276,11 @@ const chartOption = computed(() => ({
           colorStops: [
             {
               offset: 0,
-              color: 'rgba(91, 143, 249, 0.3)'
+              color: 'rgba(99, 102, 241, 0.3)'
             },
             {
               offset: 1,
-              color: 'rgba(91, 143, 249, 0.05)'
+              color: 'rgba(99, 102, 241, 0.05)'
             }
           ]
         }
@@ -297,7 +297,7 @@ const chartOption = computed(() => ({
       smooth: true,
       data: mockData.value.map(item => item.maxScore),
       itemStyle: {
-        color: '#52C41A'
+        color: '#10B981'
       },
       lineStyle: {
         width: 2,
@@ -312,7 +312,7 @@ const chartOption = computed(() => ({
       smooth: true,
       data: mockData.value.map(item => item.minScore),
       itemStyle: {
-        color: '#FFA940'
+        color: '#F97316'
       },
       lineStyle: {
         width: 2,

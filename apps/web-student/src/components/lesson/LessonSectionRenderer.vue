@@ -182,7 +182,7 @@ const reportIssue = () => {
 
   .transition-icon {
     font-size: 48px;
-    color: #409eff;
+    color: var(--edu-primary-500);
     margin-bottom: 16px;
   }
 

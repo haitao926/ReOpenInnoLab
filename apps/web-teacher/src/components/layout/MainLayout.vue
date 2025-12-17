@@ -137,7 +137,7 @@ onMounted(() => {
     min-height: 100vh; /* Let content drive height while keeping app feel */
     display: grid;
     grid-template-columns: var(--edu-sidebar-width) 1fr;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(249, 250, 252, 0.96) 100%);
+    background: var(--edu-color-gray-50);
     transition: grid-template-columns var(--edu-duration-normal) var(--edu-easing-smooth);
   }
 
@@ -147,40 +147,18 @@ onMounted(() => {
 
   .layout-sidebar {
     position: relative;
-    background: var(--edu-sidebar-bg);
-    border-right: 1px solid var(--edu-border-light);
-    backdrop-filter: blur(10px);
+    background: #F9FAFB; /* Gaoding Style: Light Gray */
+    border-right: 1px solid var(--edu-border-color-light);
     overflow: hidden;
     display: flex;
   }
 
+  /* Custom Sidebar Toggle Button - distinct from header toggle */
   .sidebar-toggle-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    z-index: 10;
-    width: 32px;
-    height: 32px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    color: #e2e8f0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-
-    .sidebar-toggle-icon {
-      width: 16px;
-      height: 16px;
-    }
+    display: none; /* Hidden as per user request for cleaner layout */
   }
+
+
 
   .layout-main {
     display: flex;
@@ -193,14 +171,10 @@ onMounted(() => {
   .layout-header {
     position: sticky;
     top: 0;
-    z-index: var(--edu-z-index-dropdown);
+    z-index: var(--edu-z-index-40); /* Standardized z-index */
     backdrop-filter: blur(14px);
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.92) 0%,
-      rgba(255, 255, 255, 0.82) 100%
-    );
-    border-bottom: 1px solid rgba(209, 213, 219, 0.6);
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid var(--edu-border-color-light);
     flex-shrink: 0;
   }
 
@@ -213,7 +187,7 @@ onMounted(() => {
   .content-scroller {
     height: 100%;
     overflow-y: auto;
-    padding: 32px clamp(24px, 4vw, 48px);
+    padding: var(--edu-spacing-8) clamp(24px, 4vw, 48px);
     scroll-behavior: smooth;
   }
 
@@ -253,10 +227,10 @@ onMounted(() => {
       position: fixed;
       inset: 0 auto 0 0;
       width: 260px;
-      z-index: calc(var(--edu-z-index-modal) - 50);
+      z-index: var(--edu-z-index-50);
       transform: translateX(-100%);
       transition: transform var(--edu-duration-normal) var(--edu-easing-smooth);
-      box-shadow: 12px 0 40px rgba(15, 23, 42, 0.25);
+      box-shadow: var(--edu-shadow-lg);
     }
 
     .main-layout.is-collapsed .layout-sidebar {
@@ -269,11 +243,11 @@ onMounted(() => {
 
     .layout-main {
       min-height: 100vh;
-      background: var(--edu-color-white);
+      background: var(--edu-color-gray-50);
     }
 
     .content-scroller {
-      padding: 16px;
+      padding: var(--edu-spacing-4);
       min-height: auto; /* 移动端不限制最小高度 */
     }
   }
@@ -283,7 +257,7 @@ onMounted(() => {
     .layout-sidebar,
     .fade-enter-active,
     .fade-leave-active {
-      transition-duration: 0.01ms !important;
+      transition-duration: 0ms !important;
     }
   }
 </style>

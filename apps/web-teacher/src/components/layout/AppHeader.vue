@@ -1,46 +1,27 @@
 <template>
   <header class="app-header">
     <div class="header-left">
-      <el-button
-        link
-        :icon="Expand"
-        class="sidebar-toggle"
-        @click="toggleSidebar"
-      />
-      <div class="breadcrumb">
-        <el-breadcrumb separator="/">
-          <el-breadcrumb-item
-            v-for="item in breadcrumbItems"
-            :key="item.path"
-            :to="item.path"
-          >
-            {{ item.title }}
-          </el-breadcrumb-item>
-        </el-breadcrumb>
-      </div>
+      <h1 class="page-title">{{ pageTitle }}</h1>
     </div>
 
     <div class="header-right">
       <!-- 通知 -->
-      <el-popover placement="bottom-end" :width="360" trigger="click">
+      <el-popover placement="bottom-end" :width="360" trigger="click" popper-class="notification-popper">
         <template #reference>
-          <el-badge :value="unreadCount" :hidden="unreadCount === 0">
-            <el-button :icon="Bell" circle />
-          </el-badge>
+          <div class="icon-btn action-item">
+            <el-badge :value="unreadCount" :max="99" :hidden="unreadCount === 0" class="notification-badge">
+              <el-icon :size="20"><Bell /></el-icon>
+            </el-badge>
+          </div>
         </template>
+        <!-- Popover Content (Keep existing) -->
         <div class="notification-panel">
           <div class="notification-header">
-            <span>通知</span>
-            <el-button
-              link
-              size="small"
-              @click="markAllAsRead"
-            >
-              全部已读
-            </el-button>
+            <span>通知中心</span>
+            <el-button link size="small" @click="markAllAsRead" type="primary">全部已读</el-button>
           </div>
-          <el-scrollbar max-height="400px">
-            <div class="notification-list">
+          <el-scrollbar max-height="380px">
+            <div v-if="notifications.length > 0" class="notification-list">
               <div
                 v-for="notification in notifications"
                 :key="notification.id"
@@ -48,57 +29,55 @@
                 :class="{ unread: !notification.read }"
                 @click="markAsRead(notification.id)"
               >
-                <el-icon
-                  :color="getNotificationColor(notification.type)"
-                  class="notification-icon"
-                >
+                <div class="notif-icon-box" :class="notification.type">
                   <component :is="getNotificationIcon(notification.type)" />
-                </el-icon>
+                </div>
                 <div class="notification-content">
                   <div class="notification-title">{{ notification.title }}</div>
                   <div class="notification-message">{{ notification.message }}</div>
+                  <div class="notification-time">10分钟前</div>
                 </div>
-                <el-button
-                  link
-                  :icon="Close"
-                  size="small"
-                  @click.stop="removeNotification(notification.id)"
-                />
+                <div class="notif-action" @click.stop="removeNotification(notification.id)">
+                   <el-icon><Close /></el-icon>
+                </div>
               </div>
+            </div>
+            <div v-else class="empty-notif">
+               <el-icon :size="48" color="#e2e8f0"><Bell /></el-icon>
+               <p>暂无新通知</p>
             </div>
           </el-scrollbar>
         </div>
       </el-popover>
 
+      <div class="header-divider"></div>
+
       <!-- 用户菜单 -->
-      <el-dropdown @command="handleUserMenuCommand">
-        <div class="user-info">
-          <el-avatar :src="userAvatar" :size="32">
-            {{ userName.charAt(0).toUpperCase() }}
+      <el-dropdown @command="handleUserMenuCommand" trigger="click">
+        <div class="user-pill">
+          <el-avatar :src="userAvatar" :size="32" class="user-avatar-img">
+            {{ userName?.charAt(0)?.toUpperCase() || 'U' }}
           </el-avatar>
-          <span class="username">{{ userName }}</span>
-          <el-icon><ArrowDown /></el-icon>
+          <div class="user-text">
+             <span class="username">{{ userName || '用户' }}</span>
+             <span class="user-role">教师</span>
+          </div>
+          <el-icon class="dropdown-arrow"><ArrowDown /></el-icon>
         </div>
         <template #dropdown>
-          <el-dropdown-menu>
+          <el-dropdown-menu class="user-dropdown-menu">
             <el-dropdown-item command="profile">
-              <el-icon><User /></el-icon>
-              个人中心
+              <el-icon><User /></el-icon> 个人中心
             </el-dropdown-item>
             <el-dropdown-item command="settings">
-              <el-icon><Setting /></el-icon>
-              系统设置
+              <el-icon><Setting /></el-icon> 系统设置
             </el-dropdown-item>
-            <el-dropdown-item divided command="logout">
-              <el-icon><SwitchButton /></el-icon>
-              退出登录
+            <el-dropdown-item divided command="logout" class="danger-item">
+              <el-icon><SwitchButton /></el-icon> 退出登录
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-
-      <!-- 主题切换器 -->
-      <EduThemeSwitcher @theme-changed="handleThemeChanged" />
     </div>
   </header>
 </template>
@@ -121,7 +100,6 @@ import {
 } from '@element-plus/icons-vue'
 import { useAppStore } from '@/stores/app'
 import { useUserStore } from '@/stores/user'
-import { EduThemeSwitcher } from '@reopeninnolab/ui-kit'
 
 const router = useRouter()
 const route = useRoute()
@@ -134,22 +112,14 @@ const userAvatar = computed(() => userStore.userAvatar)
 const notifications = computed(() => appStore.notifications)
 const unreadCount = computed(() => appStore.unreadNotificationsCount)
 
-// 面包屑导航
-const breadcrumbItems = computed(() => {
-  const matched = route.matched.filter(item => item.meta && item.meta.title)
-  return matched.map(item => ({
-    path: item.path,
-    title: item.meta.title as string
-  }))
+// 页面标题
+const pageTitle = computed(() => {
+  return (route.meta.title as string) || 'ReOpenInnoLab'
 })
 
 // 方法
 const toggleSidebar = () => {
   appStore.toggleSidebar()
-}
-
-const handleThemeChanged = (theme: string) => {
-  appStore.setTheme(theme)
 }
 
 const markAsRead = (id: string) => {
@@ -204,108 +174,183 @@ const handleUserMenuCommand = (command: string) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: var(--edu-header-height);
-  padding: 0 clamp(20px, 4vw, 36px);
-  background: transparent;
-  border-bottom: none;
-  box-shadow: none;
-  position: relative;
-  z-index: var(--edu-z-sticky);
+  height: 64px; /* Fallback */
+  height: var(--edu-header-height, 64px);
+  padding: 0 var(--edu-spacing-5);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--edu-border-color-light);
+  position: sticky;
+  top: 0;
+  z-index: var(--edu-z-index-20);
+  transition: background-color var(--edu-duration-normal) var(--edu-easing-linear);
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: var(--spacing-base);
+  gap: var(--edu-spacing-4);
 }
 
-.sidebar-toggle {
-  font-size: var(--font-size-lg);
-  padding: 8px;
-  border-radius: 12px;
-  color: var(--edu-text-primary);
-  background: rgba(15, 23, 42, 0.06);
-  backdrop-filter: blur(8px);
-  transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
-
-  &:hover {
-    background: rgba(15, 23, 42, 0.12);
-    transform: translateY(-1px);
-  }
-}
-
-.breadcrumb {
-  font-size: var(--font-size-sm);
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--edu-color-gray-900);
+  margin: 0;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: clamp(12px, 1.6vw, 18px);
+  gap: 16px;
 }
 
-.user-info {
+/* Icon Buttons (Theme, Bell) */
+.icon-btn {
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  padding: 6px 14px;
-  border-radius: 999px;
+  justify-content: center;
+  border-radius: 50%;
   cursor: pointer;
-  transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
-  background: rgba(15, 23, 42, 0.06);
-  backdrop-filter: blur(12px);
-
+  color: #64748B; /* Slate-500 */
+  transition: all 0.2s;
+  
   &:hover {
-    background: rgba(15, 23, 42, 0.12);
+    background-color: #F1F5F9; /* Slate-100 */
+    color: #0F172A;
   }
 }
 
-.username {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--edu-text-primary);
+.notification-badge :deep(.el-badge__content) {
+  border: 2px solid white;
+  background-color: #F97316; /* Orange */
 }
 
+.header-divider {
+  width: 1px;
+  height: 24px;
+  background-color: #E2E8F0; /* Slate-200 */
+  margin: 0 4px;
+}
+
+/* User Pill */
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 4px 4px; /* Left padding smaller for avatar */
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+
+  &:hover {
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border-color: #F1F5F9;
+  }
+}
+
+.user-avatar-img {
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  color: white;
+  font-weight: 600;
+  border: 2px solid white; /* Clean look */
+}
+
+.user-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.username {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1E293B;
+}
+
+.user-role {
+  font-size: 11px;
+  color: #94A3B8;
+}
+
+.dropdown-arrow {
+  font-size: 12px;
+  color: #94A3B8;
+  margin-left: 4px;
+}
+
+/* Notification Panel Styles */
 .notification-panel {
-  width: 100%;
-  background: var(--edu-bg-primary);
+  padding: 0;
 }
 
 .notification-header {
+  padding: 16px;
+  border-bottom: 1px solid #F1F5F9;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-base) var(--spacing-lg);
-  border-bottom: 1px solid var(--edu-border-light);
-  font-weight: var(--font-weight-medium);
-  color: var(--edu-text-primary);
+  align-items: center;
+  
+  span {
+    font-weight: 600;
+    color: #0F172A;
+  }
 }
 
 .notification-list {
-  padding: var(--spacing-sm) 0;
+  padding: 0;
 }
 
 .notification-item {
   display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-base) var(--spacing-lg);
+  padding: 16px;
+  gap: 12px;
+  border-bottom: 1px solid #F8FAFC;
   cursor: pointer;
-  transition: all var(--edu-duration-fast) var(--edu-easing-in-out);
-
+  transition: background 0.2s;
+  position: relative;
+  
   &:hover {
-    background-color: var(--edu-bg-tertiary);
+    background-color: #F8FAFC;
+    
+    .notif-action {
+      opacity: 1;
+    }
   }
-
+  
   &.unread {
-    background-color: var(--edu-primary-50);
-    border-left: 3px solid var(--edu-primary-500);
+    background-color: #F0F9FF; /* Very faint blue */
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background-color: #3B82F6;
+    }
   }
 }
 
-.notification-icon {
-  margin-top: 2px;
+.notif-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  font-size: 18px;
+  
+  &.info { background: #E0F2FE; color: #0EA5E9; }
+  &.success { background: #DCFCE7; color: #16A34A; }
+  &.warning { background: #FEF3C7; color: #D97706; }
+  &.error { background: #FEE2E2; color: #DC2626; }
 }
 
 .notification-content {
@@ -314,87 +359,56 @@ const handleUserMenuCommand = (command: string) => {
 }
 
 .notification-title {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  margin-bottom: var(--spacing-xs);
-  color: var(--edu-text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 4px;
 }
 
 .notification-message {
-  font-size: var(--font-size-xs);
-  color: var(--edu-text-secondary);
-  line-height: var(--edu-leading-normal);
+  font-size: 13px;
+  color: #64748B;
+  line-height: 1.4;
+  margin-bottom: 4px;
 }
 
-/* 深色模式适配 */
+.notification-time {
+  font-size: 11px;
+  color: #94A3B8;
+}
+
+.notif-action {
+  opacity: 0;
+  color: #94A3B8;
+  padding: 4px;
+  transition: opacity 0.2s;
+  
+  &:hover { color: #EF4444; }
+}
+
+.empty-notif {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  color: #94A3B8;
+  gap: 12px;
+  
+  p { margin: 0; font-size: 13px; }
+}
+
+/* User Dropdown */
+.danger-item {
+  color: #EF4444;
+  &:hover { background-color: #FEF2F2; color: #DC2626; }
+}
+
+/* 深色模式适配 (Simplified for now) */
 [data-theme="dark"] {
-  .app-header {
-    background: var(--edu-glass-bg-dark);
-    border-color: var(--edu-border-dark);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-  }
-
-  .sidebar-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-  }
-
-  .user-info:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-  }
-
-  .notification-item {
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    &.unread {
-      background-color: rgba(91, 143, 249, 0.1);
-      border-left-color: var(--edu-primary-400);
-    }
-  }
-
-  .notification-header {
-    border-color: var(--edu-border-dark);
-  }
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .app-header {
-    padding: 0 var(--spacing-base);
-  }
-
-  .header-left {
-    gap: var(--spacing-sm);
-  }
-
-  .header-right {
-    gap: var(--spacing-xs);
-  }
-
-  .breadcrumb {
-    display: none;
-  }
-
-  .username {
-    display: none;
-  }
-}
-
-/* 无障碍优化 */
-.sidebar-toggle:focus-visible,
-.user-info:focus-visible {
-  outline: 2px solid var(--edu-primary-500);
-  outline-offset: 2px;
-}
-
-/* 减少动画模式 */
-@media (prefers-reduced-motion: reduce) {
-  .app-header,
-  .sidebar-toggle,
-  .user-info,
-  .notification-item {
-    transition-duration: 0.01ms !important;
-  }
+  .icon-btn:hover { background-color: rgba(255,255,255,0.1); color: white; }
+  .user-pill:hover { background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+  .username { color: #E2E8F0; }
+  .user-role { color: #64748B; }
 }
 </style>

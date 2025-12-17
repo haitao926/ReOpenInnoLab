@@ -334,9 +334,9 @@ const getMemoryPercentage = (bytes: number): number => {
 }
 
 const getResourceColor = (percentage: number): string => {
-  if (percentage < 50) return '#67c23a'
-  if (percentage < 80) return '#e6a23c'
-  return '#f56c6c'
+  if (percentage < 50) return 'var(--edu-color-success-default)'
+  if (percentage < 80) return 'var(--edu-color-warning-default)'
+  return 'var(--edu-color-error-default)'
 }
 
 const formatLogTime = (date: Date): string => {

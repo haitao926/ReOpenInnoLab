@@ -9,6 +9,10 @@ import router from './router'
 import { setupAuthGuard } from './composables/useAuth'
 import { setupMonitoring } from './services/monitoring'
 
+// UI Kit
+import '@reopeninnolab/ui-kit/styles'
+import { themeManager } from '@reopeninnolab/ui-kit/theme'
+
 // Styles
 import 'element-plus/dist/index.css'
 import './assets/styles/main.scss'
@@ -28,6 +32,9 @@ const i18n = createI18n({
 })
 
 const app = createApp(App)
+
+// Apply UI Kit theme
+themeManager.applyFullTheme()
 
 // Register Element Plus icons
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

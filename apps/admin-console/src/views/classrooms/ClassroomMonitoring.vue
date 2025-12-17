@@ -357,9 +357,9 @@ onMounted(() => {
         font-size: 48px;
         opacity: 0.1;
 
-        &.active { color: #67c23a; }
-        &.students { color: #409eff; }
-        &.today { color: #e6a23c; }
+        &.active { color: var(--edu-color-success-default); }
+        &.students { color: var(--edu-primary-500); }
+        &.today { color: var(--edu-color-warning-default); }
         &.duration { color: #f56c6c; }
       }
     }

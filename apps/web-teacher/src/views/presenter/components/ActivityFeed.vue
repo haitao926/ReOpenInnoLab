@@ -513,9 +513,9 @@ defineExpose({
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--edu-color-white);
+  border-radius: var(--radius-base);
+  box-shadow: var(--edu-shadow-sm);
 }
 
 .feed-header {
@@ -523,7 +523,7 @@ defineExpose({
   align-items: center;
   justify-content: space-between;
   padding: 16px;
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid var(--edu-color-gray-200);
 
   h3 {
     display: flex;
@@ -532,7 +532,7 @@ defineExpose({
     margin: 0;
     font-size: 16px;
     font-weight: 600;
-    color: #303133;
+    color: var(--edu-color-gray-900);
   }
 
   .header-actions {
@@ -546,8 +546,8 @@ defineExpose({
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #ebeef5;
+  background: var(--edu-color-gray-50);
+  border-bottom: 1px solid var(--edu-color-gray-200);
 }
 
 .feed-content {
@@ -567,28 +567,28 @@ defineExpose({
   border: 1px solid transparent;
 
   &:hover {
-    background: #f8f9fa;
-    border-color: #e4e7ed;
+    background: var(--edu-color-gray-50);
+    border-color: var(--edu-color-gray-200);
   }
 
   &.student {
-    border-left: 3px solid #409eff;
+    border-left: 3px solid var(--edu-primary-500);
   }
 
   &.system {
-    border-left: 3px solid #e6a23c;
+    border-left: 3px solid var(--edu-color-warning-default);
   }
 
   &.interaction {
-    border-left: 3px solid #67c23a;
+    border-left: 3px solid var(--edu-color-success-default);
   }
 
   &.assignment {
-    border-left: 3px solid #909399;
+    border-left: 3px solid var(--edu-color-gray-500);
   }
 
   &.achievement {
-    border-left: 3px solid #f56c6c;
+    border-left: 3px solid var(--edu-color-error-default);
   }
 }
 
@@ -604,23 +604,23 @@ defineExpose({
   font-size: 14px;
 
   .student & {
-    background: #409eff;
+    background: var(--edu-primary-500);
   }
 
   .system & {
-    background: #e6a23c;
+    background: var(--edu-color-warning-default);
   }
 
   .interaction & {
-    background: #67c23a;
+    background: var(--edu-color-success-default);
   }
 
   .assignment & {
-    background: #909399;
+    background: var(--edu-color-gray-500);
   }
 
   .achievement & {
-    background: #f56c6c;
+    background: var(--edu-color-error-default);
   }
 }
 
@@ -637,18 +637,18 @@ defineExpose({
 
   .activity-title {
     font-weight: 500;
-    color: #303133;
+    color: var(--edu-color-gray-900);
     font-size: 14px;
   }
 
   .activity-time {
     font-size: 12px;
-    color: #909399;
+    color: var(--edu-color-gray-500);
   }
 }
 
 .activity-description {
-  color: #606266;
+  color: var(--edu-color-gray-600);
   font-size: 13px;
   line-height: 1.4;
   margin-bottom: 8px;
@@ -662,27 +662,27 @@ defineExpose({
 
   .student-name {
     font-size: 13px;
-    color: #303133;
+    color: var(--edu-color-gray-900);
   }
 }
 
 .assignment-info {
   margin-top: 8px;
   padding: 8px;
-  background: #f0f9ff;
+  background: var(--edu-primary-50);
   border-radius: 4px;
 
   .assignment-stats {
     display: flex;
     gap: 16px;
     font-size: 12px;
-    color: #606266;
+    color: var(--edu-color-gray-600);
     margin-bottom: 4px;
   }
 
   .assignment-feedback {
     font-size: 12px;
-    color: #67c23a;
+    color: var(--edu-color-success-default);
     font-style: italic;
   }
 }
@@ -690,18 +690,18 @@ defineExpose({
 .interaction-info {
   margin-top: 8px;
   padding: 8px;
-  background: #f0f9ff;
+  background: var(--edu-primary-50);
   border-radius: 4px;
 
   .interaction-type {
     font-size: 12px;
-    color: #409eff;
+    color: var(--edu-primary-500);
     margin-bottom: 4px;
   }
 
   .interaction-content {
     font-size: 13px;
-    color: #303133;
+    color: var(--edu-color-gray-900);
     line-height: 1.4;
   }
 }
@@ -719,7 +719,7 @@ defineExpose({
   align-items: center;
   justify-content: center;
   padding: 40px 20px;
-  color: #909399;
+  color: var(--edu-color-gray-500);
 
   .el-icon {
     margin-bottom: 16px;
@@ -734,7 +734,7 @@ defineExpose({
 
 .feed-footer {
   padding: 12px 16px;
-  border-top: 1px solid #ebeef5;
+  border-top: 1px solid var(--edu-color-gray-200);
   text-align: center;
 }
 
@@ -745,8 +745,8 @@ defineExpose({
     h4 {
       margin: 0 0 12px 0;
       font-size: 14px;
-      color: #303133;
-      border-bottom: 1px solid #ebeef5;
+      color: var(--edu-color-gray-900);
+      border-bottom: 1px solid var(--edu-color-gray-200);
       padding-bottom: 8px;
     }
   }
@@ -758,13 +758,13 @@ defineExpose({
 
     label {
       font-weight: 500;
-      color: #606266;
+      color: var(--edu-color-gray-600);
       min-width: 80px;
       margin-right: 12px;
     }
 
     span {
-      color: #303133;
+      color: var(--edu-color-gray-900);
     }
   }
 
@@ -776,18 +776,18 @@ defineExpose({
     .student-detail-info {
       .name {
         font-weight: 500;
-        color: #303133;
+        color: var(--edu-color-gray-900);
         margin-bottom: 4px;
       }
     }
   }
 
   .metadata-content {
-    background: #f8f9fa;
+    background: var(--edu-color-gray-50);
     padding: 12px;
     border-radius: 4px;
     font-size: 12px;
-    color: #606266;
+    color: var(--edu-color-gray-600);
     line-height: 1.4;
     max-height: 200px;
     overflow-y: auto;

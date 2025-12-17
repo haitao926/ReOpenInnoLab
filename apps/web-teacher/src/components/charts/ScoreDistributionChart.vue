@@ -119,11 +119,11 @@ const distributionData = ref([
 
 // 颜色配置
 const colors = [
-  '#52C41A', // 优秀 - 绿色
-  '#1890FF', // 良好 - 蓝色
-  '#FAAD14', // 中等 - 黄色
-  '#FA8C16', // 及格 - 橙色
-  '#F5222D'  // 不及格 - 红色
+  '#10B981', // 优秀 - 绿色
+  '#6366F1', // 良好 - 靛蓝
+  '#F59E0B', // 中等 - 警告橙
+  '#F97316', // 及格 - CTA 橙
+  '#EF4444'  // 不及格 - 红色
 ]
 
 // 计算属性
@@ -284,10 +284,10 @@ const chartOption = computed(() => {
                 value: distributionData.value.map(item => item.count),
                 name: '学生人数',
                 itemStyle: {
-                  color: '#5B8FF9'
+                  color: '#6366F1'
                 },
                 areaStyle: {
-                  color: 'rgba(91, 143, 249, 0.3)'
+                  color: 'rgba(99, 102, 241, 0.3)'
                 }
               }
             ]

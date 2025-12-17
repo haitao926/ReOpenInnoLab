@@ -5,6 +5,23 @@
 
 set -e
 
+# 自动检测脚本所在的项目根目录
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# 尝试添加本地工具路径到 PATH
+if [ -d "$PROJECT_ROOT/.tools/npm-global" ]; then
+    export PATH="$PROJECT_ROOT/.tools/npm-global:$PATH"
+fi
+
+# sharp 下载镜像路径（预置 libvips 压缩包，避免联网失败）
+if command -v wslpath >/dev/null 2>&1; then
+    SHARP_NATIVE_CACHE="file://$(wslpath -m "$PROJECT_ROOT/.cache/libvips")/"
+else
+    SHARP_NATIVE_CACHE="file://$PROJECT_ROOT/.cache/libvips/"
+fi
+export SHARP_DIST_BASE_URL="$SHARP_NATIVE_CACHE"
+mkdir -p "$PROJECT_ROOT/.cache/libvips"
+
 # 默认参数
 START_TEACHER=true
 START_STUDENT=false
@@ -48,16 +65,21 @@ log_service() {
 check_dependencies() {
     log_step "检查系统依赖..."
 
-    # 检查 pnpm
-    if ! command -v pnpm &> /dev/null; then
-        log_error "pnpm 未安装，请先安装 pnpm"
-        exit 1
-    fi
-
     # 检查 Node.js
     if ! command -v node &> /dev/null; then
         log_error "Node.js 未安装，请先安装 Node.js >= 18.0.0"
         exit 1
+    fi
+
+    # 检查 pnpm
+    if ! command -v pnpm &> /dev/null; then
+        log_warning "pnpm 未找到，尝试自动安装..."
+        if npm install -g pnpm; then
+            log_success "pnpm 安装成功"
+        else
+            log_error "pnpm 自动安装失败，请尝试手动安装: npm install -g pnpm"
+            exit 1
+        fi
     fi
 
     log_success "所有依赖检查通过"
@@ -67,14 +89,14 @@ check_dependencies() {
 install_dependencies() {
     log_step "安装前端应用依赖..."
 
-    cd /home/wht/reopeninnolab
+    cd "$PROJECT_ROOT"
 
     # 安装教师端应用依赖
     if [ "$START_TEACHER" = "true" ]; then
         log_info "安装教师端应用依赖..."
         cd apps/web-teacher
         pnpm install
-        cd /home/wht/reopeninnolab
+        cd "$PROJECT_ROOT"
     fi
 
     # 安装学生端应用依赖
@@ -82,7 +104,7 @@ install_dependencies() {
         log_info "安装学生端应用依赖..."
         cd apps/web-student
         pnpm install
-        cd /home/wht/reopeninnolab
+        cd "$PROJECT_ROOT"
     fi
 
     log_success "前端依赖安装完成"
@@ -92,7 +114,7 @@ install_dependencies() {
 start_backend_services() {
     log_step "检查后端服务..."
 
-    cd /home/wht/reopeninnolab
+    cd "$PROJECT_ROOT"
 
     # 检查是否有后端服务目录
     if [ -d "services/identity-service" ]; then
@@ -110,7 +132,7 @@ start_backend_services() {
             log_warning "未找到dev-server.js，跳过API服务器启动"
         fi
 
-        cd /home/wht/reopeninnolab
+        cd "$PROJECT_ROOT"
 
         # 等待API服务器启动
         log_info "等待API服务器启动..."
@@ -134,7 +156,7 @@ start_backend_services() {
 start_frontend_applications() {
     log_step "启动前端应用..."
 
-    cd /home/wht/reopeninnolab
+    cd "$PROJECT_ROOT"
 
     # 启动教师端应用
     if [ "$START_TEACHER" = "true" ]; then
@@ -142,7 +164,7 @@ start_frontend_applications() {
         cd apps/web-teacher
         pnpm run dev &
         TEACHER_PID=$!
-        cd /home/wht/reopeninnolab
+        cd "$PROJECT_ROOT"
 
         # 等待教师端应用启动
         log_info "等待教师端应用启动..."
@@ -162,7 +184,7 @@ start_frontend_applications() {
         cd apps/web-student
         pnpm run dev &
         STUDENT_PID=$!
-        cd /home/wht/reopeninnolab
+        cd "$PROJECT_ROOT"
 
         # 等待学生端应用启动
         log_info "等待学生端应用启动..."
@@ -273,7 +295,7 @@ main() {
     echo "================================"
 
     # 检查是否在项目根目录
-    if [ ! -f "/home/wht/reopeninnolab/package.json" ]; then
+    if [ ! -f "$PROJECT_ROOT/package.json" ]; then
         log_error "请在项目根目录运行此脚本"
         exit 1
     fi

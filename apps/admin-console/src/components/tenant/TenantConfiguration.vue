@@ -60,7 +60,7 @@ const loadConfiguration = () => {
     name: '示例租户',
     domain: 'example.com',
     logoUrl: 'https://via.placeholder.com/100x50',
-    themeColor: '#409eff',
+themeColor: 'var(--edu-primary-500)',
     features: ['courses', 'resources']
   }
 }

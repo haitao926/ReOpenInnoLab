@@ -1,171 +1,50 @@
-// CSS变量定义 - 教育主题
+// 教师端本地变量映射 (Legacy Bridge)
+// 用于让现有的 SCSS 代码能继续工作，同时指向新的 CSS 变量
+// 长期目标：逐步替换为直接使用 CSS 变量 var(--edu-*)
 
-// 颜色系统
-:root {
-  // 基础色彩
-  --edu-primary-50: #eff6ff;
-  --edu-primary-100: #dbeafe;
-  --edu-primary-200: #bfdbfe;
-  --edu-primary-300: #93c5fd;
-  --edu-primary-400: #60a5fa;
-  --edu-primary-500: #3b82f6;
-  --edu-primary-600: #2563eb;
-  --edu-primary-700: #1d4ed8;
-  --edu-primary-800: #1e40af;
-  --edu-primary-900: #1e3a8a;
+// 1. 颜色系统映射
+$edu-primary: var(--edu-primary-500);
+$edu-secondary: var(--edu-color-secondary-500); // Updated to new variable name
+$edu-tertiary: var(--edu-color-tertiary-500);   // New semantic color
 
-  --edu-success-50: #f0fdf4;
-  --edu-success-100: #dcfce7;
-  --edu-success-200: #bbf7d0;
-  --edu-success-300: #86efac;
-  --edu-success-400: #4ade80;
-  --edu-success-500: #22c55e;
-  --edu-success-600: #16a34a;
-  --edu-success-700: #15803d;
-  --edu-success-800: #166534;
-  --edu-success-900: #14532d;
+// 功能色
+$edu-success: var(--edu-color-success-default);
+$edu-warning: var(--edu-color-warning-default);
+$edu-error: var(--edu-color-error-default);
+$edu-info: var(--edu-color-info-default);
+$edu-cta: var(--edu-color-cta-default); // New semantic color
 
-  --edu-warning-50: #fffbeb;
-  --edu-warning-100: #fef3c7;
-  --edu-warning-200: #fde68a;
-  --edu-warning-300: #fcd34d;
-  --edu-warning-400: #fbbf24;
-  --edu-warning-500: #f59e0b;
-  --edu-warning-600: #d97706;
-  --edu-warning-700: #b45309;
-  --edu-warning-800: #92400e;
-  --edu-warning-900: #78350f;
+// 文本颜色
+$edu-text-primary: var(--edu-color-gray-900); // Direct mapping to new token
+$edu-text-secondary: var(--edu-color-gray-600);
+$edu-text-tertiary: var(--edu-color-gray-400);
+$edu-text-disabled: var(--edu-color-gray-300);
 
-  --edu-danger-50: #fef2f2;
-  --edu-danger-100: #fee2e2;
-  --edu-danger-200: #fecaca;
-  --edu-danger-300: #fca5a5;
-  --edu-danger-400: #f87171;
-  --edu-danger-500: #ef4444;
-  --edu-danger-600: #dc2626;
-  --edu-danger-700: #b91c1c;
-  --edu-danger-800: #991b1b;
-  --edu-danger-900: #7f1d1d;
+// 背景颜色
+$edu-bg-primary: var(--edu-color-white);
+$edu-bg-secondary: var(--edu-color-gray-50);
+$edu-bg-tertiary: var(--edu-color-gray-100);
 
-  // 文本颜色
-  --edu-text-primary: #1f2937;
-  --edu-text-secondary: #6b7280;
-  --edu-text-tertiary: #9ca3af;
-  --edu-text-disabled: #d1d5db;
-  --edu-text-white: #ffffff;
+// 边框颜色
+$edu-border-color: var(--edu-color-gray-200);
+$edu-border-light: var(--edu-color-gray-100);
 
-  // 背景颜色
-  --edu-bg-primary: #ffffff;
-  --edu-bg-secondary: #f9fafb;
-  --edu-bg-tertiary: #f3f4f6;
+// 间距
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-base: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
 
-  // 边框颜色
-  --edu-border-light: #e5e7eb;
-  --edu-border-medium: #d1d5db;
-  --edu-border-dark: #9ca3af;
+// 圆角
+$radius-sm: 4px;
+$radius-base: 8px;
+$radius-lg: 12px;
+$radius-full: 9999px;
 
-  // 阴影
-  --edu-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --edu-shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --edu-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --edu-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --edu-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-
-  // 间距
-  --edu-spacing-xs: 0.25rem;
-  --edu-spacing-sm: 0.5rem;
-  --edu-spacing-base: 0.75rem;
-  --edu-spacing-md: 1rem;
-  --edu-spacing-lg: 1.5rem;
-  --edu-spacing-xl: 2rem;
-  --edu-spacing-2xl: 3rem;
-
-  // 字体
-  --edu-font-size-xs: 0.75rem;
-  --edu-font-size-sm: 0.875rem;
-  --edu-font-size-base: 1rem;
-  --edu-font-size-lg: 1.125rem;
-  --edu-font-size-xl: 1.25rem;
-  --edu-font-size-2xl: 1.5rem;
-  --edu-font-size-3xl: 1.875rem;
-
-  --edu-font-weight-normal: 400;
-  --edu-font-weight-medium: 500;
-  --edu-font-weight-semibold: 600;
-  --edu-font-weight-bold: 700;
-
-  --edu-leading-tight: 1.25;
-  --edu-leading-normal: 1.5;
-  --edu-leading-relaxed: 1.75;
-
-  // 圆角
-  --edu-radius-xs: 0.125rem;
-  --edu-radius-sm: 0.25rem;
-  --edu-radius-base: 0.375rem;
-  --edu-radius-lg: 0.5rem;
-  --edu-radius-xl: 0.75rem;
-  --edu-radius-2xl: 1rem;
-  --edu-radius-3xl: 1.5rem;
-  --edu-radius-full: 9999px;
-
-  // 动画
-  --edu-duration-fast: 150ms;
-  --edu-duration-base: 200ms;
-  --edu-duration-slow: 300ms;
-  --edu-easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-
-  // Z-index层级
-  --edu-z-dropdown: 1000;
-  --edu-z-sticky: 1020;
-  --edu-z-fixed: 1030;
-  --edu-z-modal-backdrop: 1040;
-  --edu-z-modal: 1050;
-  --edu-z-popover: 1060;
-  --edu-z-tooltip: 1070;
-  --edu-z-toast: 1080;
-}
-
-// 深色模式
-[data-theme="dark"] {
-  --edu-text-primary: #f9fafb;
-  --edu-text-secondary: #d1d5db;
-  --edu-text-tertiary: #9ca3af;
-  --edu-text-disabled: #6b7280;
-
-  --edu-bg-primary: #111827;
-  --edu-bg-secondary: #1f2937;
-  --edu-bg-tertiary: #374151;
-
-  --edu-border-light: #374151;
-  --edu-border-medium: #4b5563;
-  --edu-border-dark: #6b7280;
-}
-
-// 语义化变量
-$spacing-xs: var(--edu-spacing-xs);
-$spacing-sm: var(--edu-spacing-sm);
-$spacing-base: var(--edu-spacing-base);
-$spacing-md: var(--edu-spacing-md);
-$spacing-lg: var(--edu-spacing-lg);
-$spacing-xl: var(--edu-spacing-xl);
-$spacing-2xl: var(--edu-spacing-2xl);
-
-$font-size-xs: var(--edu-font-size-xs);
-$font-size-sm: var(--edu-font-size-sm);
-$font-size-base: var(--edu-font-size-base);
-$font-size-lg: var(--edu-font-size-lg);
-$font-size-xl: var(--edu-font-size-xl);
-$font-size-2xl: var(--edu-font-size-2xl);
-$font-size-3xl: var(--edu-font-size-3xl);
-
-$font-weight-normal: var(--edu-font-weight-normal);
-$font-weight-medium: var(--edu-font-weight-medium);
-$font-weight-semibold: var(--edu-font-weight-semibold);
-$font-weight-bold: var(--edu-font-weight-bold);
-
-$radius-sm: var(--edu-radius-sm);
-$radius-base: var(--edu-radius-base);
-$radius-lg: var(--edu-radius-lg);
-$radius-xl: var(--edu-radius-xl);
-$radius-2xl: var(--edu-radius-2xl);
-$radius-full: var(--edu-radius-full);
+// 字体大小
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;

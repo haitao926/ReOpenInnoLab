@@ -1,0 +1,212 @@
+// 开源浦育 ReOpenInnoLab - Element Plus 全局组件覆写
+// 适配 InnoFlow 设计语言 (流光、通透、克制)
+
+// ========================================
+// Button: 胶囊形 + 流光渐变
+// ========================================
+.el-button {
+  border-radius: var(--radius-full); // 强制全圆角
+  font-weight: var(--edu-font-weight-medium);
+  letter-spacing: 0.02em;
+  transition: all 0.3s var(--edu-easing-smooth);
+  border: 1px solid transparent;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--edu-shadow-base);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  // Primary Button (Indigo Gradient)
+  &.el-button--primary {
+    background: var(--edu-gradient-primary);
+    border: none;
+    box-shadow: var(--edu-shadow-glow); // 弥散光影
+
+    &:hover {
+      background: linear-gradient(135deg, var(--edu-primary-400) 0%, var(--edu-primary-500) 100%);
+      box-shadow: var(--edu-shadow-glow), 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+  }
+
+  // Warning Button -> Semantic CTA (Orange Gradient)
+  // 虽然 Element 默认 Warning 是 Yellow/Amber，但在业务中常用于 CTA
+  // 此处遵循新设计规范，Warning 按钮使用 Orange 体系
+  &.el-button--warning {
+    background: var(--edu-gradient-tertiary); // Orange Gradient
+    border: none;
+    color: white;
+    box-shadow: var(--edu-shadow-glow-orange);
+
+    &:hover {
+      background: linear-gradient(135deg, #FB923C 0%, #F97316 100%);
+      box-shadow: var(--edu-shadow-glow-orange), 0 4px 12px rgba(249, 115, 22, 0.4);
+    }
+  }
+
+  // Secondary/Default Button
+  &.el-button--default:not(.el-button--text) {
+    background: transparent;
+    border: 1px solid var(--edu-color-gray-200);
+    color: var(--edu-color-gray-600);
+
+    &:hover {
+      color: var(--edu-primary-500);
+      border-color: var(--edu-primary-200);
+      background: var(--edu-primary-50);
+    }
+  }
+}
+
+// ========================================
+// Card: 去边框 + 悬浮光影
+// ========================================
+.el-card {
+  border: none; // 去除硬边框
+  background: var(--edu-color-white);
+  box-shadow: var(--edu-shadow-base); // 基础柔和阴影
+  border-radius: var(--radius-lg); // 大圆角
+  transition: all 0.3s var(--edu-easing-smooth);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--edu-shadow-lg); // 悬浮时光影扩散
+  }
+
+  .el-card__header {
+    border-bottom: 1px solid var(--edu-color-gray-100);
+    padding: 16px 24px;
+    font-weight: var(--edu-font-weight-semibold);
+    color: var(--edu-color-gray-900);
+  }
+}
+
+// ========================================
+// Input: 极简 + 聚焦光环
+// ========================================
+.el-input__wrapper {
+  box-shadow: 0 0 0 1px var(--edu-color-gray-200) inset;
+  background-color: var(--edu-color-gray-50);
+  border-radius: var(--radius-base);
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 0 0 1px var(--edu-primary-300) inset;
+    background-color: white;
+  }
+
+  &.is-focus {
+    background-color: white;
+    box-shadow: 0 0 0 2px var(--edu-primary-200) inset, 0 0 0 1px var(--edu-primary-500) inset;
+  }
+}
+
+// ========================================
+// Menu (Sidebar): 玻璃态 + 光剑指示条
+// ========================================
+.el-menu {
+  border-right: none;
+  background: transparent;
+
+  .el-menu-item {
+    border-radius: var(--radius-base);
+    margin: 4px 8px;
+    height: 44px;
+    line-height: 44px;
+    color: var(--edu-color-gray-600);
+
+    &:hover {
+      background-color: var(--edu-primary-50);
+      color: var(--edu-primary-600);
+    }
+
+    &.is-active {
+      background: linear-gradient(90deg, var(--edu-primary-50) 0%, transparent 100%);
+      color: var(--edu-primary-600);
+      font-weight: var(--edu-font-weight-semibold);
+      
+      // 光剑指示条
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 8px;
+        bottom: 8px;
+        width: 3px;
+        background: var(--edu-primary-500);
+        border-radius: 0 4px 4px 0;
+        box-shadow: 0 0 8px var(--edu-primary-500);
+      }
+    }
+  }
+}
+
+// ========================================
+// Dialog: 玻璃态背景
+// ========================================
+.el-overlay {
+  background-color: rgba(15, 23, 42, 0.4); // Slate-900 alpha
+  backdrop-filter: blur(4px);
+}
+
+.el-dialog {
+  border-radius: var(--radius-xl);
+  box-shadow: var(--edu-shadow-xl);
+  
+  // 头部样式
+  .el-dialog__header {
+    margin-right: 0;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--edu-color-gray-100);
+    
+    .el-dialog__title {
+      font-size: var(--edu-font-size-lg);
+      font-weight: var(--edu-font-weight-semibold);
+    }
+  }
+}
+
+// ========================================
+// 深色模式适配 (Dark Mode)
+// ========================================
+[data-theme="dark"] {
+  // 变量重写 (如果 ThemeManager 未覆盖完全，此处补漏)
+  
+  .el-card {
+    background: #1E293B;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .el-input__wrapper {
+    background-color: #0F172A; // Slate-900
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.1) inset;
+    
+    &:hover {
+      background-color: #0F172A;
+    }
+  }
+  
+  .el-menu {
+    .el-menu-item {
+      color: #94A3B8;
+      
+      &:hover {
+        background-color: rgba(255,255,255,0.05);
+        color: #F1F5F9;
+      }
+      
+      &.is-active {
+        background: linear-gradient(90deg, rgba(99, 102, 241, 0.2) 0%, transparent 100%);
+        color: #818CF8; // Indigo-400
+        
+        &::before {
+          background: #818CF8;
+          box-shadow: 0 0 10px #818CF8;
+        }
+      }
+    }
+  }
+}

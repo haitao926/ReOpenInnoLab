@@ -707,7 +707,7 @@ onUnmounted(() => {
 
 .welcome-subtitle {
   font-size: 0.95rem;
-  color: #64748b;
+  color: var(--edu-color-gray-500);
   margin: 0;
   line-height: 1.5;
   font-weight: 400;
@@ -755,8 +755,8 @@ onUnmounted(() => {
   text-align: center;
   background: rgba(248, 250, 252, 0.5);
   border-radius: 16px;
-  border: 2px dashed #cbd5e1;
-  color: #94a3b8;
+  border: 2px dashed var(--edu-color-gray-300);
+  color: var(--edu-color-gray-400);
   font-size: 0.95rem;
 }
 
@@ -790,12 +790,12 @@ onUnmounted(() => {
 
   .el-icon {
     font-size: 14px;
-    color: #0ea5e9;
+    color: var(--edu-primary-500);
   }
 
   span {
     font-size: 0.8rem;
-    color: #0284c7;
+    color: var(--edu-primary-600);
     font-weight: 500;
   }
 }
@@ -805,23 +805,23 @@ onUnmounted(() => {
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  color: #94a3b8;
+  color: var(--edu-color-gray-400);
   font-size: 0.85rem;
   flex-wrap: wrap;
 
   .link {
-    color: #64748b;
+    color: var(--edu-color-gray-500);
     text-decoration: none;
     font-weight: 400;
     transition: color 0.2s ease;
 
     &:hover {
-      color: #0ea5e9;
+      color: var(--edu-primary-500);
     }
   }
 
   .separator {
-    color: #cbd5e1;
+    color: var(--edu-color-gray-300);
     font-weight: 300;
     margin: 0 0.25rem;
   }
@@ -942,14 +942,14 @@ onUnmounted(() => {
 
   .brand-title {
     .brand-name {
-      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
+      background: linear-gradient(135deg, var(--edu-color-gray-100) 0%, var(--edu-color-gray-200) 50%, var(--edu-color-gray-300) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
     .brand-subtitle {
-      background: linear-gradient(135deg, #cbd5e1 0%, #e2e8f0 100%);
+      background: linear-gradient(135deg, var(--edu-color-gray-300) 0%, var(--edu-color-gray-200) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -957,7 +957,7 @@ onUnmounted(() => {
   }
 
   .brand-description {
-    color: #cbd5e1;
+    color: var(--edu-color-gray-300);
   }
 
   .value-item {
@@ -971,7 +971,7 @@ onUnmounted(() => {
 
   .value-icon,
   .value-text {
-    color: #cbd5e1;
+    color: var(--edu-color-gray-300);
   }
 
   .login-section {
@@ -991,7 +991,7 @@ onUnmounted(() => {
   }
 
   .welcome-subtitle {
-    color: #94a3b8;
+    color: var(--edu-color-gray-400);
   }
 
   .user-badge {
@@ -1006,7 +1006,7 @@ onUnmounted(() => {
   .form-placeholder {
     background: rgba(30, 41, 59, 0.5);
     border-color: #475569;
-    color: #94a3b8;
+    color: var(--edu-color-gray-400);
   }
 
   .badge {
@@ -1024,7 +1024,7 @@ onUnmounted(() => {
 
   .footer-links {
     .link {
-      color: #94a3b8;
+      color: var(--edu-color-gray-400);
 
       &:hover {
         color: #60a5fa;

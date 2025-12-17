@@ -1,188 +1,170 @@
 <template>
   <TeacherWorkspaceLayout
     title="交互体验管理"
-    subtitle="上传和管理HTML互动内容，提供沉浸式学习体验"
-    v-model:leftCollapsed="leftSidebarCollapsed"
+    subtitle="沉浸式互动内容库"
+    :leftCollapsible="false"
     :rightCollapsible="false"
   >
-    <template #header-controls>
-      <WorkspacePrimaryToolbar
-        :create-button-text="'上传内容'"
-        :import-button-text="'批量导入'"
-        :show-ai-button="false"
-        :show-refresh-button="true"
-        @create="showUploadModal = true"
-        @import="batchImport"
-        @refresh="refreshList"
-      />
-    </template>
-
+    <!-- 左侧筛选区 -->
     <template #left>
-        <div class="sidebar-section">
-            <h4 class="sidebar-title">筛选</h4>
-            <div class="filter-stack">
-               <el-select v-model="filterType" placeholder="内容类型" class="w-full mb-2" clearable>
-                    <el-option label="全部类型" value="" />
-                    <el-option label="HTML单页" value="html" />
-                    <el-option label="互动包" value="package" />
-                    <el-option label="模拟器" value="simulation" />
-                    <el-option label="游戏" value="game" />
-                </el-select>
-                <el-select v-model="filterSubject" placeholder="适用学科" class="w-full mb-2" clearable>
-                    <el-option label="全部学科" value="" />
-                    <el-option
-                      v-for="subject in subjects"
-                      :key="subject.value"
-                      :label="subject.label"
-                      :value="subject.value"
-                    />
-                </el-select>
+      <div class="filter-sidebar">
+        <!-- 资源类型 -->
+        <div class="filter-section">
+          <div class="filter-title">资源类型</div>
+          <div class="filter-menu">
+            <div class="filter-item" :class="{ active: filterType === '' }" @click="filterType = ''">
+              <el-icon><Menu /></el-icon>
+              <span>全部内容</span>
             </div>
-
-            <h4 class="sidebar-title mt-4">快捷操作</h4>
-            <div class="experience-quick-actions">
-                <el-button type="primary" size="small" style="width: 100%; margin-bottom: 8px;" @click="showUploadModal = true">
-                  <el-icon class="mr-1"><Plus /></el-icon> 上传内容
-                </el-button>
-                <el-button type="default" size="small" style="width: 100%;" @click="batchImport">
-                  <el-icon class="mr-1"><Upload /></el-icon> 批量导入
-                </el-button>
+            <div class="filter-item" :class="{ active: filterType === 'html' }" @click="filterType = 'html'">
+              <el-icon><Document /></el-icon>
+              <span>HTML 单页</span>
             </div>
+            <div class="filter-item" :class="{ active: filterType === 'simulation' }" @click="filterType = 'simulation'">
+              <el-icon><Monitor /></el-icon>
+              <span>物理/化学模拟</span>
+            </div>
+            <div class="filter-item" :class="{ active: filterType === 'game' }" @click="filterType = 'game'">
+              <el-icon><VideoPlay /></el-icon>
+              <span>教育游戏</span>
+            </div>
+          </div>
         </div>
+
+        <!-- 学科筛选 -->
+        <div class="filter-section mt-6">
+          <div class="filter-title">学科分类</div>
+          <div class="filter-tree">
+             <div 
+               v-for="sub in subjects" 
+               :key="sub.value"
+               class="filter-tree-item"
+               :class="{ active: filterSubject === sub.value }"
+               @click="filterSubject = filterSubject === sub.value ? '' : sub.value"
+             >
+                <span class="tree-dot" :style="{ background: getSubjectColor(sub.value) }"></span>
+                <span class="tree-text">{{ sub.label }}</span>
+             </div>
+          </div>
+        </div>
+      </div>
     </template>
 
-    <div class="interactive-content">
-        <!-- 视图切换和工具栏 -->
-      <div class="content-toolbar">
-         <div class="toolbar-left">
-             <el-radio-group v-model="viewMode" size="default">
-                <el-radio-button label="card">
-                    <el-icon><Grid /></el-icon> 卡片
-                </el-radio-button>
-                <el-radio-button label="table">
-                    <el-icon><List /></el-icon> 列表
-                </el-radio-button>
-            </el-radio-group>
-            <span class="content-count">共 {{ filteredContentList.length }} 个内容</span>
+    <!-- 右侧画布 -->
+    <div class="experience-canvas">
+      
+      <!-- 头部 -->
+      <div class="canvas-header">
+         <div class="search-bar-floating">
+            <el-icon class="search-icon"><Search /></el-icon>
+            <input 
+              v-model="searchKeyword" 
+              type="text" 
+              placeholder="搜索互动资源..." 
+              class="search-input-clean"
+            />
+            <button class="search-btn" v-if="searchKeyword" @click="searchKeyword=''">
+               <el-icon><Close /></el-icon>
+            </button>
          </div>
-         <div class="toolbar-right">
-             <el-input
-                v-model="searchKeyword"
-                placeholder="搜索内容..."
-                clearable
-                style="width: 240px"
-              >
-                <template #prefix>
-                  <el-icon><Search /></el-icon>
-                </template>
-              </el-input>
+         
+         <div class="quick-actions-row">
+            <button class="action-card" @click="showUploadModal = true">
+               <div class="icon-box blue"><el-icon><Upload /></el-icon></div>
+               <span>上传 H5 内容</span>
+            </button>
+            <button class="action-card" @click="batchImport">
+               <div class="icon-box purple"><el-icon><Connection /></el-icon></div>
+               <span>连接外部资源</span>
+            </button>
          </div>
       </div>
 
-      <div class="content-container">
-          <!-- 卡片视图 -->
-          <div v-if="viewMode === 'card'" class="content-grid">
-            <div
-              v-for="content in filteredContentList"
-              :key="content.id"
-              class="content-card-wrapper"
-            >
-               <EduCard
-                 class="content-card"
-                 variant="elevated"
-                 :hoverable="true"
-                 :body-style="{ padding: '0' }"
-               >
-                 <div class="content-card__inner">
-                    <div class="card-thumbnail">
-                        <!-- Placeholder for thumbnail -->
-                        <div class="thumbnail-placeholder" :style="{ backgroundColor: getTypeColor(content.type) + '20' }">
-                           <el-icon :color="getTypeColor(content.type)" size="40"><component :is="getContentIcon(content.type)" /></el-icon>
-                        </div>
-                        <div class="thumbnail-overlay">
-                           <el-button type="primary" size="small" @click.stop="previewContent(content)">
-                              <el-icon class="mr-1"><View /></el-icon> 预览
-                           </el-button>
-                        </div>
-                    </div>
-                    
-                    <div class="card-content">
-                       <div class="content-header">
-                          <h4 class="content-title text-truncate">{{ content.title }}</h4>
-                          <el-tag size="small" :type="getTypeVariant(content.type)">{{ getTypeLabel(content.type) }}</el-tag>
-                       </div>
-                       <p class="content-desc text-truncate-2">{{ content.description }}</p>
-                       
-                       <div class="content-meta">
-                          <span class="meta-item"><el-icon><User /></el-icon> {{ content.author }}</span>
-                          <span class="meta-item"><el-icon><Clock /></el-icon> {{ formatDate(content.createdAt) }}</span>
-                       </div>
-                    </div>
-                 </div>
-                 
-                 <footer class="content-card__footer">
-                    <el-button link size="small" @click="editContent(content)">编辑</el-button>
-                    <el-button link size="small" type="primary" @click="assignToCourse(content)">分配课程</el-button>
-                 </footer>
-               </EduCard>
+      <!-- 工具栏 -->
+      <div class="canvas-toolbar">
+         <div class="left-stat">共 {{ filteredContentList.length }} 个互动资源</div>
+         <div class="right-tools">
+            <div class="view-toggles">
+               <button :class="{ active: viewMode === 'card' }" @click="viewMode = 'card'"><el-icon><Grid /></el-icon></button>
+               <button :class="{ active: viewMode === 'list' }" @click="viewMode = 'list'"><el-icon><List /></el-icon></button>
             </div>
-          </div>
-
-          <!-- 表格视图 -->
-          <div v-else-if="viewMode === 'table'" class="content-table">
-            <el-table :data="filteredContentList" stripe style="width: 100%">
-              <el-table-column label="内容" min-width="200">
-                <template #default="{ row }">
-                  <div class="flex items-center gap-3">
-                    <el-icon :size="20"><component :is="getContentIcon(row.type)" /></el-icon>
-                    <div>
-                        <div class="font-medium">{{ row.title }}</div>
-                        <div class="text-xs text-gray-500">{{ getTypeLabel(row.type) }}</div>
-                    </div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column prop="author" label="作者" width="120" />
-              <el-table-column label="使用次数" width="100" align="center" prop="usageCount" />
-              <el-table-column label="创建时间" width="160">
-                <template #default="{ row }">
-                  {{ formatDate(row.createdAt) }}
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" width="180" fixed="right">
-                <template #default="{ row }">
-                  <el-button link type="primary" size="small" @click="previewContent(row)">预览</el-button>
-                  <el-button link type="primary" size="small" @click="editContent(row)">编辑</el-button>
-                  <el-button link type="danger" size="small" @click="deleteContent(row)">删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-
-          <!-- 空状态 -->
-          <div v-if="filteredContentList.length === 0" class="empty-state">
-            <el-empty description="暂无互动内容">
-              <el-button type="primary" @click="showUploadModal = true">
-                <el-icon class="mr-1"><Upload /></el-icon> 上传互动内容
-              </el-button>
-            </el-empty>
-          </div>
+         </div>
       </div>
+
+      <!-- 内容区 -->
+      <div class="canvas-content">
+         <!-- Empty State -->
+         <div v-if="filteredContentList.length === 0" class="empty-placeholder">
+            <el-empty description="暂无相关资源" />
+            <el-button type="primary" @click="showUploadModal = true">上传资源</el-button>
+         </div>
+
+         <!-- Card Grid -->
+         <div v-if="viewMode === 'card'" class="grid-layout">
+            <div 
+              v-for="content in filteredContentList" 
+              :key="content.id" 
+              class="clean-card"
+              @click="previewContent(content)"
+            >
+               <div class="card-thumb" :class="content.type">
+                  <div class="thumb-icon">
+                     <el-icon><component :is="getContentIcon(content.type)" /></el-icon>
+                  </div>
+                  <div class="thumb-overlay">
+                     <el-button circle icon="View" @click.stop="previewContent(content)" />
+                     <el-button circle icon="Edit" @click.stop="editContent(content)" />
+                  </div>
+               </div>
+               <div class="card-body">
+                  <div class="exp-title">{{ content.title }}</div>
+                  <div class="exp-meta">
+                     <el-tag size="small" :type="getTypeVariant(content.type)">{{ getTypeLabel(content.type) }}</el-tag>
+                     <span class="exp-author">{{ content.author }}</span>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <!-- List View -->
+         <div v-else class="list-layout">
+            <div 
+               v-for="content in filteredContentList" 
+               :key="content.id" 
+               class="clean-list-item"
+               @click="previewContent(content)"
+            >
+               <div class="list-icon-box" :class="content.type">
+                  <el-icon><component :is="getContentIcon(content.type)" /></el-icon>
+               </div>
+               <div class="list-main">
+                  <div class="list-title">{{ content.title }}</div>
+                  <div class="list-desc">{{ content.description }}</div>
+               </div>
+               <div class="list-meta">
+                  <el-tag size="small" :type="getTypeVariant(content.type)">{{ getTypeLabel(content.type) }}</el-tag>
+                  <span class="ml-4 text-xs text-gray-400">{{ formatDate(content.createdAt) }}</span>
+               </div>
+               <div class="list-action">
+                  <el-button circle size="small" icon="Edit" @click.stop="editContent(content)" />
+               </div>
+            </div>
+         </div>
+      </div>
+
     </div>
 
-    <!-- 上传模态框 -->
-    <el-dialog
-      v-model="showUploadModal"
-      title="上传互动内容"
-      width="600px"
-      :before-close="handleCloseUpload"
-    >
-        <!-- Simplify Dialog Content for brevity in refactor, keeping structure implies logic exists -->
-        <p>上传功能正在优化中...</p> 
-        <template #footer>
-            <el-button @click="showUploadModal = false">取消</el-button>
-            <el-button type="primary" @click="showUploadModal = false">确定</el-button>
-        </template>
+    <!-- Upload Dialog -->
+    <el-dialog v-model="showUploadModal" title="上传互动内容" width="500px">
+       <div class="upload-area">
+          <el-icon class="upload-icon"><Upload /></el-icon>
+          <div class="upload-text">拖拽文件到此处或点击上传</div>
+          <div class="upload-hint">支持 .html, .zip, .mp4 格式</div>
+       </div>
+       <template #footer>
+          <el-button @click="showUploadModal = false">取消</el-button>
+          <el-button type="primary">开始上传</el-button>
+       </template>
     </el-dialog>
 
   </TeacherWorkspaceLayout>
@@ -190,57 +172,35 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import {
-  Plus, Upload, Refresh, Search, View, Edit, User, Clock,
-  Grid, List, Monitor, Document, VideoPlay, Picture
+  Search, Grid, List, Plus, Upload, Connection,
+  Menu, Document, Monitor, VideoPlay, Close
 } from '@element-plus/icons-vue'
-
 import TeacherWorkspaceLayout from '@/components/layout/TeacherWorkspaceLayout.vue'
-import WorkspacePrimaryToolbar from '@/components/workspace/WorkspacePrimaryToolbar.vue' 
-import { EduCard, EduTag } from '@reopeninnolab/ui-kit'
 import { formatDate } from '@/utils/date'
 import { subjects } from '@/config/courseData'
 
-// Types
-interface InteractiveContent {
-  id: string
-  title: string
-  description: string
-  type: 'html' | 'package' | 'simulation' | 'game'
-  subject: string
-  author: string
-  thumbnail?: string
-  url: string
-  tags: string[]
-  usageCount: number
-  createdAt: Date
-  featured: boolean
-}
-
-const router = useRouter()
-
 // State
-const activeTab = ref('upload')
 const searchKeyword = ref('')
-const viewMode = ref<'card' | 'table'>('card')
+const viewMode = ref<'card' | 'list'>('card')
 const filterType = ref('')
 const filterSubject = ref('')
-const leftSidebarCollapsed = ref(false)
 const showUploadModal = ref(false)
 
 // Mock Data
-const contentList = ref<InteractiveContent[]>([
+const contentList = ref([
     {
         id: '1', title: 'AI 神经网络可视化', description: '交互式神经网络层级演示', type: 'simulation',
-        subject: 'ai', author: '王老师', url: '#', tags: ['AI', 'Visualization'], usageCount: 45,
-        createdAt: new Date(), featured: true
+        subject: 'ai', author: '王老师', createdAt: new Date()
     },
     {
         id: '2', title: 'Python 排序算法演示', description: '冒泡排序与快速排序对比', type: 'html',
-        subject: 'cs', author: '李老师', url: '#', tags: ['Python', 'Algorithm'], usageCount: 120,
-        createdAt: new Date(), featured: false
+        subject: 'cs', author: '李老师', createdAt: new Date()
+    },
+    {
+        id: '3', title: '太阳系引力模拟', description: '基于 WebGL 的引力场模拟', type: 'game',
+        subject: 'physics', author: '张老师', createdAt: new Date()
     }
 ])
 
@@ -248,188 +208,124 @@ const filteredContentList = computed(() => {
     return contentList.value.filter(item => {
         const matchesSearch = !searchKeyword.value || item.title.includes(searchKeyword.value)
         const matchesType = !filterType.value || item.type === filterType.value
-        return matchesSearch && matchesType
+        const matchesSubject = !filterSubject.value || item.subject === filterSubject.value
+        return matchesSearch && matchesType && matchesSubject
     })
 })
 
 // Methods
 const batchImport = () => ElMessage.info('批量导入功能')
-const refreshList = () => ElMessage.success('刷新列表')
-const handleCloseUpload = () => showUploadModal.value = false
 const previewContent = (c: any) => ElMessage.success(`预览: ${c.title}`)
 const editContent = (c: any) => ElMessage.info(`编辑: ${c.title}`)
-const deleteContent = (c: any) => ElMessage.warning(`删除: ${c.title}`)
-const assignToCourse = (c: any) => ElMessage.success(`分配: ${c.title}`)
 
 // Helpers
-const getTypeColor = (type: string) => {
-    const map: any = { html: '#409EFF', package: '#E6A23C', simulation: '#67C23A', game: '#F56C6C' }
-    return map[type] || '#909399'
-}
-
-const getTypeVariant = (type: string) => {
-    const map: any = { html: 'primary', package: 'warning', simulation: 'success', game: 'danger' }
-    return map[type] || 'info'
-}
-
-const getTypeLabel = (type: string) => {
-    const map: any = { html: 'HTML单页', package: '互动包', simulation: '模拟器', game: '游戏' }
-    return map[type] || type
-}
-
-const getContentIcon = (type: string) => {
-    const map: any = { html: 'Document', package: 'Box', simulation: 'Monitor', game: 'VideoPlay' }
-    return map[type] || 'Document'
-}
-
-const getSubjectLabel = (val: string) => {
-    const sub = subjects.find(s => s.value === val)
-    return sub ? sub.label : val
+const getTypeVariant = (type: string) => ({ html: 'primary', simulation: 'success', game: 'warning' }[type] || 'info')
+const getTypeLabel = (type: string) => ({ html: 'HTML', simulation: '模拟', game: '游戏' }[type] || type)
+const getContentIcon = (type: string) => ({ html: 'Document', simulation: 'Monitor', game: 'VideoPlay' }[type] || 'Document')
+const getSubjectColor = (sub: string) => {
+  const map: Record<string, string> = {
+    chinese: '#f56a00', // Orange
+    math: '#1890ff',    // Blue
+    english: '#52c41a', // Green
+    physics: '#722ed1', // Purple
+    chemistry: '#eb2f96', // Magenta
+    biology: '#faad14', // Yellow-Orange
+    ai: '#4F46E5',      // Indigo
+    cs: '#10B981'       // Emerald
+  }
+  return map[sub] || '#94A3B8'
 }
 
 </script>
 
 <style scoped lang="scss">
-.sidebar-section {
-  margin-bottom: 24px;
+/* Reuse Global Layout Styles */
+
+/* Left Sidebar */
+.filter-sidebar { padding: 8px 0; display: flex; flex-direction: column; gap: 24px; }
+.filter-section { display: flex; flex-direction: column; gap: 12px; }
+.filter-title { font-size: 12px; font-weight: 700; color: #94A3B8; padding-left: 12px; text-transform: uppercase; }
+.filter-menu, .filter-tree { display: flex; flex-direction: column; gap: 4px; }
+
+.filter-item, .filter-tree-item {
+  display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; cursor: pointer; color: #475569; font-size: 14px; transition: all 0.2s;
+  &:hover { background: #F1F5F9; color: #0F172A; }
+  &.active { background: #E0E7FF; color: #4F46E5; font-weight: 500; }
+}
+.tree-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* Right Canvas */
+.experience-canvas { display: flex; flex-direction: column; gap: 24px; max-width: 1200px; margin: 0 auto; width: 100%; }
+.canvas-header { display: flex; flex-direction: column; gap: 24px; padding-bottom: 24px; border-bottom: 1px solid #F1F5F9; }
+
+.search-bar-floating {
+  background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); padding: 8px 16px; display: flex; align-items: center; gap: 12px;
+  &:focus-within { box-shadow: 0 8px 30px rgba(99, 102, 241, 0.1); }
+}
+.search-input-clean { border: none; outline: none; font-size: 16px; flex: 1; color: #0F172A; }
+.search-icon { font-size: 20px; color: #94A3B8; }
+.search-btn { background: none; border: none; cursor: pointer; color: #94A3B8; padding: 4px; &:hover { color: #64748B; } }
+
+.quick-actions-row { display: flex; gap: 16px; }
+.action-card {
+  flex: 1; background: white; border: 1px solid #F1F5F9; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;
+  &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.03); border-color: #E2E8F0; }
+}
+.icon-box {
+  width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;
+  &.blue { background: #E0E7FF; color: #4F46E5; }
+  &.purple { background: #F3E8FF; color: #9333EA; }
+  &.orange { background: #FFEDD5; color: #F97316; }
 }
 
-.sidebar-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--edu-text-secondary);
-  margin-bottom: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.canvas-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.left-stat { font-size: 14px; color: #64748B; }
+.view-toggles { background: #F1F5F9; padding: 2px; border-radius: 6px; display: flex; }
+.view-toggles button { background: none; border: none; padding: 6px; border-radius: 4px; color: #94A3B8; cursor: pointer; &.active { background: white; color: #0F172A; box-shadow: 0 1px 2px rgba(0,0,0,0.05); } }
+
+/* Content */
+.grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 24px; }
+.clean-card {
+   background: white; border-radius: 16px; overflow: hidden; cursor: pointer; transition: all 0.3s; border: 1px solid transparent;
+   &:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.06); .thumb-overlay { opacity: 1; } }
 }
 
-.content-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  
-  .toolbar-left {
-     display: flex;
-     align-items: center;
-     gap: 16px;
-  }
-  
-  .content-count {
-     color: var(--edu-text-secondary);
-     font-size: 14px;
-  }
+.card-thumb {
+   height: 140px; display: flex; align-items: center; justify-content: center; position: relative;
+   &.html { background: #E0E7FF; color: #4F46E5; }
+   &.simulation { background: #DCFCE7; color: #16A34A; }
+   &.game { background: #FEF3C7; color: #D97706; }
+}
+.thumb-icon { font-size: 48px; opacity: 0.8; }
+.thumb-overlay {
+   position: absolute; inset: 0; background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; gap: 12px; opacity: 0; transition: opacity 0.2s;
 }
 
-.content-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 24px;
-}
+.card-body { padding: 16px; }
+.exp-title { font-size: 15px; font-weight: 600; color: #0F172A; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.exp-meta { display: flex; justify-content: space-between; align-items: center; }
+.exp-author { font-size: 12px; color: #94A3B8; }
 
-.content-card {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s;
-    
-    &:hover {
-       transform: translateY(-4px);
-       
-       .thumbnail-overlay {
-          opacity: 1 !important;
-       }
-    }
+/* List */
+.list-layout { display: flex; flex-direction: column; gap: 8px; }
+.clean-list-item {
+   display: flex; align-items: center; gap: 16px; background: white; padding: 12px 16px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; transition: all 0.2s;
+   &:hover { background: #F8FAFC; border-color: #E2E8F0; }
 }
+.list-icon-box {
+   width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px;
+   &.html { background: #E0E7FF; color: #4F46E5; }
+   &.simulation { background: #DCFCE7; color: #16A34A; }
+   &.game { background: #FEF3C7; color: #D97706; }
+}
+.list-main { flex: 1; }
+.list-title { font-size: 14px; font-weight: 600; color: #0F172A; }
+.list-desc { font-size: 12px; color: #64748B; }
 
-.content-card__inner {
-    flex: 1;
-}
+/* Upload Area */
+.upload-area { border: 2px dashed #E2E8F0; border-radius: 12px; padding: 40px; text-align: center; color: #64748B; cursor: pointer; &:hover { border-color: #4F46E5; background: #F5F3FF; } }
+.upload-icon { font-size: 48px; color: #94A3B8; margin-bottom: 16px; }
+.upload-hint { font-size: 12px; color: #94A3B8; margin-top: 8px; }
 
-.card-thumbnail {
-    height: 160px;
-    position: relative;
-    background: #f5f7fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    
-    .thumbnail-placeholder {
-       width: 100%;
-       height: 100%;
-       display: flex;
-       align-items: center;
-       justify-content: center;
-    }
-    
-    .thumbnail-overlay {
-       position: absolute;
-       inset: 0;
-       background: rgba(0,0,0,0.3);
-       display: flex;
-       align-items: center;
-       justify-content: center;
-       opacity: 0;
-       transition: opacity 0.2s;
-    }
-}
-
-.card-content {
-    padding: 16px;
-}
-
-.content-title {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.content-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 8px;
-}
-
-.content-desc {
-    font-size: 14px;
-    color: var(--edu-text-secondary);
-    margin-bottom: 12px;
-    height: 40px; 
-    line-height: 20px;
-}
-
-.content-meta {
-    display: flex;
-    gap: 12px;
-    font-size: 12px;
-    color: var(--edu-text-tertiary);
-    
-    .meta-item {
-       display: flex;
-       align-items: center;
-       gap: 4px;
-    }
-}
-
-.content-card__footer {
-   padding: 12px 16px;
-   border-top: 1px solid var(--edu-border-base);
-   display: flex;
-   justify-content: flex-end;
-}
-
-.text-truncate {
-   white-space: nowrap;
-   overflow: hidden;
-   text-overflow: ellipsis;
-}
-
-.text-truncate-2 {
-   display: -webkit-box;
-   -webkit-line-clamp: 2;
-   -webkit-box-orient: vertical;
-   overflow: hidden;
-}
+.empty-placeholder { display: flex; flex-direction: column; align-items: center; padding: 60px 0; gap: 16px; }
 </style>

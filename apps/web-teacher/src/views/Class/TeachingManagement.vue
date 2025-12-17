@@ -825,19 +825,19 @@ onMounted(() => {
     color: white;
 
     &.active {
-      background: linear-gradient(135deg, #67c23a 0%, #85ce61 100%);
+      background: var(--edu-gradient-success);
     }
 
     &.scheduled {
-      background: linear-gradient(135deg, #409eff 0%, #66b1ff 100%);
+      background: var(--edu-gradient-primary);
     }
 
     &.completed {
-      background: linear-gradient(135deg, #909399 0%, #b1b3b8 100%);
+      background: var(--edu-gradient-secondary);
     }
 
     &.total {
-      background: linear-gradient(135deg, #e6a23c 0%, #ebb563 100%);
+      background: var(--edu-gradient-warning);
     }
 
     .el-icon {

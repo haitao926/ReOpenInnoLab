@@ -2,7 +2,7 @@
 
 /**
  * 主题验证脚本
- * 检查 CSS 变量命名规范、Element Plus 映射完整性、主题一致性
+ * 检查 CSS 变量命名、Element Plus 映射、应用集成与硬编码颜色
  */
 
 const fs = require('fs')
@@ -12,17 +12,14 @@ const path = require('path')
 const config = {
   uiKitPath: path.join(__dirname, '../packages/ui-kit'),
   webTeacherPath: path.join(__dirname, '../apps/web-teacher'),
+  webStudentPath: path.join(__dirname, '../apps/web-student'),
   themesPath: path.join(__dirname, '../packages/ui-kit/src/theme'),
   stylesPath: path.join(__dirname, '../packages/ui-kit/src/styles')
 }
 
-// 颜色主题
-const THEME_COLORS = {
-  primary: ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'],
-  secondary: ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  semantic: ['success', 'warning', 'error', 'info'],
-  subjects: ['math', 'physics', 'chemistry', 'biology', 'language', 'history', 'geography', 'english', 'art', 'music', 'pe', 'it']
-}
+const COLOR_FILE_ALLOWLIST = new Set([
+  path.join(config.themesPath, 'tokens.json')
+])
 
 // Element Plus 必需变量
 const REQUIRED_ELEMENT_PLUS_VARS = [
@@ -100,12 +97,10 @@ class ThemeValidator {
     }
   }
 
-  // 添加错误
   addError(message) {
     this.errors.push(message)
   }
 
-  // 添加警告
   addWarning(message) {
     this.warnings.push(message)
   }
@@ -123,7 +118,6 @@ class ThemeValidator {
     scssFiles.forEach(file => {
       if (fs.existsSync(file)) {
         const content = this.readFile(file)
-        // 只匹配CSS变量（不包括CSS选择器中的类名）
         const variableRegex = /var\(--([a-zA-Z0-9-]+)/g
         let match
 
@@ -131,7 +125,6 @@ class ThemeValidator {
           const variableName = match[1]
           this.stats.totalVariables++
 
-          // 检查是否符合 --edu- 命名规范
           if (!variableName.startsWith('edu-')) {
             this.stats.invalidVariables++
             this.addError(`变量命名不规范: --${variableName} (应为 --edu-${variableName})`)
@@ -142,7 +135,7 @@ class ThemeValidator {
       }
     })
 
-    console.log(`✅ CSS 变量命名检查完成`)
+    console.log('✅ CSS 变量命名检查完成')
     console.log(`   总变量: ${this.stats.totalVariables}`)
     console.log(`   有效变量: ${this.stats.validVariables}`)
     console.log(`   无效变量: ${this.stats.invalidVariables}`)
@@ -161,7 +154,6 @@ class ThemeValidator {
 
     const content = this.readFile(themeIndexPath)
 
-    // 检查必要的方法
     const requiredMethods = [
       'generateCSSVariables',
       'applyCSSVariables',
@@ -177,7 +169,6 @@ class ThemeValidator {
       }
     })
 
-    // 检查主题类型定义
     const themeTypes = ['light', 'dark', 'high-contrast']
     themeTypes.forEach(type => {
       if (!content.includes(type)) {
@@ -195,7 +186,6 @@ class ThemeValidator {
     const themeIndexPath = path.join(config.themesPath, 'index.ts')
     const content = this.readFile(themeIndexPath)
 
-    // 查找 applyElementPlusTheme 方法
     const applyElementPlusThemeMatch = content.match(/applyElementPlusTheme\(\)[\s\S]*?^}/m)
 
     if (!applyElementPlusThemeMatch) {
@@ -205,7 +195,6 @@ class ThemeValidator {
 
     const methodContent = applyElementPlusThemeMatch[0]
 
-    // 检查每个必需的 Element Plus 变量
     REQUIRED_ELEMENT_PLUS_VARS.forEach(variable => {
       if (methodContent.includes(variable)) {
         this.stats.elementPlusMapped++
@@ -228,12 +217,10 @@ class ThemeValidator {
     const appStorePath = path.join(config.webTeacherPath, 'src/stores/app.ts')
     const appVuePath = path.join(config.webTeacherPath, 'src/App.vue')
 
-    // 检查 main.ts 集成
     const mainContent = this.readFile(mainTsPath)
     const requiredImports = [
-      '@ui-kit/index.scss',
-      'themeManager',
-      'applyFullTheme'
+      '@reopeninnolab/ui-kit/styles',
+      'themeManager'
     ]
 
     requiredImports.forEach(item => {
@@ -242,7 +229,6 @@ class ThemeValidator {
       }
     })
 
-    // 检查 app.ts 主题管理
     const appStoreContent = this.readFile(appStorePath)
     const requiredStoreMethods = [
       'setTheme',
@@ -259,7 +245,6 @@ class ThemeValidator {
       }
     })
 
-    // 检查 App.vue 使用 UI Kit 变量
     const appVueContent = this.readFile(appVuePath)
     const requiredVariables = [
       '--edu-color-',
@@ -281,6 +266,53 @@ class ThemeValidator {
     console.log('✅ 应用集成检查完成')
   }
 
+  // 扫描硬编码颜色（代码层面）
+  scanHardcodedColors() {
+    console.log('🔍 扫描硬编码颜色...')
+
+    const targetRoots = [
+      path.join(config.uiKitPath, 'src'),
+      path.join(config.webTeacherPath, 'src'),
+      path.join(config.webStudentPath, 'src')
+    ]
+
+    const colorRegex = /#(?:[0-9a-fA-F]{3,8})\b/g
+    const rgbRegex = /rgba?\(/g
+    const skipDirs = new Set(['node_modules', 'dist', '.turbo', '.git', '.cache'])
+    const validExt = new Set(['.vue', '.scss', '.css', '.ts', '.tsx', '.js', '.jsx', '.json'])
+
+    const walk = dir => {
+      if (!fs.existsSync(dir)) return
+      const entries = fs.readdirSync(dir, { withFileTypes: true })
+      entries.forEach(entry => {
+        if (skipDirs.has(entry.name)) return
+        const fullPath = path.join(dir, entry.name)
+
+        if (entry.isDirectory()) {
+          walk(fullPath)
+          return
+        }
+
+        const ext = path.extname(entry.name)
+        if (!validExt.has(ext)) return
+        if (COLOR_FILE_ALLOWLIST.has(fullPath)) return
+
+        const content = this.readFile(fullPath)
+        if (!content) return
+
+        const hexMatches = content.match(colorRegex) || []
+        const rgbMatches = content.match(rgbRegex) || []
+
+        if (hexMatches.length > 0 || rgbMatches.length > 0) {
+          this.addWarning(`检测到硬编码颜色: ${fullPath} (${hexMatches.length} hex, ${rgbMatches.length} rgb/rgba)`)
+        }
+      })
+    }
+
+    targetRoots.forEach(walk)
+    console.log('✅ 硬编码颜色扫描完成')
+  }
+
   // 检查组件样式一致性
   validateComponentConsistency() {
     console.log('🔍 检查组件样式一致性...')
@@ -290,7 +322,6 @@ class ThemeValidator {
     if (fs.existsSync(componentShowcasePath)) {
       const content = this.readFile(componentShowcasePath)
 
-      // 检查是否使用了正确的 CSS 变量
       const validVariablePatterns = [
         /var\(--edu-color-[a-z-]+(\d+)?\)/g,
         /var\(--edu-spacing-[a-z0-9-]+\)/g,
@@ -313,7 +344,6 @@ class ThemeValidator {
         this.addWarning(`ComponentShowcase.vue 使用的 UI Kit 变量较少 (${validVariableCount} 个)`)
       }
 
-      // 检查是否使用了硬编码颜色
       const hardcodedColorRegex = /#[0-9A-Fa-f]{6}|#[0-9A-Fa-f]{3}/g
       const hardcodedColors = content.match(hardcodedColorRegex)
       if (hardcodedColors && hardcodedColors.length > 5) {
@@ -350,7 +380,7 @@ class ThemeValidator {
     console.log(`   CSS 变量: ${this.stats.validVariables}/${this.stats.totalVariables} 有效`)
     console.log(`   Element Plus 映射: ${this.stats.elementPlusMapped}/${this.stats.elementPlusMapped + this.stats.elementPlusMissing} 已映射`)
 
-    console.log('\n🎯 建议:')
+    console.log('\n💡 建议:')
     if (this.errors.length > 0) {
       console.log('   - 请修复上述错误以确保主题系统正常工作')
     }
@@ -361,7 +391,7 @@ class ThemeValidator {
       console.log('   - 完善 Element Plus 变量映射以确保组件样式一致性')
     }
 
-    console.log('\n🔗 相关文档:')
+    console.log('\n📎 相关文档:')
     console.log('   - 设计指南: docs/design/THEME_GUIDE.md')
     console.log('   - 组件展示: http://localhost:5173/component-showcase')
     console.log('   - UI Kit 令牌: packages/ui-kit/src/theme/tokens.json')
@@ -377,6 +407,7 @@ class ThemeValidator {
     this.validateThemeFile()
     this.validateElementPlusMapping()
     this.validateAppIntegration()
+    this.scanHardcodedColors()
     this.validateComponentConsistency()
 
     return this.generateReport()
@@ -391,7 +422,6 @@ function main() {
   process.exit(success ? 0 : 1)
 }
 
-// 如果直接运行此脚本
 if (require.main === module) {
   main()
 }

@@ -640,39 +640,39 @@ export class PreviewService {
   </text>
 
   <!-- Content area -->
-  <rect x="10" y="50" width="280" height="140" fill="white" stroke="#ddd" stroke-width="1" rx="5"/>
+  <rect x="10" y="50" width="280" height="140" fill="white" stroke="#E2E8F0" stroke-width="1" rx="5"/>
 
   <!-- Title -->
-  <text x="150" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#333" font-weight="600">
+  <text x="150" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1E293B" font-weight="600">
     ${this.truncateText(title, 35)}
   </text>
 
   <!-- Cell count indicator -->
-  <rect x="20" y="90" width="60" height="20" fill="#e3f2fd" rx="3"/>
-  <text x="50" y="103" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1976d2">
+  <rect x="20" y="90" width="60" height="20" fill="#EEF2FF" rx="3"/>
+  <text x="50" y="103" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#4F46E5">
     ${cellCount} cells
   </text>
 
   <!-- Code cell indicator -->
-  <rect x="90" y="90" width="50" height="20" fill="#f3e5f5" rx="3"/>
-  <text x="115" y="103" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7b1fa2">
+  <rect x="90" y="90" width="50" height="20" fill="#F5F3FF" rx="3"/>
+  <text x="115" y="103" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#6D28D9">
     Code
   </text>
 
   <!-- Markdown cell indicator -->
-  <rect x="150" y="90" width="60" height="20" fill="#e8f5e8" rx="3"/>
-  <text x="180" y="103" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#388e3c">
+  <rect x="150" y="90" width="60" height="20" fill="#ECFDF3" rx="3"/>
+  <text x="180" y="103" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#047857">
     Text
   </text>
 
   <!-- Preview status -->
-  <circle cx="20" cy="170" r="4" fill="#4caf50"/>
-  <text x="30" y="174" font-family="Arial, sans-serif" font-size="10" fill="#666">
+  <circle cx="20" cy="170" r="4" fill="#10B981"/>
+  <text x="30" y="174" font-family="Arial, sans-serif" font-size="10" fill="#475569">
     Preview Ready
   </text>
 
   <!-- Timestamp -->
-  <text x="270" y="174" text-anchor="end" font-family="Arial, sans-serif" font-size="9" fill="#999">
+  <text x="270" y="174" text-anchor="end" font-family="Arial, sans-serif" font-size="9" fill="#94A3B8">
     ${new Date().toLocaleDateString()}
   </text>
 </svg>`

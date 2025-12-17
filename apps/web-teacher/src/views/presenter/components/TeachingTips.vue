@@ -389,9 +389,9 @@ const getTipPriorityLabel = (priority: string) => {
 
 // 进度条颜色
 const getProgressColor = (value: number) => {
-  if (value < 30) return '#f56c6c'
-  if (value < 70) return '#e6a23c'
-  return '#67c23a'
+  if (value < 30) return 'var(--edu-color-error-default)'
+  if (value < 70) return 'var(--edu-color-warning-default)'
+  return 'var(--edu-color-success-default)'
 }
 
 // 时间格式化
@@ -614,9 +614,9 @@ defineExpose({
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--edu-color-white);
+  border-radius: var(--radius-base);
+  box-shadow: var(--edu-shadow-sm);
 }
 
 .tips-header {
@@ -624,7 +624,7 @@ defineExpose({
   align-items: center;
   justify-content: space-between;
   padding: 16px;
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid var(--edu-color-gray-200);
 
   h3 {
     display: flex;
@@ -633,7 +633,7 @@ defineExpose({
     margin: 0;
     font-size: 16px;
     font-weight: 600;
-    color: #303133;
+    color: var(--edu-color-gray-900);
   }
 
   .header-actions {
@@ -643,7 +643,7 @@ defineExpose({
 }
 
 .tips-filters {
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid var(--edu-color-gray-200);
 
   .tab-label {
     display: flex;
@@ -671,16 +671,16 @@ defineExpose({
     gap: 8px;
     margin-bottom: 12px;
     padding: 8px 12px;
-    background: #fef0f0;
-    border: 1px solid #fbc4c4;
+    background: var(--edu-color-error-light);
+    border: 1px solid var(--edu-color-error-light);
     border-radius: 4px;
-    color: #f56c6c;
+    color: var(--edu-color-error-default);
     font-weight: 500;
   }
 
   .tip-item.priority {
-    background: #fef0f0;
-    border-color: #fbc4c4;
+    background: var(--edu-color-error-light);
+    border-color: var(--edu-color-error-light);
   }
 }
 
@@ -692,33 +692,33 @@ defineExpose({
     padding: 12px;
     border-radius: 6px;
     margin-bottom: 8px;
-    border: 1px solid #ebeef5;
+    border: 1px solid var(--edu-color-gray-200);
     transition: all 0.3s ease;
 
     &:hover {
-      background: #f8f9fa;
-      border-color: #e4e7ed;
+      background: var(--edu-color-gray-50);
+      border-color: var(--edu-color-gray-200);
     }
 
     &.dismissed {
       opacity: 0.5;
-      background: #fafafa;
+      background: var(--edu-color-gray-50);
     }
 
     &.ai {
-      border-left: 3px solid #409eff;
+      border-left: 3px solid var(--edu-primary-500);
     }
 
     &.timing {
-      border-left: 3px solid #e6a23c;
+      border-left: 3px solid var(--edu-color-warning-default);
     }
 
     &.engagement {
-      border-left: 3px solid #67c23a;
+      border-left: 3px solid var(--edu-color-success-default);
     }
 
     &.content {
-      border-left: 3px solid #909399;
+      border-left: 3px solid var(--edu-color-gray-500);
     }
   }
 }
@@ -735,19 +735,19 @@ defineExpose({
   font-size: 14px;
 
   .ai & {
-    background: #409eff;
+    background: var(--edu-primary-500);
   }
 
   .timing & {
-    background: #e6a23c;
+    background: var(--edu-color-warning-default);
   }
 
   .engagement & {
-    background: #67c23a;
+    background: var(--edu-color-success-default);
   }
 
   .content & {
-    background: #909399;
+    background: var(--edu-color-gray-500);
   }
 }
 
@@ -758,13 +758,13 @@ defineExpose({
 
 .tip-title {
   font-weight: 500;
-  color: #303133;
+  color: var(--edu-color-gray-900);
   font-size: 14px;
   margin-bottom: 4px;
 }
 
 .tip-description {
-  color: #606266;
+  color: var(--edu-color-gray-600);
   font-size: 13px;
   line-height: 1.4;
   margin-bottom: 8px;
@@ -778,7 +778,7 @@ defineExpose({
     justify-content: space-between;
     margin-bottom: 4px;
     font-size: 12px;
-    color: #909399;
+    color: var(--edu-color-gray-500);
   }
 }
 
@@ -791,7 +791,7 @@ defineExpose({
 
 .tip-timestamp {
   font-size: 11px;
-  color: #c0c4cc;
+  color: var(--edu-color-gray-400);
   margin-top: 8px;
 }
 
@@ -805,7 +805,7 @@ defineExpose({
   align-items: center;
   justify-content: center;
   padding: 40px 20px;
-  color: #909399;
+  color: var(--edu-color-gray-500);
 
   .el-icon {
     margin-bottom: 16px;
@@ -827,7 +827,7 @@ defineExpose({
 
     .setting-label {
       font-weight: 500;
-      color: #303133;
+      color: var(--edu-color-gray-900);
     }
   }
 }
@@ -839,23 +839,23 @@ defineExpose({
     h4 {
       margin: 0 0 12px 0;
       font-size: 14px;
-      color: #303133;
-      border-bottom: 1px solid #ebeef5;
+      color: var(--edu-color-gray-900);
+      border-bottom: 1px solid var(--edu-color-gray-200);
       padding-bottom: 8px;
     }
 
     p {
       margin: 0 0 12px 0;
-      color: #606266;
+      color: var(--edu-color-gray-600);
       line-height: 1.6;
     }
   }
 
   .details-content {
-    color: #606266;
+    color: var(--edu-color-gray-600);
     line-height: 1.6;
     padding: 12px;
-    background: #f8f9fa;
+    background: var(--edu-color-gray-50);
     border-radius: 4px;
   }
 
@@ -868,16 +868,16 @@ defineExpose({
       display: flex;
       justify-content: space-between;
       padding: 8px 12px;
-      background: #f8f9fa;
+      background: var(--edu-color-gray-50);
       border-radius: 4px;
 
       .data-label {
-        color: #909399;
+        color: var(--edu-color-gray-500);
         font-size: 13px;
       }
 
       .data-value {
-        color: #303133;
+        color: var(--edu-color-gray-900);
         font-weight: 500;
       }
     }
@@ -892,14 +892,14 @@ defineExpose({
       position: relative;
       padding-left: 16px;
       margin-bottom: 8px;
-      color: #606266;
+      color: var(--edu-color-gray-600);
       line-height: 1.5;
 
       &:before {
         content: '•';
         position: absolute;
         left: 0;
-        color: #409eff;
+        color: var(--edu-primary-500);
       }
     }
   }

@@ -6,6 +6,10 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'
 import router from './router'
 
+// UI Kit 主题导入 - 必须在最前面
+import '@reopeninnolab/ui-kit/styles'
+import { themeManager } from '@reopeninnolab/ui-kit/theme'
+
 // 样式导入
 import 'element-plus/dist/index.css'
 import './assets/styles/main.scss'
@@ -18,6 +22,9 @@ import { useOfflineData } from './services/persistence/offline-data.service'
 
 const app = createApp(App)
 const pinia = createPinia()
+
+// 应用UI Kit主题到DOM
+themeManager.applyFullTheme()
 
 // 注册 Element Plus 图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

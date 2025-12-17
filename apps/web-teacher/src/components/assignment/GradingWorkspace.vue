@@ -688,10 +688,10 @@ const getSubjectVariant = (subject: string): 'success' | 'warning' | 'error' | '
 }
 
 const getProgressColor = (progress: number) => {
-  if (progress >= 80) return '#67c23a'
-  if (progress >= 60) return '#e6a23c'
-  if (progress >= 40) return '#f56c6c'
-  return '#909399'
+  if (progress >= 80) return 'var(--edu-color-success-default)'
+  if (progress >= 60) return 'var(--edu-color-warning-default)'
+  if (progress >= 40) return 'var(--edu-color-error-default)'
+  return 'var(--edu-color-gray-500)'
 }
 
 const getGradeVariant = (scoreRatio: number): 'success' | 'warning' | 'error' | 'info' => {

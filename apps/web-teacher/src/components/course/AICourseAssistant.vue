@@ -183,7 +183,7 @@
               <div class="analytics-dashboard">
                 <div class="analytics-summary">
                   <div class="summary-card">
-                    <div class="summary-icon" style="background: #52C41A;">
+                    <div class="summary-icon" style="background: #10B981;">
                       <el-icon><TrendCharts /></el-icon>
                     </div>
                     <div class="summary-content">
@@ -192,7 +192,7 @@
                     </div>
                   </div>
                   <div class="summary-card">
-                    <div class="summary-icon" style="background: #1890FF;">
+                    <div class="summary-icon" style="background: #6366F1;">
                       <el-icon><DataLine /></el-icon>
                     </div>
                     <div class="summary-content">

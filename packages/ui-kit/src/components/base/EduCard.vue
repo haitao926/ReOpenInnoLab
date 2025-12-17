@@ -222,26 +222,26 @@ document.addEventListener('click', (e) => {
 
 <style lang="scss" scoped>
 .edu-card {
-  background-color: var(--card-bg);
-  border-radius: var(--card-border-radius);
-  box-shadow: var(--card-shadow);
-  transition: all var(--edu-duration-normal) var(--edu-easing-in-out);
+  background-color: var(--edu-bg-primary);
+  border-radius: var(--edu-border-radius-lg);
+  box-shadow: var(--edu-shadow-base);
+  transition: all var(--edu-duration-normal) var(--edu-easing-smooth);
   position: relative;
   overflow: hidden;
 
   &:focus-visible {
-    outline: 2px solid var(--edu-primary-500);
+    outline: 2px solid var(--edu-color-primary-500);
     outline-offset: 2px;
   }
 
   // 变体样式
   &--default {
-    border: 1px solid var(--edu-border-light);
+    border: 1px solid var(--edu-border-color-light);
     background: var(--edu-bg-primary);
   }
 
   &--bordered {
-    border: 2px solid var(--edu-border-base);
+    border: 1px solid var(--edu-border-color);
     box-shadow: none;
     background: var(--edu-bg-primary);
   }
@@ -259,15 +259,15 @@ document.addEventListener('click', (e) => {
   }
 
   &--glass {
-    border-radius: 12px;
+    border-radius: var(--edu-border-radius-lg);
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05); /* Match GlassSurface card variant */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
     position: relative;
-    overflow: visible; /* Changed to visible to allow hover effects */
+    overflow: visible;
     
-    transition: all 0.3s ease;
+    transition: all var(--edu-duration-normal) var(--edu-easing-smooth);
 
     /* Highlight top border for glass effect */
     &::before {
@@ -286,11 +286,10 @@ document.addEventListener('click', (e) => {
       pointer-events: none;
     }
     
-    /* Hover Effect from GlassSurface */
     &:hover:not(.edu-card--disabled) {
         background: rgba(255, 255, 255, 0.75);
         transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        box-shadow: var(--edu-shadow-lg);
         border-color: rgba(255, 255, 255, 0.6);
     }
   }
@@ -316,11 +315,11 @@ document.addEventListener('click', (e) => {
     .edu-card__footer {
       position: relative;
       z-index: 1;
-      color: white;
+      color: var(--edu-color-white);
     }
 
     .edu-card__title {
-      color: white;
+      color: var(--edu-color-white);
     }
 
     .edu-card__subtitle {
@@ -331,19 +330,19 @@ document.addEventListener('click', (e) => {
   // 尺寸样式
   &--sm {
     .edu-card__title {
-      font-size: var(--font-size-lg);
+      font-size: var(--edu-font-size-lg);
     }
   }
 
   &--md {
     .edu-card__title {
-      font-size: var(--font-size-xl);
+      font-size: var(--edu-font-size-xl);
     }
   }
 
   &--lg {
     .edu-card__title {
-      font-size: var(--font-size-2xl);
+      font-size: var(--edu-font-size-2xl);
     }
   }
 
@@ -357,38 +356,26 @@ document.addEventListener('click', (e) => {
   }
 
   &--padding-sm {
-    .edu-card__header {
-      padding: var(--spacing-sm);
-    }
-    .edu-card__body {
-      padding: var(--spacing-sm);
-    }
+    .edu-card__header,
+    .edu-card__body,
     .edu-card__footer {
-      padding: var(--spacing-sm);
+      padding: var(--edu-spacing-3);
     }
   }
 
   &--padding-md {
-    .edu-card__header {
-      padding: var(--spacing-base);
-    }
-    .edu-card__body {
-      padding: var(--spacing-base);
-    }
+    .edu-card__header,
+    .edu-card__body,
     .edu-card__footer {
-      padding: var(--spacing-base);
+      padding: var(--edu-spacing-5);
     }
   }
 
   &--padding-lg {
-    .edu-card__header {
-      padding: var(--spacing-xl);
-    }
-    .edu-card__body {
-      padding: var(--spacing-xl);
-    }
+    .edu-card__header,
+    .edu-card__body,
     .edu-card__footer {
-      padding: var(--spacing-xl);
+      padding: var(--edu-spacing-7);
     }
   }
 
@@ -419,12 +406,12 @@ document.addEventListener('click', (e) => {
     border: 2px solid transparent;
 
     &:hover:not(.edu-card--disabled) {
-      border-color: var(--edu-primary-200);
+      border-color: var(--edu-color-primary-200);
     }
 
     &.edu-card--selected {
-      border-color: var(--edu-primary-500);
-      background-color: var(--edu-primary-50);
+      border-color: var(--edu-color-primary-500);
+      background-color: var(--edu-color-primary-50);
     }
   }
 
@@ -443,8 +430,8 @@ document.addEventListener('click', (e) => {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--spacing-base);
-  border-bottom: 1px solid var(--edu-color-gray-100);
+  gap: var(--edu-spacing-4);
+  border-bottom: 1px solid var(--edu-border-color-light);
 }
 
 .edu-card__header-content {
@@ -453,42 +440,42 @@ document.addEventListener('click', (e) => {
 }
 
 .edu-card__title {
-  margin: 0 0 var(--spacing-xs) 0;
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
-  line-height: var(--line-height-tight);
+  margin: 0 0 var(--edu-spacing-1) 0;
+  font-weight: var(--edu-font-weight-semibold);
+  color: var(--edu-text-primary);
+  line-height: var(--edu-line-height-tight);
 }
 
 .edu-card__subtitle {
   margin: 0;
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-  line-height: var(--line-height-normal);
+  font-size: var(--edu-font-size-sm);
+  color: var(--edu-text-secondary);
+  line-height: var(--edu-line-height-normal);
 }
 
 .edu-card__actions {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: var(--edu-spacing-2);
   flex-shrink: 0;
 }
 
 .edu-card__more-btn {
   background: none;
   border: none;
-  padding: var(--spacing-xs);
-  border-radius: var(--radius-sm);
+  padding: var(--edu-spacing-2);
+  border-radius: var(--edu-border-radius-base);
   cursor: pointer;
-  color: var(--icon-color-secondary);
+  color: var(--edu-text-secondary);
   transition: all var(--edu-duration-normal) var(--edu-easing-in-out);
 
   &:hover {
     background-color: var(--edu-color-gray-100);
-    color: var(--icon-color-primary);
+    color: var(--edu-color-primary-500);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--edu-primary-500);
+    outline: 2px solid var(--edu-color-primary-500);
     outline-offset: 1px;
   }
 
@@ -503,36 +490,36 @@ document.addEventListener('click', (e) => {
 }
 
 .edu-card__body-content {
-  color: var(--text-primary);
-  line-height: var(--line-height-relaxed);
+  color: var(--edu-text-primary);
+  line-height: var(--edu-line-height-relaxed);
 }
 
 .edu-card__footer {
-  border-top: 1px solid var(--edu-color-gray-100);
-  padding-top: var(--spacing-base);
+  border-top: 1px solid var(--edu-border-color-light);
+  padding-top: var(--edu-spacing-4);
 }
 
 .edu-card__more-menu {
   position: absolute;
-  top: var(--spacing-base);
-  right: var(--spacing-base);
-  background-color: var(--bg-elevated);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-base);
+  top: var(--edu-spacing-5);
+  right: var(--edu-spacing-5);
+  background-color: var(--edu-bg-primary);
+  border: 1px solid var(--edu-border-color);
+  border-radius: var(--edu-border-radius-base);
   box-shadow: var(--edu-shadow-lg);
-  z-index: var(--edu-z-dropdown);
+  z-index: var(--edu-z-index-dropdown);
   min-width: 120px;
   overflow: hidden;
 
   button {
     display: block;
     width: 100%;
-    padding: var(--spacing-sm) var(--spacing-base);
+    padding: var(--edu-spacing-2) var(--edu-spacing-4);
     background: none;
     border: none;
     text-align: left;
-    font-size: var(--font-size-sm);
-    color: var(--text-primary);
+    font-size: var(--edu-font-size-sm);
+    color: var(--edu-text-primary);
     cursor: pointer;
     transition: background-color var(--edu-duration-fast) var(--edu-easing-in-out);
 
@@ -541,11 +528,11 @@ document.addEventListener('click', (e) => {
     }
 
     &:first-child {
-      padding-top: var(--spacing-base);
+      padding-top: var(--edu-spacing-3);
     }
 
     &:last-child {
-      padding-bottom: var(--spacing-base);
+      padding-bottom: var(--edu-spacing-3);
     }
   }
 }
@@ -556,7 +543,7 @@ document.addEventListener('click', (e) => {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: var(--edu-z-overlay);
+  z-index: var(--edu-z-index-overlay);
   background: transparent;
 }
 
@@ -658,8 +645,8 @@ document.addEventListener('click', (e) => {
 .edu-card__loading-spinner {
   width: 24px;
   height: 24px;
-  border: 2px solid var(--edu-border-light);
-  border-top: 2px solid var(--edu-primary);
+  border: 2px solid var(--edu-border-color-light);
+  border-top: 2px solid var(--edu-color-primary-500);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -672,28 +659,28 @@ document.addEventListener('click', (e) => {
 
 // 渐变变量
 .edu-card {
-  --card-gradient: linear-gradient(135deg, var(--edu-primary) 0%, var(--edu-primary-light) 100%);
+  --card-gradient: linear-gradient(135deg, var(--edu-color-primary-500) 0%, var(--edu-color-primary-300) 100%);
 }
 
 .edu-card--gradient[data-gradient-variant="secondary"] {
-  --card-gradient: linear-gradient(135deg, var(--edu-secondary) 0%, var(--edu-secondary-light) 100%);
+  --card-gradient: linear-gradient(135deg, var(--edu-color-secondary-500) 0%, var(--edu-color-secondary-300) 100%);
 }
 
 .edu-card--gradient[data-gradient-variant="warm"] {
-  --card-gradient: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+  --card-gradient: var(--edu-gradient-tertiary);
 }
 
 .edu-card--gradient[data-gradient-variant="cool"] {
-  --card-gradient: linear-gradient(135deg, #4ECDC4 0%, #44A3AA 100%);
+  --card-gradient: var(--edu-gradient-secondary);
 }
 
 .edu-card--gradient[data-gradient-variant="success"] {
-  --card-gradient: linear-gradient(135deg, var(--edu-success) 0%, var(--edu-success-light) 100%);
+  --card-gradient: linear-gradient(135deg, var(--edu-color-success-default) 0%, var(--edu-color-success-light) 100%);
 }
 
 // 自定义强调色
 .edu-card {
-  --edu-accent-color: var(--edu-primary);
+  --edu-accent-color: var(--edu-color-primary-500);
 }
 
 .edu-card[data-accent-color] {
@@ -708,31 +695,31 @@ document.addEventListener('click', (e) => {
 // 深色模式适配
 [data-theme="dark"] {
   .edu-card {
-    background-color: var(--card-bg);
-    border-color: var(--border-color);
+    background-color: var(--edu-bg-primary);
+    border-color: var(--edu-border-color);
 
     &--default {
-      border-color: var(--border-color);
+      border-color: var(--edu-border-color);
     }
 
     &--bordered {
-      border-color: var(--border-color-strong);
+      border-color: var(--edu-border-color-light);
     }
 
     &--glass {
-      background: var(--edu-dark-glass-bg);
-      border: var(--edu-dark-glass-border);
-      box-shadow: var(--edu-dark-glass-shadow);
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: var(--edu-shadow-lg);
     }
 
     &--selectable {
       &:hover:not(.edu-card--disabled) {
-        border-color: var(--edu-primary-400);
+        border-color: var(--edu-color-primary-400);
       }
 
       &.edu-card--selected {
         background-color: rgba(133, 190, 255, 0.1);
-        border-color: var(--edu-primary-500);
+        border-color: var(--edu-color-primary-500);
       }
     }
 
@@ -744,11 +731,11 @@ document.addEventListener('click', (e) => {
   }
 
   .edu-card__header {
-    border-bottom-color: var(--border-color);
+    border-bottom-color: var(--edu-border-color);
   }
 
   .edu-card__footer {
-    border-top-color: var(--border-color);
+    border-top-color: var(--edu-border-color);
   }
 
   .edu-card__more-btn {
@@ -758,8 +745,8 @@ document.addEventListener('click', (e) => {
   }
 
   .edu-card__more-menu {
-    background-color: var(--bg-elevated);
-    border-color: var(--border-color-strong);
+    background-color: var(--edu-bg-primary);
+    border-color: var(--edu-border-color);
 
     button {
       &:hover {

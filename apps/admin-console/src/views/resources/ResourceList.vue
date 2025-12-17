@@ -278,9 +278,9 @@ onMounted(() => {
   .type-icon {
     margin-right: 8px;
 
-    &.type-document { color: #409eff; }
-    &.type-video { color: #67c23a; }
-    &.type-audio { color: #e6a23c; }
+    &.type-document { color: var(--edu-primary-500); }
+    &.type-video { color: var(--edu-color-success-default); }
+    &.type-audio { color: var(--edu-color-warning-default); }
     &.type-image { color: #f56c6c; }
     &.type-other { color: #909399; }
   }

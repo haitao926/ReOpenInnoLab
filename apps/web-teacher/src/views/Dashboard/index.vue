@@ -1,536 +1,289 @@
 <template>
   <TeacherWorkspaceLayout
     title="教学工作台"
-    subtitle="今天 2024年5月20日 星期一"
     :leftCollapsible="false"
     :rightCollapsible="false"
   >
-    <template #header-controls>
-       <div class="header-actions">
-         <EduButton variant="primary" icon="VideoPlay" @click="startInstantClass">
-           快速开始上课
-         </EduButton>
-       </div>
-    </template>
-
-    <div class="dashboard-container page-surface">
-      <!-- Top Row: Status & Stats -->
-      <div class="stats-row">
-        <GlassSurface variant="panel" class="stat-card">
-          <div class="stat-icon blue">
-            <el-icon><Reading /></el-icon>
-          </div>
-          <div class="stat-info">
-            <span class="stat-value">3</span>
-            <span class="stat-label">进行中课程</span>
-          </div>
-        </GlassSurface>
-
-        <GlassSurface variant="panel" class="stat-card">
-          <div class="stat-icon orange">
-            <el-icon><EditPen /></el-icon>
-          </div>
-          <div class="stat-info">
-            <span class="stat-value">12</span>
-            <span class="stat-label">待批改作业</span>
-          </div>
-        </GlassSurface>
-
-         <GlassSurface variant="panel" class="stat-card">
-          <div class="stat-icon purple">
-            <el-icon><User /></el-icon>
-          </div>
-          <div class="stat-info">
-            <span class="stat-value">45</span>
-            <span class="stat-label">学生互动</span>
-          </div>
-        </GlassSurface>
-
-        <GlassSurface variant="panel" class="stat-card action-card" @click="createNewCourse">
-           <div class="action-content">
-              <el-icon class="action-icon"><Plus /></el-icon>
-              <span>创建新课程</span>
-           </div>
-        </GlassSurface>
+    <div class="dashboard-canvas">
+      
+      <!-- Greeting Header -->
+      <div class="welcome-header">
+         <h2 class="welcome-title">早安，张老师 👋</h2>
+         <p class="welcome-sub">今天是 2025年12月17日 星期三，您有 3 节课需要处理</p>
       </div>
 
-      <!-- Middle Row: Workbench -->
-      <div class="workbench-grid">
-        <!-- Main Column: Active Teaching -->
-        <div class="main-column">
-          <!-- Next Up Card -->
-          <section class="mb-6">
-            <h3 class="section-title">下一节课</h3>
-            <GlassSurface variant="card" class="next-up-card" tinted>
-               <div class="next-up-content">
-                  <div class="time-badge">
-                     <span class="time-big">10:10</span>
-                     <span class="time-desc">25分钟后开始</span>
-                  </div>
-                  <div class="class-details">
-                     <div class="class-tags">
-                        <EduTag variant="primary" size="sm">人工智能基础</EduTag>
-                        <EduTag variant="secondary" size="sm">高一(2)班</EduTag>
-                     </div>
-                     <h2 class="lesson-title">第三章：神经网络初探与实践</h2>
-                     <p class="lesson-desc">本节课将带领学生使用 TensorFlow Playground 直观体验神经网络的训练过程。</p>
-                  </div>
-                  <div class="class-action">
-                     <EduButton size="large" variant="primary" icon="VideoPlay" @click="enterClassroom">
-                        进入教室
-                     </EduButton>
-                  </div>
-               </div>
-            </GlassSurface>
-          </section>
-
-          <!-- Timeline -->
-          <section>
-            <div class="flex justify-between items-center mb-4">
-               <h3 class="section-title">今日日程</h3>
-               <el-button link type="primary">查看全部</el-button>
-            </div>
-            
-            <div class="schedule-list">
-               <div v-for="item in scheduleItems" :key="item.id" class="schedule-item">
-                  <div class="time-column">
-                     <span class="start">{{ item.start }}</span>
-                     <span class="end">{{ item.end }}</span>
-                  </div>
-                  <GlassSurface class="schedule-content" :variant="item.status === 'done' ? 'base' : 'card'">
-                     <div class="schedule-dot" :class="item.status"></div>
-                     <div class="schedule-texts">
-                        <span class="sched-title">{{ item.title }}</span>
-                        <span class="sched-sub">{{ item.class }} • {{ item.room }}</span>
-                     </div>
-                     <div class="sched-status">
-                        <el-tag v-if="item.status === 'done'" type="info" size="small" effect="plain">已结束</el-tag>
-                        <el-tag v-else-if="item.status === 'active'" type="success" size="small" effect="dark">进行中</el-tag>
-                        <el-tag v-else type="primary" size="small" effect="light">未开始</el-tag>
-                     </div>
-                  </GlassSurface>
-               </div>
-            </div>
-          </section>
-        </div>
-
-        <!-- Side Column: Quick Access -->
-        <div class="side-column">
-          <!-- Quick Courses -->
-          <section class="mb-6">
-             <h3 class="section-title">最近编辑</h3>
-             <div class="course-list">
-                <GlassSurface 
-                  v-for="course in recentCourses" 
-                  :key="course.id" 
-                  variant="base" 
-                  class="mini-course-card"
-                  @click="goToCourse(course.id)"
-                >
-                   <div class="course-cover" :style="{ backgroundColor: course.color }">
-                      <el-icon><component :is="course.icon" /></el-icon>
-                   </div>
-                   <div class="course-info">
-                      <span class="c-name">{{ course.name }}</span>
-                      <span class="c-update">2小时前更新</span>
-                   </div>
-                   <el-icon class="arrow-icon"><ArrowRight /></el-icon>
-                </GlassSurface>
-             </div>
-          </section>
-
-          <!-- Inboxes -->
-          <section>
-             <h3 class="section-title">消息通知</h3>
-             <GlassSurface variant="panel" class="notification-panel">
-                <div class="notif-item">
-                   <div class="dot red"></div>
-                   <span>张伟提交了作业《Python循环》</span>
-                   <span class="time">5m</span>
-                </div>
-                 <div class="notif-item">
-                   <div class="dot blue"></div>
-                   <span>教务处：期中考试安排通知</span>
-                   <span class="time">1h</span>
-                </div>
-                 <div class="notif-item">
-                   <div class="dot"></div>
-                   <span>系统：云实验环境维护完成</span>
-                   <span class="time">2h</span>
-                </div>
-             </GlassSurface>
-          </section>
-        </div>
+      <!-- Quick Actions Row -->
+      <div class="action-grid">
+         <div class="dash-action-card blue" @click="startInstantClass">
+            <div class="act-icon"><el-icon><VideoPlay /></el-icon></div>
+            <span>快速上课</span>
+         </div>
+         <div class="dash-action-card purple" @click="createNewCourse">
+            <div class="act-icon"><el-icon><Plus /></el-icon></div>
+            <span>新建课程</span>
+         </div>
+         <div class="dash-action-card orange">
+            <div class="act-icon"><el-icon><EditPen /></el-icon></div>
+            <span>批改作业</span>
+            <span class="badge">12</span>
+         </div>
+         <div class="dash-action-card green">
+            <div class="act-icon"><el-icon><DataAnalysis /></el-icon></div>
+            <span>学情分析</span>
+         </div>
       </div>
+
+      <!-- Main Dashboard Grid -->
+      <div class="dashboard-grid">
+         
+         <!-- Left Column: Schedule & Tasks -->
+         <div class="main-column">
+            <!-- Next Class -->
+            <div class="section-block">
+               <h3 class="section-header">下一节课</h3>
+               <div class="next-class-card">
+                  <div class="time-box">
+                     <span class="t-start">10:10</span>
+                     <span class="t-status">25分钟后</span>
+                  </div>
+                  <div class="class-detail">
+                     <div class="c-tags">
+                        <span class="tag-pill blue">人工智能基础</span>
+                        <span class="tag-pill gray">高一(2)班</span>
+                     </div>
+                     <div class="c-title">第三章：神经网络初探与实践</div>
+                     <div class="c-loc"><el-icon><Location /></el-icon> AI 实验室 A201</div>
+                  </div>
+                  <el-button type="primary" size="large" round @click="enterClassroom">进入教室</el-button>
+               </div>
+            </div>
+
+            <!-- Schedule -->
+            <div class="section-block mt-6">
+               <h3 class="section-header">今日日程</h3>
+               <div class="schedule-list">
+                  <div class="schedule-row done">
+                     <div class="s-time">08:00 - 08:45</div>
+                     <div class="s-line"></div>
+                     <div class="s-content">
+                        <span class="s-title">Python 基础语法</span>
+                        <span class="s-sub">高一(1)班 • 已结束</span>
+                     </div>
+                  </div>
+                  <div class="schedule-row active">
+                     <div class="s-time">10:10 - 10:55</div>
+                     <div class="s-line"></div>
+                     <div class="s-content">
+                        <span class="s-title">神经网络初探</span>
+                        <span class="s-sub">高一(2)班 • 即将开始</span>
+                     </div>
+                  </div>
+                  <div class="schedule-row future">
+                     <div class="s-time">14:00 - 14:45</div>
+                     <div class="s-line"></div>
+                     <div class="s-content">
+                        <span class="s-title">计算机视觉项目</span>
+                        <span class="s-sub">社团课 • 未开始</span>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <!-- Right Column: Recent & Updates -->
+         <div class="side-column">
+            <div class="section-block">
+               <h3 class="section-header">最近编辑</h3>
+               <div class="recent-list">
+                  <div class="recent-item" @click="goToCourse('c1')">
+                     <div class="r-icon" style="background: #E0E7FF; color: #4F46E5"><el-icon><Monitor /></el-icon></div>
+                     <div class="r-info">
+                        <div class="r-name">人工智能基础概论</div>
+                        <div class="r-time">2小时前</div>
+                     </div>
+                  </div>
+                  <div class="recent-item" @click="goToCourse('c2')">
+                     <div class="r-icon" style="background: #FEF3C7; color: #D97706"><el-icon><DataLine /></el-icon></div>
+                     <div class="r-info">
+                        <div class="r-name">Python 数据分析</div>
+                        <div class="r-time">昨天</div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+
+            <div class="section-block mt-6">
+               <h3 class="section-header">消息通知</h3>
+               <div class="msg-list">
+                  <div class="msg-item">
+                     <div class="msg-dot red"></div>
+                     <div class="msg-text">张伟提交了作业《Python循环》</div>
+                     <div class="msg-time">5m</div>
+                  </div>
+                  <div class="msg-item">
+                     <div class="msg-dot blue"></div>
+                     <div class="msg-text">教务处：期中考试安排通知</div>
+                     <div class="msg-time">1h</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+      </div>
+
     </div>
   </TeacherWorkspaceLayout>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import {
-  Reading,
-  EditPen,
-  User,
-  Plus,
-  VideoPlay,
-  ArrowRight,
-  Monitor,
-  DataLine,
-  Connection
+  VideoPlay, Plus, EditPen, DataAnalysis,
+  Location, Monitor, DataLine
 } from '@element-plus/icons-vue'
-import { EduButton, EduTag, GlassSurface } from '@reopeninnolab/ui-kit'
 import TeacherWorkspaceLayout from '@/components/layout/TeacherWorkspaceLayout.vue'
 
 const router = useRouter()
 
-// Actions
-const startInstantClass = () => {
-    ElMessage.success('正在启动快速课堂...')
-}
-
-const createNewCourse = () => {
-    router.push('/courses/create')
-}
-
-const enterClassroom = () => {
-    ElMessage.success('进入教室: 神经网络初探')
-}
-
-const goToCourse = (id: string) => {
-    router.push(`/courses/${id}`)
-}
-
-// Data
-const scheduleItems = ref([
-    { id: 1, start: '08:00', end: '08:45', title: 'Python 基础语法', class: '高一(1)班', room: '机房 A201', status: 'done' },
-    { id: 2, start: '09:00', end: '09:45', title: 'Python 基础语法', class: '高一(3)班', room: '机房 A201', status: 'done' },
-    { id: 3, start: '10:10', end: '10:55', title: '神经网络初探', class: '高一(2)班', room: 'AI 实验室', status: 'active' },
-    { id: 4, start: '14:00', end: '14:45', title: '计算机视觉项目', class: '社团课', room: '创客空间', status: 'future' },
-])
-
-const recentCourses = ref([
-    { id: 'c1', name: '人工智能基础概论', color: '#5B8FF9', icon: 'Monitor' },
-    { id: 'c2', name: 'Python 数据分析', color: '#FAAD14', icon: 'DataLine' },
-    { id: 'c3', name: '物联网实战', color: '#52C41A', icon: 'Connection' },
-])
-
+const startInstantClass = () => ElMessage.success('启动快速课堂')
+const createNewCourse = () => router.push('/courses/create')
+const enterClassroom = () => ElMessage.success('进入教室')
+const goToCourse = (id: string) => router.push(`/courses/${id}`)
 </script>
 
 <style scoped lang="scss">
-.dashboard-container {
+.dashboard-canvas {
+  max-width: 1200px;
+  margin: 0 auto;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--edu-space-section);
+  gap: 32px;
 }
 
-.section-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--edu-text-primary);
-    margin-bottom: 12px;
+.welcome-header {
+  margin-top: 8px;
+}
+.welcome-title { font-size: 24px; font-weight: 700; color: #0F172A; margin: 0 0 8px 0; }
+.welcome-sub { color: #64748B; font-size: 14px; margin: 0; }
+
+/* Quick Actions */
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
 }
 
-/* Stats Row */
-.stats-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    
-    @media (max-width: 1024px) {
-        grid-template-columns: repeat(2, 1fr);
-    }
+.dash-action-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  position: relative;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+  }
+  
+  .act-icon {
+    width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;
+  }
+  
+  span { font-weight: 600; color: #334155; font-size: 15px; }
+  
+  .badge {
+    position: absolute; top: 12px; right: 12px; background: #EF4444; color: white; font-size: 11px; padding: 2px 8px; border-radius: 10px;
+  }
+  
+  &.blue .act-icon { background: #E0E7FF; color: #4F46E5; }
+  &.purple .act-icon { background: #F3E8FF; color: #9333EA; }
+  &.orange .act-icon { background: #FFEDD5; color: #F97316; }
+  &.green .act-icon { background: #DCFCE7; color: #16A34A; }
 }
 
-.stat-card {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    gap: 16px;
-    transition: transform 0.2s;
-    
-    &:hover {
-        transform: translateY(-2px);
-    }
+/* Grid Layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 32px;
 }
 
-.stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    
-    &.blue { background: rgba(91, 143, 249, 0.1); color: #5B8FF9; }
-    &.orange { background: rgba(250, 173, 20, 0.1); color: #FAAD14; }
-    &.purple { background: rgba(114, 46, 209, 0.1); color: #722ED1; }
+.section-header { font-size: 16px; font-weight: 600; color: #0F172A; margin: 0 0 16px 0; }
+
+/* Next Class */
+.next-class-card {
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  color: white;
+  box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.4);
 }
 
-.stat-info {
-    display: flex;
-    flex-direction: column;
-    
-    .stat-value {
-        font-size: 24px;
-        font-weight: 700;
-        color: var(--edu-text-primary);
-        line-height: 1.2;
-    }
-    
-    .stat-label {
-        font-size: 13px;
-        color: var(--edu-text-secondary);
-    }
+.time-box {
+  display: flex; flex-direction: column; align-items: center; padding-right: 24px; border-right: 1px solid rgba(255,255,255,0.2); min-width: 80px;
+}
+.t-start { font-size: 28px; font-weight: 700; font-family: monospace; }
+.t-status { font-size: 12px; opacity: 0.9; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; margin-top: 4px; }
+
+.class-detail { flex: 1; }
+.c-tags { display: flex; gap: 8px; margin-bottom: 8px; }
+.tag-pill { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; 
+   &.blue { background: white; color: #4F46E5; }
+   &.gray { background: rgba(255,255,255,0.2); color: white; }
+}
+.c-title { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+.c-loc { font-size: 13px; opacity: 0.8; display: flex; align-items: center; gap: 4px; }
+
+/* Schedule */
+.schedule-list { display: flex; flex-direction: column; gap: 0; }
+.schedule-row {
+  display: flex; align-items: flex-start; gap: 16px; padding: 12px 0; position: relative;
+  
+  .s-time { width: 100px; font-size: 13px; color: #64748B; font-family: monospace; text-align: right; }
+  .s-line { 
+     width: 2px; background: #E2E8F0; align-self: stretch; position: relative; 
+     &::before { content: ''; position: absolute; top: 6px; left: -4px; width: 10px; height: 10px; border-radius: 50%; background: #CBD5E1; border: 2px solid #F1F5F9; }
+  }
+  
+  &.active .s-line::before { background: #22C55E; border-color: #DCFCE7; box-shadow: 0 0 0 4px rgba(34,197,94,0.1); }
+  &.active .s-title { color: #0F172A; font-weight: 600; }
+  
+  .s-content { flex: 1; display: flex; flex-direction: column; }
+  .s-title { font-size: 14px; font-weight: 500; color: #334155; }
+  .s-sub { font-size: 12px; color: #94A3B8; }
 }
 
-.action-card {
-    cursor: pointer;
-    border: 2px dashed var(--edu-border-base) !important;
-    background: transparent !important;
-    justify-content: center;
-    
-    .action-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-        color: var(--edu-text-secondary);
-        
-        .action-icon {
-            font-size: 24px;
-        }
-    }
-    
-    &:hover {
-        border-color: var(--edu-primary) !important;
-        color: var(--edu-primary);
-        
-        .action-content { color: var(--edu-primary); }
-    }
+/* Recent */
+.recent-list { display: flex; flex-direction: column; gap: 12px; }
+.recent-item {
+  display: flex; align-items: center; gap: 12px; background: white; padding: 12px; border-radius: 12px; cursor: pointer; transition: all 0.2s;
+  &:hover { background: #F8FAFC; }
 }
+.r-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.r-info { display: flex; flex-direction: column; }
+.r-name { font-size: 14px; font-weight: 500; color: #334155; }
+.r-time { font-size: 12px; color: #94A3B8; }
 
-/* Workbench Grid */
-.workbench-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 24px;
-    
-    @media (max-width: 768px) {
-        grid-template-columns: 1fr;
-    }
-}
+/* Messages */
+.msg-list { display: flex; flex-direction: column; gap: 12px; }
+.msg-item { display: flex; align-items: center; gap: 12px; background: white; padding: 12px; border-radius: 12px; }
+.msg-dot { width: 8px; height: 8px; border-radius: 50%; &.red { background: #EF4444; } &.blue { background: #3B82F6; } }
+.msg-text { flex: 1; font-size: 13px; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.msg-time { font-size: 12px; color: #94A3B8; }
 
-/* Main Column */
-.next-up-card {
-    display: flex;
-    padding: 0;
-    overflow: hidden;
-    
-    .next-up-content {
-        display: flex;
-        width: 100%;
-        padding: 24px;
-        align-items: center;
-        gap: 24px;
-        
-        @media (max-width: 768px) {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-    }
-}
-
-.time-badge {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-right: 24px;
-    border-right: 1px solid var(--edu-border-light);
-    min-width: 100px;
-    
-    .time-big {
-        font-size: 32px;
-        font-weight: 700;
-        color: var(--edu-primary);
-        font-family: monospace;
-    }
-    
-    .time-desc {
-        font-size: 13px;
-        color: var(--edu-success);
-        font-weight: 500;
-        background: rgba(82, 196, 26, 0.1);
-        padding: 2px 8px;
-        border-radius: 10px;
-        margin-top: 4px;
-    }
-
-    @media (max-width: 768px) {
-        border-right: none;
-        border-bottom: 1px solid var(--edu-border-light);
-        padding-right: 0;
-        padding-bottom: 16px;
-        width: 100%;
-        flex-direction: row;
-        justify-content: space-between;
-    }
-}
-
-.class-details {
-    flex: 1;
-    
-    .class-tags {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 8px;
-    }
-    
-    .lesson-title {
-        font-size: 20px;
-        font-weight: 600;
-        margin: 0 0 8px 0;
-        color: var(--edu-text-primary);
-    }
-    
-    .lesson-desc {
-        font-size: 14px;
-        color: var(--edu-text-secondary);
-        margin: 0;
-        line-height: 1.5;
-    }
-}
-
-/* Schedule List */
-.schedule-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.schedule-item {
-    display: flex;
-    gap: 16px;
-}
-
-.time-column {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    min-width: 50px;
-    font-size: 13px;
-    color: var(--edu-text-secondary);
-    font-family: monospace;
-    padding-top: 12px;
-}
-
-.schedule-content {
-    flex: 1;
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: relative;
-    
-    .schedule-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--edu-border-base);
-        
-        &.active { background: var(--edu-success); box-shadow: 0 0 0 4px rgba(82, 196, 26, 0.2); }
-        &.future { background: var(--edu-primary); }
-    }
-    
-    .schedule-texts {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        
-        .sched-title { font-weight: 500; color: var(--edu-text-primary); }
-        .sched-sub { font-size: 12px; color: var(--edu-text-secondary); }
-    }
-}
-
-/* Side Column */
-.course-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.mini-course-card {
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: background 0.2s;
-    
-    &:hover {
-        background: rgba(0,0,0,0.02);
-        
-        .arrow-icon { opacity: 1; transform: translateX(0); }
-    }
-}
-
-.course-cover {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 20px;
-}
-
-.course-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    
-    .c-name { font-weight: 500; font-size: 14px; color: var(--edu-text-primary); }
-    .c-update { font-size: 12px; color: var(--edu-text-tertiary); }
-}
-
-.arrow-icon {
-    opacity: 0;
-    transform: translateX(-4px);
-    transition: all 0.2s;
-    color: var(--edu-text-placeholder);
-}
-
-.notification-panel {
-    padding: 0 16px;
-    
-    .notif-item {
-        padding: 12px 0;
-        border-bottom: 1px solid var(--edu-border-light);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-        color: var(--edu-text-regular);
-        
-        &:last-child { border-bottom: none; }
-        
-        .dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--edu-border-base);
-            
-            &.red { background: var(--edu-error); }
-            &.blue { background: var(--edu-info); }
-        }
-        
-        span:not(.time) { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .time { font-size: 12px; color: var(--edu-text-tertiary); }
-    }
+/* Responsive */
+@media (max-width: 900px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .action-grid { grid-template-columns: repeat(2, 1fr); }
 }
 </style>

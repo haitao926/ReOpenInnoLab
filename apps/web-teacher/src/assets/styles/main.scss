@@ -1,10 +1,10 @@
-@use './variables';
-@use './element-plus-theme';
+// @use './variables'; // Deprecated: Use UI Kit
+// @use './element-plus-theme'; // Deprecated: Moved to UI Kit
 @use './icon-theme';
 @use './sidebar-tokens';
 
 // 开源浦育 ReOpenInnoLab - 教师端主样式文件
-// 导入UI Kit主题样式
+// InnoFlow 风格适配
 
 // 全局样式重置
 * {
@@ -22,15 +22,10 @@ html {
 }
 
 body {
-  background-color: var(--edu-bg-secondary);
-  color: var(--edu-text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--bg-page, var(--edu-color-gray-50));
+  color: var(--text-primary);
+  font-family: var(--font-family-sans);
   transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-[data-theme="dark"] body {
-  background-color: var(--edu-bg-primary);
-  color: var(--edu-text-primary);
 }
 
 // 应用根容器
@@ -47,401 +42,86 @@ body {
   overflow-x: hidden;
 
   &::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
 
   &::-webkit-scrollbar-track {
-    background: var(--edu-bg-tertiary);
-    border-radius: 4px;
+    background: transparent;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--edu-border-medium);
+    background: var(--edu-color-gray-300);
     border-radius: 4px;
     transition: background-color 0.3s ease;
 
     &:hover {
-      background: var(--edu-border-dark);
+      background: var(--edu-color-gray-400);
     }
   }
 }
 
-[data-theme="dark"] {
-  .workspace-main,
-  .layout-content .content-scroller,
-  .main-content,
-  .content-area {
-    &::-webkit-scrollbar-track {
-      background: var(--edu-bg-secondary);
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: var(--edu-border-light);
-
-      &:hover {
-        background: var(--edu-border-medium);
-      }
-    }
-  }
-}
-
-// 全局滚动条样式（覆盖默认样式）
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  border-radius: 4px;
-  background: var(--edu-bg-tertiary);
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: 4px;
-  background: var(--edu-border-medium);
-  transition: background-color 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--edu-border-dark);
-}
-
-// 深色模式滚动条
-[data-theme="dark"] {
-  ::-webkit-scrollbar-track {
-    background: var(--edu-bg-secondary);
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: var(--edu-border-light);
-
-    &:hover {
-      background: var(--edu-border-medium);
-    }
-  }
-}
-
-
-// 教育平台专用CSS变量
+// 布局相关变量 (保留布局相关的特有变量)
 :root {
-  // 教育主题色彩
-  --edu-primary: var(--edu-primary-500);
-  --edu-primary-light: var(--edu-primary-300);
-  --edu-primary-dark: var(--edu-primary-700);
-
-  // 布局相关
-  --edu-header-height: 60px;
-  --edu-sidebar-width: 240px;
-  --edu-sidebar-collapsed-width: 64px;
-
-  // 背景色
-  --edu-bg-color: var(--edu-bg-secondary);
-  --edu-header-bg: var(--edu-bg-primary);
-  --edu-sidebar-bg: var(--edu-bg-primary);
-  --edu-main-bg: var(--edu-bg-secondary);
-
-  // 边框色
-  --edu-border-color: var(--edu-border-light);
-  --edu-border-color-light: var(--edu-bg-tertiary);
-
-  // 文字色
-  --edu-text-primary: var(--edu-text-primary);
-  --edu-text-secondary: var(--edu-text-secondary);
-  --edu-text-disabled: var(--edu-text-disabled);
-
-  // 动效
-  --edu-ease-smooth: var(--edu-easing-in-out);
-  --edu-duration-fast: var(--edu-duration-fast);
-  --edu-duration-normal: var(--edu-duration-base);
-
-  // 阴影
-  --edu-shadow-sm: var(--edu-shadow-sm);
-  --edu-shadow-md: var(--edu-shadow-md);
-  --edu-shadow-lg: var(--edu-shadow-lg);
-
-  // 统一间距尺寸
-  --edu-space-page-x: clamp(20px, 4vw, 32px);
-  --edu-space-section: 24px;
-  --edu-space-block: 16px;
+  --edu-header-height: 64px;
+  --edu-sidebar-width: 260px;
+  --edu-sidebar-collapsed-width: 76px;
+  
+  // 页面级间距
+  --edu-space-page-x: var(--spacing-xl);
 }
 
-[data-theme="dark"] {
-  // 深色模式背景色
-  --edu-bg-color: var(--edu-bg-primary);
-  --edu-header-bg: var(--edu-bg-secondary);
-  --edu-sidebar-bg: var(--edu-bg-secondary);
-  --edu-main-bg: var(--edu-bg-primary);
-
-  // 深色模式边框色
-  --edu-border-color: var(--edu-border-medium);
-  --edu-border-color-light: var(--edu-border-light);
-
-  // 深色模式文字色
-  --edu-text-primary: var(--edu-text-primary);
-  --edu-text-secondary: var(--edu-text-secondary);
-  --edu-text-disabled: var(--edu-text-disabled);
-
-  // 深色模式阴影
-  --edu-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 30%);
-  --edu-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 40%), 0 2px 4px -1px rgb(0 0 0 / 30%);
-  --edu-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 40%), 0 4px 6px -2px rgb(0 0 0 / 30%);
-}
-
-// 通用布局与排版
+// 通用布局类
 .page-surface {
-  max-width: 1280px;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 0 var(--edu-space-page-x);
   display: flex;
   flex-direction: column;
-  gap: var(--edu-space-section);
+  gap: var(--spacing-lg);
 }
 
+// 卡片表面 - 适配玻璃态 (Updated to match EduCard style)
 .card-surface {
   background: var(--edu-bg-primary);
-  border: 1px solid var(--edu-border-light);
-  border-radius: var(--edu-radius-lg);
-  box-shadow: var(--edu-shadow-sm);
-  padding: var(--edu-space-block);
+  border: 1px solid var(--edu-border-color-light);
+  border-radius: var(--edu-border-radius-lg);
+  box-shadow: var(--edu-shadow-base);
+  padding: var(--edu-spacing-6);
+  transition: all var(--edu-duration-normal) var(--edu-easing-in-out);
 
   &.sticky-toolbar {
     position: sticky;
-    top: 72px;
+    top: 80px;
     z-index: 5;
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: var(--edu-shadow-lg);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
+  // Dark mode support
+  [data-theme="dark"] & {
+    background: var(--edu-bg-primary);
+    border-color: var(--edu-border-color);
+    
+    &.sticky-toolbar {
+      background: rgba(30, 41, 59, 0.8);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
   }
 }
 
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--edu-text-primary);
-}
-
-.section-subtitle {
-  font-size: 14px;
-  color: var(--edu-text-secondary);
-}
-
-.sidebar-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--edu-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.gap-section {
-  gap: var(--edu-space-section);
-}
-
-.gap-block {
-  gap: var(--edu-space-block);
-}
-
-// 通用工具类
-.edu-flex-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.edu-flex-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.edu-flex-start {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.edu-flex-end {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.edu-text-ellipsis {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.edu-text-ellipsis-2 {
-  display: -webkit-box;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-// 学科色彩类 - 简化版本，使用现有的教育主题色彩
-.edu-subject-math { color: var(--edu-warning-500); }
-.edu-subject-physics { color: var(--edu-primary-500); }
-.edu-subject-chemistry { color: var(--edu-success-500); }
-.edu-subject-biology { color: var(--edu-primary-600); }
-.edu-subject-language { color: var(--edu-danger-500); }
-
-.edu-bg-subject-math { background-color: var(--edu-warning-500); }
-.edu-bg-subject-physics { background-color: var(--edu-primary-500); }
-.edu-bg-subject-chemistry { background-color: var(--edu-success-500); }
-.edu-bg-subject-biology { background-color: var(--edu-primary-600); }
-.edu-bg-subject-language { background-color: var(--edu-danger-500); }
-
-// 页面过渡动画
+// 动画
 .edu-page-transition-enter-active,
 .edu-page-transition-leave-active {
-  transition: all 0.3s var(--edu-ease-smooth);
+  transition: all 0.3s var(--edu-easing-smooth);
 }
 
 .edu-page-transition-enter-from {
-  opacity: 0%;
-  transform: translateX(20px);
+  opacity: 0;
+  transform: translateY(10px);
 }
 
 .edu-page-transition-leave-to {
-  opacity: 0%;
-  transform: translateX(-20px);
-}
-
-// 加载状态
-.edu-loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 200px;
-}
-
-.edu-loading-text {
-  margin-left: 12px;
-  color: var(--edu-text-secondary);
-}
-
-// 空状态
-.edu-empty {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 300px;
-  padding: 40px 20px;
-  text-align: center;
-}
-
-.edu-empty-icon {
-  margin-bottom: 16px;
-  color: var(--edu-text-disabled);
-  font-size: 48px;
-}
-
-.edu-empty-title {
-  margin-bottom: 8px;
-  color: var(--edu-text-primary);
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.edu-empty-description {
-  margin-bottom: 24px;
-  color: var(--edu-text-secondary);
-  font-size: 14px;
-}
-
-// 卡片样式
-.edu-card {
-  border: 1px solid var(--edu-border-light);
-  border-radius: var(--edu-radius-lg);
-  box-shadow: var(--edu-shadow-sm);
-  background: var(--edu-bg-primary);
-  transition: all 0.3s var(--edu-easing-in-out);
-
-  &:hover {
-    box-shadow: var(--edu-shadow-md);
-    transform: translateY(-2px);
-  }
-}
-
-.edu-card-header {
-  padding: 20px 24px 16px;
-  border-bottom: 1px solid var(--edu-border-light);
-}
-
-.edu-card-body {
-  padding: 20px 24px;
-}
-
-.edu-card-footer {
-  padding: 16px 24px 20px;
-  border-top: 1px solid var(--edu-border-light);
-}
-
-[data-theme="dark"] {
-  .edu-card {
-    background: var(--edu-bg-secondary);
-    border-color: var(--edu-border-medium);
-  }
-
-  .edu-card-header,
-  .edu-card-footer {
-    border-color: var(--edu-border-light);
-  }
-}
-
-// 响应式设计
-@media (width <= 768px) {
-  .edu-mobile-hidden {
-    display: none !important;
-  }
-
-  .edu-mobile-flex {
-    display: flex !important;
-  }
-
-  .edu-card-header,
-  .edu-card-body,
-  .edu-card-footer {
-    padding-right: 16px;
-    padding-left: 16px;
-  }
-}
-
-// 打印样式
-@media print {
-  .edu-no-print {
-    display: none !important;
-  }
-
-  .edu-card {
-    border: 1px solid #ccc !important;
-    box-shadow: none !important;
-  }
-}
-
-// 高对比度模式
-@media (prefers-contrast: high) {
-  .edu-card {
-    border-width: 2px;
-  }
-
-  .edu-btn {
-    border-width: 2px;
-  }
-}
-
-// 减少动画模式
-@media (prefers-reduced-motion: reduce) {
-  .edu-page-transition-enter-active,
-  .edu-page-transition-leave-active {
-    transition: none;
-  }
-
-  .edu-card {
-    transition: none;
-  }
+  opacity: 0;
 }

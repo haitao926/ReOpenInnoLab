@@ -366,10 +366,10 @@ onMounted(() => {
         font-size: 48px;
         opacity: 0.1;
 
-        &.running { color: #409eff; }
-        &.completed { color: #67c23a; }
+        &.running { color: var(--edu-primary-500); }
+        &.completed { color: var(--edu-color-success-default); }
         &.failed { color: #f56c6c; }
-        &.runtime { color: #e6a23c; }
+        &.runtime { color: var(--edu-color-warning-default); }
       }
     }
   }

@@ -170,10 +170,10 @@ const popoverVisible = ref(false)
 const autoSwitch = ref(false)
 
 const customSettings = ref<CustomSettings>({
-  primaryColor: '#5B8FF9',
-  accentColor: '#52C41A',
+  primaryColor: '#6366F1',
+  accentColor: '#8B5CF6',
   fontSize: 16,
-  borderRadius: 8
+  borderRadius: 12
 })
 
 // 预设主题
@@ -183,10 +183,10 @@ const themePresets = ref<ThemePreset[]>([
     name: '浅色主题',
     description: '清新明亮的默认主题',
     colors: {
-      primary: '#5B8FF9',
+      primary: '#6366F1',
       background: '#FFFFFF',
-      surface: '#F5F5F5',
-      text: '#262626'
+      surface: '#F8FAFC',
+      text: '#0F172A'
     }
   },
   {
@@ -194,7 +194,7 @@ const themePresets = ref<ThemePreset[]>([
     name: '深色主题',
     description: '护眼的深色主题',
     colors: {
-      primary: '#85BEFF',
+      primary: '#8B5CF6',
       background: '#141414',
       surface: '#1F1F1F',
       text: '#FFFFFF'
@@ -205,10 +205,10 @@ const themePresets = ref<ThemePreset[]>([
     name: '海洋蓝',
     description: '专业的蓝色主题',
     colors: {
-      primary: '#1890FF',
-      background: '#F0F8FF',
-      surface: '#E6F7FF',
-      text: '#003A8C'
+      primary: '#6366F1',
+      background: '#EEF2FF',
+      surface: '#E0E7FF',
+      text: '#1E1B4B'
     }
   },
   {
@@ -216,10 +216,10 @@ const themePresets = ref<ThemePreset[]>([
     name: '自然绿',
     description: '护眼的绿色主题',
     colors: {
-      primary: '#52C41A',
-      background: '#F6FFED',
-      surface: '#F0FFF4',
-      text: '#135200'
+      primary: '#10B981',
+      background: '#ECFDF5',
+      surface: '#D1FAE5',
+      text: '#065F46'
     }
   },
   {
@@ -227,10 +227,10 @@ const themePresets = ref<ThemePreset[]>([
     name: '优雅紫',
     description: '高贵的紫色主题',
     colors: {
-      primary: '#722ED1',
-      background: '#F9F0FF',
-      surface: '#F3E8FF',
-      text: '#391085'
+      primary: '#8B5CF6',
+      background: '#F5F3FF',
+      surface: '#EDE9FE',
+      text: '#4C1D95'
     }
   }
 ])
@@ -353,10 +353,10 @@ const updateCustomTheme = () => {
 
 const resetToDefault = () => {
   customSettings.value = {
-    primaryColor: '#5B8FF9',
-    accentColor: '#52C41A',
+    primaryColor: '#6366F1',
+    accentColor: '#8B5CF6',
     fontSize: 16,
-    borderRadius: 8
+    borderRadius: 12
   }
 
   currentTheme.value = 'light'

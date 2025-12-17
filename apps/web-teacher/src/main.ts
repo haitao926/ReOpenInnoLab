@@ -14,7 +14,7 @@ import { themeManager } from '@reopeninnolab/ui-kit/theme'
 // 样式导入
 import 'element-plus/dist/index.css'
 import './assets/styles/main.scss'
-import './assets/styles/element-plus-theme.scss'
+// import './assets/styles/element-plus-theme.scss' // Deprecated: Moved to UI Kit
 
 // AI服务导入
 import { AIService } from './services/ai'

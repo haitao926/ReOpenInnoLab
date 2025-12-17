@@ -1,222 +1,63 @@
+@use '../styles/variables';
+
 /**
- * 智能教育平台主题样式
- * 基于Element Plus的深度定制，体现"温暖科技"的设计理念
+ * 智能教育平台主题样式 (Legacy Adapter)
+ * 适配 InnoFlow 设计语言
  */
 
-// 色彩系统
+// 重新映射旧变量名到新设计系统，确保兼容性
 :root {
-  // 主色调 - 温暖科技蓝
-  --edu-primary: #5B8FF9;
-  --edu-primary-light: #85BEFF;
-  --edu-primary-lighter: #B3D4FF;
-  --edu-primary-dark: #3971D7;
-  --edu-primary-darker: #2851B8;
+  // 主色调映射 (Indigo)
+  --edu-primary: var(--edu-primary-500);
+  --edu-primary-light: var(--edu-primary-300);
+  --edu-primary-lighter: var(--edu-primary-100);
+  --edu-primary-dark: var(--edu-primary-700);
+  --edu-primary-darker: var(--edu-primary-900);
 
-  // 辅助色彩
-  --edu-secondary: #52C41A;
-  --edu-secondary-light: #7ED321;
-  --edu-secondary-dark: #389E0D;
+  // 辅助色映射 (Violet)
+  --edu-secondary: var(--edu-color-secondary-500);
+  --edu-secondary-light: var(--edu-color-secondary-300);
+  --edu-secondary-dark: var(--edu-color-secondary-700);
 
-  // 功能色彩
-  --edu-success: #52C41A;
-  --edu-warning: #FAAD14;
-  --edu-error: #F5222D;
-  --edu-info: #1890FF;
+  // 功能色彩映射
+  --edu-success: var(--edu-color-success-default);
+  --edu-warning: var(--edu-color-warning-default);
+  --edu-error: var(--edu-color-error-default);
+  --edu-info: var(--edu-color-info-default);
 
-  // 学科色彩系统
-  --edu-subject-math: #FF6B6B;      // 数学 - 活力红
-  --edu-subject-physics: #4ECDC4;    // 物理 - 智慧青
-  --edu-subject-chemistry: #45B7D1;  // 化学 - 实验蓝
-  --edu-subject-biology: #96CEB4;    // 生物 - 生命绿
-  --edu-subject-language: #DDA0DD;   // 语文 - 文艺紫
-  --edu-subject-history: #FFB347;    // 历史 - 厚史橙
-  --edu-subject-geography: #87CEEB;  // 地理 - 天空蓝
-  --edu-subject-english: #98D8C8;    // 英语 - 薄荷绿
-  --edu-subject-art: #FF69B4;        // 美术 - 艺术粉
-  --edu-subject-music: #DDA0DD;      // 音乐 - 优雅紫
-  --edu-subject-pe: #FFA07A;         // 体育 - 健康橘
-  --edu-subject-it: #708090;         // 信息技术 - 科技灰
+  // 字体颜色映射
+  --edu-text-primary: var(--text-primary);
+  --edu-text-regular: var(--text-secondary);
+  --edu-text-secondary: var(--text-tertiary);
+  --edu-text-placeholder: var(--text-disabled);
 
-  // 场景色彩系统 (New)
-  // 场景色彩 RGB 值（用于透明度计算）
-  --scene-rgb-reading: 91, 143, 249;
-  --scene-rgb-coding: 255, 140, 0;
-  --scene-rgb-feedback: 114, 46, 209;
+  // 背景色映射
+  --edu-bg-primary: var(--edu-color-white);
+  --edu-bg-secondary: var(--edu-color-gray-50);
+  --edu-bg-tertiary: var(--edu-color-gray-100);
+  --edu-bg-quaternary: var(--edu-color-gray-200);
 
-  // 场景渐变背景
-  --scene-gradient-reading: linear-gradient(135deg, #5B8FF9 0%, #85BEFF 100%);
-  --scene-gradient-coding: linear-gradient(135deg, #FF8C00 0%, #FFA500 100%);
-  --scene-gradient-feedback: linear-gradient(135deg, #722ED1 0%, #9254DE 100%);
+  // 边框色映射
+  --edu-border-light: var(--edu-color-gray-100);
+  --edu-border-base: var(--edu-color-gray-200);
+  --edu-border-dark: var(--edu-color-gray-300);
 
-  // 中性色彩
-  --edu-text-primary: #262626;
-  --edu-text-regular: #595959;
-  --edu-text-secondary: #8C8C8C;
-  --edu-text-placeholder: #BFBFBF;
-
-  // 背景色
-  --edu-bg-primary: #FFF;
-  --edu-bg-secondary: #FAFAFA;
-  --edu-bg-tertiary: #F5F5F5;
-  --edu-bg-quaternary: #F0F2F5;
-
-  // 边框色
-  --edu-border-light: #F0F0F0;
-  --edu-border-base: #D9D9D9;
-  --edu-border-dark: #BFBFBF;
-
-  // 玻璃质感效果
-  --edu-glass-bg: rgb(255 255 255 / 85%);
-  --edu-glass-bg-dark: rgb(0 0 0 / 75%);
-  --edu-glass-border: 1px solid rgb(255 255 255 / 18%);
-  --edu-glass-border-dark: 1px solid rgb(255 255 255 / 10%);
-  --edu-glass-blur: blur(12px);
-  --edu-glass-shadow: 0 8px 32px rgb(31 38 135 / 15%);
-
-  // 阴影
-  --edu-shadow-sm: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%);
-  --edu-shadow-base: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
-  --edu-shadow-lg: 0 10px 25px rgb(0 0 0 / 19%), 0 6px 6px rgb(0 0 0 / 23%);
-  --edu-shadow-xl: 0 20px 40px rgb(0 0 0 / 25%), 0 10px 10px rgb(0 0 0 / 22%);
-
-  // 圆角
-  --edu-radius-sm: 4px;
-  --edu-radius-base: 8px;
-  --edu-radius-lg: 12px;
-  --edu-radius-xl: 16px;
-  --edu-radius-2xl: 24px;
-  --edu-radius-full: 9999px;
-
-  // 动效曲线
-  --edu-ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --edu-ease-out: cubic-bezier(0, 0, 0.2, 1);
-  --edu-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --edu-ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --edu-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  --edu-ease-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-  // 间距系统
-  --edu-spacing-xs: 4px;
-  --edu-spacing-sm: 8px;
-  --edu-spacing-base: 16px;
-  --edu-spacing-lg: 24px;
-  --edu-spacing-xl: 32px;
-  --edu-spacing-2xl: 48px;
-  --edu-spacing-3xl: 64px;
-
-  // 字体大小
-  --edu-text-xs: 12px;
-  --edu-text-sm: 14px;
-  --edu-text-base: 16px;
-  --edu-text-lg: 18px;
-  --edu-text-xl: 20px;
-  --edu-text-2xl: 24px;
-  --edu-text-3xl: 30px;
-  --edu-text-4xl: 36px;
-  --edu-text-5xl: 48px;
-
-  // 行高
-  --edu-leading-tight: 1.25;
-  --edu-leading-normal: 1.5;
-  --edu-leading-relaxed: 1.75;
-
-  // 层级
-  --edu-z-dropdown: 1000;
-  --edu-z-sticky: 1020;
-  --edu-z-fixed: 1030;
-  --edu-z-modal-backdrop: 1040;
-  --edu-z-modal: 1050;
-  --edu-z-popover: 1060;
-  --edu-z-tooltip: 1070;
-  --edu-z-toast: 1080;
+  // 尺寸映射
+  --edu-radius-sm: var(--radius-sm);
+  --edu-radius-base: var(--radius-base);
+  --edu-radius-lg: var(--radius-lg);
+  --edu-radius-xl: var(--radius-xl);
+  --edu-radius-full: var(--radius-full);
 }
 
-// Element Plus 主题定制
+// 场景色彩系统 (保留逻辑，更新色值)
 :root {
-  // 主色定制
-  --el-color-primary: var(--edu-primary);
-  --el-color-primary-light-3: var(--edu-primary-light);
-  --el-color-primary-light-5: var(--edu-primary-lighter);
-  --el-color-primary-light-7: #E6F4FF;
-  --el-color-primary-light-8: #F2F8FF;
-  --el-color-primary-light-9: #F7FAFF;
-  --el-color-primary-dark-2: var(--edu-primary-dark);
-
-  // 功能色定制
-  --el-color-success: var(--edu-success);
-  --el-color-warning: var(--edu-warning);
-  --el-color-danger: var(--edu-error);
-  --el-color-info: var(--edu-info);
-
-  // 文字颜色
-  --el-text-color-primary: var(--edu-text-primary);
-  --el-text-color-regular: var(--edu-text-regular);
-  --el-text-color-secondary: var(--edu-text-secondary);
-  --el-text-color-placeholder: var(--edu-text-placeholder);
-
-  // 边框颜色
-  --el-border-color-light: var(--edu-border-light);
-  --el-border-color: var(--edu-border-base);
-  --el-border-color-dark: var(--edu-border-dark);
-
-  // 填充色
-  --el-fill-color-blank: var(--edu-bg-primary);
-  --el-fill-color: var(--edu-bg-secondary);
-  --el-fill-color-light: var(--edu-bg-tertiary);
-  --el-fill-color-lighter: var(--edu-bg-quaternary);
-
-  // 背景色
-  --el-bg-color: var(--edu-bg-primary);
-  --el-bg-color-page: var(--edu-bg-secondary);
-
-  // 组件尺寸
-  --el-component-size-large: 40px;
-  --el-component-size: 32px;
-  --el-component-size-small: 24px;
-
-  // 圆角
-  --el-border-radius-base: var(--edu-radius-base);
-  --el-border-radius-small: var(--edu-radius-sm);
-  --el-border-radius-round: var(--edu-radius-full);
-
-  // 阴影
-  --el-box-shadow: var(--edu-shadow-base);
-  --el-box-shadow-light: var(--edu-shadow-sm);
-  --el-box-shadow-dark: var(--edu-shadow-lg);
-
-  // 字体
-  --el-font-size-base: var(--edu-text-base);
-  --el-font-size-small: var(--edu-text-sm);
-  --el-font-size-large: var(--edu-text-lg);
-  --el-font-size-extra-large: var(--edu-text-xl);
-
-  // 动画
-  --el-transition-duration: 0.3s;
-  --el-transition-duration-fast: 0.2s;
-  --el-transition-function: var(--edu-ease-smooth);
+  --scene-gradient-reading: var(--edu-gradient-primary);
+  --scene-gradient-coding: var(--edu-gradient-tertiary); // Orange for coding
+  --scene-gradient-feedback: var(--edu-gradient-secondary); // Violet for feedback
 }
 
-// 全局样式重置
-* {
-  box-sizing: border-box;
-}
-
-html {
-  font-size: 16px;
-  line-height: var(--edu-leading-normal);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: var(--edu-bg-secondary);
-  color: var(--edu-text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-}
-
-// 玻璃质感组件
+// 玻璃质感组件 (使用新变量)
 .edu-glass {
   border: var(--edu-glass-border);
   border-radius: var(--edu-radius-lg);
@@ -225,79 +66,31 @@ body {
   backdrop-filter: var(--edu-glass-blur);
 }
 
-.edu-glass-dark {
-  border: var(--edu-glass-border-dark);
-  border-radius: var(--edu-radius-lg);
-  box-shadow: var(--edu-glass-shadow);
-  background: var(--edu-glass-bg-dark);
-  backdrop-filter: var(--edu-glass-blur);
-}
-
-// 场景切换类
-.scene-reading {
-  --edu-primary: #5B8FF9;
-  --edu-scene-gradient: var(--scene-gradient-reading);
-}
-
-.scene-coding {
-  --edu-primary: #FF8C00;
-  --edu-scene-gradient: var(--scene-gradient-coding);
-}
-
-.scene-feedback {
-  --edu-primary: #722ED1;
-  --edu-scene-gradient: var(--scene-gradient-feedback);
-}
-
-// 渐变背景
+// 渐变背景类
 .edu-gradient-primary {
-  background: linear-gradient(135deg, var(--edu-primary) 0%, var(--edu-primary-light) 100%);
+  background: var(--edu-gradient-primary);
 }
 
 .edu-gradient-secondary {
-  background: linear-gradient(135deg, var(--edu-secondary) 0%, var(--edu-secondary-light) 100%);
+  background: var(--edu-gradient-secondary);
 }
 
 .edu-gradient-warm {
-  background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+  background: var(--edu-gradient-warm);
 }
 
 .edu-gradient-cool {
-  background: linear-gradient(135deg, #4ECDC4 0%, #44A3AA 100%);
+  background: var(--edu-gradient-cool);
 }
 
-// 学科标签样式
-.edu-subject-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--edu-spacing-xs) var(--edu-spacing-sm);
-  border-radius: var(--edu-radius-full);
-  color: white;
-  font-size: var(--edu-text-xs);
-  font-weight: 500;
-
-  &.math { background-color: var(--edu-subject-math); }
-  &.physics { background-color: var(--edu-subject-physics); }
-  &.chemistry { background-color: var(--edu-subject-chemistry); }
-  &.biology { background-color: var(--edu-subject-biology); }
-  &.language { background-color: var(--edu-subject-language); }
-  &.history { background-color: var(--edu-subject-history); }
-  &.geography { background-color: var(--edu-subject-geography); }
-  &.english { background-color: var(--edu-subject-english); }
-  &.art { background-color: var(--edu-subject-art); }
-  &.music { background-color: var(--edu-subject-music); }
-  &.pe { background-color: var(--edu-subject-pe); }
-  &.it { background-color: var(--edu-subject-it); }
-}
-
-// 教育卡片样式
+// 教育卡片样式 (适配新风格)
 .edu-card {
-  padding: var(--edu-spacing-lg);
-  border: 1px solid var(--edu-border-light);
-  border-radius: var(--edu-radius-lg);
-  box-shadow: var(--edu-shadow-sm);
+  padding: var(--spacing-lg);
+  border: none; // 去边框
+  border-radius: var(--radius-lg);
+  box-shadow: var(--edu-shadow-base);
   background: var(--edu-bg-primary);
-  transition: all 0.3s var(--edu-ease-smooth);
+  transition: all 0.3s var(--edu-easing-smooth);
 
   &:hover {
     box-shadow: var(--edu-shadow-lg);
@@ -305,494 +98,15 @@ body {
   }
 }
 
-.edu-card-glass {
-  @extend .edu-glass;
-
-  padding: var(--edu-spacing-lg);
-}
-
-// AI助手样式
-.edu-ai-assistant {
-  position: fixed;
-  right: var(--edu-spacing-xl);
-  bottom: var(--edu-spacing-xl);
-  z-index: var(--edu-z-toast);
-}
-
-.edu-ai-bubble {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  box-shadow: var(--edu-shadow-lg);
-  background: var(--edu-gradient-primary);
-  color: white;
-  transition: all 0.3s var(--edu-ease-bounce);
-  cursor: pointer;
-
-  &:hover {
-    box-shadow: var(--edu-shadow-xl);
-    transform: scale(1.1);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-}
-
-// 进度条样式
-.edu-progress {
-  .el-progress-bar__outer {
-    border-radius: var(--edu-radius-full);
-    background-color: var(--edu-bg-tertiary);
-  }
-
-  .el-progress-bar__inner {
-    border-radius: var(--edu-radius-full);
-    background: var(--edu-gradient-primary);
-    transition: width 0.6s var(--edu-ease-smooth);
-  }
-}
-
-// 动画效果
-.edu-fade-enter-active,
-.edu-fade-leave-active {
-  transition: opacity 0.3s var(--edu-ease-smooth);
-}
-
-.edu-fade-enter-from,
-.edu-fade-leave-to {
-  opacity: 0;
-}
-
-.edu-slide-enter-active,
-.edu-slide-leave-active {
-  transition: transform 0.3s var(--edu-ease-smooth);
-}
-
-.edu-slide-enter-from {
-  transform: translateX(100%);
-}
-
-.edu-slide-leave-to {
-  transform: translateX(-100%);
-}
-
-.edu-bounce-enter-active {
-  animation: bounce-in 0.6s var(--edu-ease-bounce);
-}
-
-@keyframes bounce-in {
-  0% {
-    opacity: 0;
-    transform: scale(0);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-// 响应式设计
-@media (width <= 768px) {
-  :root {
-    --edu-spacing-base: 12px;
-    --edu-spacing-lg: 16px;
-    --edu-spacing-xl: 24px;
-    --edu-text-base: 14px;
-    --edu-text-lg: 16px;
-    --edu-text-xl: 18px;
-  }
-
-  .edu-card {
-    padding: var(--edu-spacing-base);
-  }
-}
-
-// 深色模式变量定义
-:root {
-  // 深色模式色彩
-  --edu-dark-primary: #85BEFF;
-  --edu-dark-primary-light: #B3D4FF;
-  --edu-dark-primary-lighter: #E6F4FF;
-  --edu-dark-primary-dark: #5B8FF9;
-  --edu-dark-primary-darker: #3971D7;
-
-  --edu-dark-secondary: #7ED321;
-  --edu-dark-secondary-light: #A4E05C;
-  --edu-dark-secondary-dark: #52C41A;
-
-  // 深色模式功能色
-  --edu-dark-success: #52C41A;
-  --edu-dark-warning: #FAAD14;
-  --edu-dark-error: #F5222D;
-  --edu-dark-info: #1890FF;
-
-  // 深色模式中性色
-  --edu-dark-text-primary: #FFFFFF;
-  --edu-dark-text-regular: #E6E6E6;
-  --edu-dark-text-secondary: #B3B3B3;
-  --edu-dark-text-placeholder: #666666;
-
-  // 深色模式背景色
-  --edu-dark-bg-primary: #141414;
-  --edu-dark-bg-secondary: #1F1F1F;
-  --edu-dark-bg-tertiary: #262626;
-  --edu-dark-bg-quaternary: #2A2A2A;
-
-  // 深色模式边框色
-  --edu-dark-border-light: #404040;
-  --edu-dark-border-base: #434343;
-  --edu-dark-border-dark: #595959;
-
-  // 深色模式玻璃质感
-  --edu-dark-glass-bg: rgb(31 31 31 / 85%);
-  --edu-dark-glass-border: 1px solid rgb(255 255 255 / 10%);
-  --edu-dark-glass-shadow: 0 8px 32px rgb(0 0 0 / 37%);
-
-  // 深色模式阴影
-  --edu-dark-shadow-sm: 0 1px 3px rgb(0 0 0 / 30%), 0 1px 2px rgb(0 0 0 / 40%);
-  --edu-dark-shadow-base: 0 3px 6px rgb(0 0 0 / 40%), 0 3px 6px rgb(0 0 0 / 50%);
-  --edu-dark-shadow-lg: 0 10px 25px rgb(0 0 0 / 50%), 0 6px 6px rgb(0 0 0 / 60%);
-  --edu-dark-shadow-xl: 0 20px 40px rgb(0 0 0 / 60%), 0 10px 10px rgb(0 0 0 / 70%);
-}
-
-// 深色模式自动应用
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --edu-primary: var(--edu-dark-primary);
-    --edu-primary-light: var(--edu-dark-primary-light);
-    --edu-primary-lighter: var(--edu-dark-primary-lighter);
-    --edu-primary-dark: var(--edu-dark-primary-dark);
-    --edu-primary-darker: var(--edu-dark-primary-darker);
-
-    --edu-secondary: var(--edu-dark-secondary);
-    --edu-secondary-light: var(--edu-dark-secondary-light);
-    --edu-secondary-dark: var(--edu-dark-secondary-dark);
-
-    --edu-success: var(--edu-dark-success);
-    --edu-warning: var(--edu-dark-warning);
-    --edu-error: var(--edu-dark-error);
-    --edu-info: var(--edu-dark-info);
-
-    --edu-text-primary: var(--edu-dark-text-primary);
-    --edu-text-regular: var(--edu-dark-text-regular);
-    --edu-text-secondary: var(--edu-dark-text-secondary);
-    --edu-text-placeholder: var(--edu-dark-text-placeholder);
-
-    --edu-bg-primary: var(--edu-dark-bg-primary);
-    --edu-bg-secondary: var(--edu-dark-bg-secondary);
-    --edu-bg-tertiary: var(--edu-dark-bg-tertiary);
-    --edu-bg-quaternary: var(--edu-dark-bg-quaternary);
-
-    --edu-border-light: var(--edu-dark-border-light);
-    --edu-border-base: var(--edu-dark-border-base);
-    --edu-border-dark: var(--edu-dark-border-dark);
-
-    --edu-glass-bg: var(--edu-dark-glass-bg);
-    --edu-glass-border: var(--edu-dark-glass-border);
-    --edu-glass-shadow: var(--edu-dark-glass-shadow);
-
-    --edu-shadow-sm: var(--edu-dark-shadow-sm);
-    --edu-shadow-base: var(--edu-dark-shadow-base);
-    --edu-shadow-lg: var(--edu-dark-shadow-lg);
-    --edu-shadow-xl: var(--edu-dark-shadow-xl);
-  }
-}
-
-// 手动深色模式
+// 深色模式适配
 [data-theme="dark"] {
-  --edu-primary: var(--edu-dark-primary);
-  --edu-primary-light: var(--edu-dark-primary-light);
-  --edu-primary-lighter: var(--edu-dark-primary-lighter);
-  --edu-primary-dark: var(--edu-dark-primary-dark);
-  --edu-primary-darker: var(--edu-dark-primary-darker);
-
-  --edu-secondary: var(--edu-dark-secondary);
-  --edu-secondary-light: var(--edu-dark-secondary-light);
-  --edu-secondary-dark: var(--edu-dark-secondary-dark);
-
-  --edu-success: var(--edu-dark-success);
-  --edu-warning: var(--edu-dark-warning);
-  --edu-error: var(--edu-dark-error);
-  --edu-info: var(--edu-dark-info);
-
-  --edu-text-primary: var(--edu-dark-text-primary);
-  --edu-text-regular: var(--edu-dark-text-regular);
-  --edu-text-secondary: var(--edu-dark-text-secondary);
-  --edu-text-placeholder: var(--edu-dark-text-placeholder);
-
-  --edu-bg-primary: var(--edu-dark-bg-primary);
-  --edu-bg-secondary: var(--edu-dark-bg-secondary);
-  --edu-bg-tertiary: var(--edu-dark-bg-tertiary);
-  --edu-bg-quaternary: var(--edu-dark-bg-quaternary);
-
-  --edu-border-light: var(--edu-dark-border-light);
-  --edu-border-base: var(--edu-dark-border-base);
-  --edu-border-dark: var(--edu-dark-border-dark);
-
-  --edu-glass-bg: var(--edu-dark-glass-bg);
-  --edu-glass-border: var(--edu-dark-glass-border);
-  --edu-glass-shadow: var(--edu-dark-glass-shadow);
-
-  --edu-shadow-sm: var(--edu-dark-shadow-sm);
-  --edu-shadow-base: var(--edu-dark-shadow-base);
-  --edu-shadow-lg: var(--edu-dark-shadow-lg);
-  --edu-shadow-xl: var(--edu-dark-shadow-xl);
-}
-
-// 自定义主题支持
-[data-theme="custom"] {
-  --edu-primary: var(--edu-primary-custom, var(--edu-primary));
-  --edu-secondary: var(--edu-accent-custom, var(--edu-secondary));
-}
-
-// 主题色变体
-[data-theme="blue"] {
-  --edu-primary: #1890FF;
-  --edu-primary-light: #40A9FF;
-  --edu-primary-lighter: #69C0FF;
-  --edu-primary-dark: #096DD9;
-  --edu-primary-darker: #0050B3;
-}
-
-[data-theme="green"] {
-  --edu-primary: #52C41A;
-  --edu-primary-light: #73D13D;
-  --edu-primary-lighter: #95DE64;
-  --edu-primary-dark: #389E0D;
-  --edu-primary-darker: #237804;
-}
-
-[data-theme="purple"] {
-  --edu-primary: #722ED1;
-  --edu-primary-light: #9254DE;
-  --edu-primary-lighter: #B37FEB;
-  --edu-primary-dark: #531DAB;
-  --edu-primary-darker: #391085;
-}
-
-// Element Plus 深色模式适配
-[data-theme="dark"] {
-  --el-color-primary: var(--edu-dark-primary);
-  --el-color-primary-light-3: var(--edu-dark-primary-light);
-  --el-color-primary-light-5: var(--edu-dark-primary-lighter);
-  --el-color-primary-light-7: #1D39C4;
-  --el-color-primary-light-8: #2A4ECC;
-  --el-color-primary-light-9: #3666E3;
-  --el-color-primary-dark-2: var(--edu-dark-primary-dark);
-
-  --el-color-success: var(--edu-dark-success);
-  --el-color-warning: var(--edu-dark-warning);
-  --el-color-danger: var(--edu-dark-error);
-  --el-color-info: var(--edu-dark-info);
-
-  --el-text-color-primary: var(--edu-dark-text-primary);
-  --el-text-color-regular: var(--edu-dark-text-regular);
-  --el-text-color-secondary: var(--edu-dark-text-secondary);
-  --el-text-color-placeholder: var(--edu-dark-text-placeholder);
-
-  --el-border-color-light: var(--edu-dark-border-light);
-  --el-border-color: var(--edu-dark-border-base);
-  --el-border-color-dark: var(--edu-dark-border-dark);
-
-  --el-fill-color-blank: var(--edu-dark-bg-primary);
-  --el-fill-color: var(--edu-dark-bg-secondary);
-  --el-fill-color-light: var(--edu-dark-bg-tertiary);
-  --el-fill-color-lighter: var(--edu-dark-bg-quaternary);
-
-  --el-bg-color: var(--edu-dark-bg-primary);
-  --el-bg-color-page: var(--edu-dark-bg-secondary);
-
-  --el-box-shadow: var(--edu-dark-shadow-base);
-  --el-box-shadow-light: var(--edu-dark-shadow-sm);
-  --el-box-shadow-dark: var(--edu-dark-shadow-lg);
-}
-
-// 全局深色模式样式
-[data-theme="dark"] {
-  // 滚动条样式
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: var(--edu-dark-bg-tertiary);
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: var(--edu-dark-border-base);
-    border-radius: var(--radius-full);
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--edu-dark-border-dark);
-  }
-
-  // 选择文本样式
-  ::selection {
-    background: var(--edu-dark-primary);
-    color: white;
-  }
-
-  ::-moz-selection {
-    background: var(--edu-dark-primary);
-    color: white;
-  }
-
-  // 高亮文本
-  mark {
-    background: var(--edu-dark-warning);
-    color: var(--edu-dark-text-primary);
-  }
-
-  // 链接样式
-  a {
-    color: var(--edu-dark-primary-light);
-
-    &:hover {
-      color: var(--edu-dark-primary-lighter);
-    }
-
-    &:active {
-      color: var(--edu-dark-primary);
-    }
-  }
-
-  // 代码块
-  code, pre {
-    background: var(--edu-dark-bg-tertiary);
-    color: var(--edu-dark-text-primary);
-    border: 1px solid var(--edu-dark-border-light);
-  }
-
-  // 表格
-  table {
-    border-color: var(--edu-dark-border-base);
-
-    th, td {
-      border-color: var(--edu-dark-border-light);
-    }
-
-    th {
-      background: var(--edu-dark-bg-secondary);
-    }
-
-    tr:hover {
-      background: rgba(255, 255, 255, 0.02);
-    }
-  }
-
-  // 分割线
-  hr {
-    border-color: var(--edu-dark-border-light);
-  }
-
-  // 引用块
-  blockquote {
-    border-left-color: var(--edu-dark-primary);
-    background: rgba(91, 143, 249, 0.05);
-    color: var(--edu-dark-text-secondary);
-  }
-}
-
-// 高对比度深色模式
-@media (prefers-color-scheme: dark) and (prefers-contrast: high) {
-  :root:not([data-theme="light"]) {
-    --edu-dark-text-primary: #FFFFFF;
-    --edu-dark-text-regular: #F0F0F0;
-    --edu-dark-text-secondary: #D0D0D0;
-    --edu-dark-bg-primary: #000000;
-    --edu-dark-bg-secondary: #1A1A1A;
-    --edu-dark-bg-tertiary: #2A2A2A;
-    --edu-dark-border-light: #606060;
-    --edu-dark-border-base: #808080;
-    --edu-dark-border-dark: #A0A0A0;
-  }
-}
-
-[data-theme="dark"] {
-  // 高对比度支持
-  @media (prefers-contrast: high) {
-    --edu-text-primary: #FFFFFF;
-    --edu-text-regular: #F0F0F0;
-    --edu-text-secondary: #D0D0D0;
-    --edu-bg-primary: #000000;
-    --edu-bg-secondary: #1A1A1A;
-    --edu-bg-tertiary: #2A2A2A;
-    --edu-border-light: #606060;
-    --edu-border-base: #808080;
-    --edu-border-dark: #A0A0A0;
-  }
-}
-
-// 高对比度模式
-@media (prefers-contrast: high) {
-  :root {
-    --edu-border-light: #000;
-    --edu-border-base: #000;
-    --edu-border-dark: #000;
-    --edu-shadow-sm: none;
-    --edu-shadow-base: none;
-    --edu-shadow-lg: none;
-    --edu-glass-shadow: none;
-  }
-
-  .edu-card {
-    border: 2px solid var(--edu-border-base);
-  }
-}
-
-// 减少动画模式
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-  }
-}
-
-// 打印样式
-@media print {
-  .edu-ai-assistant,
-  .no-print {
-    display: none !important;
-  }
-
-  .edu-card {
-    border: 1px solid #000;
-    box-shadow: none;
-  }
-}
-
-// 无障碍访问
-@media (prefers-reduced-motion: no-preference) {
-  .edu-focus-visible {
-    outline: 2px solid var(--edu-primary);
-    outline-offset: 2px;
-  }
-}
-
-// 焦点管理
-.edu-sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  border: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  --edu-bg-primary: var(--bg-primary);
+  --edu-bg-secondary: var(--bg-secondary);
+  --edu-bg-tertiary: var(--bg-surface);
+  
+  --edu-text-primary: var(--text-primary);
+  --edu-text-regular: var(--text-secondary);
+  
+  --edu-border-light: rgba(255, 255, 255, 0.05);
+  --edu-border-base: rgba(255, 255, 255, 0.1);
 }

@@ -32,7 +32,7 @@
           >
             <template #suffix>
               <div class="input-suffix-animation" v-if="form.username">
-                <el-icon color="#67c23a"><CircleCheck /></el-icon>
+                <el-icon color="var(--edu-color-success-default)"><CircleCheck /></el-icon>
               </div>
             </template>
           </el-input>

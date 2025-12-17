@@ -5,6 +5,7 @@
 @import './styles/variables';
 @import './styles/mixins';
 @import './styles/components';
+@import './styles/element-overrides';
 
 // 导出所有样式
 // 其他项目可以通过 @import '@ui-kit/index.scss' 引入
@@ -256,37 +257,24 @@ body {
 // 学科颜色类
 // ========================================
 
-@each $subject, $colors in (
-  math: (color: #FF6B6B, light: #FF8787, dark: #E55555),
-  physics: (color: #4ECDC4, light: #6DD8D0, dark: #3DBCB3),
-  chemistry: (color: #45B7D1, light: #6BC5DA, dark: #35A5C7),
-  biology: (color: #96CEB4, light: #AAD8C2, dark: #7ABE9F),
-  language: (color: #DDA0DD, light: #E8B8E8, dark: #D288D2),
-  history: (color: #FFB347, light: #FFC262, dark: #FFA32C),
-  geography: (color: #87CEEB, light: #A3D9F0, dark: #6BC3DB),
-  english: (color: #98D8C8, light: #B5E5D8, dark: #7BC8B8),
-  art: (color: #FF69B4, light: #FF85C4, dark: #FF4DA4),
-  music: (color: #DDA0DD, light: #E8B8E8, dark: #D288D2),
-  pe: (color: #FFA07A, light: #FFB59C, dark: #FF8B58),
-  it: (color: #708090, light: #8A9AAA, dark: #566676)
-) {
+@each $subject in (math, physics, chemistry, biology, language, history, geography, english, art, music, pe, it) {
   .subject-#{$subject} {
-    color: map-get($colors, color);
+    color: var(--edu-color-subject-#{$subject});
   }
   .bg-subject-#{$subject} {
-    background-color: map-get($colors, color);
+    background-color: var(--edu-color-subject-#{$subject});
   }
   .subject-#{$subject}-light {
-    color: map-get($colors, light);
+    color: var(--edu-color-subject-#{$subject}-light);
   }
   .bg-subject-#{$subject}-light {
-    background-color: map-get($colors, light);
+    background-color: var(--edu-color-subject-#{$subject}-light);
   }
   .subject-#{$subject}-dark {
-    color: map-get($colors, dark);
+    color: var(--edu-color-subject-#{$subject}-dark);
   }
   .bg-subject-#{$subject}-dark {
-    background-color: map-get($colors, dark);
+    background-color: var(--edu-color-subject-#{$subject}-dark);
   }
 }
 

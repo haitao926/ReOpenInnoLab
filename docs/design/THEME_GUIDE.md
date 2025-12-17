@@ -1,375 +1,130 @@
-# ReOpenInnoLab 主题设计指南
+# ReOpenInnoLab 主题设计指南 (InnoFlow Edition)
 
 ## 📖 概述
 
-ReOpenInnoLab 的设计系统基于现代化的 Design Token 理念，提供一致、可扩展的视觉体验。本指南详细说明了主题系统的使用规范和最佳实践。
+ReOpenInnoLab 的设计语言已全面升级为 **"InnoFlow" (流光)**。本指南定义了打造高级、优雅、通透用户体验的核心规范。
 
-## 🎯 设计目标
-
-- **一致性**: 统一的视觉语言，确保跨平台体验一致
-- **可扩展性**: 基于令牌的系统，便于快速扩展和定制
-- **可维护性**: 集中管理设计变量，减少重复工作
-- **可访问性**: 支持亮/暗/高对比模式，符合 WCAG 标准
-
-## 🎨 核心设计原则
-
-### 1. 教育科技感
-- 温暖的科技蓝色作为主色调
-- 现代化的玻璃质感和渐变效果
-- 友好但不失专业的视觉体验
-
-### 2. 学科差异化
-- 12个学科专属色彩
-- 每个学科有明暗两种变体
-- 支持学科特色的视觉表达
-
-### 3. 响应式设计
-- 移动优先的设计方法
-- 断点系统: xs(480px), sm(768px), md(1024px), lg(1280px), xl(1536px), 2xl(1920px)
-- 灵活的网格系统
-
-## 🎨 主题色彩系统
-
-### 主色调 (Primary Colors)
-温暖科技蓝色，传达智能、可靠、专业的品牌形象
-
-| 变体 | 颜色值 | 用途 |
-|------|--------|------|
-| 50 | #E6F4FF | 背景、高亮 |
-| 100 | #BAE0FF | 背景、禁用 |
-| 200 | #91CAFF | 边框、分割线 |
-| 300 | #69B1FF | 悬停状态 |
-| 400 | #4096FF | 默认状态 |
-| 500 | #5B8FF9 | 主要交互 |
-| 600 | #597EF7 | 按下状态 |
-| 700 | #597EF7 | 深色主题 |
-| 800 | #2F54EB | 强调色 |
-| 900 | #1D39C4 | 标题、链接 |
-| 950 | #101D4C | 深色背景 |
-
-### 语义色 (Semantic Colors)
-
-#### 成功色
-- Default: #52C41A (成功状态、确认操作)
-- Light: #B7EB8F (成功背景、提示信息)
-- Dark: #389E0D (成功文字、重要提示)
-
-#### 警告色
-- Default: #FAAD14 (警告状态、注意信息)
-- Light: #FFE58F (警告背景、提示信息)
-- Dark: #D48806 (警告文字、重要提示)
-
-#### 错误色
-- Default: #F5222D (错误状态、危险操作)
-- Light: #FF7875 (错误背景、提示信息)
-- Dark: #CF1322 (错误文字、重要提示)
-
-#### 信息色
-- Default: #1890FF (信息状态、提示操作)
-- Light: #91D5FF (信息背景、提示信息)
-- Dark: #0958D9 (信息文字、重要提示)
-
-### 学科色彩 (Subject Colors)
-
-| 学科 | 主色 | 浅色 | 深色 | 特点 |
-|------|------|------|------|------|
-| 数学 | #FF6B6B | #FF8787 | #E55555 | 逻辑、精确 |
-| 物理 | #4ECDC4 | #6DD8D0 | #3DBCB3 | 规律、探索 |
-| 化学 | #45B7D1 | #6BC5DA | #35A5C7 | 变化、实验 |
-| 生物 | #96CEB4 | #AAD8C2 | #7ABE9F | 生命、成长 |
-| 语文 | #DDA0DD | #E8B8E8 | #D288D2 | 文化、传承 |
-| 历史 | #FFB347 | #FFC262 | #FFA32C | 传统、厚重 |
-| 地理 | #87CEEB | #A3D9F0 | #6BC3DB | 空间、探索 |
-| 英语 | #98D8C8 | #B5E5D8 | #7BC8B8 | 交流、文化 |
-| 美术 | #FF69B4 | #FF85C4 | #FF4DA4 | 创意、美感 |
-| 音乐 | #DDA0DD | #E8B8E8 | #D288D2 | 节奏、和谐 |
-| 体育 | #FFA07A | #FFB59C | #FF8B58 | 活力、健康 |
-| 信息技术 | #708090 | #8A9AAA | #566676 | 现代、科技 |
-
-## 🏗️ 组件设计规范
-
-### 按钮系统
-
-#### 尺寸规范
-- **Large**: 40px 高度，24px 内边距
-- **Medium**: 32px 高度，16px 内边距 (默认)
-- **Small**: 24px 高度，8px 内边距
-
-#### 视觉状态
-- **Default**: 正常状态，主色调填充
-- **Hover**: 轻微上移 (-1px)，阴影加深
-- **Active**: 下移回原位，透明度变化
-- **Disabled**: 60% 透明度，禁用状态
-
-#### 特殊效果
-- **Loading**: 加载动画
-- **渐变背景**: 主要按钮使用渐变效果
-- **玻璃质感**: 特殊场景下的模糊背景
-
-### 卡片系统
-
-#### 基础卡片
-- **Padding**: 24px (Medium)
-- **Border Radius**: 8px
-- **Shadow**: 0 4px 6px -1px rgba(0, 0, 0, 0.1)
-- **Background**: 白色主题下为白色，深色主题下为深灰色
-
-#### 玻璃卡片
-- **Background**: rgba(255, 255, 255, 0.85)
-- **Backdrop Filter**: blur(12px)
-- **Border**: 1px solid rgba(255, 255, 255, 0.18)
-- **Shadow**: 0 8px 32px rgba(31, 38, 135, 0.15)
-
-#### 悬浮效果
-- **Hover Transform**: translateY(-2px)
-- **Hover Shadow**: 0 10px 25px -5px rgba(0, 0, 0, 0.1)
-- **Transition**: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)
-
-### 表单系统
-
-#### 输入框
-- **Height**: 40px
-- **Border Radius**: 6px
-- **Border**: 1px solid #E0E0E0
-- **Focus Border**: 1px solid #5B8FF9
-- **Focus Shadow**: 0 0 0 2px rgba(91, 143, 249, 0.2)
-
-#### 标签页
-- **Active Bar**: 3px 高度，渐变背景
-- **Hover**: 颜色过渡效果
-- **Transition**: 0.3s 平滑过渡
-
-## 🎭 动效系统
-
-### 时间规范
-- **Fast**: 0.15s - 微交互
-- **Normal**: 0.3s - 常规交互
-- **Slow**: 0.5s - 页面级动画
-
-### 缓动函数
-- **Smooth**: cubic-bezier(0.25, 0.46, 0.45, 0.94) - 常用
-- **Out**: cubic-bezier(0, 0, 0.2, 1) - 进入动画
-- **In**: cubic-bezier(0.4, 0, 1, 1) - 离开动画
-- **Bounce**: cubic-bezier(0.68, -0.55, 0.265, 1.55) - 特殊效果
-
-### 常用动画
-- **Fade In**: 透明度从 0 到 1
-- **Slide Up**: 从下方滑入
-- **Scale In**: 从小到大缩放
-- **Bounce**: 弹跳效果
-
-## 🌓 主题模式
-
-### 亮色模式 (Light Mode)
-- **背景**: 白色 (#FFFFFF)
-- **文字**: 深灰色系列
-- **卡片**: 白色背景，浅灰色边框
-- **阴影**: 轻微阴影效果
-
-### 暗色模式 (Dark Mode)
-- **背景**: 深灰色系列 (#1F1F1F)
-- **文字**: 浅灰色系列
-- **卡片**: 深灰色背景，浅灰色边框
-- **阴影**: 加深阴影效果
-
-### 自动模式 (Auto Mode)
-- 根据系统偏好自动切换
-- 支持手动覆盖
-- 平滑过渡效果
-
-## 🎯 Element Plus 映射
-
-### CSS 变量映射
-
-```scss
-// 主色调映射
---el-color-primary: var(--edu-color-primary-500)
---el-color-primary-light-3: var(--edu-color-primary-300)
---el-color-primary-light-5: var(--edu-color-primary-400)
---el-color-primary-dark-2: var(--edu-color-primary-600)
-
-// 语义色映射
---el-color-success: var(--edu-color-success-default)
---el-color-warning: var(--edu-color-warning-default)
---el-color-error: var(--edu-color-error-default)
---el-color-info: var(--edu-color-info-default)
-
-// 字体映射
---el-font-family: var(--edu-font-sans)
---el-font-size-base: var(--edu-font-size-sm)
-
-// 阴影映射
---el-box-shadow: var(--edu-shadow-base)
---el-box-shadow-light: var(--edu-shadow-sm)
---el-box-shadow-dark: var(--edu-shadow-lg)
-
-// 动效映射
---el-transition-duration: var(--edu-duration-normal)
---el-transition-duration-fast: var(--edu-duration-fast)
-```
-
-## 🔧 使用指南
-
-### 1. 主题切换
-
-```typescript
-import { useAppStore } from '@/stores/app'
-
-const appStore = useAppStore()
-
-// 切换主题
-appStore.setTheme('dark') // 'light' | 'dark' | 'auto'
-
-// 获取当前主题状态
-const isDark = appStore.isDarkMode
-
-// 获取主题颜色
-const primaryColor = appStore.getThemeColor('primary.500')
-const successColor = appStore.getThemeColor('semantic.success.default')
-```
-
-### 2. 学科颜色使用
-
-```typescript
-// 获取学科颜色
-const mathColor = appStore.getSubjectColor('math')
-const mathLightColor = appStore.getSubjectColor('math', 'light')
-const mathDarkColor = appStore.getSubjectColor('math', 'dark')
-```
-
-### 3. CSS 变量使用
-
-```scss
-// 在 SCSS 中使用
-.component {
-  background: var(--edu-color-primary-500);
-  color: var(--edu-color-white);
-  border-radius: var(--edu-border-radius-lg);
-  box-shadow: var(--edu-shadow-md);
-  transition: all var(--edu-duration-normal) var(--edu-easing-smooth);
-}
-```
-
-### 4. 动效类使用
-
-```html
-<!-- 预定义动画类 -->
-<div class="animate-fade-in">淡入效果</div>
-<div class="animate-slide-in-up">从下滑入</div>
-<div class="animate-bounce">弹跳效果</div>
-```
-
-## 📱 响应式设计
-
-### 断点系统
-```scss
-// 响应式断点
-@media (max-width: 768px) {
-  // 移动端样式
-}
-
-@media (min-width: 1024px) {
-  // 平板及以上样式
-}
-
-// 使用 UI Kit 响应式混入
-@include respond-to(sm) {
-  // 小屏幕样式
-}
-```
-
-### 移动端适配
-- 触摸友好的点击区域 (最小 44px)
-- 简化的导航结构
-- 优化的表单布局
-- 适配的字体大小
-
-## ♿ 可访问性
-
-### 对比度标准
-- **AA 级别**: 至少 4.5:1
-- **AAA 级别**: 至少 7:1 (推荐)
-- 支持高对比模式
-
-### 交互提示
-- Hover 状态清晰可见
-- Focus 状态明确指示
-- 键盘导航支持
-- 屏幕阅读器友好
-
-## 🚀 开发指南
-
-### 1. 主题开发流程
-
-1. **设计令牌更新**: 在 `tokens.json` 中定义新的设计变量
-2. **CSS 变量生成**: 自动生成 CSS 变量
-3. **组件适配**: 更新组件使用新的变量
-4. **测试验证**: 确保各主题下效果正常
-
-### 2. 组件开发规范
-
-```typescript
-// 组件中注入主题管理器
-import { inject } from 'vue'
-import type { ThemeManager } from '@ui-kit/theme'
-
-export default defineComponent({
-  setup() {
-    const themeManager = inject<ThemeManager>('themeManager')
-
-    // 使用主题颜色
-    const primaryColor = computed(() =>
-      themeManager?.getColor('primary.500') || '#5B8FF9'
-    )
-
-    return { primaryColor }
-  }
-})
-```
-
-### 3. 样式编写规范
-
-```scss
-// 使用 CSS 变量
-.component {
-  // ✅ 推荐：使用 UI Kit 变量
-  background: var(--edu-color-primary-500);
-  color: var(--edu-color-white);
-
-  // ❌ 避免：硬编码颜色
-  // background: #5B8FF9;
-  // color: #FFFFFF;
-}
-```
-
-## 📝 更新日志
-
-### v1.0.0 (2024-01-15)
-- ✨ 初始版本发布
-- 🎨 完整的主题色彩系统
-- 🏗️ 基础组件库
-- 🌓 亮/暗模式支持
-- 📱 响应式设计系统
-
-### 未来规划
-- 🔮 高对比模式支持
-- 🎭 更丰富的动效库
-- 🧩 自定义主题生成器
-- 📊 设计令牌管理工具
-- 🔄 实时主题预览
-
-## 📞 获取帮助
-
-### 文档资源
-- [组件展示页面](/component-showcase) - 实时预览
-- [设计令牌定义](packages/ui-kit/src/theme/tokens.json) - 完整变量列表
-- [Element Plus 主题](apps/web-teacher/src/assets/styles/element-plus-theme.scss) - 主题映射
-
-### 技术支持
-- 查看项目 README 了解更多使用方法
-- 提交 Issue 报告问题或建议
-- 贡献代码请遵循项目规范
+我们追求的不是简单的堆砌颜色，而是通过**克制（Restraint）**、**质感（Texture）**和**微光（Glow）**来体现教育科技的温度与智慧。
 
 ---
 
-*最后更新: 2024-01-15*
+## 🎨 色彩系统 (Color System)
+
+### 核心品牌色 (Brand Colors)
+
+我们采用了“三位一体”的色彩架构，每种颜色都有明确的功能定义：
+
+#### 1. 基调色：深靛蓝 (Royal Indigo)
+*   **定义**：`#6366F1` (Indigo-500)
+*   **角色**：**理智、深度、基石**。
+*   **应用**：全局主色、导航栏、一级标题、容器背景。
+*   **变体**：
+    *   `Indigo-50` (`#EEF2FF`): 极淡背景，用于大面积铺底。
+    *   `Indigo-900` (`#312E81`): 深邃文字，替代纯黑。
+
+#### 2. 智慧色：丁香紫 (Electric Violet)
+*   **定义**：`#8B5CF6` (Violet-500)
+*   **角色**：**AI、灵感、创造**。
+*   **应用**：AI 助手交互、加载动画、选中状态、微光投影。
+*   **搭配**：与 Indigo 形成完美的邻近色过渡，营造“流光”感。
+
+#### 3. 点睛色：爱马仕橙 (Hermès Orange)
+*   **定义**：`#F97316` (Orange-500)
+*   **角色**：**行动、焦点、活力**。
+*   **应用**：**Call-to-Action (CTA)** 按钮、关键数据高亮、通知红点。
+*   **原则**：**极度克制**。一个屏幕上通常只允许出现 1-2 处，作为视觉锚点。
+
+### 中性色 (Neutrals)
+放弃纯灰 (`Gray`)，全面转向 **蓝灰 (Slate)**。
+*   `Slate-50` ~ `Slate-900`: 带有微弱蓝色的灰色，让界面显得更干净、冷峻。
+
+### 渐变体系 (Gradients)
+*   **品牌主渐变 (Brand Flow)**:
+    `linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #F97316 100%)`
+    *应用：Logo、Loading 条、主按钮 Hover 态。*
+*   **深空渐变 (Deep Space)**:
+    `linear-gradient(180deg, #312E81 0%, #1E1B4B 100%)`
+    *应用：侧边栏深色模式背景。*
+
+---
+
+## 💎 质感与材质 (Materials)
+
+高级感来源于对光影的细腻处理。
+
+### 1. 弥散光影 (Diffused Glow)
+不要使用黑色阴影 (`rgba(0,0,0,0.2)`)，那是“脏”的来源。
+**请使用彩光阴影**：
+*   `shadow-glow-sm`: `0 2px 4px rgba(99, 102, 241, 0.1)`
+*   `shadow-glow-lg`: `0 10px 25px -5px rgba(99, 102, 241, 0.15)`
+*   *效果：物体仿佛自身在发光，而不是遮挡了光。*
+
+### 2. 玻璃拟态 (Glassmorphism 2.0)
+在深色或复杂背景上，使用磨砂玻璃增加通透感。
+*   `background`: `rgba(255, 255, 255, 0.7)` (Light) / `rgba(30, 41, 59, 0.7)` (Dark)
+*   `backdrop-filter`: `blur(12px)`
+*   `border`: `1px solid rgba(255, 255, 255, 0.2)`
+
+### 3. 圆角 (Radius)
+*   **小圆角 (6px)**: 输入框、内部小元素。
+*   **大圆角 (12px/16px)**: 卡片、弹窗。
+*   **全圆角 (999px)**: 按钮、标签。
+*   *原则：外圆内方，层级越高圆角越大。*
+
+---
+
+## 🧩 组件设计规范 (Component Specs)
+
+### 按钮 (Buttons)
+
+*   **Primary (主操作)**
+    *   背景：`Indigo-500` 或 `Brand Gradient`。
+    *   文字：白色。
+    *   光影：`shadow-glow-lg`。
+*   **CTA (关键行动)**
+    *   背景：`Orange-500`。
+    *   形状：全圆角 (Pill)。
+    *   *场景：开始上课、发布任务。*
+*   **Secondary (次要)**
+    *   背景：透明。
+    *   边框：`1px solid Slate-200`。
+    *   文字：`Slate-600`。
+    *   Hover: 背景变 `Indigo-50`，文字变 `Indigo-600`。
+
+### 卡片 (Cards)
+
+*   **去边框化**：默认状态下**不要**加深色边框。
+*   **悬浮感**：利用 `shadow-glow` 让卡片与背景分离。
+*   **微交互**：Hover 时，卡片上浮 `translateY(-4px)`，阴影扩散并带有微弱的紫色光晕。
+
+### 输入框 (Inputs)
+
+*   **常态**：背景 `Slate-50`，无边框或极淡边框。
+*   **聚焦**：背景变白，出现 `Indigo-500` 的光圈 (`ring-2 ring-indigo-500/20`)。
+
+---
+
+## 📏 布局与排版 (Layout & Typography)
+
+### 字体
+*   **中文**：PingFang SC, Noto Sans SC
+*   **英文**：Inter, SF Pro Display
+*   **字重**：
+    *   标题使用 `600` (SemiBold)，不要用 `700` (Bold)，保持精致。
+    *   正文使用 `400` (Regular)。
+
+### 间距 (Spacing)
+拥抱留白。
+*   模块间距：`32px` (2rem) 起步。
+*   卡片内边距：`24px` (1.5rem) 起步。
+*   *让内容呼吸，不要挤在一起。*
+
+---
+
+## 🌙 深色模式 (Dark Mode)
+
+InnoFlow 的深色模式不是纯黑，而是**深海蓝**。
+*   **背景**：`#0F172A` (Slate-900)
+*   **卡片**：`#1E293B` (Slate-800)
+*   **文字**：`#F1F5F9` (Slate-100)
+*   *在深色模式下，橙色的点缀作用会更加明显，需更加克制使用。*

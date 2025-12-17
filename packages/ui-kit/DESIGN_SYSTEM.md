@@ -39,7 +39,7 @@
 ```scss
 // 成功色
 --edu-color-success-light: #B7EB8F;
---edu-color-success-default: #52C41A;
+--edu-color-success-default: #10B981;
 --edu-color-success-dark: #389E0D;
 
 // 警告色
@@ -54,7 +54,7 @@
 
 // 信息色
 --edu-color-info-light: #91D5FF;
---edu-color-info-default: #1890FF;
+--edu-color-info-default: #0EA5E9;
 --edu-color-info-dark: #0958D9;
 ```
 
@@ -255,17 +255,17 @@
 ### 8.1 主题渐变
 
 ```scss
---edu-gradient-primary: linear-gradient(135deg, #5B8FF9 0%, #85BEFF 100%);
---edu-gradient-secondary: linear-gradient(135deg, #52C41A 0%, #7ED321 100%);
---edu-gradient-warm: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
---edu-gradient-cool: linear-gradient(135deg, #4ECDC4 0%, #44A3AA 100%);
---edu-gradient-education: linear-gradient(135deg, #5B8FF9 0%, #4ECDC4 100%);
+--edu-gradient-primary: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+--edu-gradient-secondary: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+--edu-gradient-warm: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+--edu-gradient-cool: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+--edu-gradient-education: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
 ```
 
 ### 8.2 语义化渐变
 
 ```scss
---edu-gradient-success: linear-gradient(135deg, #52C41A 0%, #95DE64 100%);
+--edu-gradient-success: linear-gradient(135deg, #10B981 0%, #34D399 100%);
 --edu-gradient-warning: linear-gradient(135deg, #FAAD14 0%, #FFD666 100%);
 --edu-gradient-error: linear-gradient(135deg, #F5222D 0%, #FF7875 100%);
 ```

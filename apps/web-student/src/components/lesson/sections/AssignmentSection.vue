@@ -550,9 +550,9 @@ const progressPercentage = computed(() => {
 })
 
 const progressColor = computed(() => {
-  if (progressPercentage.value === 100) return '#67c23a'
-  if (progressPercentage.value >= 60) return '#409eff'
-  return '#e6a23c'
+  if (progressPercentage.value === 100) return 'var(--edu-color-success-default)'
+  if (progressPercentage.value >= 60) return 'var(--edu-primary-500)'
+  return 'var(--edu-color-warning-default)'
 })
 
 // 方法
@@ -1155,7 +1155,7 @@ onUnmounted(() => {
           font-size: 20px;
 
           &.answered {
-            color: #67c23a;
+            color: var(--edu-color-success-default);
           }
 
           &.unanswered {
@@ -1315,7 +1315,7 @@ onUnmounted(() => {
     }
 
     &.answered {
-      border-left: 4px solid #67c23a;
+      border-left: 4px solid var(--edu-color-success-default);
     }
   }
 }
@@ -1417,8 +1417,8 @@ onUnmounted(() => {
         }
 
         &.answered {
-          background: #67c23a;
-          border-color: #67c23a;
+          background: var(--edu-color-success-default);
+          border-color: var(--edu-color-success-default);
           color: white;
         }
 
@@ -1451,7 +1451,7 @@ onUnmounted(() => {
           }
 
           &.answered {
-            background: #67c23a;
+            background: var(--edu-color-success-default);
           }
 
           &.current {

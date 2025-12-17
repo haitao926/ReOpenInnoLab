@@ -105,13 +105,13 @@
 
         <div class="status-indicators">
           <div class="indicator" v-if="connected" title="已连接">
-            <el-icon color="#67c23a"><Link /></el-icon>
+            <el-icon color="var(--edu-color-success-default)"><Link /></el-icon>
           </div>
           <div class="indicator" v-if="tracking" title="正在跟踪">
-            <el-icon color="#409eff"><View /></el-icon>
+            <el-icon color="var(--edu-primary-500)"><View /></el-icon>
           </div>
           <div class="indicator" v-if="interactive" title="可交互">
-            <el-icon color="#e6a23c"><Pointer /></el-icon>
+            <el-icon color="var(--edu-color-warning-default)"><Pointer /></el-icon>
           </div>
         </div>
       </div>
@@ -503,7 +503,7 @@ const addFeedback = (data: Partial<InteractionFeedback>) => {
     type: data.type || 'info',
     message: data.message || '',
     icon: data.icon || 'InfoFilled',
-    color: data.color || '#409eff',
+    color: data.color || 'var(--edu-primary-500)',
     timestamp: Date.now()
   }
 
@@ -595,7 +595,7 @@ watch(() => settings.value.showControls, (newValue) => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #f5f5f5;
+  background: var(--edu-color-gray-50);
 
   &.fullscreen-mode {
     position: fixed;
@@ -604,7 +604,7 @@ watch(() => settings.value.showControls, (newValue) => {
     right: 0;
     bottom: 0;
     z-index: 9999;
-    background: #000;
+    background: var(--edu-color-black);
   }
 }
 
@@ -620,30 +620,30 @@ watch(() => settings.value.showControls, (newValue) => {
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.9);
-  color: #333;
+  color: var(--edu-color-gray-900);
   gap: 16px;
   z-index: 10;
 }
 
 .loading-icon {
   font-size: 48px;
-  color: #409eff;
+  color: var(--edu-primary-500);
 }
 
 .loading-text {
   font-size: 16px;
-  color: #666;
+  color: var(--edu-color-gray-600);
 }
 
 .error-title {
   font-size: 18px;
   font-weight: bold;
-  color: #f56c6c;
+  color: var(--edu-color-error-default);
 }
 
 .error-message {
   font-size: 14px;
-  color: #666;
+  color: var(--edu-color-gray-600);
   text-align: center;
   max-width: 300px;
 }
@@ -739,19 +739,19 @@ watch(() => settings.value.showControls, (newValue) => {
 
   .el-icon {
     font-size: 48px;
-    color: #e6a23c;
+    color: var(--edu-color-warning-default);
   }
 
   h4 {
     margin: 0 0 8px 0;
     font-size: 16px;
-    color: #333;
+    color: var(--edu-color-gray-900);
   }
 
   p {
     margin: 0 0 16px 0;
     font-size: 14px;
-    color: #666;
+    color: var(--edu-color-gray-600);
     line-height: 1.5;
   }
 }

@@ -1,725 +1,421 @@
-// 开源浦育 ReOpenInnoLab - UI Kit Variables
-// 基于 Design Tokens 的样式变量
+// 开源浦育 ReOpenInnoLab - UI Kit Variables (InnoFlow Edition)
+// 基于 Design Tokens 的样式变量 - 2025 Refactor
 
 // ========================================
-// 颜色系统
+// 颜色系统 (Color System)
 // ========================================
 
-// 主色调 - 学术蓝
 :root {
-  // 主色系 - Academic Blue
-  --edu-primary-50: #e3f2fd;
-  --edu-primary-100: #bbdefb;
-  --edu-primary-200: #90caf9;
-  --edu-primary-300: #64b5f6;
-  --edu-primary-400: #42a5f5;
-  --edu-primary-500: #2196f3;  // 主色
-  --edu-primary-600: #1e88e5;
-  --edu-primary-700: #1976d2;
-  --edu-primary-800: #1565c0;
-  --edu-primary-900: #0d47a1;
+  // ----------------------------------------
+  // 1. 基调色 - 深靛蓝 (Royal Indigo)
+  // Role: 深度、理智、基石
+  // ----------------------------------------
+  --edu-primary-50: #EEF2FF;
+  --edu-primary-100: #E0E7FF;
+  --edu-primary-200: #C7D2FE;
+  --edu-primary-300: #A5B4FC;
+  --edu-primary-400: #818CF8;
+  --edu-primary-500: #6366F1; // 主色 Main
+  --edu-primary-600: #4F46E5;
+  --edu-primary-700: #4338CA;
+  --edu-primary-800: #3730A3;
+  --edu-primary-900: #312E81;
+  --edu-primary-950: #1E1B4B;
+
+  // 兼容旧版变量名 (Mapping to New Indigo)
+  --edu-color-primary-50: var(--edu-primary-50);
+  --edu-color-primary-100: var(--edu-primary-100);
+  --edu-color-primary-200: var(--edu-primary-200);
+  --edu-color-primary-300: var(--edu-primary-300);
+  --edu-color-primary-400: var(--edu-primary-400);
+  --edu-color-primary-500: var(--edu-primary-500);
+  --edu-color-primary-600: var(--edu-primary-600);
+  --edu-color-primary-700: var(--edu-primary-700);
+  --edu-color-primary-800: var(--edu-primary-800);
+  --edu-color-primary-900: var(--edu-primary-900);
+  --edu-color-primary-950: var(--edu-primary-950);
+
+  // ----------------------------------------
+  // 2. 智慧色 - 丁香紫 (Electric Violet)
+  // Role: AI、灵感、创造 (Replaces old Green Secondary)
+  // ----------------------------------------
+  --edu-color-secondary-50: #F5F3FF;
+  --edu-color-secondary-100: #EDE9FE;
+  --edu-color-secondary-200: #DDD6FE;
+  --edu-color-secondary-300: #C4B5FD;
+  --edu-color-secondary-400: #A78BFA;
+  --edu-color-secondary-500: #8B5CF6; // 主紫 Main
+  --edu-color-secondary-600: #7C3AED;
+  --edu-color-secondary-700: #6D28D9;
+  --edu-color-secondary-800: #5B21B6;
+  --edu-color-secondary-900: #4C1D95;
+
+  // ----------------------------------------
+  // 3. 点睛色 - 爱马仕橙 (Hermès Orange)
+  // Role: 行动、焦点、活力 (New Tertiary)
+  // ----------------------------------------
+  --edu-color-tertiary-50: #FFF7ED;
+  --edu-color-tertiary-100: #FFEDD5;
+  --edu-color-tertiary-200: #FED7AA;
+  --edu-color-tertiary-300: #FDBA74;
+  --edu-color-tertiary-400: #FB923C;
+  --edu-color-tertiary-500: #F97316; // 主橙 Main
+  --edu-color-tertiary-600: #EA580C;
+  --edu-color-tertiary-700: #C2410C;
+  --edu-color-tertiary-800: #9A3412;
+  --edu-color-tertiary-900: #7C2D12;
+
+  // ----------------------------------------
+  // 4. 中性色 - 蓝灰 (Slate)
+  // Role: 质感、冷峻、高级
+  // ----------------------------------------
+  --edu-color-white: #FFFFFF;
+  --edu-color-gray-50: #F8FAFC;
+  --edu-color-gray-100: #F1F5F9;
+  --edu-color-gray-200: #E2E8F0;
+  --edu-color-gray-300: #CBD5E1;
+  --edu-color-gray-400: #94A3B8;
+  --edu-color-gray-500: #64748B;
+  --edu-color-gray-600: #475569;
+  --edu-color-gray-700: #334155;
+  --edu-color-gray-800: #1E293B;
+  --edu-color-gray-900: #0F172A;
+  --edu-color-black: #020617;
+
+  // ----------------------------------------
+  // 5. 语义化颜色 (Semantic)
+  // ----------------------------------------
+  // Success (Green)
+  --edu-color-success-light: #D1FAE5;
+  --edu-color-success-default: #10B981; // Emerald-500
+  --edu-color-success-dark: #047857;
+
+  // Warning (Amber/Yellow - Distinct from Orange Tertiary)
+  --edu-color-warning-light: #FEF3C7;
+  --edu-color-warning-default: #F59E0B; // Amber-500
+  --edu-color-warning-dark: #B45309;
+
+  // Error (Red)
+  --edu-color-error-light: #FEE2E2;
+  --edu-color-error-default: #EF4444; // Red-500
+  --edu-color-error-dark: #B91C1C;
+
+  // Info (Sky)
+  --edu-color-info-light: #E0F2FE;
+  --edu-color-info-default: #0EA5E9; // Sky-500
+  --edu-color-info-dark: #0369A1;
+
+  // CTA (Call to Action - Orange)
+  // 对应 Tertiary 色系，用于关键操作引导
+  --edu-color-cta-light: var(--edu-color-tertiary-100);
+  --edu-color-cta-default: var(--edu-color-tertiary-500);
+  --edu-color-cta-dark: var(--edu-color-tertiary-700);
+
+  // ----------------------------------------
+  // 6. 学科色彩体系 (Subject Colors)
+  // 保留原有逻辑，但微调以匹配新风格
+  // ----------------------------------------
+  --math-primary: #F97316; // Orange (Match Tertiary)
+  --math-light: #FFF7ED;
+  --math-dark: #C2410C;
+
+  --physics-primary: #6366F1; // Indigo (Match Primary)
+  --physics-light: #EEF2FF;
+  --physics-dark: #4338CA;
+
+  --chemistry-primary: #10B981; // Emerald
+  --chemistry-light: #ECFDF5;
+  --chemistry-dark: #047857;
+
+  --biology-primary: #8B5CF6; // Violet (Match Secondary)
+  --biology-light: #F5F3FF;
+  --biology-dark: #6D28D9;
+
+  --language-primary: #EC4899; // Pink
+  --language-light: #FDF2F8;
+  --language-dark: #BE185D;
 
   // 兼容现有变量名
-  --edu-color-primary-50: #e3f2fd;
-  --edu-color-primary-100: #bbdefb;
-  --edu-color-primary-200: #90caf9;
-  --edu-color-primary-300: #64b5f6;
-  --edu-color-primary-400: #42a5f5;
-  --edu-color-primary-500: #2196f3;
-  --edu-color-primary-600: #1e88e5;
-  --edu-color-primary-700: #1976d2;
-  --edu-color-primary-800: #1565c0;
-  --edu-color-primary-900: #0d47a1;
-  --edu-color-primary-950: #0a2857;
-
-  // Secondary Colors
-  --edu-color-secondary-50: #F6FFED;
-  --edu-color-secondary-100: #D9F7BE;
-  --edu-color-secondary-200: #BAF0B4;
-  --edu-color-secondary-300: #95DE64;
-  --edu-color-secondary-400: #73D13D;
-  --edu-color-secondary-500: #52C41A;
-  --edu-color-secondary-600: #389E0D;
-  --edu-color-secondary-700: #237804;
-  --edu-color-secondary-800: #135200;
-  --edu-color-secondary-900: #092B00;
-
-  // 中性色
-  --edu-color-white: #FFF;
-  --edu-color-gray-50: #FAFAFA;
-  --edu-color-gray-100: #F5F5F5;
-  --edu-color-gray-200: #F0F0F0;
-  --edu-color-gray-300: #D9D9D9;
-  --edu-color-gray-400: #BFBFBF;
-  --edu-color-gray-500: #8C8C8C;
-  --edu-color-gray-600: #595959;
-  --edu-color-gray-700: #434343;
-  --edu-color-gray-800: #262626;
-  --edu-color-gray-900: #1F1F1F;
-  --edu-color-black: #000;
-
-  // 语义化颜色
-  --edu-color-success-light: #B7EB8F;
-  --edu-color-success-default: #52C41A;
-  --edu-color-success-dark: #389E0D;
-  --edu-color-warning-light: #FFE58F;
-  --edu-color-warning-default: #FAAD14;
-  --edu-color-warning-dark: #D48806;
-  --edu-color-error-light: #FF7875;
-  --edu-color-error-default: #F5222D;
-  --edu-color-error-dark: #CF1322;
-  --edu-color-info-light: #91D5FF;
-  --edu-color-info-default: #1890FF;
-  --edu-color-info-dark: #0958D9;
-
-  // 学科色彩体系 - Subject Colors
-  // 物理蓝色
-  --physics-primary: #1976d2;
-  --physics-light: #e3f2fd;
-  --physics-dark: #0d47a1;
-
-  // 化学绿色
-  --chemistry-primary: #388e3c;
-  --chemistry-light: #e8f5e8;
-  --chemistry-dark: #1b5e20;
-
-  // 数学橙色
-  --math-primary: #f57c00;
-  --math-light: #fff3e0;
-  --math-dark: #e65100;
-
-  // 生物紫色
-  --biology-primary: #7b1fa2;
-  --biology-light: #f3e5f5;
-  --biology-dark: #4a148c;
-
-  // 语文红色
-  --language-primary: #d32f2f;
-  --language-light: #ffebee;
-  --language-dark: #b71c1c;
-
-  // 兼容现有学科色彩命名
-  --edu-color-subject-math: #f57c00;
-  --edu-color-subject-math-light: #fff3e0;
-  --edu-color-subject-math-dark: #e65100;
-  --edu-color-subject-physics: #1976d2;
-  --edu-color-subject-physics-light: #e3f2fd;
-  --edu-color-subject-physics-dark: #0d47a1;
-  --edu-color-subject-chemistry: #388e3c;
-  --edu-color-subject-chemistry-light: #e8f5e8;
-  --edu-color-subject-chemistry-dark: #1b5e20;
-  --edu-color-subject-biology: #7b1fa2;
-  --edu-color-subject-biology-light: #f3e5f5;
-  --edu-color-subject-biology-dark: #4a148c;
-  --edu-color-subject-language: #d32f2f;
-  --edu-color-subject-language-light: #ffebee;
-  --edu-color-subject-language-dark: #b71c1c;
-  --edu-color-subject-history: #ff6f00;
-  --edu-color-subject-history-light: #fff3e0;
-  --edu-color-subject-history-dark: #e65100;
-  --edu-color-subject-geography: #0277bd;
-  --edu-color-subject-geography-light: #e1f5fe;
-  --edu-color-subject-geography-dark: #01579b;
-  --edu-color-subject-english: #2e7d32;
-  --edu-color-subject-english-light: #e8f5e8;
-  --edu-color-subject-english-dark: #1b5e20;
-  --edu-color-subject-art: #7b1fa2;
-  --edu-color-subject-art-light: #f3e5f5;
-  --edu-color-subject-art-dark: #4a148c;
-  --edu-color-subject-music: #c2185b;
-  --edu-color-subject-music-light: #fce4ec;
-  --edu-color-subject-music-dark: #880e4f;
-  --edu-color-subject-pe: #f57c00;
-  --edu-color-subject-pe-light: #fff3e0;
-  --edu-color-subject-pe-dark: #e65100;
-  --edu-color-subject-it: #455a64;
-  --edu-color-subject-it-light: #eceff1;
-  --edu-color-subject-it-dark: #263238;
+  --edu-color-subject-math: var(--math-primary);
+  --edu-color-subject-physics: var(--physics-primary);
+  --edu-color-subject-chemistry: var(--chemistry-primary);
+  --edu-color-subject-biology: var(--biology-primary);
+  --edu-color-subject-language: var(--language-primary);
+  --edu-color-subject-history: #D97706;
+  --edu-color-subject-geography: #0891B2;
+  --edu-color-subject-english: #059669;
+  --edu-color-subject-art: #D946EF;
+  --edu-color-subject-music: #8B5CF6;
+  --edu-color-subject-pe: #F97316;
+  --edu-color-subject-it: #64748B;
 }
 
 // ========================================
-// 字体系统 - Typography System
+// 字体系统 (Typography)
 // ========================================
 
 :root {
-  // 字体族 - Font Family
-  --font-family-sans: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
-  --font-family-serif: "Songti SC", "SimSun", "Noto Serif SC", Georgia, serif;
-  --font-family-mono: "SF Mono", "Monaco", "Inconsolata", "Fira Code", "Source Code Pro", monospace;
+  --font-family-sans: "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  --font-family-serif: "Noto Serif SC", "Songti SC", serif;
+  --font-family-mono: "JetBrains Mono", "Fira Code", monospace;
 
   // 兼容现有变量名
-  --edu-font-sans: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
-  --edu-font-serif: "Songti SC", "SimSun", "Noto Serif SC", Georgia, serif;
-  --edu-font-mono: "SF Mono", "Monaco", "Inconsolata", "Fira Code", "Source Code Pro", monospace;
+  --edu-font-sans: var(--font-family-sans);
+  --edu-font-serif: var(--font-family-serif);
+  --edu-font-mono: var(--font-family-mono);
 
-  // 字号体系 - Font Sizes
-  --font-size-xs: 12px;    // 辅助信息
-  --font-size-sm: 14px;    // 正文小字
-  --font-size-base: 16px;  // 基础字号
-  --font-size-lg: 18px;    // 标题小字
-  --font-size-xl: 20px;    // 小标题
-  --font-size-2xl: 24px;   // 中标题
-  --font-size-3xl: 30px;   // 大标题
-  --font-size-4xl: 36px;   // 超大标题
-  --font-size-5xl: 48px;   // 特大标题
+  // 字体大小
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  --font-size-4xl: 36px;
+  --font-size-5xl: 48px;
 
-  // 兼容现有变量名
-  --edu-font-size-xs: 12px;
-  --edu-font-size-sm: 14px;
-  --edu-font-size-base: 16px;
-  --edu-font-size-lg: 18px;
-  --edu-font-size-xl: 20px;
-  --edu-font-size-2xl: 24px;
-  --edu-font-size-3xl: 30px;
-  --edu-font-size-4xl: 36px;
-  --edu-font-size-5xl: 48px;
-  --edu-font-size-6xl: 60px;
-  --edu-font-size-7xl: 72px;
+  // 兼容
+  --edu-font-size-xs: var(--font-size-xs);
+  --edu-font-size-sm: var(--font-size-sm);
+  --edu-font-size-base: var(--font-size-base);
+  --edu-font-size-lg: var(--font-size-lg);
+  --edu-font-size-xl: var(--font-size-xl);
+  --edu-font-size-2xl: var(--font-size-2xl);
 
-  // 字重规范 - Font Weights
-  --font-weight-light: 300;      // 轻体
-  --font-weight-normal: 400;     // 常规
-  --font-weight-medium: 500;     // 中等
-  --font-weight-semibold: 600;   // 半粗
-  --font-weight-bold: 700;       // 粗体
+  // 字重 - 更加克制，不再使用过重的黑体
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600; // 标题级
+  --font-weight-bold: 700;     // 强调级
 
-  // 兼容现有变量名
-  --edu-font-weight-light: 300;
-  --edu-font-weight-normal: 400;
-  --edu-font-weight-medium: 500;
-  --edu-font-weight-semibold: 600;
-  --edu-font-weight-bold: 700;
-  --edu-font-weight-thin: 100;
-  --edu-font-weight-extralight: 200;
-  --edu-font-weight-extrabold: 800;
-  --edu-font-weight-black: 900;
+  --edu-font-weight-normal: var(--font-weight-normal);
+  --edu-font-weight-medium: var(--font-weight-medium);
+  --edu-font-weight-semibold: var(--font-weight-semibold);
+  --edu-font-weight-bold: var(--font-weight-bold);
 
-  // 行高规范 - Line Heights
-  --line-height-tight: 1.25;     // 紧凑行高 - 标题使用
-  --line-height-snug: 1.375;     // 适中行高 - 小文本使用
-  --line-height-normal: 1.5;     // 标准行高 - 正文使用
-  --line-height-relaxed: 1.625;  // 宽松行高 - 长段落使用
-  --line-height-loose: 2;        // 最宽行高 - 特殊场景
+  // 行高
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
 
-  // 兼容现有变量名
-  --edu-line-height-none: 1;
-  --edu-line-height-tight: 1.25;
-  --edu-line-height-snug: 1.375;
-  --edu-line-height-normal: 1.5;
-  --edu-line-height-relaxed: 1.625;
-  --edu-line-height-loose: 2;
+  --edu-line-height-normal: var(--line-height-normal);
 
-  // 字符间距规范 - Letter Spacing
-  --letter-spacing-tighter: -0.05em;  // 更紧密
-  --letter-spacing-tight: -0.025em;   // 紧密
-  --letter-spacing-normal: 0;         // 标准
-  --letter-spacing-wide: 0.025em;     // 宽松
-  --letter-spacing-wider: 0.05em;     // 更宽松
-  --letter-spacing-widest: 0.1em;     // 最宽松
+  // 文本色彩 - 基于 Slate
+  --text-primary: var(--edu-color-gray-900);      // #0F172A
+  --text-secondary: var(--edu-color-gray-600);    // #475569
+  --text-tertiary: var(--edu-color-gray-400);     // #94A3B8
+  --text-disabled: var(--edu-color-gray-300);     // #CBD5E1
 
-  // 兼容现有变量名
-  --edu-letter-spacing-tighter: -0.05em;
-  --edu-letter-spacing-tight: -0.025em;
-  --edu-letter-spacing-normal: 0em;
-  --edu-letter-spacing-wide: 0.025em;
-  --edu-letter-spacing-wider: 0.05em;
-  --edu-letter-spacing-widest: 0.1em;
+  // 主/辅色兼容别名（供旧组件引用）
+  --edu-primary: var(--edu-primary-500);
+  --edu-primary-light: var(--edu-primary-300);
+  --edu-primary-lighter: var(--edu-primary-100);
+  --edu-primary-dark: var(--edu-primary-700);
+  --edu-primary-darker: var(--edu-primary-900);
 
-  // 文本色彩 - Text Colors
-  --text-primary: rgba(0, 0, 0, 0.87);      // 主要文本
-  --text-secondary: rgba(0, 0, 0, 0.68);    // 次要文本
-  --text-tertiary: rgba(0, 0, 0, 0.38);     // 辅助文本
-  --text-disabled: rgba(0, 0, 0, 0.25);     // 禁用文本
+  --edu-secondary: var(--edu-color-secondary-500);
+  --edu-secondary-light: var(--edu-color-secondary-300);
+  --edu-secondary-dark: var(--edu-color-secondary-700);
 
-  // 背景色上的文本色
+  --edu-success: var(--edu-color-success-default);
+  --edu-warning: var(--edu-color-warning-default);
+  --edu-error: var(--edu-color-error-default);
+  --edu-info: var(--edu-color-info-default);
+
+  // 兼容旧版 edu-text / edu-bg / edu-radius 命名（UI Kit 组件历史包袱）
+  --edu-text-primary: var(--text-primary);
+  --edu-text-secondary: var(--text-secondary);
+  --edu-text-tertiary: var(--text-tertiary);
+  --edu-text-disabled: var(--text-disabled);
+
+  --edu-text-xs: var(--edu-font-size-xs);
+  --edu-text-sm: var(--edu-font-size-sm);
+  --edu-text-base: var(--edu-font-size-base);
+  --edu-text-lg: var(--edu-font-size-lg);
+  --edu-text-xl: var(--edu-font-size-xl);
+
+  --edu-bg-primary: var(--edu-color-white);
+  --edu-bg-secondary: var(--edu-color-gray-50);
+  --edu-bg-tertiary: var(--edu-color-gray-100);
+  --edu-bg-elevated: var(--edu-color-white);
+
+  --edu-border-color: var(--edu-color-gray-200);
+  --edu-border-color-light: var(--edu-color-gray-100);
+  --edu-border-light: var(--edu-color-gray-100);
+  --edu-border-base: var(--edu-color-gray-200);
+  --edu-border-dark: var(--edu-color-gray-300);
+
+  --edu-radius-sm: var(--radius-sm);
+  --edu-radius-base: var(--radius-base);
+  --edu-radius-lg: var(--radius-lg);
+  --edu-radius-xl: var(--radius-xl);
+  --edu-radius-2xl: var(--radius-2xl);
+  --edu-radius-full: var(--radius-full);
+
   --text-on-primary: #ffffff;
-  --text-on-surface: rgba(0, 0, 0, 0.87);
-
-  // 玻璃效果变量
-  --edu-glass-bg: rgba(255, 255, 255, 0.95);
-  --edu-glass-border: 1px solid rgba(255, 255, 255, 0.18);
-  --edu-glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-  --edu-glass-blur: saturate(180%) blur(20px);
-
-  // 深色模式玻璃效果
-  --edu-dark-glass-bg: rgba(0, 0, 0, 0.95);
-  --edu-dark-glass-border: 1px solid rgba(255, 255, 255, 0.1);
-  --edu-dark-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
 // ========================================
-// 间距系统 - Spacing System
+// 阴影系统 (Glow System)
 // ========================================
 
 :root {
-  // 基础间距 - Base Spacing
+  // 使用 Indigo 色相的弥散阴影，而非黑色
+  --shadow-color: 99, 102, 241; // Indigo-500 RGB
+
+  --edu-shadow-sm: 0 1px 2px 0 rgba(var(--shadow-color), 0.05);
+  --edu-shadow-base: 0 4px 6px -1px rgba(var(--shadow-color), 0.1), 0 2px 4px -1px rgba(var(--shadow-color), 0.06);
+  --edu-shadow-md: 0 10px 15px -3px rgba(var(--shadow-color), 0.1), 0 4px 6px -2px rgba(var(--shadow-color), 0.05);
+  --edu-shadow-lg: 0 20px 25px -5px rgba(var(--shadow-color), 0.1), 0 10px 10px -5px rgba(var(--shadow-color), 0.04);
+  --edu-shadow-xl: 0 25px 50px -12px rgba(var(--shadow-color), 0.25);
+  --edu-shadow-2xl: 0 30px 60px -14px rgba(var(--shadow-color), 0.3);
+  --edu-shadow-education: 0 4px 20px rgba(var(--shadow-color), 0.15);
+  
+  // 特殊发光效果
+  --edu-shadow-glow: 0 0 15px rgba(var(--shadow-color), 0.3);
+  --edu-shadow-glow-orange: 0 0 15px rgba(249, 115, 22, 0.4); // Orange glow
+
+  --edu-shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+// ========================================
+// 玻璃态系统 (Glassmorphism)
+// ========================================
+
+:root {
+  --edu-glass-bg: rgba(255, 255, 255, 0.7);
+  --edu-glass-border: 1px solid rgba(255, 255, 255, 0.5);
+  --edu-glass-blur: blur(12px);
+  --edu-glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+
+  --edu-dark-glass-bg: rgba(30, 41, 59, 0.7); // Slate-800, 70%
+  --edu-dark-glass-border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+// ========================================
+// 渐变系统 (Gradient Flow)
+// ========================================
+
+:root {
+  // 品牌流光 (Brand Flow) - Logo, Loading, Primary Buttons
+  --edu-gradient-brand: linear-gradient(135deg, var(--edu-primary-500) 0%, var(--edu-color-secondary-500) 50%, var(--edu-color-tertiary-500) 100%);
+  
+  // 基础渐变
+  --edu-gradient-primary: linear-gradient(135deg, var(--edu-primary-500) 0%, var(--edu-primary-600) 100%);
+  --edu-gradient-secondary: linear-gradient(135deg, var(--edu-color-secondary-500) 0%, var(--edu-color-secondary-600) 100%);
+  --edu-gradient-tertiary: linear-gradient(135deg, var(--edu-color-tertiary-500) 0%, var(--edu-color-tertiary-600) 100%);
+  
+  // 氛围渐变
+  --edu-gradient-warm: linear-gradient(135deg, #F97316 0%, #F59E0B 100%);
+  --edu-gradient-cool: linear-gradient(135deg, #6366F1 0%, #0EA5E9 100%);
+  
+  // Status Gradients (for dashboards/stats)
+  --edu-gradient-success: linear-gradient(135deg, var(--edu-color-success-default) 0%, #34D399 100%);
+  --edu-gradient-warning: linear-gradient(135deg, var(--edu-color-warning-default) 0%, #FBBF24 100%);
+  --edu-gradient-error: linear-gradient(135deg, var(--edu-color-error-default) 0%, #F87171 100%);
+}
+
+// ========================================
+// 间距与圆角 (Spacing & Radius)
+// ========================================
+
+:root {
+  // 圆角 - 偏大
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-base: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-3xl: 32px;
+  --radius-full: 9999px;
+
+  --edu-border-radius-none: 0px;
+  --edu-border-radius-sm: var(--radius-sm);
+  --edu-border-radius-md: 10px;
+  --edu-border-radius-base: var(--radius-base);
+  --edu-border-radius-lg: var(--radius-lg);
+  --edu-border-radius-xl: var(--radius-xl);
+  --edu-border-radius-2xl: var(--radius-2xl);
+  --edu-border-radius-3xl: var(--radius-3xl);
+  --edu-border-radius-full: var(--radius-full);
+
+  // 间距 - 保持原有 scale
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-base: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
   --spacing-2xl: 48px;
-  --spacing-3xl: 64px;
 
-  // 兼容现有变量名
-  --edu-spacing-0: 0px;
-  --edu-spacing-px: 1px;
-  --edu-spacing-0-5: 2px;
-  --edu-spacing-1: 4px;
-  --edu-spacing-1-5: 6px;
-  --edu-spacing-2: 8px;
-  --edu-spacing-2-5: 10px;
-  --edu-spacing-3: 12px;
-  --edu-spacing-3-5: 14px;
-  --edu-spacing-4: 16px;
-  --edu-spacing-5: 20px;
-  --edu-spacing-6: 24px;
-  --edu-spacing-7: 28px;
-  --edu-spacing-8: 32px;
-  --edu-spacing-9: 36px;
-  --edu-spacing-10: 40px;
-  --edu-spacing-11: 44px;
-  --edu-spacing-12: 48px;
-  --edu-spacing-14: 56px;
-  --edu-spacing-16: 64px;
-  --edu-spacing-20: 80px;
-  --edu-spacing-24: 96px;
-  --edu-spacing-28: 112px;
-  --edu-spacing-32: 128px;
-  --edu-spacing-36: 144px;
-  --edu-spacing-40: 160px;
-  --edu-spacing-44: 176px;
-  --edu-spacing-48: 192px;
-  --edu-spacing-52: 208px;
-  --edu-spacing-56: 224px;
-  --edu-spacing-60: 240px;
-  --edu-spacing-64: 256px;
-  --edu-spacing-72: 288px;
-  --edu-spacing-80: 320px;
-  --edu-spacing-96: 384px;
+  // edu 前缀间距，方便组件消费
+  --edu-spacing-xs: var(--spacing-xs);
+  --edu-spacing-sm: var(--spacing-sm);
+  --edu-spacing-base: var(--spacing-base);
+  --edu-spacing-lg: var(--spacing-lg);
+  --edu-spacing-xl: var(--spacing-xl);
+  --edu-spacing-2xl: var(--spacing-2xl);
+  --edu-space-section: var(--spacing-xl);
 }
 
 // ========================================
-// 圆角系统 - Border Radius System
+// 动效 (Motion)
 // ========================================
 
 :root {
-  // 基础圆角 - Base Radius
-  --radius-xs: 2px;
-  --radius-sm: 4px;
-  --radius-base: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-2xl: 16px;
-  --radius-full: 9999px;
-
-  // 兼容现有变量名
-  --edu-border-radius-none: 0px;
-  --edu-border-radius-sm: 2px;
-  --edu-border-radius-base: 4px;
-  --edu-border-radius-md: 6px;
-  --edu-border-radius-lg: 8px;
-  --edu-border-radius-xl: 12px;
-  --edu-border-radius-2xl: 16px;
-  --edu-border-radius-3xl: 24px;
-  --edu-border-radius-full: 9999px;
-}
-
-// ========================================
-// 阴影系统
-// ========================================
-
-:root {
-  --edu-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 5%);
-  --edu-shadow-base: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%);
-  --edu-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
-  --edu-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -2px rgb(0 0 0 / 5%);
-  --edu-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 10%), 0 10px 10px -5px rgb(0 0 0 / 4%);
-  --edu-shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 25%);
-  --edu-shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 6%);
-  --edu-shadow-glass: 0 8px 32px rgb(31 38 135 / 15%);
-  --edu-shadow-education: 0 4px 20px rgb(91 143 249 / 15%);
-}
-
-// ========================================
-// 层级系统
-// ========================================
-
-:root {
-  --edu-z-index-hide: -1;
-  --edu-z-index-auto: auto;
-  --edu-z-index-base: 0;
-  --edu-z-index-docked: 10;
-  --edu-z-index-dropdown: 1000;
-  --edu-z-index-sticky: 1100;
-  --edu-z-index-banner: 1200;
-  --edu-z-index-overlay: 1300;
-  --edu-z-index-modal: 1400;
-  --edu-z-index-popover: 1500;
-  --edu-z-index-skip-link: 1600;
-  --edu-z-index-toast: 1700;
-  --edu-z-index-tooltip: 1800;
-}
-
-// ========================================
-// 动效系统
-// ========================================
-
-:root {
-  // 缓动函数
-  --edu-easing-linear: linear;
-  --edu-easing-in: cubic-bezier(0.4, 0, 1, 1);
-  --edu-easing-out: cubic-bezier(0, 0, 0.2, 1);
-  --edu-easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --edu-easing-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --edu-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  --edu-easing-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-  // 持续时间
+  --edu-easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   --edu-duration-fast: 0.15s;
   --edu-duration-normal: 0.3s;
   --edu-duration-slow: 0.5s;
-
-  // 延迟时间
-  --edu-delay-short: 0.1s;
-  --edu-delay-normal: 0.2s;
-  --edu-delay-long: 0.3s;
 }
 
 // ========================================
-// 渐变色系统
+// 组件 Token (Component Tokens)
 // ========================================
 
 :root {
-  --edu-gradient-primary: linear-gradient(135deg, #5B8FF9 0%, #85BEFF 100%);
-  --edu-gradient-secondary: linear-gradient(135deg, #52C41A 0%, #7ED321 100%);
-  --edu-gradient-warm: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
-  --edu-gradient-cool: linear-gradient(135deg, #4ECDC4 0%, #44A3AA 100%);
-  --edu-gradient-education: linear-gradient(135deg, #5B8FF9 0%, #4ECDC4 100%);
-  --edu-gradient-success: linear-gradient(135deg, #52C41A 0%, #95DE64 100%);
-  --edu-gradient-warning: linear-gradient(135deg, #FAAD14 0%, #FFD666 100%);
-  --edu-gradient-error: linear-gradient(135deg, #F5222D 0%, #FF7875 100%);
-}
-
-// ========================================
-// 响应式断点
-// ========================================
-
-:root {
-  --edu-breakpoint-xs: 480px;
-  --edu-breakpoint-sm: 768px;
-  --edu-breakpoint-md: 1024px;
-  --edu-breakpoint-lg: 1280px;
-  --edu-breakpoint-xl: 1536px;
-  --edu-breakpoint-2xl: 1920px;
-}
-
-// ========================================
-// 组件级Token系统 - Component Tokens
-// ========================================
-
-:root {
-  // 按钮组件Token - Button Component Tokens
-  // 按钮尺寸
-  --btn-height-xs: 24px;
-  --btn-height-sm: 32px;
+  // Button
   --btn-height-base: 40px;
-  --btn-height-lg: 48px;
-  --btn-height-xl: 56px;
+  --btn-radius: var(--radius-full); // 默认胶囊形
 
-  // 按钮内边距
-  --btn-padding-x-sm: 8px;
-  --btn-padding-x-base: 16px;
-  --btn-padding-x-lg: 24px;
-
-  // 按钮图标占位
-  --btn-icon-size-xs: 12px;
-  --btn-icon-size-sm: 16px;
-  --btn-icon-size-base: 20px;
-  --btn-icon-size-lg: 24px;
-
-  // 按钮状态色彩
-  --btn-primary-bg: var(--edu-primary-500);
-  --btn-primary-bg-hover: var(--edu-primary-600);
-  --btn-primary-bg-active: var(--edu-primary-700);
-  --btn-primary-bg-disabled: var(--edu-primary-300);
-
-  --btn-secondary-border: var(--edu-primary-500);
-  --btn-secondary-border-hover: var(--edu-primary-600);
-  --btn-secondary-border-disabled: var(--edu-primary-200);
-
-  // 按钮加载状态
-  --btn-loading-opacity: 0.7;
-  --btn-spinner-size: 16px;
-
-  // 兼容现有按钮变量
-  --edu-button-height-sm: var(--btn-height-sm);
-  --edu-button-height-md: var(--btn-height-base);
-  --edu-button-height-lg: var(--btn-height-lg);
-  --edu-button-padding-sm: 0 var(--btn-padding-x-sm);
-  --edu-button-padding-md: 0 var(--btn-padding-x-base);
-  --edu-button-padding-lg: 0 var(--btn-padding-x-lg);
-
-  // 输入框组件Token - Input Component Tokens
-  // 输入框尺寸
-  --input-height-sm: 32px;
-  --input-height-base: 40px;
-  --input-height-lg: 48px;
-
-  // 输入框内边距
-  --input-padding-x: 12px;
-  --input-padding-y: 8px;
-
-  // 输入框边框
-  --input-border: 1px solid var(--edu-color-gray-300);
-  --input-border-hover: 1px solid var(--edu-primary-400);
+  // Input
+  --input-bg: var(--edu-color-gray-50);
+  --input-border: 1px solid transparent; // 默认无边框
+  --input-border-hover: 1px solid var(--edu-primary-300);
   --input-border-focus: 2px solid var(--edu-primary-500);
-  --input-border-error: 2px solid var(--edu-color-error-default);
-
-  // 输入框背景
-  --input-bg: #ffffff;
-  --input-bg-disabled: var(--edu-color-gray-100);
-  --input-bg-readonly: var(--edu-color-gray-50);
-
-  // 输入框文本
-  --input-color: var(--text-primary);
-  --input-color-placeholder: var(--text-tertiary);
-  --input-color-disabled: var(--text-disabled);
-
-  // 输入框图标
-  --input-icon-size: 16px;
-  --input-icon-color: var(--text-secondary);
-  --input-icon-spacing: 8px;
-
-  // 兼容现有输入框变量
-  --edu-input-height: var(--input-height-base);
-  --edu-input-padding: 0 var(--input-padding-x);
-  --edu-input-border-radius: var(--radius-base);
-  --edu-input-border: var(--input-border);
-  --edu-input-border-focus: var(--input-border-focus);
-
-  // 表格组件Token - Table Component Tokens
-  // 表格尺寸
-  --table-cell-height-sm: 40px;
-  --table-cell-height-base: 48px;
-  --table-cell-height-lg: 56px;
-
-  // 表格内边距
-  --table-cell-padding-x: 16px;
-  --table-cell-padding-y: 12px;
-
-  // 表格边框
-  --table-border: 1px solid var(--edu-color-gray-200);
-  --table-border-header: 2px solid var(--edu-color-gray-200);
-
-  // 表格背景
-  --table-bg-header: var(--edu-color-gray-50);
-  --table-bg-body: #ffffff;
-  --table-bg-striped: var(--edu-color-gray-50);
-  --table-bg-hover: var(--edu-primary-50);
-  --table-bg-selected: var(--edu-primary-100);
-
-  // 表格文本
-  --table-color-header: var(--text-primary);
-  --table-color-body: var(--text-secondary);
-
-  // 排序图标
-  --table-sort-icon-size: 16px;
-  --table-sort-icon-color: var(--text-tertiary);
-  --table-sort-icon-color-active: var(--edu-primary-500);
-
-  // 兼容现有表格变量
-  --edu-table-header-height: var(--table-cell-height-base);
-  --edu-table-row-height: var(--table-cell-height-base);
-  --edu-table-cell-padding: var(--table-cell-padding-y) var(--table-cell-padding-x);
-  --edu-table-border-color: var(--table-border);
-  --edu-table-header-bg: var(--table-bg-header);
-
-  // 标签组件Token - Tag Component Tokens
-  // 标签尺寸
-  --tag-height-xs: 20px;
-  --tag-height-sm: 24px;
-  --tag-height-base: 28px;
-  --tag-height-lg: 32px;
-
-  // 标签内边距
-  --tag-padding-x-sm: 6px;
-  --tag-padding-x-base: 8px;
-  --tag-padding-x-lg: 12px;
-
-  // 标签圆角
-  --tag-radius: var(--radius-full);
-
-  // 标签色彩 - 学科主题
-  --tag-physics-bg: var(--physics-light);
-  --tag-physics-color: var(--physics-primary);
-  --tag-chemistry-bg: var(--chemistry-light);
-  --tag-chemistry-color: var(--chemistry-primary);
-  --tag-math-bg: var(--math-light);
-  --tag-math-color: var(--math-primary);
-
-  // 标签色彩 - 状态主题
-  --tag-success-bg: var(--edu-color-success-light);
-  --tag-success-color: var(--edu-color-success-default);
-  --tag-warning-bg: var(--edu-color-warning-light);
-  --tag-warning-color: var(--edu-color-warning-default);
-  --tag-error-bg: var(--edu-color-error-light);
-  --tag-error-color: var(--edu-color-error-default);
-
-  // 标签图标
-  --tag-icon-size: 12px;
-  --tag-icon-spacing: 4px;
-
-  // 卡片组件Token - Card Component Tokens
-  --card-padding-sm: 16px;
-  --card-padding-base: 24px;
-  --card-padding-lg: 32px;
-  --card-border-radius: var(--radius-lg);
-  --card-shadow: var(--edu-shadow-md);
-  --card-bg: #ffffff;
-  --card-bg-hover: #ffffff;
-
-  // 兼容现有卡片变量
-  --edu-card-padding-sm: var(--card-padding-sm);
-  --edu-card-padding-md: var(--card-padding-base);
-  --edu-card-padding-lg: var(--card-padding-lg);
-  --edu-card-border-radius: var(--card-border-radius);
-  --edu-card-shadow: var(--card-shadow);
-
-  // 图标组件Token - Icon Component Tokens
-  // 图标尺寸标准
-  --icon-xs: 12px;    // 极小图标 - 用于状态指示器
-  --icon-sm: 16px;    // 小图标 - 用于按钮内、列表项
-  --icon-base: 20px;  // 基础图标 - 用于导航、标签
-  --icon-lg: 24px;    // 大图标 - 用于卡片标题、重要按钮
-  --icon-xl: 32px;    // 特大图标 - 用于空状态、重要提示
-  --icon-2xl: 48px;   // 超大图标 - 用于主视觉
-
-  // 图标色彩规范
-  --icon-color-primary: var(--edu-primary-500);
-  --icon-color-secondary: var(--text-secondary);
-  --icon-color-tertiary: var(--text-tertiary);
-  --icon-color-success: var(--edu-color-success-default);
-  --icon-color-warning: var(--edu-color-warning-default);
-  --icon-color-error: var(--edu-color-error-default);
-  --icon-color-disabled: var(--text-disabled);
-
-  // 图标对齐方式
-  --icon-align-center: vertical-align: middle;
-  --icon-align-text: vertical-align: text-bottom;
+  --input-radius: var(--radius-sm); // 输入框保持小圆角
 }
 
 // ========================================
-// 深色主题与高对比度配色 - Dark Theme & High Contrast
+// 深色主题 (Dark Mode)
 // ========================================
 
-// 深色主题Token
 [data-theme="dark"] {
-  // 背景色
-  --bg-primary: #121212;
-  --bg-secondary: #1e1e1e;
-  --bg-surface: #262626;
-  --bg-elevated: #2f2f2f;
+  // 背景
+  --bg-primary: #0F172A; // Slate-900
+  --bg-secondary: #1E293B; // Slate-800
+  --bg-surface: #334155; // Slate-700
+  
+  // 文字
+  --text-primary: #F1F5F9; // Slate-100
+  --text-secondary: #CBD5E1; // Slate-300
+  --text-tertiary: #94A3B8; // Slate-400
+  --text-disabled: #64748B; // Slate-500
 
-  // 文本色
-  --text-primary: rgba(255, 255, 255, 0.87);
-  --text-secondary: rgba(255, 255, 255, 0.68);
-  --text-tertiary: rgba(255, 255, 255, 0.38);
-  --text-disabled: rgba(255, 255, 255, 0.25);
-
-  // 边框色
-  --border-color: rgba(255, 255, 255, 0.12);
-  --border-color-strong: rgba(255, 255, 255, 0.2);
-
-  // 组件适配
+  // 边框
+  --border-color: rgba(255, 255, 255, 0.1);
+  
+  // 覆盖基础颜色（保持亮度）
+  --edu-color-gray-50: #1E293B;
+  --edu-color-gray-100: #334155;
+  --edu-color-gray-200: #475569;
+  
+  // 输入框
   --input-bg: var(--bg-surface);
-  --card-bg: var(--bg-surface);
-  --table-bg-body: var(--bg-surface);
-  --table-bg-hover: rgba(255, 255, 255, 0.04);
-
-  // 调整现有颜色变量
-  --edu-color-gray-50: #1F1F1F;
-  --edu-color-gray-100: #262626;
-  --edu-color-gray-200: #434343;
-  --edu-color-gray-300: #595959;
-  --edu-color-gray-400: #8C8C8C;
-  --edu-color-gray-500: #BFBFBF;
-  --edu-color-gray-600: #D9D9D9;
-  --edu-color-gray-700: #F0F0F0;
-  --edu-color-gray-800: #F5F5F5;
-  --edu-color-gray-900: #FAFAFA;
-
-  // 调整阴影
-  --edu-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 30%);
-  --edu-shadow-base: 0 1px 3px 0 rgb(0 0 0 / 40%), 0 1px 2px 0 rgb(0 0 0 / 30%);
-  --edu-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 40%), 0 2px 4px -1px rgb(0 0 0 / 30%);
-  --edu-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 40%), 0 4px 6px -2px rgb(0 0 0 / 30%);
-  --edu-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 40%), 0 10px 10px -5px rgb(0 0 0 / 30%);
-  --edu-shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 50%);
-}
-
-// 高对比度主题Token
-[data-theme="high-contrast"] {
-  // 增强对比度
-  --text-primary: #000000;
-  --text-secondary: #333333;
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f8f8;
-
-  // 加强边框
-  --border-color: #666666;
-  --border-width: 2px;
-
-  // 增强按钮对比
-  --btn-primary-bg: #000000;
-  --btn-primary-color: #ffffff;
-  --btn-secondary-border: #000000;
-  --btn-secondary-color: #000000;
-
-  // 焦点状态增强
-  --focus-ring: 3px solid #000000;
-  --focus-offset: 2px;
-}
-
-// 数据可视化配色规范 - Chart Colors
-:root {
-  // 主数据系列色彩
-  --chart-color-1: var(--edu-primary-500);
-  --chart-color-2: var(--edu-color-success-default);
-  --chart-color-3: var(--edu-color-warning-default);
-  --chart-color-4: var(--edu-color-error-default);
-  --chart-color-5: var(--edu-color-info-default);
-  --chart-color-6: var(--physics-primary);
-  --chart-color-7: var(--chemistry-primary);
-  --chart-color-8: var(--math-primary);
-
-  // 中性色彩
-  --chart-neutral-100: #f5f5f5;
-  --chart-neutral-200: #e0e0e0;
-  --chart-neutral-300: #bdbdbd;
-  --chart-neutral-400: #9e9e9e;
-  --chart-neutral-500: #757575;
-  --chart-neutral-600: #616161;
-  --chart-neutral-700: #424242;
-  --chart-neutral-800: #212121;
-  --chart-neutral-900: #000000;
-
-  // 图表网格线
-  --chart-grid-color: var(--chart-neutral-200);
-  --chart-grid-color-thick: var(--chart-neutral-300);
-  --chart-grid-style: solid;
-  --chart-grid-width: 1px;
-
-  // 图表字体
-  --chart-font-size: 12px;
-  --chart-font-size-label: 10px;
-  --chart-font-size-title: 14px;
-  --chart-font-color: var(--text-secondary);
-  --chart-font-color-label: var(--text-tertiary);
-
-  // 图例样式
-  --chart-legend-font-size: 12px;
-  --chart-legend-color: var(--text-secondary);
-  --chart-legend-item-spacing: 16px;
-  --chart-legend-icon-size: 12px;
+  
+  // 阴影
+  --edu-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --edu-shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
 }

@@ -140,7 +140,7 @@
       <div v-if="!selectedModuleKey" class="welcome-screen">
         <div class="welcome-content">
           <div class="welcome-icon">
-            <el-icon size="64" color="#409EFF"><EditPen /></el-icon>
+            <el-icon size="64" color="var(--edu-primary-500)"><EditPen /></el-icon>
           </div>
           <h2>欢迎使用五环节课程编辑器</h2>
           <p>选择左侧的环节开始编辑课程内容，或使用AI智能生成</p>
@@ -483,10 +483,10 @@ const summaryCards = computed<SummaryCard[]>(() => [
 onMounted(async () => {
   if (courseId.value) {
     await courseStore.fetchCourseById(courseId.value)
-    addActivity('加载课程', 'Document', '#409EFF')
+    addActivity('加载课程', 'Document', 'var(--edu-primary-500)')
   } else {
     courseStore.initializeEditor()
-    addActivity('新建课程', 'Plus', '#67C23A')
+    addActivity('新建课程', 'Plus', 'var(--edu-color-success-default)')
   }
 })
 
@@ -516,7 +516,7 @@ function getCurrentModule(): ModuleConfig | undefined {
 
 function selectModule(key: string) {
   selectedModuleKey.value = key
-  addActivity(`选择环节: ${getModuleTypeLabel(getCurrentModule()?.type)}`, 'Edit', '#E6A23C')
+  addActivity(`选择环节: ${getModuleTypeLabel(getCurrentModule()?.type)}`, 'Edit', 'var(--edu-color-warning-default)')
 }
 
 function isModuleActive(key: string): boolean {
@@ -530,12 +530,12 @@ function updateModule(moduleKey: string, updates: Partial<ModuleConfig>) {
   const module = courseStore.editor.fiveModules[moduleKey as keyof typeof courseStore.editor.fiveModules]
   Object.assign(module, updates)
 
-  addActivity(`更新环节: ${module.title}`, 'Edit', '#E6A23C')
+  addActivity(`更新环节: ${module.title}`, 'Edit', 'var(--edu-color-warning-default)')
 }
 
 function resetToDefaultModules() {
   courseStore.initializeEditor(currentCourse.value)
-  addActivity('重置环节结构', 'Refresh', '#F56C6C')
+  addActivity('重置环节结构', 'Refresh', 'var(--edu-color-error-default)')
 }
 
 // 环节类型相关方法
@@ -552,13 +552,13 @@ function getModuleIcon(type?: string): any {
 
 function getModuleTypeColor(type?: string): string {
   const colors: Record<string, string> = {
-    introduction: '#67C23A',
-    knowledge: '#409EFF',
-    experience: '#E6A23C',
-    experiment: '#F56C6C',
-    assignment: '#909399'
+    introduction: 'var(--edu-color-success-default)',
+    knowledge: 'var(--edu-primary-500)',
+    experience: 'var(--edu-color-warning-default)',
+    experiment: 'var(--edu-color-error-default)',
+    assignment: 'var(--edu-color-gray-500)'
   }
-  return colors[type || ''] || '#909399'
+  return colors[type || ''] || 'var(--edu-color-gray-500)'
 }
 
 function getModuleTagType(type?: string): string {
@@ -601,7 +601,7 @@ async function generateWithAI() {
   try {
     ElMessage.info('AI正在生成完整课程结构...')
     // TODO: 集成真实的AI服务
-    addActivity('AI生成课程', 'MagicStick', '#409EFF')
+    addActivity('AI生成课程', 'MagicStick', 'var(--edu-primary-500)')
     ElMessage.success('AI课程生成完成')
   } catch (error) {
     ElMessage.error('AI生成失败')
@@ -615,7 +615,7 @@ async function aiGenerateModule() {
   try {
     ElMessage.info(`AI正在生成${module.title}内容...`)
     // TODO: 集成真实的AI服务
-    addActivity(`AI生成${module.title}`, 'MagicStick', '#409EFF')
+    addActivity(`AI生成${module.title}`, 'MagicStick', 'var(--edu-primary-500)')
     ElMessage.success(`${module.title}生成完成`)
   } catch (error) {
     ElMessage.error('AI生成失败')
@@ -636,7 +636,7 @@ function applyAISuggestion(suggestion: any) {
 async function saveVersion() {
   try {
     await courseStore.saveVersion()
-    addActivity('保存版本', 'Document', '#67C23A')
+    addActivity('保存版本', 'Document', 'var(--edu-color-success-default)')
     ElMessage.success('版本保存成功')
   } catch (error) {
     // 错误已在store中处理
@@ -649,7 +649,7 @@ async function saveModuleChanges() {
 
   try {
     await courseStore.saveVersion()
-    addActivity(`保存${module.title}`, 'Check', '#67C23A')
+    addActivity(`保存${module.title}`, 'Check', 'var(--edu-color-success-default)')
     ElMessage.success('模块保存成功')
   } catch (error) {
     ElMessage.error('保存失败')
@@ -668,7 +668,7 @@ async function publishCourse() {
     })
 
     await courseStore.publishCourse()
-    addActivity('发布课程', 'Upload', '#E6A23C')
+    addActivity('发布课程', 'Upload', 'var(--edu-color-warning-default)')
     ElMessage.success('课程发布成功')
   } catch (error) {
     if (error !== 'cancel') {
@@ -713,7 +713,7 @@ function exportACL() {
   link.click()
   URL.revokeObjectURL(url)
 
-  addActivity('导出ACL', 'Download', '#909399')
+  addActivity('导出ACL', 'Download', 'var(--edu-color-gray-500)')
   ElMessage.success('ACL文件导出成功')
 }
 
@@ -727,11 +727,11 @@ function validateCourse() {
   const validation = new ACLValidator().validate(acl)
   if (validation.isValid) {
     ElMessage.success('课程验证通过')
-    addActivity('验证课程', 'Check', '#67C23A')
+    addActivity('验证课程', 'Check', 'var(--edu-color-success-default)')
   } else {
     const errorMessages = validation.errors.slice(0, 3).map(e => e.message).join('；')
     ElMessage.error(`验证失败: ${errorMessages}`)
-    addActivity('验证失败', 'Close', '#F56C6C')
+    addActivity('验证失败', 'Close', 'var(--edu-color-error-default)')
   }
 }
 
@@ -752,7 +752,7 @@ function previewCourse() {
   }
 
   aclPreviewVisible.value = true
-  addActivity('预览课程', 'View', '#409EFF')
+  addActivity('预览课程', 'View', 'var(--edu-primary-500)')
 }
 
 // 模板相关
@@ -763,7 +763,7 @@ function loadTemplate() {
 function applyTemplate(template: any) {
   // 应用课程模板
   console.log('应用模板:', template)
-  addActivity('应用模板', 'Grid', '#E6A23C')
+  addActivity('应用模板', 'Grid', 'var(--edu-color-warning-default)')
   ElMessage.success('模板应用成功')
 }
 
@@ -772,7 +772,7 @@ async function loadVersion(version: any) {
   try {
     // 加载指定版本
     console.log('加载版本:', version)
-    addActivity(`切换版本: ${version.version}`, 'Refresh', '#409EFF')
+    addActivity(`切换版本: ${version.version}`, 'Refresh', 'var(--edu-primary-500)')
     ElMessage.success('版本加载成功')
   } catch (error) {
     ElMessage.error('版本加载失败')
@@ -870,7 +870,7 @@ function removeResource(resourceId: string) {
   const module = getCurrentModule()
   if (module) {
     module.resources = module.resources.filter(r => r.id !== resourceId)
-    addActivity(`删除资源`, 'Delete', '#F56C6C')
+    addActivity(`删除资源`, 'Delete', 'var(--edu-color-error-default)')
   }
 }
 

@@ -903,15 +903,15 @@ watch(currentMethod, () => {
   gap: 1rem;
   margin-bottom: 2rem;
   padding: 1.5rem;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  background: linear-gradient(135deg, var(--edu-color-primary-50) 0%, var(--edu-color-secondary-50) 100%);
   border-radius: 16px;
-  border: 1px solid #bae6fd;
+  border: 1px solid var(--edu-color-primary-200);
 
   .welcome-icon {
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    background: var(--edu-gradient-primary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -929,13 +929,13 @@ watch(currentMethod, () => {
       margin: 0 0 0.25rem 0;
       font-size: 1.1rem;
       font-weight: 600;
-      color: #0277bd;
+      color: var(--edu-primary-700);
     }
 
     p {
       margin: 0;
       font-size: 0.9rem;
-      color: #0284c7;
+      color: var(--edu-primary-600);
     }
   }
 }
@@ -1004,7 +1004,7 @@ watch(currentMethod, () => {
 
     :deep(.el-segmented__item.is-selected) {
       background: white;
-      color: #0ea5e9;
+      color: var(--edu-primary-500);
       box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
     }
   }
@@ -1042,7 +1042,7 @@ watch(currentMethod, () => {
     }
 
     &.is-focus {
-      border-color: #0ea5e9;
+      border-color: var(--edu-primary-500);
       box-shadow: 0 4px 20px rgba(14, 165, 233, 0.15);
       background: rgba(255, 255, 255, 1);
     }
@@ -1202,7 +1202,7 @@ watch(currentMethod, () => {
       transition: all 0.2s ease;
 
       &:hover {
-        color: #0ea5e9;
+        color: var(--edu-primary-500);
       }
     }
   }
@@ -1275,7 +1275,7 @@ watch(currentMethod, () => {
     }
 
     &.is-focus {
-      border-color: #0ea5e9;
+      border-color: var(--edu-primary-500);
       box-shadow: 0 4px 20px rgba(14, 165, 233, 0.15);
       background: rgba(255, 255, 255, 1);
     }
@@ -1314,7 +1314,7 @@ watch(currentMethod, () => {
   border-radius: 14px;
   font-size: 17px;
   font-weight: 600;
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  background: var(--edu-gradient-primary);
   border: none;
   transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
@@ -1377,7 +1377,7 @@ watch(currentMethod, () => {
       transition: all 0.2s ease;
 
       &:hover {
-        color: #0ea5e9;
+        color: var(--edu-primary-500);
         transform: translateY(-1px);
       }
 

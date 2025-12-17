@@ -126,39 +126,39 @@ $tag-colors: (
 // 学科标签颜色
 $tag-subjects: (
   'physics': (
-    'bg': #e3f2fd,
-    'color': #1565c0,
-    'border': #90caf9,
-    'primary': #1976d2,
-    'light': #e3f2fd
+    'bg': var(--edu-color-subject-physics-light),
+    'color': var(--edu-color-subject-physics-dark),
+    'border': var(--edu-color-subject-physics-light),
+    'primary': var(--edu-color-subject-physics),
+    'light': var(--edu-color-subject-physics-light)
   ),
   'chemistry': (
-    'bg': #e8f5e8,
-    'color': #2e7d32,
-    'border': #81c784,
-    'primary': #388e3c,
-    'light': #e8f5e8
+    'bg': var(--edu-color-subject-chemistry-light),
+    'color': var(--edu-color-subject-chemistry-dark),
+    'border': var(--edu-color-subject-chemistry-light),
+    'primary': var(--edu-color-subject-chemistry),
+    'light': var(--edu-color-subject-chemistry-light)
   ),
   'math': (
-    'bg': #fff3e0,
-    'color': #ef6c00,
-    'border': #ffb74d,
-    'primary': #f57c00,
-    'light': #fff3e0
+    'bg': var(--edu-color-subject-math-light),
+    'color': var(--edu-color-subject-math-dark),
+    'border': var(--edu-color-subject-math-light),
+    'primary': var(--edu-color-subject-math),
+    'light': var(--edu-color-subject-math-light)
   ),
   'biology': (
-    'bg': #f3e5f5,
-    'color': #7b1fa2,
-    'border': #ba68c8,
-    'primary': #8e24aa,
-    'light': #f3e5f5
+    'bg': var(--edu-color-subject-biology-light),
+    'color': var(--edu-color-subject-biology-dark),
+    'border': var(--edu-color-subject-biology-light),
+    'primary': var(--edu-color-subject-biology),
+    'light': var(--edu-color-subject-biology-light)
   ),
   'language': (
-    'bg': #fce4ec,
-    'color': #c2185b,
-    'border': #f48fb1,
-    'primary': #d81b60,
-    'light': #fce4ec
+    'bg': var(--edu-color-subject-language-light),
+    'color': var(--edu-color-subject-language-dark),
+    'border': var(--edu-color-subject-language-light),
+    'primary': var(--edu-color-subject-language),
+    'light': var(--edu-color-subject-language-light)
   )
 );
 

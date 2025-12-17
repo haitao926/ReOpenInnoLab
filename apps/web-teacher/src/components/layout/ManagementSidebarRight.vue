@@ -150,7 +150,7 @@ const defaultInsights = [
     change: '+2',
     trend: 'up',
     icon: 'Reading',
-    color: '#1890ff'
+    color: 'var(--edu-primary-500)'
   },
   {
     id: 2,
@@ -159,7 +159,7 @@ const defaultInsights = [
     change: '+8',
     trend: 'up',
     icon: 'User',
-    color: '#52c41a'
+    color: 'var(--edu-color-success-default)'
   },
   {
     id: 3,
@@ -168,7 +168,7 @@ const defaultInsights = [
     change: '+5%',
     trend: 'up',
     icon: 'TrendCharts',
-    color: '#722ed1'
+    color: 'var(--edu-color-secondary-500)'
   }
 ]
 

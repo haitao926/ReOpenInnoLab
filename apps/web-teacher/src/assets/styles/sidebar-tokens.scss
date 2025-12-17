@@ -93,19 +93,19 @@
   text-align: left;
 
   &:hover {
-    background: rgba(99, 102, 241, 0.08);
+    background: var(--edu-primary-50);
     transform: translateX(2px);
   }
 
   &.active {
-    background: rgba(99, 102, 241, 0.12);
-    color: #4f46e5;
+    background: var(--edu-primary-100);
+    color: var(--edu-primary-600);
     font-weight: var(--sidebar-font-weight-semibold);
   }
 
   // 焦点状态
   &:focus-visible {
-    outline: 2px solid #4f46e5;
+    outline: 2px solid var(--edu-primary-600);
     outline-offset: 2px;
   }
 }
@@ -139,7 +139,7 @@
 
 .sidebar-category-item:hover .sidebar-category-icon {
   transform: translateY(-1px) scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--edu-shadow-sm);
 }
 
 .sidebar-category-item:hover .sidebar-category-icon::before,
@@ -262,24 +262,24 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(99, 102, 241, 0.12);
-  color: #4f46e5;
+  background: var(--edu-primary-50);
+  color: var(--edu-primary-600);
   flex-shrink: 0;
   font-size: var(--sidebar-icon-size-base);
 
   &--upload {
-    background: rgba(76, 175, 80, 0.12);
-    color: #4caf50;
+    background: var(--edu-color-success-light);
+    color: var(--edu-color-success-default);
   }
 
   &--edit {
-    background: rgba(249, 115, 22, 0.12);
-    color: #f97316;
+    background: var(--edu-color-cta-light);
+    color: var(--edu-color-cta-default);
   }
 
   &--create {
-    background: rgba(33, 150, 243, 0.12);
-    color: #2196f3;
+    background: var(--edu-color-primary-50);
+    color: var(--edu-primary-500);
   }
 }
 

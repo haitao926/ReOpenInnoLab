@@ -57,6 +57,7 @@ export interface SemanticColors {
   warning: { light: string; default: string; dark: string }
   error: { light: string; default: string; dark: string }
   info: { light: string; default: string; dark: string }
+  cta: { light: string; default: string; dark: string }
 }
 
 export interface TypographySystem {
@@ -201,6 +202,9 @@ const extractColorValues = (colorObj: any): ColorPalette => {
 }
 
 const extractTypographyValues = (typoObj: any): TypographySystem => {
+  if (!typoObj || typeof typoObj !== 'object') {
+    return {} as TypographySystem
+  }
   const result: any = {}
 
   Object.entries(typoObj).forEach(([key, value]: [string, any]) => {
@@ -216,8 +220,12 @@ const extractTypographyValues = (typoObj: any): TypographySystem => {
 
 const extractSimpleValues = (obj: any): Record<string, any> => {
   const result: any = {}
+  if (!obj) return result
 
-  Object.entries(obj).forEach(([key, value]: [string, any]) => {
+  // Handle wrapped token objects (like shadow)
+  const data = obj.value || obj
+
+  Object.entries(data).forEach(([key, value]: [string, any]) => {
     if (value && typeof value === 'object' && 'value' in value) {
       result[key] = value.value
     } else {
@@ -229,6 +237,9 @@ const extractSimpleValues = (obj: any): Record<string, any> => {
 }
 
 const extractMotionValues = (motionObj: any): MotionSystem => {
+  if (!motionObj || typeof motionObj !== 'object') {
+    return {} as MotionSystem
+  }
   const result: any = {}
 
   // motion 对象有一个 value 属性包含实际的动效数据
@@ -472,9 +483,9 @@ export class ThemeManager {
 
     // 字体变量
     const fontFamily = theme.typography?.fontFamily ?? defaultTheme.typography.fontFamily
-    const sansFonts = ensureArray(fontFamily?.sans, defaultTheme.typography.fontFamily.sans)
-    const serifFonts = ensureArray(fontFamily?.serif, defaultTheme.typography.fontFamily.serif)
-    const monoFonts = ensureArray(fontFamily?.mono, defaultTheme.typography.fontFamily.mono)
+    const sansFonts = ensureArray(fontFamily?.sans, defaultTheme.typography.fontFamily?.sans || ['sans-serif'])
+    const serifFonts = ensureArray(fontFamily?.serif, defaultTheme.typography.fontFamily?.serif || ['serif'])
+    const monoFonts = ensureArray(fontFamily?.mono, defaultTheme.typography.fontFamily?.mono || ['monospace'])
     variables['--edu-font-sans'] = sansFonts.join(', ')
     variables['--edu-font-serif'] = serifFonts.join(', ')
     variables['--edu-font-mono'] = monoFonts.join(', ')
@@ -604,12 +615,12 @@ export class ThemeManager {
     root.style.setProperty('--el-border-radius-round', theme.borderRadius.full || '9999px')
 
     // Element Plus字体映射
-    root.style.setProperty('--el-font-family', theme.typography.fontFamily.sans?.join(', ') || 'system-ui, sans-serif')
-    root.style.setProperty('--el-font-size-base', theme.typography.fontSize.sm || '14px')
-    root.style.setProperty('--el-font-size-small', theme.typography.fontSize.xs || '12px')
-    root.style.setProperty('--el-font-size-large', theme.typography.fontSize.base || '16px')
-    root.style.setProperty('--el-font-size-extra-large', theme.typography.fontSize.lg || '18px')
-    root.style.setProperty('--el-font-weight-primary', theme.typography.fontWeight.medium?.toString() || '500')
+    root.style.setProperty('--el-font-family', theme.typography.fontFamily?.sans?.join(', ') || 'system-ui, sans-serif')
+    root.style.setProperty('--el-font-size-base', theme.typography.fontSize?.sm || '14px')
+    root.style.setProperty('--el-font-size-small', theme.typography.fontSize?.xs || '12px')
+    root.style.setProperty('--el-font-size-large', theme.typography.fontSize?.base || '16px')
+    root.style.setProperty('--el-font-size-extra-large', theme.typography.fontSize?.lg || '18px')
+    root.style.setProperty('--el-font-weight-primary', theme.typography.fontWeight?.medium?.toString() || '500')
 
     // Element Plus阴影映射
     root.style.setProperty('--el-box-shadow', theme.shadows.base || '0 1px 3px 0 rgba(0, 0, 0, 0.1)')

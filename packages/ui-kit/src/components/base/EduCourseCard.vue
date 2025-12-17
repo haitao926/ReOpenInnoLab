@@ -452,18 +452,18 @@ const handleAction = (action: string) => {
     color: white;
     font-size: 20px;
 
-    &.subject-math { background: linear-gradient(135deg, #FF6B6B, #FF8E8E); }
-    &.subject-physics { background: linear-gradient(135deg, #4ECDC4, #6EE7E0); }
-    &.subject-chemistry { background: linear-gradient(135deg, #45B7D1, #6AC5DB); }
-    &.subject-biology { background: linear-gradient(135deg, #96CEB4, #AAD8C4); }
-    &.subject-language { background: linear-gradient(135deg, #DDA0DD, #E8C4E8); }
-    &.subject-history { background: linear-gradient(135deg, #FFB347, #FFC970); }
-    &.subject-geography { background: linear-gradient(135deg, #87CEEB, #A8D8EA); }
-    &.subject-english { background: linear-gradient(135deg, #98D8C8, #B5E5D9); }
-    &.subject-art { background: linear-gradient(135deg, #FF69B4, #FF8FCC); }
-    &.subject-music { background: linear-gradient(135deg, #DDA0DD, #E8C4E8); }
-    &.subject-pe { background: linear-gradient(135deg, #FFA07A, #FFB899); }
-    &.subject-it { background: linear-gradient(135deg, #708090, #8B9DC3); }
+    &.subject-math { background: linear-gradient(135deg, var(--edu-color-subject-math), var(--edu-color-subject-math-light)); }
+    &.subject-physics { background: linear-gradient(135deg, var(--edu-color-subject-physics), var(--edu-color-subject-physics-light)); }
+    &.subject-chemistry { background: linear-gradient(135deg, var(--edu-color-subject-chemistry), var(--edu-color-subject-chemistry-light)); }
+    &.subject-biology { background: linear-gradient(135deg, var(--edu-color-subject-biology), var(--edu-color-subject-biology-light)); }
+    &.subject-language { background: linear-gradient(135deg, var(--edu-color-subject-language), var(--edu-color-subject-language-light)); }
+    &.subject-history { background: linear-gradient(135deg, var(--edu-color-subject-history), var(--edu-color-subject-history-light)); }
+    &.subject-geography { background: linear-gradient(135deg, var(--edu-color-subject-geography), var(--edu-color-subject-geography-light)); }
+    &.subject-english { background: linear-gradient(135deg, var(--edu-color-subject-english), var(--edu-color-subject-english-light)); }
+    &.subject-art { background: linear-gradient(135deg, var(--edu-color-subject-art), var(--edu-color-subject-art-light)); }
+    &.subject-music { background: linear-gradient(135deg, var(--edu-color-subject-music), var(--edu-color-subject-music-light)); }
+    &.subject-pe { background: linear-gradient(135deg, var(--edu-color-subject-pe), var(--edu-color-subject-pe-light)); }
+    &.subject-it { background: linear-gradient(135deg, var(--edu-color-subject-it), var(--edu-color-subject-it-light)); }
 
     svg {
       width: 24px;
